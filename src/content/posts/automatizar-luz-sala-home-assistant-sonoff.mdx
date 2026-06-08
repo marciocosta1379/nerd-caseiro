@@ -1,0 +1,130 @@
+---
+title: 'Automatize a luz da sala com Home Assistant + Sonoff'
+description: 'Tutorial passo a passo para controlar a iluminação da sala por app, voz e horário usando Home Assistant e um interruptor Sonoff — com o código pronto.'
+pubDate: 2026-06-08
+category: 'automacao-residencial'
+tags: ['home-assistant', 'sonoff', 'esphome', 'automacao']
+featured: true
+draft: true
+faq:
+  - question: 'Preciso saber programar para fazer isso?'
+    answer: 'Não muito. O Home Assistant tem editor visual de automações; o código YAML mostrado aqui é opcional, mas deixa tudo mais rápido de reproduzir.'
+  - question: 'Funciona sem internet?'
+    answer: 'Sim. Com o Sonoff flasheado com ESPHome, o controle é 100% local — funciona mesmo com a internet caída, diferente do app de nuvem original.'
+  - question: 'Posso usar a Alexa junto?'
+    answer: 'Pode. Depois de o interruptor aparecer no Home Assistant, basta expô-lo à Alexa pela integração de assistentes de voz e controlar por comando falado.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Controlar a luz da sala pelo celular, por voz e por horário é um dos primeiros projetos de quem
+começa na casa inteligente — e também um dos que mais entregam no dia a dia. Neste tutorial eu
+mostro como fazer isso com o **Home Assistant** e um interruptor **Sonoff**, deixando o controle
+**100% local** (funciona até sem internet). Tudo com o código pronto pra você copiar.
+
+> Este é um tutorial técnico de exemplo, criado para validar a estrutura do site. O código está
+> correto, mas revise os links de produto antes de publicar.
+
+## O que você vai precisar
+
+- Um **Sonoff** compatível com ESPHome (ex.: Sonoff MINI R2 ou Basic R2)
+- O **Home Assistant** já rodando (Raspberry Pi, mini PC ou container)
+- Um cabo serial USB-TTL para o primeiro flash (ou OTA, se já estiver no Tasmota/ESPHome)
+
+## Passo 1 — Flashear o Sonoff com ESPHome
+
+O firmware de fábrica do Sonoff depende da nuvem da eWeLink. Trocando por **ESPHome**, o
+dispositivo passa a falar direto com o Home Assistant, na sua rede local. A configuração mínima:
+
+```yaml
+# luz-sala.yaml
+esphome:
+  name: luz-sala
+
+esp8266:
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret api_key
+
+ota:
+  platform: esphome
+
+# Relé do Sonoff + botão físico
+switch:
+  - platform: gpio
+    name: "Luz da Sala"
+    pin: GPIO12
+    id: rele_luz
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+    on_press:
+      - switch.toggle: rele_luz
+```
+
+Depois do primeiro flash via cabo, as próximas atualizações são **OTA** (pelo Wi-Fi).
+
+## Passo 2 — Adicionar ao Home Assistant
+
+Com o ESPHome na rede, o Home Assistant detecta o dispositivo automaticamente em
+**Configurações → Dispositivos e Serviços**. Confirme a chave de API e o interruptor "Luz da
+Sala" já aparece como uma entidade `switch.luz_da_sala`.
+
+## Passo 3 — Automação por horário
+
+Aqui está o pulo do gato: acender a luz automaticamente ao anoitecer e apagar de madrugada.
+Cole no seu `automations.yaml`:
+
+```yaml
+- alias: "Luz da sala ao anoitecer"
+  trigger:
+    - platform: sun
+      event: sunset
+      offset: "-00:15:00"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.luz_da_sala
+
+- alias: "Apagar luz da sala de madrugada"
+  trigger:
+    - platform: time
+      at: "00:30:00"
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.luz_da_sala
+```
+
+Pronto: a luz acende 15 minutos antes do pôr do sol e apaga às 00h30. Para controlar por voz,
+basta expor a entidade à Alexa ou ao Google.
+
+## Onde comprar o Sonoff
+
+<AffiliateButton href="https://www.mercadolivre.com.br/" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" />
+
+## Perguntas frequentes
+
+**Preciso saber programar para fazer isso?**
+Não muito. O Home Assistant tem editor visual de automações; o YAML mostrado aqui é opcional, mas
+deixa tudo mais rápido de reproduzir.
+
+**Funciona sem internet?**
+Sim. Com o Sonoff flasheado com ESPHome, o controle é 100% local.
+
+**Posso usar a Alexa junto?**
+Pode. Depois de o interruptor aparecer no Home Assistant, exponha-o à Alexa e controle por voz.
+
+---
+
+*Dúvidas ou sugestões de tutorial? [Fale com a gente](/contato/).*

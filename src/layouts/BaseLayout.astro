@@ -1,0 +1,208 @@
+---
+import { SITE } from '../config/site';
+import '../styles/global.css';
+import CookieBanner from '../components/CookieBanner.astro';
+import MLAvisoModal from '../components/MLAvisoModal.astro';
+
+interface Props {
+  title?: string;
+  fullTitle?: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  pubDate?: Date;
+  updatedDate?: Date;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  fullTitle,
+  description = SITE.description,
+  image = '/og-default.png',
+  imageAlt = SITE.description,
+  type = 'website',
+  pubDate,
+  updatedDate,
+  noindex = false,
+} = Astro.props;
+
+const pageTitle = fullTitle ?? (title ? `${title} | ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`);
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+// Destaque do item de menu da seção atual
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath === href || currentPath.startsWith(href);
+const socialImage = new URL(image, Astro.site).toString();
+const socialImageType = socialImage.endsWith('.png')
+  ? 'image/png'
+  : socialImage.endsWith('.webp')
+    ? 'image/webp'
+    : 'image/jpeg';
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: SITE.locale,
+};
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <link rel="icon" type="image/png" href="/images/favicon.png" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/rss.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:type" content={socialImageType} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:locale" content="pt_BR" />
+    {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
+    {updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    <slot name="head" />
+
+    <!-- Google Analytics 4 (trocar G-XXXXXXXXXX pela propriedade do Nerd Caseiro) -->
+    {import.meta.env.PROD && (
+      <>
+        <script async defer src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
+        </script>
+      </>
+    )}
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Pular para o conteúdo</a>
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="/" class="logo" aria-label="Nerd Caseiro - Início">
+          <img
+            src="/images/logo.png"
+            alt="Nerd Caseiro — Automação, gadgets e impressão 3D pra sua casa"
+            width="242"
+            height="84"
+            fetchpriority="high"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <span class="logo-text" style="display:none">
+            <strong>Nerd <span>Caseiro</span></strong>
+            <small>Automação · Gadgets · Impressão 3D</small>
+          </span>
+        </a>
+
+        <nav aria-label="Navegação principal">
+          <a href="/" class:list={{ 'is-active': isActive('/') }} aria-current={isActive('/') ? 'page' : undefined}>Início</a>
+          <a href="/categorias/" class:list={{ 'is-active': isActive('/categorias/') }} aria-current={isActive('/categorias/') ? 'page' : undefined}>Categorias</a>
+          <a href="/sobre/" class:list={{ 'is-active': isActive('/sobre/') }} aria-current={isActive('/sobre/') ? 'page' : undefined}>Sobre</a>
+          <a href="/contato/" class:list={{ 'is-active': isActive('/contato/') }} aria-current={isActive('/contato/') ? 'page' : undefined}>Contato</a>
+          <a href="/pesquisa/" class="nav-search" aria-label="Pesquisar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-brand__top">
+            <div>
+              <div class="footer-brand__name">Nerd <span>Caseiro</span></div>
+              <div class="footer-brand__tagline">Automação · Gadgets · Impressão 3D</div>
+            </div>
+          </div>
+          <p>Tutoriais de automação residencial, reviews de gadgets de casa inteligente e impressão 3D — com o código que funciona de verdade.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Pilares</h4>
+          <ul>
+            <li><a href="/categorias/automacao-residencial/">Automação</a></li>
+            <li><a href="/categorias/casa-inteligente/">Casa Inteligente</a></li>
+            <li><a href="/categorias/impressao-3d/">Impressão 3D</a></li>
+            <li><a href="/categorias/eletronica-maker/">Maker</a></li>
+            <li><a href="/categorias/">Ver todas</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Tecnologia</h4>
+          <ul>
+            <li><a href="/categorias/gadgets/">Gadgets</a></li>
+            <li><a href="/categorias/redes-wifi/">Redes & Wi-Fi</a></li>
+            <li><a href="/categorias/home-office/">Home Office</a></li>
+            <li><a href="/categorias/energia-backup/">Energia & Backup</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Institucional</h4>
+          <ul>
+            <li><a href="/sobre/">Sobre nós</a></li>
+            <li><a href="/contato/">Contato</a></li>
+            <li><a href="/divulgacao-afiliado/">Afiliados</a></li>
+            <li><a href="/politica-privacidade/">Privacidade</a></li>
+            <li><a href="/rss.xml">RSS Feed</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom container">
+        <span>&copy; {new Date().getFullYear()} {SITE.name}. Todos os direitos reservados.</span>
+        <div style="display:flex;gap:1.25rem;flex-wrap:wrap">
+          <a href="/politica-privacidade/">Privacidade</a>
+          <a href="/divulgacao-afiliado/">Divulgação de Afiliado</a>
+        </div>
+      </div>
+
+      <p class="footer-disclosure">
+        Como Associado da Amazon, eu ganho com compras qualificadas. Este site também participa do
+        programa de afiliados do Mercado Livre e da Hotmart. Compras feitas através dos nossos links
+        podem gerar uma comissão sem custo adicional para você.
+      </p>
+    </footer>
+    <CookieBanner />
+    <MLAvisoModal />
+  </body>
+</html>

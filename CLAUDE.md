@@ -1,0 +1,128 @@
+# Nerd Caseiro — Tecnologia Caseira (Automação, Gadgets e Impressão 3D)
+
+## Projeto
+
+Site estático em **Astro 4** com MDX, hospedado na Hostinger (FTP). Nicho: **tecnologia para a casa** — automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets. Conteúdo escrito por um **programador maker** (E-E-A-T real), com o código que funciona de verdade.
+
+Domínio: `nerdcaseiro.com.br`
+
+Faz parte de uma **rede de sites sobre a casa**, do mesmo autor (Márcio Costa):
+- **Reforma Caseira** (`reformacaseira.com.br`) — ferramentas/reforma/DIY
+- **Abanou** (`abanou.com.br`) — pets
+
+### Posicionamento (decisão-chave)
+Não ser "blog de gadget genérico" (compete com portais gigantes). Ter:
+- **Núcleo de autoridade** — *"o programador que automatiza a própria casa"*: tutoriais com **código que funciona** (Home Assistant, ESPHome, ESP32, Klipper). É o moat — diferencia de fazenda de conteúdo de IA.
+- **Camada larga** — reviews/comparativos de gadgets de casa inteligente (topo de funil que se beneficia do halo do núcleo).
+
+### Monetização — 3 motores
+- **Mercado Livre (principal):** maioria do hardware. ⚠️ A conta de afiliado é **única para a rede e o perfil se chama "Rede Caseira"** — os links ML do Nerd Caseiro saem com essa identidade. O `MLAvisoModal` avisa o visitante disso, e a página Sobre faz a disclosure da rede.
+- **Amazon Associados (secundária):** itens que faltam no ML. Tag em `.env` (`AMAZON_AFFILIATE_TAG`). ⚠️ Exige ~3 vendas/180d e PA-API travada → **preço da Amazon fica oculto** no lançamento.
+- **Hotmart (digital):** cursos (Home Assistant, modelagem 3D, Arduino). Comissão alta.
+
+### Sem YMYL
+Vantagem do nicho: conteúdo é spec-driven, **sem temas de saúde/finanças**. Mais seguro para conteúdo gerado por agente.
+
+## Comandos
+
+```bash
+npm run dev          # Dev server em localhost:4321 (mostra drafts)
+npm run build        # Gera dist/
+npm run deploy       # OG + build + pagefind + upload FTP
+npm run search       # Baixa imagens dos produtos (search-products.mjs)
+npm run scaffold     # Gera MDX a partir de JSON de produtos
+npm run og           # Gera os cartões og:image
+npm run publish-scheduled  # Publica posts com pubDate <= hoje
+npm run update-prices      # Atualiza preços via API do Mercado Livre
+```
+
+## Categorias válidas
+
+Ancoradas nos 4 pilares do logo (Automação · Impressão 3D · Maker · Tecnologia):
+
+`automacao-residencial` | `casa-inteligente` | `impressao-3d` | `eletronica-maker` | `ferramentas-maker` | `gadgets` | `audio-video` | `redes-wifi` | `energia-backup` | `home-office` | `guias`
+
+## Componentes disponíveis nos posts MDX
+
+```mdx
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+import ProductCard from '../../components/ProductCard.astro';
+```
+
+- `<AffiliateButton href="..." store="mercadolivre|amazon|hotmart" source="slug" />` — botão de afiliado (cor por loja, UTM `nerdcaseiro`). O botão `mercadolivre` abre o **`MLAvisoModal`** automaticamente.
+- `<ComparisonTable rows={[{ name, brand, rating, highlight, stores: [{store,url}] }]} source="slug" />`
+- `<ProsCons pros={[...]} cons={[...]} />`
+- `<ProductCard name="..." stores={[...]} ... />`
+
+## Modelo de produto (frontmatter)
+
+```yaml
+products:
+  - name: 'Sensor de presença Zigbee XYZ'
+    brand: 'Marca'
+    rating: 4.6
+    price: 79.90          # ML pode exibir preço; Amazon manter oculto
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://...'
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/...?tag=nerdcaseiro-20'
+    image: '/images/produtos/sensor-xyz.webp'
+    pros: ['...']
+    cons: ['...']
+```
+
+## Regras editoriais
+
+- Todo post tem `<AffiliateDisclosure />` (injetado pelo template `[...slug].astro`): "Como Associado da Amazon, eu ganho com compras qualificadas." + menção de que links ML aparecem como **Rede Caseira**.
+- Links de afiliado usam `rel="sponsored nofollow noopener noreferrer"`. UTM source é sempre `nerdcaseiro` (o `AffiliateButton` cuida).
+- **Preço:** Mercado Livre pode exibir (`price` + `priceCheckedAt: 'DD/MM/AAAA'`). **Amazon não** (regra Amazon — só com PA-API).
+- **Recorrência (a joia):** filamento 3D é consumível → priorizar no calendário.
+- **Tutorial técnico (moat):** quando o post for tutorial de automação, incluir **código real e testado** (blocos ```yaml / ```cpp). O autor (programador) valida o código.
+- Títulos ≤ 70 caracteres; descrições meta ≤ 160.
+- Posts saem com `draft: true` por padrão.
+- **Imagem de capa / og:image:** a foto do **1º produto** vira a capa nos cards e o cartão social (`scripts/make-og-images.mjs` → `public/images/og/<slug>.jpg`, JPG 1200×630). Coloque o produto principal em primeiro. **Nunca WebP na og:image** (WhatsApp não renderiza).
+- **Regra de ouro:** nunca invente specs. Confirme em ≥2 fontes confiáveis.
+
+### Fontes confiáveis para pesquisa
+- Documentação oficial (Home Assistant, ESPHome, Klipper, fabricantes)
+- Canais maker BR no YouTube
+- Reddit (r/homeassistant, r/3Dprinting), fóruns
+- Reclame Aqui (problemas reais)
+- Sites oficiais das marcas
+
+## Geração de conteúdo (skill com aprovação em etapas)
+
+A skill `/lote-semanal` segue **checkpoints de aprovação do usuário** (ver `.claude/skills/lote-semanal/SKILL.md`):
+1. Usuário dispara → 2. agente sugere **temas** (aprovação) → 3. agente sugere **títulos** (aprovação) → 4. agente escreve **texto** (aprovação) → 5. usuário **libera o agendamento**.
+**Nunca** commitar nem mudar `draft:false` sem aprovação.
+
+## Automação / Publicação
+
+- `.github/workflows/publish-scheduled.yml` muda `draft:true → false` em posts com `pubDate <= hoje`, faz deploy e notifica o IndexNow.
+- ⚠️ **O cron do GitHub Actions tem falhado** — quem dispara de forma confiável é o **n8n** (pasta `n8n/`), via `workflow_dispatch`. Não depender do cron do GitHub.
+
+## Estrutura de pastas
+
+- `src/content/posts/` — posts MDX
+- `src/pages/` — páginas e templates
+- `src/components/` — componentes
+- `src/layouts/BaseLayout.astro` — SEO, header, footer
+- `src/config/site.ts` — config global (nome, URL, autor, rede)
+- `scripts/` — automação (search, scaffold, deploy, og, publish-scheduled, update-prices)
+- `public/images/produtos/` — imagens em WebP
+
+## Credenciais
+
+Em `.env` (não comitar). Ver `.env.example`. Necessário: FTP da Hostinger, `AMAZON_AFFILIATE_TAG`, link ML, link Hotmart.
+
+## Pendências externas (configurar fora do código)
+
+- Confirmar hospedagem de `nerdcaseiro.com.br` (FTP Hostinger).
+- Inscrever em Mercado Livre Afiliados, Amazon Associados e Hotmart.
+- Criar repo GitHub + secrets FTP + configurar trigger n8n.
+- Criar propriedade GA4 e trocar `G-XXXXXXXXXX` em `BaseLayout.astro`. Verificar Search Console.
+- Newsletter/MailerLite: **desabilitada** (componente removido). Reavaliar no futuro se quiser captar e-mails.
+- Adicionar `public/images/ml-perfil.png` (print do perfil "Rede Caseira" no ML) para o `MLAvisoModal`.

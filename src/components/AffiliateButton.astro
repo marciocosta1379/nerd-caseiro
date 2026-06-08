@@ -1,0 +1,52 @@
+---
+type Store = 'mercadolivre' | 'amazon' | 'hotmart';
+
+interface Props {
+  href: string;
+  store?: Store;
+  label?: string;
+  source?: string;
+  block?: boolean;
+}
+
+const STORE_META: Record<Store, { label: string; class: string }> = {
+  mercadolivre: { label: 'Ver no Mercado Livre', class: 'affiliate-btn--mercadolivre' },
+  amazon: { label: 'Ver na Amazon', class: 'affiliate-btn--amazon' },
+  hotmart: { label: 'Conhecer o curso', class: 'affiliate-btn--hotmart' },
+};
+
+const { href, store = 'mercadolivre', label, source = 'review', block = false } = Astro.props;
+
+const meta = STORE_META[store] ?? STORE_META.mercadolivre;
+const finalLabel = label ?? meta.label;
+
+function withTracking(rawUrl: string, src: string): string {
+  try {
+    const url = new URL(rawUrl);
+    if (!url.searchParams.has('utm_source')) {
+      url.searchParams.set('utm_source', 'nerdcaseiro');
+    }
+    if (!url.searchParams.has('utm_medium')) {
+      url.searchParams.set('utm_medium', 'afiliado');
+    }
+    if (!url.searchParams.has('utm_campaign')) {
+      url.searchParams.set('utm_campaign', src);
+    }
+    return url.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
+const finalUrl = withTracking(href, source);
+---
+
+<a
+  class:list={['affiliate-btn', meta.class, { 'affiliate-btn--block': block, 'js-ml-link': store === 'mercadolivre' }]}
+  href={finalUrl}
+  target="_blank"
+  rel="sponsored nofollow noopener noreferrer"
+>
+  {finalLabel}
+  <span aria-hidden="true">→</span>
+</a>

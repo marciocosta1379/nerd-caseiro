@@ -1,0 +1,89 @@
+---
+import AffiliateButton from './AffiliateButton.astro';
+
+type Store = 'mercadolivre' | 'amazon' | 'hotmart';
+
+interface StoreLink {
+  store: Store;
+  url: string;
+}
+
+interface Row {
+  name: string;
+  brand?: string;
+  price?: number;
+  rating?: number;
+  highlight?: string;
+  stores?: StoreLink[];
+  affiliateUrl?: string;
+}
+
+interface Props {
+  rows: Row[];
+  source?: string;
+  priceDate?: string;
+}
+
+const { rows, source, priceDate } = Astro.props;
+
+const storeLinksOf = (r: Row): StoreLink[] =>
+  r.stores && r.stores.length > 0
+    ? r.stores
+    : r.affiliateUrl
+      ? [{ store: 'mercadolivre', url: r.affiliateUrl }]
+      : [];
+
+const fmt = (n?: number) =>
+  n ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n) : '—';
+
+// Esconde colunas que não têm dado em nenhuma linha (evita coluna vazia de "—")
+const showRating = rows.some((r) => typeof r.rating === 'number');
+const showPrice = rows.some((r) => typeof r.price === 'number');
+---
+
+<div class="comparison-wrap">
+  <table class="comparison">
+    <thead>
+      <tr>
+        <th scope="col">Produto</th>
+        <th scope="col">Destaque</th>
+        {showRating && <th scope="col">Nota</th>}
+        {showPrice && <th scope="col">Preço</th>}
+        <th scope="col"><span class="visually-hidden">Comprar</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r) => (
+          <tr>
+            <th scope="row">
+              <strong>{r.name}</strong>
+              {r.brand && <span class="comparison__brand"> · {r.brand}</span>}
+            </th>
+            <td>{r.highlight ?? '—'}</td>
+            {showRating && <td>{r.rating ? `⭐ ${r.rating.toFixed(1)}` : '—'}</td>}
+            {showPrice && <td>{fmt(r.price)}</td>}
+            <td>
+              <div class="comparison__actions">
+                {storeLinksOf(r).map((s) => (
+                  <AffiliateButton href={s.url} store={s.store} source={source} />
+                ))}
+              </div>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+  {showPrice && priceDate && (
+    <p class="comparison__pricenote">💲 Preços consultados em {priceDate}, sujeitos a alteração. Confira o valor atual na loja.</p>
+  )}
+</div>
+
+<style>
+  .comparison__pricenote {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0.6rem 0 0;
+  }
+</style>

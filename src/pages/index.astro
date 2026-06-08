@@ -1,0 +1,218 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const allPosts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featured = allPosts.filter((p) => p.data.featured).slice(0, 3);
+const latest = allPosts.slice(0, 6);
+
+const categories = [
+  { slug: 'automacao-residencial', label: 'Automação Residencial', icon: '🤖' },
+  { slug: 'casa-inteligente', label: 'Casa Inteligente', icon: '💡' },
+  { slug: 'impressao-3d', label: 'Impressão 3D', icon: '🖨️' },
+  { slug: 'eletronica-maker', label: 'Eletrônica Maker', icon: '🔌' },
+  { slug: 'ferramentas-maker', label: 'Ferramentas Maker', icon: '🛠️' },
+  { slug: 'gadgets', label: 'Gadgets', icon: '📱' },
+  { slug: 'audio-video', label: 'Áudio & Vídeo', icon: '🔊' },
+  { slug: 'redes-wifi', label: 'Redes & Wi-Fi', icon: '📶' },
+  { slug: 'energia-backup', label: 'Energia & Backup', icon: '🔋' },
+  { slug: 'home-office', label: 'Home Office', icon: '💻' },
+  { slug: 'guias', label: 'Guias de Compra', icon: '📖' },
+];
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+---
+
+<BaseLayout fullTitle="Nerd Caseiro — Automação, gadgets e impressão 3D pra sua casa">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__content">
+        <span class="hero__tagline">⚙️ Tutoriais · Reviews · Código que funciona</span>
+        <h1>
+          Deixe sua casa <em>inteligente</em> — sem cair em listas genéricas
+        </h1>
+        <p class="hero__sub">
+          Tutoriais de automação residencial, reviews de gadgets e impressão 3D escritos por um
+          programador maker. Mostramos o código que funciona (Home Assistant, ESP32, Klipper) e
+          indicamos o hardware que vale a pena. Sem enrolação.
+        </p>
+        <div class="hero__actions">
+          <a href="/categorias/" class="btn btn--primary">
+            Explorar categorias
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+          <a href="/sobre/" class="btn btn--soft">Como avaliamos</a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <img class="hero__logo" src="/images/logo.png" alt="Nerd Caseiro" width="440" height="220" fetchpriority="high" />
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <div class="trust-bar__inner">
+      <span class="trust-item">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Reviews imparciais
+      </span>
+      <span class="trust-item">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+        Código testado
+      </span>
+      <span class="trust-item">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Atualizado regularmente
+      </span>
+      <span class="trust-item">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        Só indicamos o que vale
+      </span>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="categories-strip">
+    <div class="categories-strip__inner">
+      <h2>Navegar por categoria</h2>
+      <ul class="cat-list">
+        {categories.map((cat) => (
+          <li>
+            <a href={`/categorias/${cat.slug}/`}>
+              <span>{cat.icon}</span>
+              {cat.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <!-- POSTS EM DESTAQUE -->
+  {featured.length > 0 && (
+    <section class="container section">
+      <div class="section-header">
+        <h2>⭐ Em destaque</h2>
+        <a href="/categorias/">Ver todos →</a>
+      </div>
+      <div class="post-grid">
+        {featured.map((post) => {
+          const thumb = post.data.products?.[0]?.image;
+          return (
+          <article class="post-card">
+            <div class="post-card__thumb">
+              {thumb
+                ? <img src={thumb} alt={post.data.title} loading="lazy" width="320" height="240" />
+                : <span>⚙️</span>
+              }
+            </div>
+            <div class="post-card__body">
+              <span class="badge badge--orange">{post.data.category}</span>
+              <a href={`/posts/${post.slug}/`} class="post-card__link">
+                <h3>{post.data.title}</h3>
+              </a>
+              <p class="post-card__excerpt">{post.data.description}</p>
+              <div class="post-card__footer">
+                <span class="post-card__date">{formatDate(post.data.pubDate)}</span>
+                <a href={`/posts/${post.slug}/`} class="post-card__read">Ler artigo →</a>
+              </div>
+            </div>
+          </article>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- POSTS RECENTES -->
+  <section class="container section" style="padding-top: 0">
+    <div class="section-header">
+      <h2>Publicações recentes</h2>
+      {latest.length > 0 && <a href="/categorias/">Ver todos →</a>}
+    </div>
+
+    {latest.length === 0 ? (
+      <div class="post-grid">
+        <div class="empty-state">
+          <div class="empty-state__icon">⚙️</div>
+          <p>Em breve os primeiros artigos. Estamos preparando conteúdo de qualidade para você!</p>
+        </div>
+      </div>
+    ) : (
+      <div class="post-grid">
+        {latest.map((post) => {
+          const thumb = post.data.products?.[0]?.image;
+          return (
+          <article class="post-card">
+            <div class="post-card__thumb">
+              {thumb
+                ? <img src={thumb} alt={post.data.title} loading="lazy" width="320" height="240" />
+                : <span>⚙️</span>
+              }
+            </div>
+            <div class="post-card__body">
+              <span class="badge">{post.data.category}</span>
+              <a href={`/posts/${post.slug}/`} class="post-card__link">
+                <h3>{post.data.title}</h3>
+              </a>
+              <p class="post-card__excerpt">{post.data.description}</p>
+              <div class="post-card__footer">
+                <span class="post-card__date">{formatDate(post.data.pubDate)}</span>
+                <a href={`/posts/${post.slug}/`} class="post-card__read">Ler artigo →</a>
+              </div>
+            </div>
+          </article>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  <!-- POR QUE NOS -->
+  <section class="why-section">
+    <div class="container">
+      <div class="why-section__head">
+        <span class="why-eyebrow">⚙️ Sobre nós</span>
+        <h2>Por que confiar no Nerd Caseiro?</h2>
+        <p>Não escrevemos de achismos. Cada tutorial e recomendação é testado ou fundamentado em pesquisa séria.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-card__icon why-card__icon--orange">🔍</div>
+          <h3>Pesquisa Cruzada</h3>
+          <p>Cruzamos specs oficiais, avaliações de compradores e reclamações antes de indicar.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-card__icon why-card__icon--teal">💻</div>
+          <h3>Código que Funciona</h3>
+          <p>Tutoriais com configs reais (Home Assistant, ESP32, Klipper) validadas por um programador.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-card__icon why-card__icon--orange">💰</div>
+          <h3>Custo-Benefício Real</h3>
+          <p>Levamos em conta o que você realmente precisa — sem empurrar o mais caro.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-card__icon why-card__icon--teal">✅</div>
+          <h3>Maker de Verdade</h3>
+          <p>Quem escreve tem impressora 3D e automatiza a própria casa. Não é teoria.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero__logo {
+    width: min(440px, 90%);
+    height: auto;
+    filter: drop-shadow(0 14px 30px rgba(16,27,46,0.18));
+  }
+</style>

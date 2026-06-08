@@ -1,0 +1,31 @@
+---
+interface Props {
+  variant?: 'full' | 'mini';
+}
+const { variant = 'full' } = Astro.props;
+---
+
+{
+  variant === 'full' ? (
+    <aside class="disclosure" role="note">
+      <strong class="disclosure__label">Divulgação:</strong>
+      <span class="disclosure__body">
+        este artigo contém links de afiliado. Se você comprar através deles, podemos receber uma
+        pequena comissão sem custo adicional para você. Isso nos ajuda a manter o site no ar, mas
+        não influencia nossas recomendações — só indicamos o que avaliamos com critério. Nos links
+        do Mercado Livre, a recomendação aparece como <strong>Rede Caseira</strong> (mesma rede,
+        mesmo autor).
+      </span>
+    </aside>
+
+    <style>
+      .disclosure__label { flex-shrink: 0; }
+      .disclosure__body { flex: 1; min-width: 0; }
+      .disclosure__body a { color: var(--color-teal-hover); font-weight: 700; }
+    </style>
+  ) : (
+    <p class="disclosure disclosure--mini">
+      <em>Contém links de afiliado. <a href="/divulgacao-afiliado/">Saiba mais</a>.</em>
+    </p>
+  )
+}

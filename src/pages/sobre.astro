@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, AUTHOR, NETWORK } from '../config/site';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: AUTHOR.name,
+  jobTitle: AUTHOR.role,
+  description: AUTHOR.bio,
+  url: AUTHOR.url,
+  worksFor: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+  },
+};
+---
+
+<BaseLayout
+  title="Sobre"
+  description={`Conheça o ${SITE.name}: a metodologia, quem está por trás e por que você pode confiar nas recomendações.`}
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <article class="container prose section">
+    <h1>Sobre o {SITE.name}</h1>
+
+    <p>
+      O {SITE.name} nasceu para resolver um problema simples: quando você quer deixar a casa mais
+      inteligente — automatizar a iluminação, escolher uma impressora 3D, montar um servidor de
+      mídia — a internet está cheia de listas genéricas, copiadas umas das outras, escritas só para
+      empurrar links. Aqui o trabalho é outro: <strong>código que funciona de verdade</strong> e
+      recomendações fundamentadas em pesquisa séria.
+    </p>
+
+    <h2>Quem está por trás</h2>
+    <p>
+      <strong>{AUTHOR.name}</strong> — {AUTHOR.role}. {AUTHOR.bio}
+    </p>
+    <p>
+      Na prática: tenho impressora 3D em casa, automatizo o próprio lar com Home Assistant e ESP32,
+      e programo há anos. Quando publico um tutorial de automação, o código foi testado; quando
+      indico uma impressora ou um filamento, a escolha passou por pesquisa real — não por copiar a
+      lista do vizinho.
+    </p>
+
+    <h2>Como avaliamos (com honestidade)</h2>
+    <p>
+      Não compramos fisicamente todos os produtos que recomendamos — seria desonesto dizer o
+      contrário. O que fazemos é uma <strong>pesquisa cuidadosa e cruzada</strong> antes de cada
+      recomendação, e testamos o que envolve código:
+    </p>
+    <ol>
+      <li>
+        <strong>Especificações reais:</strong> conferimos potência, conectividade, compatibilidade
+        (Zigbee, Wi-Fi, Matter), volume de impressão e firmware direto nas fichas dos fabricantes.
+      </li>
+      <li>
+        <strong>Avaliações de quem comprou:</strong> lemos dezenas a centenas de reviews para
+        entender durabilidade, defeitos comuns e o que esperar no uso diário.
+      </li>
+      <li>
+        <strong>Reclamações e pós-venda:</strong> checamos o Reclame Aqui e fóruns para detectar
+        problemas recorrentes e a qualidade do suporte de cada marca.
+      </li>
+      <li>
+        <strong>Código testado:</strong> nos tutoriais de automação, as configs (Home Assistant,
+        ESPHome, Klipper) são validadas antes de publicar.
+      </li>
+      <li>
+        <strong>Regra de ouro:</strong> se uma informação não é confirmada por pelo menos duas
+        fontes confiáveis, ela não entra no artigo.
+      </li>
+    </ol>
+
+    <h2>Nossa fonte de renda</h2>
+    <p>
+      Mantemos o site através de programas de afiliados — <strong>Mercado Livre</strong>,
+      <strong>Amazon Associados</strong> e <strong>Hotmart</strong>. Quando você compra por um dos
+      nossos links, recebemos uma pequena comissão, sem custo extra para você. Como Associado da
+      Amazon, ganhamos com compras qualificadas. Isso paga o tempo dedicado à pesquisa e à
+      manutenção do site.
+    </p>
+    <p>
+      <strong>Importante e transparente:</strong> nossa conta de afiliado do Mercado Livre é a
+      mesma da nossa rede de sites, então, ao clicar num link do Mercado Livre, a recomendação
+      aparece com o nome <strong>Rede Caseira</strong>. É a mesma pessoa por trás — pode comprar
+      tranquilo.
+    </p>
+    <p>
+      <strong>Isso não influencia nossas opiniões.</strong> Já indicamos o produto barato em vez do
+      caro e já apontamos defeitos de marcas grandes. O critério é sempre o mesmo: o que entrega o
+      melhor resultado para a sua casa.
+    </p>
+
+    <h2>A nossa rede</h2>
+    <p>
+      O {SITE.name} faz parte de uma pequena rede de sites sobre a casa, todos mantidos por mim:
+    </p>
+    <ul>
+      {NETWORK.map((s) => (
+        <li>
+          <a href={s.url} target="_blank" rel="noopener">{s.name}</a> — {s.blurb}
+        </li>
+      ))}
+    </ul>
+
+    <h2>Fale com a gente</h2>
+    <p>
+      Tem uma dúvida, sugestão de tutorial ou correção? <a href="/contato/">Entre em contato</a>.
+      Levamos correções a sério — se erramos uma spec ou um trecho de código, queremos saber.
+    </p>
+  </article>
+</BaseLayout>
