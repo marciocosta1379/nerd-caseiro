@@ -20,6 +20,9 @@ if (!HOSTINGER_FTP_HOST || !HOSTINGER_FTP_USER || !HOSTINGER_FTP_PASS) {
 
 const DIST_DIR = join(ROOT, 'dist');
 const REMOTE_DIR = HOSTINGER_FTP_DIR || '/public_html';
+// Contas FTP "presas" ao domínio já logam dentro do docroot. Nesses casos use
+// HOSTINGER_FTP_DIR=. (ou vazio) para NÃO navegar à raiz absoluta (restrita) — fica no dir de login.
+const stayInLoginDir = REMOTE_DIR === '.' || REMOTE_DIR === '';
 
 async function main() {
   const client = new Client();
@@ -35,10 +38,11 @@ async function main() {
       secureOptions: { rejectUnauthorized: false },
     });
 
-    console.log(`Conectado. Enviando dist/ para ${REMOTE_DIR}...`);
-    await client.ensureDir(REMOTE_DIR);
+    const pwd = await client.pwd();
+    console.log(`Conectado. Dir de login: ${pwd}. ${stayInLoginDir ? 'Subindo no dir de login.' : `Indo para ${REMOTE_DIR}.`}`);
+    if (!stayInLoginDir) await client.ensureDir(REMOTE_DIR);
     await client.clearWorkingDir();
-    await client.uploadFromDir(DIST_DIR, REMOTE_DIR);
+    await client.uploadFromDir(DIST_DIR);
 
     console.log('Deploy concluído com sucesso!');
     console.log(`Site ao vivo em: https://nerdcaseiro.com.br`);
