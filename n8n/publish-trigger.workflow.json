@@ -1,5 +1,5 @@
 {
-  "name": "Abanou — Publicar posts (07h BRT)",
+  "name": "Nerd Caseiro — Publicar posts (07h BRT)",
   "nodes": [
     {
       "parameters": {
@@ -25,7 +25,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.github.com/repos/marciocosta1379/abanou/actions/workflows/publish-scheduled.yml/dispatches",
+        "url": "https://api.github.com/repos/marciocosta1379/nerd-caseiro/actions/workflows/publish-scheduled.yml/dispatches",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -33,7 +33,7 @@
           "parameters": [
             { "name": "Accept", "value": "application/vnd.github+json" },
             { "name": "X-GitHub-Api-Version", "value": "2022-11-28" },
-            { "name": "User-Agent", "value": "n8n-abanou" }
+            { "name": "User-Agent", "value": "n8n-nerdcaseiro" }
           ]
         },
         "sendBody": true,
@@ -69,11 +69,11 @@
         360,
         300
       ],
-      "webhookId": "abanou-wait-1"
+      "webhookId": "nerdcaseiro-wait-1"
     },
     {
       "parameters": {
-        "url": "https://api.github.com/repos/marciocosta1379/abanou/actions/runs",
+        "url": "https://api.github.com/repos/marciocosta1379/nerd-caseiro/actions/runs",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -81,7 +81,7 @@
           "parameters": [
             { "name": "Accept", "value": "application/vnd.github+json" },
             { "name": "X-GitHub-Api-Version", "value": "2022-11-28" },
-            { "name": "User-Agent", "value": "n8n-abanou" }
+            { "name": "User-Agent", "value": "n8n-nerdcaseiro" }
           ]
         },
         "sendQuery": true,
@@ -153,7 +153,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.github.com/repos/marciocosta1379/abanou/actions/workflows/publish-scheduled.yml/dispatches",
+        "url": "https://api.github.com/repos/marciocosta1379/nerd-caseiro/actions/workflows/publish-scheduled.yml/dispatches",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -161,7 +161,7 @@
           "parameters": [
             { "name": "Accept", "value": "application/vnd.github+json" },
             { "name": "X-GitHub-Api-Version", "value": "2022-11-28" },
-            { "name": "User-Agent", "value": "n8n-abanou" }
+            { "name": "User-Agent", "value": "n8n-nerdcaseiro" }
           ]
         },
         "sendBody": true,
@@ -197,11 +197,11 @@
         1260,
         400
       ],
-      "webhookId": "abanou-wait-2"
+      "webhookId": "nerdcaseiro-wait-2"
     },
     {
       "parameters": {
-        "url": "https://api.github.com/repos/marciocosta1379/abanou/actions/runs",
+        "url": "https://api.github.com/repos/marciocosta1379/nerd-caseiro/actions/runs",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
@@ -209,7 +209,7 @@
           "parameters": [
             { "name": "Accept", "value": "application/vnd.github+json" },
             { "name": "X-GitHub-Api-Version", "value": "2022-11-28" },
-            { "name": "User-Agent", "value": "n8n-abanou" }
+            { "name": "User-Agent", "value": "n8n-nerdcaseiro" }
           ]
         },
         "sendQuery": true,
@@ -281,7 +281,7 @@
     {
       "parameters": {
         "chatId": "REPLACE_CHAT_ID",
-        "text": "=⚠️ *Abanou* — publicação do post de {{ $now.format('dd/MM/yyyy') }} FALHOU mesmo após retry.\n\nÚltimo run: {{ $json.workflow_runs[0].html_url }}\nConclusão: {{ $json.workflow_runs[0].conclusion }}\n\nProvável timeout de FTP na Hostinger. Rode o workflow manualmente ou verifique a Hostinger.",
+        "text": "=⚠️ *Nerd Caseiro* — publicação do post de {{ $now.format('dd/MM/yyyy') }} FALHOU mesmo após retry.\n\nÚltimo run: {{ $json.workflow_runs[0].html_url }}\nConclusão: {{ $json.workflow_runs[0].conclusion }}\n\nProvável timeout de FTP na Hostinger. Rode o workflow manualmente ou verifique a Hostinger.",
         "additionalFields": {
           "parse_mode": "Markdown"
         }

@@ -1,11 +1,12 @@
-# n8n — Trigger de publicação do Abanou (07h BRT)
+# n8n — Trigger de publicação do Nerd Caseiro (07h BRT)
 
-Mesma lógica do reformacaseira, mas para o repo **`marciocosta1379/abanou`**. O n8n agenda
-às **07h BRT**, dispara o workflow `publish-scheduled.yml` via `workflow_dispatch`, confere
-o resultado e, se falhar, **redispara 1x** e avisa no **Telegram**.
+Mesma lógica do reformacaseira/abanou, mas para o repo **`marciocosta1379/nerd-caseiro`**. O n8n
+agenda às **07h BRT**, dispara o workflow `publish-scheduled.yml` via `workflow_dispatch` (na
+branch `main`), confere o resultado e, se falhar, **redispara 1x** e avisa no **Telegram**.
 
-O build, commit e deploy FTP rodam no GitHub Actions do repo do abanou (usando os secrets
-`HOSTINGER_FTP_*`).
+O build, commit e deploy FTP rodam no GitHub Actions do repo do nerd-caseiro (usando os secrets
+`HOSTINGER_FTP_*`). ⚠️ Lembre que `HOSTINGER_FTP_DIR` deve ser **`.`** (a conta FTP loga direto
+no docroot) — não `/` nem `/public_html`.
 
 ## Setup (uma vez)
 
@@ -19,8 +20,8 @@ O build, commit e deploy FTP rodam no GitHub Actions do repo do abanou (usando o
 5. Confirme o timezone da workflow = **America/Sao_Paulo**.
 6. **Ativar** a workflow.
 
-> Isso é uma workflow **separada** da do reformacaseira — os dois sites publicam de forma
-> independente, cada um com seu repo e seus secrets. Um não derruba o outro.
+> Isso é uma workflow **separada** das do reformacaseira/abanou — os três sites publicam de
+> forma independente, cada um com seu repo e seus secrets. Um não derruba o outro.
 
 ## ⚠️ Pegadinha do cron (n8n usa 6 campos, começando por SEGUNDOS)
 
@@ -45,5 +46,5 @@ toggle **Active** para re-registrar o agendamento.
 sozinho. Funcionando, volte para `0 0 7 * * *`.
 
 ## Testar
-Na workflow, clique **Execute Workflow**. Deve disparar um run no GitHub Actions do abanou
+Na workflow, clique **Execute Workflow**. Deve disparar um run no GitHub Actions do nerd-caseiro
 e, ~3 min depois, confirmar sucesso.
