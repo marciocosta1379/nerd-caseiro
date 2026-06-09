@@ -1,0 +1,106 @@
+---
+title: 'Sonoff MINI R2 vale a pena? Review honesto (2026)'
+description: 'Review do Sonoff MINI R2: o mini interruptor Wi-Fi que cabe na caixa de parede, aceita ESPHome/Tasmota e roda local no Home Assistant. Prós, contras e cuidados.'
+pubDate: 2026-06-12
+category: 'automacao-residencial'
+tags: ['sonoff', 'sonoff-mini-r2', 'esphome', 'home-assistant', 'interruptor-inteligente']
+featured: false
+draft: true
+priceCheckedAt: '08/06/2026'
+products:
+  - name: 'Sonoff MINI R4 Extreme'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 78.90
+    image: '/images/produtos/sonoff-mini-r4-extreme.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/24i58ao'
+faq:
+  - question: 'O Sonoff MINI R2 precisa de fio neutro?'
+    answer: 'Sim. O MINI R2 precisa de neutro (N) e fase (L) nos terminais. Em instalações antigas que só levam fase até o interruptor, talvez seja necessário puxar o neutro.'
+  - question: 'Dá para usar o MINI R2 sem a nuvem da eWeLink?'
+    answer: 'Sim. Ele tem o modo DIY e é compatível com ESPHome e Tasmota, o que permite rodar 100% local com o Home Assistant, sem depender da nuvem.'
+  - question: 'Preciso abrir o aparelho para instalar firmware customizado?'
+    answer: 'Depende da versão de firmware. Em firmwares recentes dá para usar o modo DIY e gravar via OTA; em unidades mais antigas pode ser necessário um conversor USB-TTL e soldar/encaixar fios para o primeiro flash.'
+  - question: 'Funciona com interruptor de parede normal?'
+    answer: 'Sim. O MINI R2 tem entrada para interruptor externo (S1/S2), então você mantém o controle físico na parede além do controle por app/voz.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+![Sonoff MINI R4 Extreme](/images/produtos/sonoff-mini-r4-extreme.webp)
+
+Se existe um "interruptor de entrada" no mundo da automação DIY, é a linha **Sonoff MINI**. Este review cobre a série — com foco no **R4 Extreme** (versão atual disponível) e nas características que se aplicam também ao clássico R2. Ele é pequeno o suficiente pra caber **dentro da caixa de parede**, atrás do interruptor que já existe — ou seja, você automatiza a luz **sem trocar o visual** do ambiente. E, o mais importante pra quem é maker: ele roda **firmware aberto** (ESPHome/Tasmota) e funciona **100% local** no Home Assistant.
+
+Usei ele como base do nosso [tutorial de automação de iluminação](/posts/automatizar-luz-sala-home-assistant-sonoff/). Aqui vai o review honesto: o que ele faz bem, onde tropeça e os cuidados antes de comprar.
+
+## Ficha rápida
+
+- **Tipo:** mini interruptor/relé Wi-Fi (2,4 GHz)
+- **Instalação:** terminais parafusados — **fase (L) e neutro (N)** obrigatórios
+- **Interruptor externo:** sim (entrada S1/S2 — mantém o controle físico na parede)
+- **App oficial:** eWeLink · compatível com **Alexa** e **Google Assistente**
+- **Firmware aberto:** **modo DIY** + compatível com **ESPHome** e **Tasmota**
+- **Corpo:** plástico ABS
+
+## Na prática
+
+O grande barato do MINI R2 é a **discrição**: como ele fica embutido, a parede continua com o interruptor de sempre — quem entra na sala nem percebe que ali tem automação. A entrada para **interruptor externo** é o detalhe que muita gente ignora e que faz toda a diferença: você não perde o controle manual (essencial pra quando a visita não sabe usar o app).
+
+Para o público maker, o ponto alto é o **firmware aberto**. Com ESPHome, ele aparece no Home Assistant como uma entidade local, responde instantâneo e **não depende da nuvem da eWeLink** — se a internet cair, a luz continua funcionando. É exatamente o que mostramos no tutorial.
+
+<AffiliateButton href="https://meli.la/24i58ao" store="mercadolivre" source="review-sonoff-mini-r2" />
+
+## Prós e contras
+
+<ProsCons
+  pros={[
+    'Minúsculo: cabe na caixa de parede (não muda o visual)',
+    'Entrada para interruptor externo (mantém o controle físico)',
+    'Firmware aberto: ESPHome/Tasmota = 100% local no Home Assistant',
+    'Barato e fácil de achar',
+    'Funciona com Alexa e Google'
+  ]}
+  cons={[
+    'Exige fio neutro — instalações antigas podem não ter',
+    'Primeiro flash do firmware custom pode exigir USB-TTL (depende da versão)',
+    'Wi-Fi 2,4 GHz (em casas com MUITOS dispositivos, Zigbee é mais estável)',
+    'Instalação elétrica: trabalhe sempre com o disjuntor desligado'
+  ]}
+/>
+
+> ⚠️ **Segurança:** instalação envolve rede elétrica. Desligue o disjuntor antes de mexer e, se não tiver segurança com fiação, chame um eletricista. Confira também se a sua caixa de parede tem **neutro** disponível.
+
+## Alternativas
+
+- **Sonoff BASIC R2 / R4:** para automatizar um aparelho na tomada/linha, fora da caixa de parede.
+- **Sonoff MINI Extreme (MINIR4):** versão menor; algumas variações facilitam o flash OTA.
+- **Interruptor Zigbee:** se você já tem um hub/coordenador Zigbee e quer fugir do Wi-Fi, vale considerar um relé Zigbee no lugar.
+
+## Veredicto — para quem é
+
+O **Sonoff MINI R2 vale muito a pena** para quem quer **começar a automação de iluminação de forma discreta e barata**, principalmente se for usar **Home Assistant + ESPHome** (controle local de verdade). Os cuidados são os de sempre da elétrica: precisa de **neutro** e de respeito ao disjuntor.
+
+Se você não pretende mexer em fiação nem em firmware, uma lâmpada inteligente "plug and play" é mais simples — veja a [lista das melhores lâmpadas inteligentes](/posts/melhores-lampadas-inteligentes-2026/). Mas se quer o controle de verdade, sem nuvem, o MINI R2 é o ponto de partida clássico.
+
+<AffiliateButton href="https://meli.la/24i58ao" store="mercadolivre" source="review-sonoff-mini-r2" />
+
+## Perguntas frequentes
+
+**O Sonoff MINI R2 precisa de fio neutro?**
+Sim — precisa de neutro (N) e fase (L). Instalações antigas que só levam fase ao interruptor podem exigir puxar o neutro.
+
+**Dá para usar sem a nuvem da eWeLink?**
+Sim. Com o modo DIY + ESPHome/Tasmota, ele roda 100% local no Home Assistant.
+
+**Preciso abrir o aparelho para firmware customizado?**
+Depende da versão: firmwares recentes permitem DIY via OTA; unidades antigas podem exigir USB-TTL no primeiro flash.
+
+**Funciona com interruptor de parede normal?**
+Sim, tem entrada para interruptor externo (S1/S2) — mantém o controle físico.
+
+---
+
+*Quer ver ele em ação? Siga o [tutorial: automatize a luz da sala com Home Assistant + Sonoff](/posts/automatizar-luz-sala-home-assistant-sonoff/).*

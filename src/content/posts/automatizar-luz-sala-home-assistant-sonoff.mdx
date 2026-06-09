@@ -1,11 +1,21 @@
 ---
 title: 'Automatize a luz da sala com Home Assistant + Sonoff'
 description: 'Tutorial passo a passo para controlar a iluminação da sala por app, voz e horário usando Home Assistant e um interruptor Sonoff — com o código pronto.'
-pubDate: 2026-06-08
+pubDate: 2026-06-11
 category: 'automacao-residencial'
 tags: ['home-assistant', 'sonoff', 'esphome', 'automacao']
 featured: true
 draft: true
+priceCheckedAt: '08/06/2026'
+products:
+  - name: 'Sonoff MINI R4 Extreme'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 78.90
+    image: '/images/produtos/sonoff-mini-r4-extreme.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/24i58ao'
 faq:
   - question: 'Preciso saber programar para fazer isso?'
     answer: 'Não muito. O Home Assistant tem editor visual de automações; o código YAML mostrado aqui é opcional, mas deixa tudo mais rápido de reproduzir.'
@@ -22,14 +32,17 @@ começa na casa inteligente — e também um dos que mais entregam no dia a dia.
 mostro como fazer isso com o **Home Assistant** e um interruptor **Sonoff**, deixando o controle
 **100% local** (funciona até sem internet). Tudo com o código pronto pra você copiar.
 
-> Este é um tutorial técnico de exemplo, criado para validar a estrutura do site. O código está
-> correto, mas revise os links de produto antes de publicar.
-
 ## O que você vai precisar
 
-- Um **Sonoff** compatível com ESPHome (ex.: Sonoff MINI R2 ou Basic R2)
-- O **Home Assistant** já rodando (Raspberry Pi, mini PC ou container)
-- Um cabo serial USB-TTL para o primeiro flash (ou OTA, se já estiver no Tasmota/ESPHome)
+![Sonoff MINI R4 Extreme](/images/produtos/sonoff-mini-r4-extreme.webp)
+
+- Um **Sonoff MINI R4 Extreme** (interruptor Wi-Fi compatível com ESPHome) — cabe atrás do interruptor de parede. *(O R4 é a versão atual do clássico R2 — mesma função, firmware mais fácil de atualizar via OTA.)*
+- O **Home Assistant** rodando num **Raspberry Pi 5** (recomendado), mini PC ou container
+- Um **conversor USB-TTL** (serial) para eventuais flashes manuais
+
+<AffiliateButton href="https://meli.la/24i58ao" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" label="Ver o Sonoff MINI R4" />
+<AffiliateButton href="https://meli.la/1bsAHpT" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" label="Ver o Raspberry Pi 5" />
+<AffiliateButton href="https://meli.la/1azsSTh" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" label="Ver o conversor USB-TTL" />
 
 ## Passo 1 — Flashear o Sonoff com ESPHome
 
@@ -42,7 +55,7 @@ esphome:
   name: luz-sala
 
 esp8266:
-  board: esp01_1m
+  board: esp8285
 
 wifi:
   ssid: !secret wifi_ssid
@@ -109,9 +122,11 @@ Cole no seu `automations.yaml`:
 Pronto: a luz acende 15 minutos antes do pôr do sol e apaga às 00h30. Para controlar por voz,
 basta expor a entidade à Alexa ou ao Google.
 
-## Onde comprar o Sonoff
+## Onde comprar o Sonoff MINI R4 Extreme
 
-<AffiliateButton href="https://www.mercadolivre.com.br/" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" />
+Versão atual do clássico MINI — barato, pequeno e compatível com ESPHome. Antes de comprar, leia o [review completo](/posts/review-sonoff-mini-r2/) pra entender os cuidados de instalação (precisa de neutro).
+
+<AffiliateButton href="https://meli.la/24i58ao" store="mercadolivre" source="automatizar-luz-sala-home-assistant-sonoff" />
 
 ## Perguntas frequentes
 

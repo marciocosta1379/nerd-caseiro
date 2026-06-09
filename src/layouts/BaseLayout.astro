@@ -92,15 +92,15 @@ const websiteSchema = {
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
     <slot name="head" />
 
-    <!-- Google Analytics 4 (trocar G-XXXXXXXXXX pela propriedade do Nerd Caseiro) -->
+    <!-- Google Analytics 4 (trocar G-815KHC17QJ pela propriedade do Nerd Caseiro) -->
     {import.meta.env.PROD && (
       <>
-        <script async defer src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+        <script async defer src="https://www.googletagmanager.com/gtag/js?id=G-815KHC17QJ"></script>
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-XXXXXXXXXX', { send_page_view: true });
+          gtag('config', 'G-815KHC17QJ', { send_page_view: true });
         </script>
       </>
     )}
