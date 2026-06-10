@@ -1,0 +1,258 @@
+---
+title: 'Alimentador automático para gatos e cães: ESP32 e impressão 3D'
+description: 'Tutorial completo: como montar um alimentador automático de ração com ESP32, servo motor e peças impressas em 3D. Código funcional incluso.'
+pubDate: 2026-06-16
+category: 'eletronica-maker'
+tags: ['esp32', 'impressao-3d', 'home-assistant', 'maker', 'automacao', 'pet']
+featured: true
+draft: true
+priceCheckedAt: '10/06/2026'
+products:
+  - name: 'ESP32 DevKitC Wroom-32U'
+    brand: 'Espressif'
+    rating: 5.0
+    price: 109.90
+    image: '/images/produtos/esp32-devkitc.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2UvWDgr'
+    pros:
+      - 'Wi-Fi e Bluetooth integrados — conecta ao Home Assistant nativamente'
+      - 'Suporte a ESPHome: zero código C++ necessário se preferir YAML'
+      - 'Versão com nota fiscal e antena externa (Wroom-32U)'
+    cons:
+      - 'Placas genéricas de 38 pinos saem mais baratas, mas sem NF'
+  - name: 'Micro Servo SG90 9g (Tower Pro)'
+    brand: 'Tower Pro'
+    rating: 4.8
+    price: 19.00
+    image: '/images/produtos/servo-sg90.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2mHi2Xr'
+    pros:
+      - 'É o servo que os modelos de alimentador do MakerWorld usam'
+      - 'Torque de 1,5 kg.cm — suficiente para abrir a comporta de ração'
+      - 'Consome pouco: um carregador de celular de 5V dá conta'
+      - 'Barato (~R$ 19) e leve'
+    cons:
+      - 'Engrenagem de nylon — para uso muito intenso, suba para um servo de metal'
+      - 'Para reservatórios grandes e pesados, um MG996R tem mais folga de torque'
+  - name: 'Módulo RTC DS3231'
+    brand: 'Genérico'
+    rating: 4.9
+    price: 18.87
+    image: '/images/produtos/rtc-ds3231.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1AyMj4y'
+    pros:
+      - 'Mantém o horário mesmo com queda de energia (bateria CR2032)'
+      - 'Comunicação I2C — usa só 2 pinos do ESP32'
+    cons:
+      - 'Desnecessário se usar ESPHome com NTP (sincroniza pelo Wi-Fi)'
+faq:
+  - question: 'Posso usar ESPHome em vez de código C++ puro?'
+    answer: 'Sim, e é a abordagem mais recomendada. Com ESPHome você descreve o comportamento em YAML, o framework gera o código e faz o flash automaticamente. A integração com Home Assistant é automática via mDNS. Neste tutorial usei Arduino IDE por didática, mas o ESPHome é mais prático para projetos de produção.'
+  - question: 'O alimentador funciona sem internet?'
+    answer: 'Sim, o RTC DS3231 mantém o horário localmente. Os horários de alimentação ficam na memória do ESP32. Se o Wi-Fi cair, o alimentador continua funcionando nos horários programados. A integração com Home Assistant é opcional — só necessária para controle remoto e notificações.'
+  - question: 'Qual o tamanho mínimo de impressora 3D para este projeto?'
+    answer: 'O funil tem aproximadamente 12×12×18cm. Qualquer impressora com volume acima de 150×150×150mm consegue imprimir as peças — inclusive a Bambu A1 Mini (180×180×180mm). Peças maiores como o reservatório podem ser impressas em partes e coladas.'
+  - question: 'Funciona para gatos e cães ao mesmo tempo?'
+    answer: 'O projeto básico é para um animal. Para dois compartimentos separados você precisa de dois servos e dois funis — o ESP32 tem pinos suficientes para isso. No código você define dois grupos de horários independentes.'
+  - question: 'Quanta ração o reservatório aguenta?'
+    answer: 'Depende do tamanho que você imprimir. O design de referência comporta cerca de 500g de ração granulada padrão (gatos). Para cães médios/grandes que comem mais, vale imprimir um reservatório maior ou usar um galão plástico adaptado como reservatório externo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+Alimentador automático comercial custa entre R$ 150 e R$ 400 e faz o básico: abre uma comporta em horário programado. O problema é que você não tem controle real: não sabe quanto de ração sobrou, não recebe notificação se o mecanismo travou, e não consegue disparar uma alimentação extra pelo celular quando está viajando.
+
+Com ESP32, um microservo e peças impressas em 3D, você monta um alimentador que integra ao Home Assistant e manda notificação no celular. O custo dos componentes principais fica em torno de **R$ 150** — e você sabe exatamente o que está dentro.
+
+Se você ainda está pesquisando comedouros automáticos prontos, o Abanou tem um [comparativo completo de comedouros automáticos para gatos](https://abanou.com.br/posts/melhores-comedouros-automaticos-gatos) com opções para quem prefere comprar pronto.
+
+## O que você vai precisar
+
+<ComparisonTable
+  source="alimentador-automatico-gatos-caes-esp32"
+  rows={[
+    { name: 'ESP32 DevKitC Wroom-32U', brand: 'Espressif', rating: 5.0, price: 109.90, highlight: 'Cérebro do projeto', stores: [{store: 'mercadolivre', url: 'https://meli.la/2UvWDgr'}] },
+    { name: 'Micro Servo SG90 9g', brand: 'Tower Pro', rating: 4.8, price: 19.00, highlight: 'Aciona a comporta', stores: [{store: 'mercadolivre', url: 'https://meli.la/2mHi2Xr'}] },
+    { name: 'RTC DS3231', brand: 'Genérico', rating: 4.9, price: 18.87, highlight: 'Relógio local', stores: [{store: 'mercadolivre', url: 'https://meli.la/1AyMj4y'}] },
+  ]}
+/>
+
+**Outros materiais:** fonte 5V 2A (carregador de celular serve), protoboard ou PCB, fios jumper, parafusos M3, cola de cianoacrilato.
+
+**Filamento:** cerca de 400g de PLA. Eu uso o [PLA Basic da Bambu Lab preto](https://meli.la/1bkfB62) — fácil de imprimir e com acabamento consistente (confira o preço atual no link).
+
+**Opcional — sensor de nível:** se quiser monitorar o peso do reservatório, adicione um módulo HX711 com célula de carga (procure "hx711 célula de carga" no Mercado Livre — kits de eletrônica saem barato). O código abaixo já inclui o suporte; basta descomentar.
+
+## Peças impressas em 3D (STLs prontos)
+
+Você **não precisa modelar nada do zero** — a comunidade do MakerWorld já tem projetos de alimentador testados e prontos para baixar de graça. Eu recomendo começar por um destes:
+
+- **[Meowton — Automatic Pet Feeder (psy0rz)](https://makerworld.com/en/models/137020-automatic-pet-feeder)** — o mais consagrado. 100% impresso, usa **um único servo**, não trava nem esmaga a ração, e foi pensado para o gato não "trapacear". É o que eu recomendo para a maioria.
+- **[Smart Automatic Pet Feeder (tunell)](https://makerworld.com/en/models/892368-smart-automatic-pet-feeder)** — feito para **ESP32 com web app** (acesso por `catfeeder.local`), com PDF de montagem, diagrama do circuito e código. É o que mais se aproxima deste tutorial.
+- **[Pet Feeder ESP32 (Andrea3DLab)](https://makerworld.com/en/models/723489-pet-feeder-esp32)** — funil + microservo no bocal, com app para horários.
+
+> ✅ **Servo certo:** todos esses modelos (e o código deste tutorial) usam o **[microservo SG90 (9g)](https://meli.la/2mHi2Xr)** — é o que está no nosso BOM acima, por ~R$ 19. Se um dia quiser mais torque para um reservatório grande e pesado, dá para trocar por um **MG996R** (engrenagem de metal), mas aí escolha um STL com encaixe para servo grande ou alargue o furo na fatia.
+
+### Anatomia das peças
+
+Independente do modelo, todo alimentador impresso tem 4 partes:
+
+1. **Funil/reservatório** — guarda a ração (~500g no design de referência). Imprima em PLA com 3 paredes e 20% de infill; parede interna lisa ajuda a ração a escorregar.
+2. **Câmara de dosagem** — acoplada ao servo, libera a porção por rotação. ~90° solta cerca de 15g de granulado — ajuste o ângulo no código conforme a ração do seu animal.
+3. **Base** — sustenta o conjunto e esconde a eletrônica.
+4. **Tampa de proteção** — impede que ração caia nos componentes.
+
+Se você está pensando em organizar sua bancada para projetos como este, o Reforma Caseira tem um guia com [10 ideias para organizar a oficina com impressão 3D](https://reformacaseira.com.br/posts/organizar-oficina-impressao-3d-ideias) — porta-brocas, organizadores de parafusos e suportes impressos que facilitam projetos maker.
+
+## Esquema de ligação
+
+```
+ESP32 GPIO 18  →  Servo SG90 (fio laranja, sinal)
+5V (USB/VIN)   →  Servo VCC (fio vermelho) + ESP32 VIN
+GND            →  Servo GND (fio marrom) + ESP32 GND (GND comum)
+
+ESP32 GPIO 21  →  DS3231 SDA
+ESP32 GPIO 22  →  DS3231 SCL
+ESP32 3.3V     →  DS3231 VCC
+```
+
+**Atenção:** o SG90 consome pouco (~250mA em movimento, picos de ~650mA), então um carregador de celular de **5V/1A** alimenta o servo e o ESP32 com folga pelo VIN. Só não puxe o servo do pino **3.3V** — ele precisa dos 5V. Se um dia trocar pelo MG996R (que chega a 1A), aí sim use uma fonte 5V dedicada para o servo.
+
+## Código ESP32 (Arduino IDE)
+
+```cpp
+#include <Wire.h>
+#include <RTClib.h>
+#include <ESP32Servo.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+// Configurações Wi-Fi e MQTT (Home Assistant)
+const char* ssid = "SUA_REDE";
+const char* password = "SUA_SENHA";
+const char* mqtt_server = "IP_DO_HOME_ASSISTANT";
+const char* mqtt_topic_feed = "alimentador/alimentar";
+const char* mqtt_topic_status = "alimentador/status";
+
+// Pinos
+const int SERVO_PIN = 18;
+
+// Horários de alimentação (hora, minuto)
+const int HORARIOS[][2] = {{7, 0}, {12, 0}, {18, 30}};
+const int NUM_HORARIOS = 3;
+const int ANGULO_FECHADO = 0;
+const int ANGULO_ABERTO = 90;
+const int TEMPO_ABERTURA_MS = 800; // ms que a comporta fica aberta
+
+RTC_DS3231 rtc;
+Servo servo;
+WiFiClient espClient;
+PubSubClient mqtt(espClient);
+
+void alimentar() {
+  servo.write(ANGULO_ABERTO);
+  delay(TEMPO_ABERTURA_MS);
+  servo.write(ANGULO_FECHADO);
+  delay(500);
+  mqtt.publish(mqtt_topic_status, "alimentado");
+}
+
+void callback_mqtt(char* topic, byte* payload, unsigned int length) {
+  String msg = "";
+  for (unsigned int i = 0; i < length; i++) msg += (char)payload[i];
+  if (String(topic) == mqtt_topic_feed && msg == "ON") {
+    alimentar();
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  if (!rtc.begin()) {
+    Serial.println("RTC não encontrado!");
+    while (1);
+  }
+
+  servo.attach(SERVO_PIN);
+  servo.write(ANGULO_FECHADO);
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+
+  mqtt.setServer(mqtt_server, 1883);
+  mqtt.setCallback(callback_mqtt);
+}
+
+void loop() {
+  if (!mqtt.connected()) {
+    mqtt.connect("alimentador_pet");
+    mqtt.subscribe(mqtt_topic_feed);
+  }
+  mqtt.loop();
+
+  DateTime agora = rtc.now();
+
+  for (int i = 0; i < NUM_HORARIOS; i++) {
+    if (agora.hour() == HORARIOS[i][0] &&
+        agora.minute() == HORARIOS[i][1] &&
+        agora.second() == 0) {
+      alimentar();
+      delay(1000); // Evita dupla alimentação no mesmo segundo
+    }
+  }
+}
+```
+
+## Integração com Home Assistant
+
+Adicione no `configuration.yaml` do Home Assistant:
+
+```yaml
+mqtt:
+  switch:
+    - name: "Alimentar Pet"
+      unique_id: alimentador_pet_switch
+      command_topic: "alimentador/alimentar"
+      payload_on: "ON"
+      payload_off: "OFF"
+      icon: mdi:bowl
+
+  sensor:
+    - name: "Última alimentação"
+      unique_id: alimentador_status
+      state_topic: "alimentador/status"
+      icon: mdi:clock-check
+```
+
+**Automação sugerida** — notificação a cada alimentação:
+
+```yaml
+automation:
+  - alias: "Notificar alimentação do pet"
+    trigger:
+      - platform: state
+        entity_id: sensor.ultima_alimentacao
+        to: "alimentado"
+    action:
+      - service: notify.mobile_app_seu_celular
+        data:
+          message: "O pet acabou de ser alimentado 🐱"
+```
+
+## Resultados esperados
+
+Com o projeto montado você terá:
+- Alimentação automática em até 3 horários configuráveis
+- Disparo manual pelo Home Assistant (ou qualquer cliente MQTT)
+- Notificação no celular a cada alimentação
+- Registro de todas as alimentações no histórico do HA
+
+O custo dos componentes eletrônicos fica em torno de **R$ 150** (sem filamento, se você já tem impressora). Um alimentador comercial com integração equivalente não existe nas lojas — esse é o ponto do projeto.

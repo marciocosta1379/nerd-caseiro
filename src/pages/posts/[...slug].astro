@@ -64,29 +64,50 @@ const articleSchema = {
 const primaryUrl = (p: (typeof products)[number]) =>
   p.stores?.[0]?.url ?? p.affiliateUrl;
 
-const productSchemas = products.map((p, i) => ({
+const productSchemas = products.map((p) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
   name: p.name,
   brand: p.brand ? { '@type': 'Brand', name: p.brand } : undefined,
   image: p.image,
-  offers: p.price
+  description: p.pros?.length ? p.pros[0] : undefined,
+  offers: p.price != null
     ? {
         '@type': 'Offer',
         price: p.price.toFixed(2),
         priceCurrency: 'BRL',
         availability: 'https://schema.org/InStock',
         url: primaryUrl(p),
+        seller: { '@type': 'Organization', name: 'Mercado Livre' },
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingRate: { '@type': 'MonetaryAmount', minValue: 0, currency: 'BRL' },
+          shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'BR' },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: { '@type': 'QuantitativeValue', minValue: 0, maxValue: 1, unitCode: 'DAY' },
+            transitTime: { '@type': 'QuantitativeValue', minValue: 2, maxValue: 10, unitCode: 'DAY' },
+          },
+        },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'BR',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 7,
+          returnMethod: 'https://schema.org/ReturnByMail',
+          returnFees: 'https://schema.org/FreeReturn',
+        },
       }
     : undefined,
-  review: p.rating
+  aggregateRating: p.rating != null
     ? {
-        '@type': 'Review',
-        reviewRating: { '@type': 'Rating', ratingValue: p.rating, bestRating: 5 },
-        author: { '@type': 'Organization', name: SITE.name },
+        '@type': 'AggregateRating',
+        ratingValue: p.rating,
+        reviewCount: 1,
+        bestRating: 5,
+        worstRating: 1,
       }
     : undefined,
-  position: i + 1,
 }));
 
 const breadcrumb = {

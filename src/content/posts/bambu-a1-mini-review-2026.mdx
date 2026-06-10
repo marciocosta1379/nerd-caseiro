@@ -1,0 +1,155 @@
+---
+title: 'Bambu A1 Mini: vale a pena comprar em 2026?'
+description: 'Review completa da Bambu A1 Mini no Brasil: velocidade, qualidade, AMS Lite, software, preço e o que falta. Sem exagero.'
+pubDate: 2026-06-19
+category: 'impressao-3d'
+tags: ['impressao-3d', 'bambu', 'review', 'fdm', 'impressora-3d']
+featured: true
+draft: true
+priceCheckedAt: '10/06/2026'
+products:
+  - name: 'Bambu Lab A1 Mini'
+    brand: 'Bambu Lab'
+    price: 2800.00
+    image: '/images/produtos/bambu-a1-mini.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/23YvTED'
+    pros:
+      - 'Velocidade real de até 500mm/s sem perda de qualidade'
+      - 'Auto-calibração completa: bed leveling, flow calibration, vibration compensation'
+      - 'Software Bambu Studio intuitivo, muito melhor que Cura para iniciantes'
+      - 'Impressão multi-material com AMS Lite (versão Combo)'
+    cons:
+      - 'Ecossistema fechado — difícil usar fora do Bambu Studio'
+      - 'Volume de impressão pequeno: 180×180×180mm'
+      - 'Câmera integrada de baixa resolução'
+      - 'Empresa com histórico recente de mudanças de política de acesso remoto'
+  - name: 'Bambu Lab A1 Mini Combo'
+    brand: 'Bambu Lab'
+    price: 4460.00
+    image: '/images/produtos/bambu-a1-mini-combo.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/26CMFwa'
+    pros:
+      - 'Inclui AMS Lite — 4 filamentos simultâneos sem troca manual'
+      - 'Suporte multi-material completo para projetos coloridos'
+      - 'Mesmos prós da versão base'
+    cons:
+      - 'Preço mais alto'
+      - 'AMS Lite gera desperdício de filamento nas trocas (purge tower)'
+      - 'Configuração de multi-material tem curva de aprendizado'
+faq:
+  - question: 'A Bambu A1 Mini é para iniciantes ou avançados?'
+    answer: 'Para os dois. A auto-calibração torna ela fácil para iniciantes — você tira da caixa, faz o setup de 15 minutos e já imprime. Usuários avançados vão sentir falta da abertura do ecossistema comparado a impressoras com Klipper nativo, mas a velocidade e a qualidade compensam para a maioria dos projetos.'
+  - question: 'O volume 180×180×180mm é suficiente?'
+    answer: 'Para a maioria dos projetos domésticos, sim. Peças para organização, protótipos, acessórios, substituição de peças quebradas — tudo cabe. O problema aparece em projetos grandes como carenagens, partes de robótica ou modelos grandes de cosplay. Se isso for frequente, olhe para a A1 (300×300×300mm) ou P1S.'
+  - question: 'Qual filamento a A1 Mini imprime?'
+    answer: 'PLA, PETG, TPU, PLA+, ABS (com algumas limitações de warping, pois não tem câmara fechada), ASA, PA (Nylon) básico. Para filamentos exigentes como fibra de carbono ou PEEK, a câmara aberta é uma limitação. PLA e PETG são os carros-chefe e funcionam muito bem.'
+  - question: 'Precisa de rede para funcionar?'
+    answer: 'Não obrigatoriamente. Você pode enviar arquivos por cartão MicroSD. Mas a conectividade Wi-Fi com o Bambu Studio/Handy é o principal diferencial — você fatia no PC e manda direto para a impressora. O modo LAN mode existe para quem não quer nuvem, mas a Bambu fez mudanças nessa política em 2025 que geraram reclamações da comunidade.'
+  - question: 'Vale pagar mais pela versão Combo com AMS Lite?'
+    answer: 'Se você quer imprimir em múltiplas cores ou materiais, sim. Se vai usar um filamento só na maioria dos projetos, não — a diferença passa de R$ 1.600 e compra muito filamento de qualidade. O AMS Lite brilha em impressões decorativas e modelos coloridos, mas não faz diferença para peças técnicas monocolores.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+A Bambu Lab virou o assunto principal do mundo da impressão 3D nos últimos dois anos — e não foi por marketing. A empresa chinesa entregou o que a comunidade esperava há anos: uma impressora rápida de verdade, que calibra sozinha e que funciona na primeira tentativa. A A1 Mini é a menor e mais acessível da linha.
+
+Mas "melhor impressora do mercado" depende muito do seu contexto. Neste review eu analiso a A1 Mini **como alguém que imprime peças funcionais para a casa e projetos maker** — não modelos decorativos ou benchmarks do YouTube.
+
+## Specs principais
+
+| Especificação | A1 Mini | A1 Mini Combo |
+|--------------|---------|---------------|
+| Volume de impressão | 180×180×180mm | 180×180×180mm |
+| Velocidade máxima | 500mm/s | 500mm/s |
+| Aceleração | 10.000mm/s² | 10.000mm/s² |
+| Multi-material | Não (1 filamento) | Sim (AMS Lite, 4 filamentos) |
+| Nivelamento automático | Sim (força) | Sim |
+| Câmera integrada | Sim (360p) | Sim |
+| Conectividade | Wi-Fi, LAN, MicroSD | Wi-Fi, LAN, MicroSD |
+| Preço (10/06/2026) | R$ 2.800 | R$ 4.460 |
+
+## O que a Bambu acertou
+
+### Velocidade real, não de folheto
+
+500mm/s não é número de marketing aqui. A A1 Mini realmente imprime rápido — uma peça que levaria 3 horas em uma Ender 3 sai em 45 minutos na Bambu com qualidade equivalente. Isso se deve à combinação de movimento CoreXY, aceleração alta e compensação de vibração por acelerômetro (Input Shaping implementado de fábrica).
+
+### Auto-calibração que funciona
+
+Bed leveling automático, calibração de fluxo, compensação de vibração — tudo roda sozinho no setup inicial e pode ser refeito com um toque. Não tem mais aquela dança de ajustar os parafusos do bed por 20 minutos antes de cada impressão.
+
+### Bambu Studio
+
+O slicer da Bambu é genuinamente bom. Importa modelos, sugere suportes inteligentes, tem perfis otimizados para cada filamento da linha e para materiais de terceiros. Para quem veio do Cura, a curva de aprendizado é rápida e o resultado é melhor.
+
+## O que falta / preocupações reais
+
+### Ecossistema fechado
+
+A Bambu limita o acesso a configurações avançadas de firmware. Você não instala Klipper, não tem acesso SSH, não customiza o que a impressora faz. Para a maioria dos usuários isso não importa — mas para quem quer controle total, é uma limitação real.
+
+Em 2025, a Bambu mudou a política de autenticação para o modo LAN — exigindo login mesmo em rede local. Isso gerou reclamações legítimas da comunidade open source. A empresa recuou parcialmente, mas deixou claro que o ecossistema é deles, não do usuário.
+
+### Volume pequeno
+
+180×180×180mm é limitante para projetos maiores. Se você planeja imprimir carenagens de moto, casas para animais, ou qualquer peça grande, vai precisar cortar e colar — ou olhar para a A1 (300×300×300mm) ou a P1S.
+
+### Câmera integrada de 360p
+
+A câmera existe mas é basicamente inútil para monitoramento remoto — resolução muito baixa para ver detalhes da impressão. Para quem quer monitorar impressões remotamente com qualidade, um Raspberry Pi com câmera e OctoEverywhere ainda é a solução.
+
+## A1 Mini vs concorrentes
+
+| | Bambu A1 Mini | Bambu P1S | Ender 3 V3 SE |
+|---|---|---|---|
+| Preço | ~R$ 2.800 | ~R$ 6.000 | ~R$ 1.300 |
+| Velocidade real | Alta (500mm/s) | Muito alta (500mm/s) | Média (200mm/s) |
+| Volume | 180³ mm | 256³ mm | 220×220×250mm |
+| Câmara fechada | Não | Sim | Não |
+| Abertura/customização | Baixa | Baixa | Alta (Klipper) |
+| Facilidade de uso | Alta | Alta | Média |
+
+<ProsCons
+  pros={[
+    'Velocidade real que muda o fluxo de trabalho',
+    'Auto-calibração elimina o setup manual',
+    'Software Bambu Studio fácil e eficiente',
+    'Qualidade de impressão consistente',
+    'Suporte multi-material com Combo/AMS Lite',
+  ]}
+  cons={[
+    'Ecossistema fechado — sem Klipper, sem SSH',
+    'Volume 180³mm limita projetos grandes',
+    'Política de conectividade remota controversa',
+    'Câmera integrada praticamente inútil',
+    'Preço alto comparado a impressoras abertas',
+  ]}
+/>
+
+## Para quem vale a Bambu A1 Mini?
+
+**Vale se você:**
+- Quer imprimir peças funcionais rápido, sem ajuste manual constante
+- Não quer aprender a calibrar manualmente — quer só imprimir
+- Imprime projetos que cabem em 180×180×180mm
+- Aceita o ecossistema fechado pelo ganho de produtividade
+
+**Não vale se você:**
+- Quer customização total e controle do firmware (prefira Ender + Klipper)
+- Precisa de volume maior (olhe para A1 ou P1S)
+- Imprime filamentos exigentes como ABS, ASA ou Nylon com regularidade (sem câmara fechada)
+- Tem orçamento abaixo de R$ 1.300 (Ender 3 V3 SE ainda é a melhor abaixo disso)
+
+**Conclusão:** A A1 Mini é a melhor impressora 3D para quem quer resultado sem fricção. O preço é alto, o ecossistema é fechado, mas a experiência de uso justifica para quem imprime com frequência.
+
+<AffiliateButton href="https://meli.la/23YvTED" store="mercadolivre" source="bambu-a1-mini-review-2026" />
+
+### Versão Combo (com AMS Lite)
+
+<AffiliateButton href="https://meli.la/26CMFwa" store="mercadolivre" source="bambu-a1-mini-review-2026" />

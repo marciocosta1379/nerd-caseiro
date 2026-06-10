@@ -1,0 +1,232 @@
+---
+title: 'Automatize as cortinas com Home Assistant e ESP32'
+description: 'Como automatizar cortinas e persianas com Home Assistant: módulo Shelly para motor AC ou ESP32 DIY. Código e YAML inclusos.'
+pubDate: 2026-06-18
+category: 'automacao-residencial'
+tags: ['home-assistant', 'esp32', 'cortinas', 'automacao', 'diy']
+featured: true
+draft: true
+priceCheckedAt: '10/06/2026'
+products:
+  - name: 'ESP32 DevKitC Wroom-32U'
+    brand: 'Espressif'
+    price: 109.90
+    image: '/images/produtos/esp32-devkitc.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2UvWDgr'
+    pros:
+      - 'Wi-Fi nativo para integração com HA via ESPHome'
+      - 'Flexível: funciona com qualquer motor DC ou de passo'
+      - 'Versão com nota fiscal e antena externa'
+    cons:
+      - 'Requer conhecimento básico de eletrônica e programação'
+faq:
+  - question: 'Qual motor de cortina comprar para usar com Home Assistant?'
+    answer: 'Para cortina de rolo com eixo padrão, os motores Zigbee (Zemismart e similares) são os mais integráveis — exigem um coordenador Zigbee (Sonoff Dongle + Zigbee2MQTT). Motores Wi-Fi Tuya funcionam via LocalTuya. A oferta no Mercado Livre muda toda semana, então pesquise por "motor cortina zigbee" e confira se o vendedor menciona compatibilidade com Tuya/Smart Life ou Zigbee 3.0.'
+  - question: 'Tenho uma persiana motorizada 220V com interruptor. Dá para automatizar?'
+    answer: 'Sim, esse é o cenário mais simples: um módulo Shelly atrás do interruptor existente transforma a persiana em uma entidade cover do Home Assistant, com controle de posição por tempo. É a Abordagem 1 deste tutorial — sem trocar o motor.'
+  - question: 'O ESP32 aguenta ficar ligado 24h?'
+    answer: 'Sim, é exatamente para isso que ele foi projetado. O ESP32 em modo normal consome ~80mA, irrelevante na conta de energia. Para um motor de cortina que precisa estar disponível para receber comando a qualquer hora, o modo normal é o correto.'
+  - question: 'Funciona em qualquer tipo de cortina?'
+    answer: 'A Abordagem 1 (Shelly) funciona com qualquer persiana/cortina que já tenha motor AC com botão subir/descer. A Abordagem 2 (ESP32 + motor DC) é para quem quer motorizar uma cortina de trilho ou rolo manual — você adapta a mecânica com polia ou engrenagem impressa em 3D.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Automatizar cortinas é um dos projetos que mais impactam o conforto da casa inteligente. Acordar com a luz do sol entrando gradualmente, fechar automaticamente quando o sol bate na tela de tarde, ou simular presença quando você viaja — tudo isso é possível com o Home Assistant.
+
+Este tutorial cobre **duas abordagens**, da mais simples à mais maker:
+
+1. **Persiana motorizada AC existente + módulo Shelly** — sem trocar motor, sem obra
+2. **Cortina manual + ESP32 e motor DC** — DIY completo, para qualquer cortina
+
+> **E os motores prontos Zigbee/Wi-Fi?** Motores de eixo (Zemismart, Moes e similares) são uma boa opção para cortina de rolo — mas a oferta com link confiável no Mercado Livre muda constantemente. Pesquise "motor cortina zigbee" e priorize anúncios que citem Zigbee 3.0 ou Tuya. O YAML da Abordagem 1 funciona igual para eles.
+
+---
+
+## Abordagem 1 — Persiana AC + Shelly (a mais simples)
+
+Se a sua persiana já tem motor 110/220V com interruptor de subir/descer (comum em persianas de PVC e toldos), você não precisa trocar nada: um módulo **[Shelly Plus 1PM](https://meli.la/2pebaNd)** (ou o Shelly 2PM, com dois canais para subir/descer) instalado atrás do interruptor transforma a persiana em uma entidade `cover` do Home Assistant — confira o preço atual no link.
+
+A instalação é elétrica básica (desligue o disjuntor): o Shelly fica entre o interruptor e o motor, dentro da caixinha 4x2.
+
+**YAML para Home Assistant (Shelly em modo cover):**
+
+```yaml
+# O Shelly 2PM em modo "cover" expõe a entidade automaticamente
+# via integração nativa Shelly. Automações de exemplo:
+
+automation:
+  - alias: "Persiana — fechar no calor"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.temperatura_sala
+        above: 27
+    condition:
+      - condition: sun
+        after: sunrise
+        before: sunset
+    action:
+      - service: cover.close_cover
+        entity_id: cover.persiana_sala
+
+  - alias: "Persiana — abrir no nascer do sol"
+    trigger:
+      - platform: sun
+        event: sunrise
+        offset: "+00:30:00"
+    action:
+      - service: cover.set_cover_position
+        entity_id: cover.persiana_sala
+        data:
+          position: 50  # Abre 50% — luz sem sol direto
+```
+
+---
+
+## Abordagem 2 — ESP32 + Motor DC (DIY completo)
+
+Para cortinas de trilho ou rolo manual, a solução maker é um motor DC controlado por ESP32 rodando ESPHome.
+
+### Componentes
+
+<ComparisonTable
+  source="automatizar-cortinas-home-assistant-esp32"
+  rows={[
+    { name: 'ESP32 DevKitC Wroom-32U', brand: 'Espressif', price: 109.90, highlight: 'Cérebro do projeto', stores: [{store: 'mercadolivre', url: 'https://meli.la/2UvWDgr'}] },
+  ]}
+/>
+
+**Demais materiais** (procure no Mercado Livre — são itens genéricos de bancada):
+- Motor DC 12V com caixa de redução (ou motor de passo NEMA 17)
+- Driver de motor L298N (~R$ 15)
+- Fonte 12V 2A
+- 2 chaves fim-de-curso (detectar posição totalmente aberto/fechado)
+- Polia ou engrenagem impressa em 3D para acoplar ao cordão da cortina
+
+<AffiliateButton href="https://meli.la/2UvWDgr" store="mercadolivre" source="automatizar-cortinas-home-assistant-esp32" />
+
+### Esquema de ligação
+
+```
+ESP32 GPIO 25  →  L298N IN1 (direção A)
+ESP32 GPIO 26  →  L298N IN2 (direção B)
+ESP32 GPIO 27  →  L298N ENA (PWM — velocidade)
+ESP32 GPIO 32  →  Fim de curso FECHADO (pullup interno)
+ESP32 GPIO 33  →  Fim de curso ABERTO (pullup interno)
+Motor DC       →  L298N OUT1/OUT2
+Fonte 12V      →  L298N VS (alimentação do motor)
+```
+
+### Código ESPHome (YAML — mais simples que Arduino)
+
+```yaml
+# esphome/cortina-sala.yaml
+esphome:
+  name: cortina-sala
+  platform: ESP32
+  board: esp32dev
+
+wifi:
+  ssid: "SUA_REDE"
+  password: "SUA_SENHA"
+
+api:
+  encryption:
+    key: "CHAVE_GERADA_PELO_ESPHOME"
+
+ota:
+  password: "SUA_SENHA_OTA"
+
+output:
+  - platform: esp32_ledc
+    pin: GPIO27
+    id: motor_pwm
+    frequency: 1000 Hz
+
+  - platform: gpio
+    pin: GPIO25
+    id: motor_dir_a
+
+  - platform: gpio
+    pin: GPIO26
+    id: motor_dir_b
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO32
+      mode: INPUT_PULLUP
+      inverted: true
+    id: fim_curso_fechado
+    name: "Cortina — fim de curso fechado"
+
+  - platform: gpio
+    pin:
+      number: GPIO33
+      mode: INPUT_PULLUP
+      inverted: true
+    id: fim_curso_aberto
+    name: "Cortina — fim de curso aberto"
+
+cover:
+  - platform: time_based
+    name: "Cortina Sala"
+    open_action:
+      - output.set_level:
+          id: motor_pwm
+          level: 80%
+      - output.turn_on: motor_dir_a
+      - output.turn_off: motor_dir_b
+    open_duration: 25s
+    close_action:
+      - output.set_level:
+          id: motor_pwm
+          level: 80%
+      - output.turn_off: motor_dir_a
+      - output.turn_on: motor_dir_b
+    close_duration: 25s
+    stop_action:
+      - output.turn_off: motor_dir_a
+      - output.turn_off: motor_dir_b
+      - output.set_level:
+          id: motor_pwm
+          level: 0%
+```
+
+Ajuste `open_duration` e `close_duration` para o tempo real que sua cortina leva para abrir e fechar completamente — meça na prática.
+
+## Automações recomendadas no HA
+
+```yaml
+# Simular presença: aleatoriza a abertura entre 7h e 8h
+automation:
+  - alias: "Cortina — abertura aleatória manhã"
+    trigger:
+      - platform: time
+        at: "07:00:00"
+    action:
+      - delay:
+          minutes: "{{ range(0, 60) | random }}"
+      - service: cover.open_cover
+        entity_id: cover.cortina_sala
+
+  # Fechar ao pôr do sol
+  - alias: "Cortina — fechar ao pôr do sol"
+    trigger:
+      - platform: sun
+        event: sunset
+    action:
+      - service: cover.close_cover
+        entity_id: cover.cortina_sala
+```
+
+## Qual abordagem escolher?
+
+- **Persiana motorizada AC já instalada:** Shelly atrás do interruptor — 30 minutos de trabalho
+- **Cortina de rolo manual + quer comprar motor pronto:** motor Zigbee + coordenador (pesquise a oferta atual)
+- **Cortina de trilho, orçamento apertado ou espírito maker:** ESP32 + motor DC + ESPHome
+- **Já usa ESPHome em outros projetos:** a Abordagem 2 é a escolha natural

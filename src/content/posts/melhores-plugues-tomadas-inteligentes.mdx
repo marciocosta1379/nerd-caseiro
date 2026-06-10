@@ -1,0 +1,152 @@
+---
+title: 'As melhores tomadas inteligentes Wi-Fi para casa'
+description: 'Da tomada com medição de energia à de embutir: comparamos as opções disponíveis no Brasil para automatizar qualquer aparelho em 2026.'
+pubDate: 2026-06-17
+category: 'automacao-residencial'
+tags: ['tomada-inteligente', 'smart-plug', 'wi-fi', 'home-assistant', 'energia']
+featured: true
+draft: true
+priceCheckedAt: '10/06/2026'
+products:
+  - name: 'TP-Link Tapo P110'
+    brand: 'TP-Link'
+    price: 48.78
+    image: '/images/produtos/tapo-p110.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2b3KeRZ'
+    pros:
+      - 'Medição de consumo em tempo real (watts, kWh, histórico)'
+      - 'O melhor preço da lista — e com medição de energia inclusa'
+      - 'App Tapo estável, integração oficial com Home Assistant'
+      - 'Suporta até 10A (2400W) bivolt'
+    cons:
+      - 'Integração com HA passa pela nuvem TP-Link por padrão'
+  - name: 'Intelbras Izy Smart ETS 1001'
+    brand: 'Intelbras'
+    rating: 5.0
+    price: 165.49
+    image: '/images/produtos/intelbras-izy-smart.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2fyiuEw'
+    pros:
+      - 'Tomada de EMBUTIR (caixa 4x2) — substitui a tomada da parede, sem volume'
+      - 'Medidor de consumo integrado'
+      - 'Marca brasileira com suporte nacional'
+      - 'Alexa e Google Assistente'
+    cons:
+      - 'Instalação requer mexer na fiação (desligue o disjuntor!)'
+      - 'Preço mais alto que os plugues de tomada'
+  - name: 'Positivo Smart Plug Max Wi-Fi 16A'
+    brand: 'Positivo'
+    rating: 4.9
+    price: 84.53
+    image: '/images/produtos/positivo-smart-plug.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2e5rygf'
+    pros:
+      - '16A / 1600W — aguenta cargas maiores que os plugues 10A'
+      - 'Monitoramento de consumo no app Positivo Casa Inteligente'
+      - 'Marca nacional com 12 meses de garantia'
+      - 'Compatível com Alexa'
+    cons:
+      - 'Volume maior — pode atrapalhar a segunda tomada do espelho'
+      - 'Integração com HA menos direta (via Tuya)'
+faq:
+  - question: 'Tomada inteligente funciona com qualquer aparelho?'
+    answer: 'Qualquer aparelho com plugue padrão brasileiro (NBR 14136) funciona, respeitando a corrente máxima: 10A (~2200W) no Tapo P110 e na Izy, 16A (~3500W em 220V) no Positivo Max. Para chuveiro ou forno elétrico, nenhum plugue serve — é caso para automação no quadro elétrico.'
+  - question: 'Vale a pena tomada com medição de energia?'
+    answer: 'Sim, especialmente para aparelhos que ficam em standby (TV, micro-ondas, computador). Com o Tapo P110 você descobre quanto cada aparelho consome por mês e pode criar automações para cortar energia quando não está em uso. As três opções desta lista têm medição.'
+  - question: 'Qual integra melhor com o Home Assistant?'
+    answer: 'O Tapo P110 tem integração oficial no HA (expõe o switch e os sensores de energia). Para controle 100% local sem nuvem, o caminho é um módulo Shelly — falo dele na seção de Home Assistant deste post.'
+  - question: 'Tomada inteligente aumenta a conta de luz?'
+    answer: 'O consumo do próprio dispositivo em standby é mínimo (0,3W a 0,5W). O ganho de automatizar aparelhos esquecidos ligados compensa fácil. Monitorar com o P110 costuma revelar surpresas no consumo de aparelhos aparentemente inofensivos.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Uma tomada inteligente é o caminho mais rápido para começar a automação residencial sem obra. Você pluga no aparelho, configura no app e pronto: liga e desliga remotamente, cria agendamentos, ou integra com o Home Assistant para automações mais sofisticadas.
+
+O mercado brasileiro mudou bastante em 2026: a medição de energia, que era recurso premium, chegou às opções de entrada — e as três escolhas desta lista têm. Selecionei uma de cada categoria: o **plugue custo-benefício** (Tapo P110), a **tomada de embutir** que desaparece na parede (Intelbras Izy) e a opção de **maior potência** (Positivo Max 16A).
+
+## Como avaliamos
+
+1. **Medição de energia** — watts em tempo real e histórico de kWh
+2. **Compatibilidade com Home Assistant** — integração local ou via nuvem
+3. **Estabilidade do app e firmware** — quantas vezes o dispositivo some da rede
+4. **Potência suportada** — 10A vs 16A faz diferença em aquecedores
+5. **Custo-benefício** — o que você leva pelo preço pago
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="melhores-plugues-tomadas-inteligentes"
+  rows={[
+    { name: 'Tapo P110', brand: 'TP-Link', price: 48.78, highlight: 'Melhor custo-benefício', stores: [{store: 'mercadolivre', url: 'https://meli.la/2b3KeRZ'}] },
+    { name: 'Izy Smart ETS 1001', brand: 'Intelbras', rating: 5.0, price: 165.49, highlight: 'De embutir, invisível', stores: [{store: 'mercadolivre', url: 'https://meli.la/2fyiuEw'}] },
+    { name: 'Smart Plug Max 16A', brand: 'Positivo', rating: 4.9, price: 84.53, highlight: 'Maior potência (16A)', stores: [{store: 'mercadolivre', url: 'https://meli.la/2e5rygf'}] },
+  ]}
+/>
+
+## 1. TP-Link Tapo P110 — O melhor custo-benefício
+
+![TP-Link Tapo P110](/images/produtos/tapo-p110.webp)
+
+**Preço: R$ 48,78** | TP-Link | 10A | **Com medição de energia**
+
+O P110 é, na minha opinião, a melhor compra da categoria em 2026: por menos de R$ 50 você leva controle remoto, agendamento **e medição de consumo em tempo real** — coisa que até pouco tempo atrás só existia em produtos de R$ 100+.
+
+No app Tapo você vê o consumo em watts ao vivo e o histórico de kWh por dia e mês. Na integração com Home Assistant (oficial), os sensores de energia ficam expostos — dá para criar automações como "se o consumo do ferro de passar cair abaixo de 10W por 10 minutos, desligue" (esqueci o ferro ligado).
+
+**Veredicto:** comece por ele. Compre dois.
+
+<AffiliateButton href="https://meli.la/2b3KeRZ" store="mercadolivre" source="melhores-plugues-tomadas-inteligentes" />
+
+## 2. Intelbras Izy Smart ETS 1001 — A tomada que desaparece
+
+![Intelbras Izy Smart](/images/produtos/intelbras-izy-smart.webp)
+
+**Preço: R$ 165,49** | Intelbras | 10A | De embutir (4x2) | Nota 5.0
+
+A Izy Smart é diferente das demais: em vez de plugar na tomada, ela **substitui a tomada da parede** (caixa 4x2 padrão). O resultado é uma instalação invisível — nada de volume saltado no espelho, nada de plugue ocupando espaço.
+
+Tem medidor de consumo, proteção contra sobrecorrente e funciona com Alexa e Google via app Mibo Smart. A instalação exige desligar o disjuntor e mexer na fiação — se você nunca trocou uma tomada, chame um eletricista (é serviço de 15 minutos).
+
+**Veredicto:** a opção definitiva para pontos fixos (máquina de lavar, micro-ondas, aquecedor) onde estética importa.
+
+<AffiliateButton href="https://meli.la/2fyiuEw" store="mercadolivre" source="melhores-plugues-tomadas-inteligentes" />
+
+## 3. Positivo Smart Plug Max — Para cargas pesadas
+
+![Positivo Smart Plug Max](/images/produtos/positivo-smart-plug.webp)
+
+**Preço: R$ 84,53** | Positivo | **16A / 1600W** | Nota 4.9
+
+A maioria dos plugues inteligentes é 10A — suficiente para luminária e TV, mas no limite para aquecedores e ar-condicionado portátil. O Smart Plug Max da Positivo é **16A**, com folga para cargas maiores, e ainda monitora o consumo no app.
+
+A Positivo tem rede de suporte nacional e 12 meses de garantia. O ponto fraco é o volume: ele é maior que o P110 e pode atrapalhar a segunda tomada do espelho.
+
+**Veredicto:** a escolha certa para aquecedor, air fryer e qualquer aparelho que esquenta o plugue comum.
+
+<AffiliateButton href="https://meli.la/2e5rygf" store="mercadolivre" source="melhores-plugues-tomadas-inteligentes" />
+
+## E para o Home Assistant 100% local?
+
+As três opções acima funcionam com o HA, mas passam pela nuvem do fabricante em algum grau. Se o seu objetivo é controle **totalmente local** — sem internet, sem servidor de terceiros — o caminho é o ecossistema **Shelly**.
+
+O [Shelly Plus 1PM](https://meli.la/2pebaNd) é um módulo de relé com medição de energia que se instala **atrás** da tomada ou interruptor existente (cabe na caixinha 4x2). Ele fala MQTT nativo e tem integração oficial no Home Assistant sem nuvem nenhuma. É o que eu uso nos pontos críticos da minha casa — confira o preço atual no link, que varia bastante entre vendedores.
+
+A diferença prática: com Tapo/Positivo, se a internet cai, você perde o controle remoto; com Shelly + HA local, tudo continua funcionando.
+
+## Qual escolher?
+
+| Cenário | Escolha |
+|-----------|---------|
+| Primeira tomada inteligente, melhor preço | Tapo P110 |
+| Ponto fixo com instalação invisível | Intelbras Izy Smart |
+| Aquecedor ou carga acima de 10A | Positivo Smart Plug Max |
+| Home Assistant 100% local | Shelly Plus 1PM (módulo) |

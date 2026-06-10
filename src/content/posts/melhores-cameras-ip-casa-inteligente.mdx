@@ -1,0 +1,256 @@
+---
+title: 'As 6 melhores câmeras IP para casa inteligente'
+description: 'Comparamos 6 câmeras IP Wi-Fi e com fio para casa inteligente no Brasil: indoor, outdoor, com e sem Home Assistant. Veja qual comprar.'
+pubDate: 2026-06-15
+category: 'casa-inteligente'
+tags: ['camera-ip', 'vigilancia', 'home-assistant', 'wi-fi']
+featured: true
+draft: true
+priceCheckedAt: '10/06/2026'
+products:
+  - name: 'TP-Link Tapo C320WS'
+    brand: 'TP-Link'
+    rating: 4.8
+    price: 239.92
+    image: '/images/produtos/tapo-c320ws.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1e3LuWu'
+    pros:
+      - 'Visão noturna colorida real (não infravermelha) com holofotes integrados'
+      - 'IP66 — aguenta chuva pesada e poeira'
+      - 'Resolução 4MP (2K QHD)'
+      - 'Integra com Home Assistant via integração Tapo'
+    cons:
+      - 'Precisa de tomada externa (sem bateria)'
+      - 'App Tapo requer conta na nuvem para configuração inicial'
+  - name: 'TP-Link Tapo C206'
+    brand: 'TP-Link'
+    rating: 4.9
+    price: 231.92
+    image: '/images/produtos/tapo-c206.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2GZC1Ld'
+    pros:
+      - 'Pan/tilt motorizado 360° com visão noturna colorida'
+      - 'IP65 — serve para uso interno e externo protegido'
+      - 'Detecção de movimento e pessoa com alerta no celular'
+      - 'Sucessora da C200, com +1000 vendas e nota 4.9'
+    cons:
+      - 'Requer fonte próxima (cabo de energia)'
+      - 'Integração com HA passa pela nuvem TP-Link por padrão'
+  - name: 'Intelbras iM3 C Black'
+    brand: 'Intelbras'
+    rating: 4.9
+    price: 264.39
+    image: '/images/produtos/intelbras-im3-black.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/12xQwP7'
+    pros:
+      - 'Marca brasileira com assistência técnica no Brasil'
+      - 'Detecção de pessoas com notificação no celular'
+      - 'Funciona com Alexa e Google Assistente'
+      - 'App Mibo Smart simples e estável'
+    cons:
+      - 'Resolução Full HD 1080p (inferior às 2K na mesma faixa)'
+      - 'Integração com Home Assistant menos direta que TP-Link'
+  - name: 'Xiaomi Mi 360° 2K Pro'
+    brand: 'Xiaomi'
+    price: 364.21
+    image: '/images/produtos/xiaomi-mi360-2k.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1M2ckmu'
+    pros:
+      - 'Resolução 2K Pro (3MP) com rotação 360°'
+      - 'IA para detecção de pessoas — menos falsos positivos'
+      - 'Visão noturna infravermelha de 940nm (discreta)'
+      - 'Áudio bidirecional'
+    cons:
+      - 'App Mi Home com curva de aprendizado maior'
+      - 'Integração com HA via token, processo manual'
+  - name: 'Reolink E1 Outdoor Pro (WiFi 6, 4K)'
+    brand: 'Reolink'
+    rating: 5.0
+    price: 1252.47
+    image: '/images/produtos/reolink-e1-outdoor-pro.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2RqbQzE'
+    pros:
+      - '4K (8MP) com zoom óptico 3x — a melhor imagem da lista'
+      - 'WiFi 6 e suporte a ONVIF — integração local com Home Assistant sem nuvem'
+      - 'Pan/tilt com rastreamento automático de pessoas'
+      - 'Armazenamento local via microSD ou NAS, sem mensalidade'
+    cons:
+      - 'Preço muito acima das demais — é a opção topo de linha'
+      - 'Requer bom sinal Wi-Fi externo (ou cabo de rede)'
+  - name: 'Intelbras VIP 1220 B G3'
+    brand: 'Intelbras'
+    rating: 5.0
+    price: 391.25
+    image: '/images/produtos/intelbras-vip-1220-b.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2K7tKb6'
+    pros:
+      - 'Câmera IP PoE — alimentação e dados em um único cabo de rede'
+      - 'Full Color: imagem colorida mesmo à noite'
+      - 'Robusta para uso externo, IP67'
+      - 'Integra com NVRs Intelbras e com HA via ONVIF/RTSP'
+    cons:
+      - 'Precisa de switch PoE ou injetor (custo extra)'
+      - 'Instalação cabeada — não é plug-and-play como as Wi-Fi'
+faq:
+  - question: 'Câmera IP Wi-Fi ou com fio: qual é mais confiável?'
+    answer: 'Com fio (PoE) é mais estável e sem interferência de sinal. Wi-Fi é mais fácil de instalar. Para uso residencial com poucas câmeras, Wi-Fi resolve bem — principalmente TP-Link Tapo e Reolink. Para instalações maiores ou em locais com sinal fraco, a VIP 1220 B PoE é o caminho.'
+  - question: 'Como integrar câmera IP ao Home Assistant?'
+    answer: 'As TP-Link Tapo integram via integração oficial do HA. A Reolink E1 Outdoor Pro suporta ONVIF, que o HA lê diretamente em Configurações > Integrações — 100% local. A Xiaomi precisa de token manual. A Intelbras VIP funciona via ONVIF/RTSP.'
+  - question: 'Câmera com detecção de movimento avisa pelo celular?'
+    answer: 'Sim, todas as câmeras desta lista enviam notificação push pelo app quando detectam movimento. No Home Assistant você pode criar automações mais sofisticadas: gravar um clip, acender uma luz, ou mandar mensagem no Telegram.'
+  - question: 'Qual resolução é suficiente para câmera de segurança residencial?'
+    answer: '1080p (Full HD) já é suficiente para identificar rostos em curta distância. 2K ou 4MP faz diferença em áreas amplas como garagem ou quintal. O 4K da Reolink é luxo — ótimo, mas só essencial se você precisa de zoom forense.'
+  - question: 'Câmera precisa de internet para funcionar?'
+    answer: 'Câmeras via nuvem (Tapo, Mi Home, Mibo) precisam de internet para acesso remoto e configuração inicial. A Reolink e câmeras com ONVIF podem operar 100% local com o Home Assistant — sem nuvem, sem assinatura.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Câmera IP é um dos componentes mais pedidos em qualquer setup de casa inteligente — e também um dos que mais geram dúvida na hora de comprar. Wi-Fi ou com fio? Indoor ou outdoor? Com Home Assistant ou só pelo app? A oferta no Mercado Livre é gigante, mas boa parte dos produtos genéricos decepciona em poucos meses.
+
+Aqui eu listei **6 câmeras que realmente funcionam no contexto brasileiro em 2026**, com base em specs oficiais e avaliações reais de compradores, cruzadas com a comunidade do Home Assistant. Sem câmeras de marca desconhecida que somem do app em 6 meses.
+
+Se o motivo de instalar câmeras é monitorar o seu pet enquanto você está fora, o Abanou tem um [guia completo com as melhores câmeras para monitorar pets](https://abanou.com.br/posts/melhores-cameras-monitorar-pets) — com foco nas necessidades dos animais (áudio bidirecional, campo visual amplo e app simples).
+
+## Como avaliamos
+
+Cada câmera foi analisada por:
+
+1. **Resolução e qualidade de imagem** — especialmente à noite, quando a câmera mais importa
+2. **Facilidade de instalação** — sem precisar de técnico
+3. **Compatibilidade com Home Assistant** — integração local ou via nuvem
+4. **Confiabilidade do app e firmware** — histórico de suporte e atualizações
+5. **Custo-benefício** — o que você leva pelo preço
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="melhores-cameras-ip-casa-inteligente"
+  rows={[
+    { name: 'Tapo C320WS', brand: 'TP-Link', rating: 4.8, price: 239.92, highlight: 'Melhor externa custo-benefício', stores: [{store: 'mercadolivre', url: 'https://meli.la/1e3LuWu'}] },
+    { name: 'Tapo C206', brand: 'TP-Link', rating: 4.9, price: 231.92, highlight: 'Melhor pan/tilt', stores: [{store: 'mercadolivre', url: 'https://meli.la/2GZC1Ld'}] },
+    { name: 'iM3 C Black', brand: 'Intelbras', rating: 4.9, price: 264.39, highlight: 'Marca BR com suporte local', stores: [{store: 'mercadolivre', url: 'https://meli.la/12xQwP7'}] },
+    { name: 'Mi 360° 2K Pro', brand: 'Xiaomi', price: 364.21, highlight: 'Melhor IA de detecção', stores: [{store: 'mercadolivre', url: 'https://meli.la/1M2ckmu'}] },
+    { name: 'E1 Outdoor Pro 4K', brand: 'Reolink', rating: 5.0, price: 1252.47, highlight: 'Topo de linha para HA', stores: [{store: 'mercadolivre', url: 'https://meli.la/2RqbQzE'}] },
+    { name: 'VIP 1220 B G3', brand: 'Intelbras', rating: 5.0, price: 391.25, highlight: 'Melhor PoE cabeada', stores: [{store: 'mercadolivre', url: 'https://meli.la/2K7tKb6'}] },
+  ]}
+/>
+
+## 1. TP-Link Tapo C320WS — A melhor externa pelo preço
+
+![TP-Link Tapo C320WS](/images/produtos/tapo-c320ws.webp)
+
+**Preço: R$ 239,92** | TP-Link | IP66 | 4MP / 2K QHD
+
+A C320WS é a câmera externa que eu recomendo para a maioria das casas. O diferencial real está na **visão noturna colorida** — ela tem holofotes brancos integrados que ativam ao detectar movimento, entregando imagem colorida real no escuro em vez do infravermelho preto e branco que 90% das câmeras usam. Em garagem ou entrada da casa isso faz diferença enorme para identificar rostos.
+
+A certificação IP66 aguenta chuva pesada sem drama. A integração com Home Assistant funciona via integração Tapo (nativa desde o HA 2024) — você vê o stream no painel e usa a detecção de movimento como gatilho de automações.
+
+**Veredicto:** a melhor relação preço/qualidade para área externa em 2026.
+
+<AffiliateButton href="https://meli.la/1e3LuWu" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## 2. TP-Link Tapo C206 — O novo padrão de pan/tilt
+
+![TP-Link Tapo C206](/images/produtos/tapo-c206.webp)
+
+**Preço: R$ 231,92** | TP-Link | IP65 | 1080p | Nota 4.9 (+1000 vendas)
+
+A C206 é a sucessora da popular C200 — e resolve a principal limitação dela: ganhou **IP65 e visão noturna colorida**, então pode ser instalada em varandas e áreas externas protegidas. O pan/tilt motorizado cobre 360° na horizontal, e você gira a câmera pelo celular para ver qualquer canto do cômodo.
+
+A integração com Home Assistant funciona via integração oficial Tapo. Pelo preço praticamente igual ao da antiga C200, não há motivo para escolher o modelo anterior.
+
+**Veredicto:** a melhor câmera pan/tilt da faixa — interna ou externa protegida.
+
+<AffiliateButton href="https://meli.la/2GZC1Ld" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## 3. Intelbras iM3 C Black — A opção com suporte nacional
+
+![Intelbras iM3 C Black](/images/produtos/intelbras-im3-black.webp)
+
+**Preço: R$ 264,39** | Intelbras | Indoor | 1080p | Nota 4.9
+
+A Intelbras é uma empresa catarinense com décadas de histórico em segurança eletrônica. Isso importa quando o assunto é pós-venda: você tem assistência técnica real no Brasil. A iM3 C detecta pessoas (não só movimento genérico), tem visão noturna de 10 m e o app Mibo Smart é estável.
+
+A limitação é a resolução 1080p — as concorrentes TP-Link e Xiaomi já entregam 2K na mesma faixa. Para quem não usa Home Assistant e quer uma câmera confiável com suporte local, é a escolha mais segura da lista.
+
+**Veredicto:** ideal para quem prioriza marca com assistência nacional.
+
+<AffiliateButton href="https://meli.la/12xQwP7" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## 4. Xiaomi Mi 360° 2K Pro — A melhor IA de detecção
+
+![Xiaomi Mi 360° 2K Pro](/images/produtos/xiaomi-mi360-2k.webp)
+
+**Preço: R$ 364,21** | Xiaomi | Indoor | 2K Pro (3MP)
+
+A Mi 360° 2K Pro entrega rotação completa de 360° com resolução 3MP e a melhor IA de detecção da lista — ela distingue pessoas de pets e objetos, reduzindo notificações falsas. A visão noturna usa infravermelho de 940nm, invisível ao olho (sem o brilho vermelho das câmeras comuns).
+
+A integração com Home Assistant requer obter o token do dispositivo (processo manual, mas bem documentado na comunidade). Para quem já usa o ecossistema Mi Home, a integração é natural.
+
+**Veredicto:** melhor câmera indoor para quem quer cobertura total e detecção inteligente.
+
+<AffiliateButton href="https://meli.la/1M2ckmu" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## 5. Reolink E1 Outdoor Pro — O topo de linha para Home Assistant
+
+![Reolink E1 Outdoor Pro](/images/produtos/reolink-e1-outdoor-pro.webp)
+
+**Preço: R$ 1.252,47** | Reolink | Outdoor | 4K (8MP) | WiFi 6 | Nota 5.0
+
+A E1 Outdoor Pro é um salto de categoria: **4K com zoom óptico 3x, WiFi 6 e rastreamento automático** de pessoas e veículos. Mas o que interessa para quem usa Home Assistant é o **suporte ONVIF completo** — integração direta, 100% local, sem nuvem, sem gambiarra. Adiciona via Configurações > Integrações e pronto.
+
+O armazenamento local via microSD ou NAS sem mensalidade fecha o pacote. O preço é o triplo das demais — faz sentido para quem quer a melhor imagem possível em um ponto crítico (entrada da casa, garagem) integrada ao HA.
+
+**Veredicto:** a escolha definitiva para quem leva automação e segurança a sério. Cara, mas sem rival técnico na lista.
+
+<AffiliateButton href="https://meli.la/2RqbQzE" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## 6. Intelbras VIP 1220 B G3 — A melhor cabeada (PoE)
+
+![Intelbras VIP 1220 B](/images/produtos/intelbras-vip-1220-b.webp)
+
+**Preço: R$ 391,25** | Intelbras | Outdoor | Full HD | PoE | Nota 5.0
+
+Para quem quer instalação cabeada profissional, a VIP 1220 B G3 usa **PoE**: um único cabo de rede leva energia e dados — sem fonte na parede, sem dependência de Wi-Fi. A linha G3 tem Full Color (imagem colorida à noite) e IP67.
+
+Funciona com NVRs Intelbras e também integra ao Home Assistant via ONVIF/RTSP. O custo extra é o switch PoE (ou injetor) se você ainda não tem.
+
+**Veredicto:** a escolha certa para instalação fixa definitiva, com a estabilidade que só cabo dá.
+
+<AffiliateButton href="https://meli.la/2K7tKb6" store="mercadolivre" source="melhores-cameras-ip-casa-inteligente" />
+
+## Integração com Home Assistant
+
+Para quem usa HA, o ranking muda um pouco:
+
+1. **Reolink E1 Outdoor Pro** — ONVIF nativo, zero configuração extra, 100% local
+2. **Intelbras VIP 1220 B** — ONVIF/RTSP local via cabo
+3. **TP-Link Tapo C320WS / C206** — integração oficial no HA, via nuvem no setup
+4. **Xiaomi Mi 360°** — funciona via token, processo manual
+5. **Intelbras iM3 C** — sem integração oficial; RTSP manual
+
+Para câmeras RTSP genéricas, o HA aceita via `generic_camera` no `configuration.yaml`.
+
+## Qual câmera escolher?
+
+- **Área externa, melhor custo-benefício:** Tapo C320WS
+- **Pan/tilt interna ou varanda:** Tapo C206
+- **Quer marca com assistência BR:** Intelbras iM3 C
+- **Cobrir cômodo grande com IA:** Xiaomi Mi 360° 2K Pro
+- **O melhor para Home Assistant, sem limite de orçamento:** Reolink E1 Outdoor Pro
+- **Instalação cabeada definitiva:** Intelbras VIP 1220 B G3
