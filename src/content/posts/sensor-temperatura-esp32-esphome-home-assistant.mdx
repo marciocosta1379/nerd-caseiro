@@ -1,0 +1,301 @@
+---
+title: 'Sensor de temperatura com ESP32 e ESPHome no Home Assistant'
+description: 'Tutorial completo: monte um sensor de temperatura, umidade e pressão com ESP32 e BME280. Código ESPHome testado, integração local sem nuvem.'
+pubDate: 2026-06-25
+category: 'eletronica-maker'
+tags: ['esp32', 'esphome', 'home assistant', 'sensor temperatura', 'diy', 'maker', 'automação residencial']
+priceCheckedAt: '12/06/2026'
+draft: true
+featured: true
+author: 'Márcio Costa'
+products:
+  - name: 'ESP32 DevKit NodeMCU Wi-Fi Bluetooth'
+    brand: 'ESP32'
+    rating: 4.6
+    price: 45
+    image: '/images/produtos/esp32-devkit-nodemcu.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/27hxVEq'
+    pros:
+      - 'Dual-core 240 MHz, Wi-Fi + Bluetooth integrado'
+      - 'Compatível com ESPHome e Arduino IDE'
+      - 'R$ 45 — o melhor custo-benefício em IoT maker'
+    cons:
+      - 'Precisa de driver CP210x no Windows (instalação simples)'
+      - 'Tensão de I/O: 3,3V — não conecte direto em sensores 5V'
+  - name: 'Sensor BME280 Temperatura Umidade Pressão I2C'
+    brand: 'Genérico'
+    rating: 4.5
+    price: 48
+    image: '/images/produtos/sensor-bme280-i2c.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2JsMEyg'
+    pros:
+      - 'Mede temperatura, umidade E pressão barométrica no mesmo módulo'
+      - 'I2C: só 4 fios para conectar (SDA, SCL, VCC, GND)'
+      - 'Precisão de ±1°C e ±3% umidade relativa'
+    cons:
+      - 'Endereço I2C pode variar: 0x76 ou 0x77 dependendo do módulo'
+      - 'Não indicado para ambientes com temperatura acima de 85°C'
+faq:
+  - question: 'Preciso saber programar para usar o ESPHome?'
+    answer: 'Não. O ESPHome usa arquivos YAML (texto simples, sem código C++). Você copia o arquivo de configuração, ajusta o nome do seu Wi-Fi e o tipo do sensor, e o ESPHome compila e grava automaticamente. A única parte técnica é a conexão dos fios — que tem apenas 4 fios no BME280.'
+  - question: 'O sensor funciona sem o Home Assistant?'
+    answer: 'O ESPHome pode funcionar sem o HA, mas a integração é feita para o HA. Para visualizar os dados sem HA, você pode configurar o sensor para enviar para um broker MQTT genérico (Node-RED, por exemplo). Mas se o objetivo é automação residencial, o HA é o caminho certo.'
+  - question: 'Qual a diferença entre BME280 e DHT22?'
+    answer: 'O BME280 mede três grandezas (temperatura, umidade e pressão barométrica), comunica via I2C (4 fios) e tem precisão melhor (±1°C vs ±0,5°C na teoria, mas o BME280 tem melhor estabilidade a longo prazo). O DHT22 mede apenas temperatura e umidade, usa protocolo 1-Wire proprietário, e tem leitura mais lenta (máximo 0,5 Hz vs 1 Hz do BME280). Para uso com ESP32 e ESPHome, BME280 é a escolha mais simples e confiável.'
+  - question: 'O ESP32 esquenta e interfere na leitura de temperatura?'
+    answer: 'Sim, o ESP32 gera calor que pode aquecer o BME280 se montado muito próximo. A solução é conectar o BME280 com jumpers e deixar o sensor a pelo menos 5 cm do ESP32 — ou imprimir uma caixa em 3D com separação entre os componentes. Com essa distância, o erro fica abaixo de 1°C.'
+  - question: 'Posso usar mais de um sensor por ESP32?'
+    answer: 'Sim. O I2C suporta múltiplos dispositivos no mesmo barramento. Com dois BME280, use dois endereços diferentes (0x76 e 0x77) — o pino SDO do segundo módulo precisa ser puxado para HIGH (VCC). Com isso você mede temperatura em dois pontos com um único ESP32.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Um sensor de temperatura que você mesmo montou, rodando 100% local no Home Assistant, custando menos de R$ 100 no total — é isso que este tutorial entrega.
+
+Uso este setup exato no meu home office e no quarto das crianças: temperatura, umidade e pressão barométrica atualizadas a cada 60 segundos, sem nuvem, sem assinatura, sem dependência de servidor externo. Quando o Home Assistant detecta que a umidade está abaixo de 40% no inverno, acende um aviso visual na dashboard. Simples e funcional.
+
+## O que você vai montar
+
+- **ESP32 DevKit** — o microcontrolador Wi-Fi que roda o firmware ESPHome
+- **Sensor BME280** — mede temperatura (±1°C), umidade relativa (±3%) e pressão barométrica
+- **Configuração ESPHome** — firmware declarativo em YAML, sem uma linha de C++
+- **Integração com Home Assistant** — entidade automática, dashboard, automações
+
+Custo total: **R$ 93** (ESP32 + BME280). Tempo de montagem: **30-45 minutos** na primeira vez, 10 minutos nas seguintes.
+
+## Lista de materiais
+
+| Componente | Função | Link |
+|---|---|---|
+| ESP32 DevKit NodeMCU | Microcontrolador Wi-Fi | [Ver no ML](https://meli.la/27hxVEq) |
+| Sensor BME280 I2C | Temperatura + umidade + pressão | [Ver no ML](https://meli.la/2JsMEyg) |
+| 4x Jumper fêmea-fêmea | Conexão sem solda | (em qualquer kit maker) |
+| Cabo micro-USB | Alimentação e programação | (cabo de celular serve) |
+
+<AffiliateButton href="https://meli.la/27hxVEq" store="mercadolivre" source="sensor-temperatura-esp32-esphome-home-assistant" />
+
+<AffiliateButton href="https://meli.la/2JsMEyg" store="mercadolivre" source="sensor-temperatura-esp32-esphome-home-assistant" />
+
+---
+
+## Passo 1 — Conectar o BME280 ao ESP32
+
+O BME280 usa protocolo I2C: apenas 4 fios. Faça a conexão:
+
+| BME280 | ESP32 DevKit |
+|--------|-------------|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO21 |
+| SCL | GPIO22 |
+
+![ESP32 DevKit NodeMCU Wi-Fi Bluetooth](/images/produtos/esp32-devkit-nodemcu.webp)
+
+> **Atenção:** use o pino **3V3** do ESP32, não o 5V. O BME280 opera em 3,3V — tensão maior danifica o sensor.
+
+O pino SDO do BME280 determina o endereço I2C:
+- SDO conectado ao GND → endereço `0x76` (padrão da maioria dos módulos)
+- SDO conectado ao VCC → endereço `0x77`
+
+Se não tiver certeza, use `0x76` e o ESPHome mostrará um erro de comunicação se o endereço estiver errado — fácil de identificar nos logs.
+
+---
+
+## Passo 2 — Instalar o ESPHome no Home Assistant
+
+O jeito mais simples é pelo **Add-on do Home Assistant**:
+
+1. Vá em **Configurações → Add-ons → Add-on Store**
+2. Procure por **ESPHome** e instale
+3. Inicie o add-on e abra a interface Web
+
+Se preferir instalar via pip (para usar fora do HA):
+
+```bash
+pip install esphome
+```
+
+---
+
+## Passo 3 — Criar a configuração ESPHome
+
+Na interface do ESPHome, clique em **"+ New Device"**, escolha ESP32 e dê um nome (ex.: `sensor-sala`).
+
+Substitua o conteúdo gerado pelo YAML abaixo — este é o arquivo que uso nos meus sensores, testado e funcionando:
+
+```yaml
+esphome:
+  name: sensor-sala
+  friendly_name: Sensor Sala
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Logging local (útil para debug via USB)
+logger:
+
+# API para o Home Assistant — gere sua chave em esphome.io/docs/api
+api:
+  encryption:
+    key: !secret api_key
+
+# Atualização OTA — nunca mais precisa conectar o cabo USB
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Hotspot de fallback se o Wi-Fi falhar
+  ap:
+    ssid: "Sensor-Sala Fallback"
+    password: "12345678"
+
+captive_portal:
+
+# Barramento I2C — pinos padrão do ESP32 DevKit
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true  # mostra dispositivos encontrados no boot
+
+sensor:
+  - platform: bme280_i2c
+    temperature:
+      name: "Temperatura"
+      oversampling: 16x
+      filters:
+        - offset: -2.0  # ajuste de calibração: compensar calor do ESP32
+    humidity:
+      name: "Umidade"
+      oversampling: 16x
+    pressure:
+      name: "Pressão Barométrica"
+    address: 0x76
+    update_interval: 60s
+```
+
+![Sensor BME280 Temperatura Umidade Pressão I2C](/images/produtos/sensor-bme280-i2c.webp)
+
+**Sobre o arquivo `secrets.yaml`** (no mesmo diretório da config):
+
+```yaml
+wifi_ssid: "Nome da sua rede Wi-Fi"
+wifi_password: "Senha do Wi-Fi"
+api_key: "gere-em-esphome-io/api"
+ota_password: "senha-ota-qualquer"
+```
+
+O `offset: -2.0` na temperatura compensa o aquecimento do próprio ESP32 que irradia para o BME280. O valor exato varia com o layout da sua montagem: meça com um termômetro de referência e ajuste.
+
+---
+
+## Passo 4 — Gravar o firmware no ESP32
+
+Conecte o ESP32 via USB ao computador onde o ESPHome está rodando.
+
+Na interface ESPHome, clique em **"Install"** → **"Plug into this computer"** e aguarde a compilação e gravação (primeira vez leva 3-5 minutos para compilar).
+
+Se aparecer erro de porta serial no Windows, instale o driver [CP210x](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) — comum nas primeiras gravações.
+
+Após gravar, o ESP32 conecta ao Wi-Fi e já começa a transmitir dados. Nos logs você vai ver:
+
+```
+[I][i2c:028]: Found i2c device at address 0x76
+[I][bme280:062]: Got temperature=22.3°C humidity=58.1% pressure=1013.2hPa
+```
+
+---
+
+## Passo 5 — Adicionar ao Home Assistant
+
+Quando o ESP32 estiver online, o Home Assistant detecta automaticamente via mDNS:
+
+1. Vá em **Configurações → Dispositivos e Serviços**
+2. Uma notificação de novo dispositivo ESPHome aparece
+3. Clique em **"Configurar"** e insira a chave de API do `secrets.yaml`
+
+Pronto. Três entidades novas no HA:
+- `sensor.sensor_sala_temperatura`
+- `sensor.sensor_sala_umidade`
+- `sensor.sensor_sala_pressao_barometrica`
+
+---
+
+## Passo 6 — Automação de exemplo: alerta de umidade baixa
+
+Esta automação envia notificação quando a umidade cai abaixo de 40% — útil no inverno com aquecedor ligado:
+
+```yaml
+automation:
+  - alias: "Alerta umidade baixa — sala"
+    description: "Avisa quando o ar fica seco demais"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.sensor_sala_umidade
+        below: 40
+        for:
+          minutes: 10  # evita alertas de leituras momentâneas
+    condition: []
+    action:
+      - service: notify.mobile_app_seu_celular
+        data:
+          title: "Umidade baixa"
+          message: >
+            Sala com {{ states('sensor.sensor_sala_umidade') }}% de umidade.
+            Considere ligar o umidificador.
+    mode: single
+```
+
+E a automação inversa para quando normaliza:
+
+```yaml
+  - alias: "Umidade sala normalizada"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.sensor_sala_umidade
+        above: 45
+    action:
+      - service: notify.mobile_app_seu_celular
+        data:
+          message: "Umidade da sala voltou ao normal: {{ states('sensor.sensor_sala_umidade') }}%"
+    mode: single
+```
+
+---
+
+## Troubleshooting
+
+**Sensor não aparece no I2C scan:** verifique se SDA/SCL não estão invertidos. Confira também se o módulo BME280 que você recebeu usa 0x76 ou 0x77 — há módulos dos dois tipos no mercado.
+
+**Temperatura lendo 2-5°C acima do real:** normal — é o calor do ESP32. Ajuste o `offset` no YAML para corrigir. Para precisão máxima, monte o BME280 em fio de extensão (10 cm de jumper) longe do ESP32.
+
+**Wi-Fi cai constantemente:** ative o modo de potência máxima adicionando ao YAML:
+```yaml
+wifi:
+  power_save_mode: none
+```
+
+**Firmware não grava (porta serial não encontrada):** instale o driver CP210x ou CH340 dependendo do chip USB-serial do seu ESP32.
+
+---
+
+## Próximos passos
+
+Com o sensor funcionando, você pode expandir:
+
+- **Dashboard:** adicione cartões de gauge para temperatura e umidade na sua view do HA
+- **Histórico:** o HA guarda automaticamente o histórico — útil para ver variações noturnas
+- **Segundo sensor:** no ESPHome, adicione um segundo BME280 com endereço `0x77` para monitorar dois cômodos com um só ESP32
+- **Caixa impressa em 3D:** projetos de enclosure para ESP32 + BME280 são abundantes no Printables — procure por "ESP32 BME280 case"
+
+## Perguntas frequentes

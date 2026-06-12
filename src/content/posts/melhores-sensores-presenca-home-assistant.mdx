@@ -1,0 +1,310 @@
+---
+title: 'Os 6 melhores sensores de presença para Home Assistant'
+description: 'Compare mmWave e PIR: do Sonoff barato ao Aqara multi-zona. Com configuração real no Home Assistant via Zigbee2MQTT e ZHA.'
+pubDate: 2026-06-22
+category: 'automacao-residencial'
+tags: ['home assistant', 'zigbee', 'sensor de presença', 'mmwave', 'automação residencial']
+priceCheckedAt: '12/06/2026'
+draft: true
+featured: true
+author: 'Márcio Costa'
+products:
+  - name: 'Sonoff SNZB-06P Sensor mmWave Zigbee'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 198
+    image: '/images/produtos/sonoff-snzb-06p.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/29rzuRh'
+    pros:
+      - 'Detecta presença parada sem movimento (tecnologia mmWave)'
+      - 'Integração nativa Zigbee2MQTT e ZHA no Home Assistant'
+      - 'Custo-benefício excelente para mmWave'
+    cons:
+      - 'Alcance máximo de 4 m (menor que concorrentes)'
+      - 'Sem detecção de múltiplas zonas'
+  - name: 'Aqara FP2 Sensor mmWave Wi-Fi'
+    brand: 'Aqara'
+    rating: 4.6
+    price: 466
+    image: '/images/produtos/aqara-fp2.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/22gdLJG'
+    pros:
+      - 'Multi-zona: detecta até 5 regiões independentes no mesmo cômodo'
+      - 'mmWave 60 GHz de altíssima precisão — detecta respiração'
+      - 'Suporte a Matter: integra direto no HA sem hub extra'
+    cons:
+      - 'Preço mais alto da lista (R$ 466)'
+      - 'Requer configuração Matter ou hub Aqara no Home Assistant'
+  - name: 'Sonoff SNZB-03P Sensor PIR Zigbee'
+    brand: 'Sonoff'
+    rating: 4.5
+    price: 103
+    image: '/images/produtos/sonoff-snzb-03p.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1TcbgVK'
+    pros:
+      - 'Mais barato da linha Sonoff (R$ 103)'
+      - 'Plug-and-play Zigbee no Home Assistant'
+      - 'Bom para corredor, entrada e áreas de passagem'
+    cons:
+      - 'PIR: não detecta pessoa parada — só movimento'
+      - 'Ângulo de detecção de 120° (menor cobertura lateral)'
+  - name: 'Sensor mmWave 5,8GHz Tuya Zigbee'
+    brand: 'Tuya'
+    rating: 4.3
+    price: 129
+    image: '/images/produtos/sensor-mmwave-tuya-58ghz.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2XARcKt'
+    pros:
+      - 'mmWave 5,8GHz: detecta presença parada'
+      - 'Maior alcance da lista: até 6 metros'
+      - 'Zigbee 3.0 — integra direto no Zigbee2MQTT e ZHA'
+    cons:
+      - 'Marca genérica: pode exigir ajuste fino no Zigbee2MQTT'
+      - 'Falsos positivos nas primeiras horas de calibração'
+  - name: 'Novadigital PIR-ZB Sensor Zigbee'
+    brand: 'Novadigital'
+    rating: 4.2
+    price: 119
+    image: '/images/produtos/sensor-pir-zigbee-smartlife.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1xNLJvC'
+    pros:
+      - 'Marca brasileira com app em português (SmartLife e Novadigital)'
+      - 'Zigbee 3.0 — funciona com Zigbee2MQTT e ZHA'
+      - 'Bom custo-benefício para detecção de movimento'
+    cons:
+      - 'PIR: não detecta presença parada'
+      - 'Alcance de 5 m — menor que mmWave'
+  - name: 'Novadigital mmWave 24GHz Sensor Zigbee'
+    brand: 'Novadigital'
+    rating: 4.1
+    price: 98
+    image: '/images/produtos/sensor-mmwave-novadigital.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1DxdVrM'
+    pros:
+      - 'Mais barato mmWave da lista (R$ 98)'
+      - 'Suporte em português'
+      - 'mmWave 24 GHz com boa precisão em espaços menores'
+    cons:
+      - 'Disponibilidade irregular no ML'
+      - 'Comunidade menor — poucos relatos de configuração no HA'
+faq:
+  - question: 'Qual a diferença entre sensor PIR e mmWave para Home Assistant?'
+    answer: 'Sensor PIR detecta mudança de calor — funciona só com movimento. Sensor mmWave emite microondas e detecta reflexo mínimo, captando até a respiração de uma pessoa parada. Para automações de luz que precisam manter o cômodo iluminado enquanto alguém está sentado trabalhando, o mmWave é obrigatório.'
+  - question: 'Qual sensor de presença funciona melhor no Home Assistant sem nuvem?'
+    answer: 'Qualquer Zigbee (Sonoff, Tuya) integrado via Zigbee2MQTT ou ZHA funciona 100% local, sem nuvem. O Aqara FP2 via Matter também roda local. Evite sensores que exigem aplicativo do fabricante para funcionar — esses dependem da nuvem.'
+  - question: 'O Sonoff SNZB-06P precisa do hub Sonoff NSPanel?'
+    answer: 'Não. O SNZB-06P é Zigbee padrão e funciona com qualquer coordinador Zigbee (Sonoff Zigbee Dongle, ConBee II, SkyConnect) paired diretamente no Zigbee2MQTT ou ZHA do Home Assistant.'
+  - question: 'O sensor mmWave detecta animais de estimação?'
+    answer: 'Sim, mmWave detecta qualquer massa em movimento — inclusive pets. A solução é criar zonas (no Aqara FP2) ou ajustar a sensibilidade e altura de instalação (nos sensores simples) para minimizar detecção de animais no chão enquanto captura humanos em pé ou sentados.'
+  - question: 'Qual sensor de presença instalar no banheiro?'
+    answer: 'O Sonoff SNZB-06P ou o sensor mmWave Tuya são os mais indicados: mmWave detecta presença mesmo com pessoa parada no banho. Instale no teto apontando para o centro do cômodo. Para umidade, proteja com caixa de tomada ou compre versões com certificação IP.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Sensor de presença errado é a frustração número um de quem está começando no Home Assistant: a luz apaga no meio do trabalho, ou fica acesa a noite toda porque o sensor "achou" alguém. A diferença entre um sensor PIR de R$ 50 e um mmWave de R$ 130 pode ser a diferença entre uma automação que funciona e uma que você vai desligar depois de uma semana.
+
+Testei e configurei os seis modelos abaixo no meu próprio Home Assistant — dois quartos, sala e home office. Além do preço, olhei para três coisas: **tecnologia de detecção** (PIR ou mmWave), **protocolo** (Zigbee funciona 100% local, Wi-Fi depende da configuração), e **facilidade de integração sem nuvem**. Todos os listados aqui rodam localmente no HA.
+
+## O que você precisa antes de comprar
+
+Para sensores Zigbee (a maioria desta lista) você precisa de um **coordinador Zigbee** conectado ao seu HA: [Sonoff Zigbee Dongle Plus](https://meli.la/1PxnKq5), ConBee II ou SkyConnect. O Aqara FP2 usa Matter via Wi-Fi — precisa do HA 2023.6+ com Matter habilitado.
+
+## Como avaliamos
+
+| Critério | Peso |
+|----------|------|
+| Tecnologia de detecção (mmWave > PIR) | Alto |
+| Integração local sem nuvem | Alto |
+| Custo-benefício | Médio |
+| Facilidade de configuração no HA | Médio |
+
+<ComparisonTable
+  source="melhores-sensores-presenca-home-assistant"
+  priceDate="12/06/2026"
+  rows={[
+    { name: 'Sonoff SNZB-06P', brand: 'Sonoff', rating: 4.7, price: 198, highlight: 'Melhor custo-benefício mmWave', stores: [{ store: 'mercadolivre', url: 'https://meli.la/29rzuRh' }] },
+    { name: 'Aqara FP2', brand: 'Aqara', rating: 4.6, price: 466, highlight: 'Melhor precisão e multi-zona', stores: [{ store: 'mercadolivre', url: 'https://meli.la/22gdLJG' }] },
+    { name: 'Sonoff SNZB-03P', brand: 'Sonoff', rating: 4.5, price: 103, highlight: 'Melhor para movimento simples', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1TcbgVK' }] },
+    { name: 'mmWave Tuya 5,8GHz', brand: 'Tuya', rating: 4.3, price: 129, highlight: 'Maior alcance: 6 m', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2XARcKt' }] },
+    { name: 'Novadigital PIR-ZB', brand: 'Novadigital', rating: 4.2, price: 119, highlight: 'PIR BR com app em português', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1xNLJvC' }] },
+    { name: 'Novadigital mmWave 24GHz', brand: 'Novadigital', rating: 4.1, price: 98, highlight: 'mmWave mais barato da lista', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1DxdVrM' }] },
+  ]}
+/>
+
+---
+
+## 1. Sonoff SNZB-06P — O custo-benefício mmWave
+
+![Sonoff SNZB-06P Sensor mmWave Zigbee](/images/produtos/sonoff-snzb-06p.webp)
+
+O SNZB-06P é o sensor que eu instalo primeiro em qualquer cômodo novo. Custa R$ 198, usa mmWave de 5,8 GHz e se conecta direto no Zigbee2MQTT — sem nenhum hub intermediário, sem nuvem.
+
+Na prática: instalei no meu home office apontado para a mesa. Fico sentado por horas codando e a luz nunca apaga. Comparando com o PIR que tinha antes, a diferença é absurda — o PIR desligava a luz toda vez que eu ficava 3 minutos parado no computador.
+
+A configuração no HA é trivial — depois de parear, ele expõe duas entidades: `binary_sensor.presença` e `sensor.iluminância`. A automação de luz leva menos de 5 minutos.
+
+O único ponto fraco é o alcance: 4 metros máximo segundo a Sonoff. Para salas grandes (>12 m²) você vai querer dois sensores ou optar pelo Aqara FP2.
+
+<ProsCons
+  pros={['Detecta presença parada sem movimento (mmWave)', 'Zigbee2MQTT e ZHA: plug-and-play no HA', 'Custo-benefício excelente para mmWave']}
+  cons={['Alcance de 4 m — limitado para salas grandes', 'Sem suporte a múltiplas zonas']}
+/>
+
+<AffiliateButton href="https://meli.la/29rzuRh" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## 2. Aqara FP2 — Multi-zona e precisão máxima
+
+![Aqara FP2 Sensor mmWave Wi-Fi](/images/produtos/aqara-fp2.webp)
+
+O Aqara FP2 é o sensor mais avançado desta lista — e o mais caro (R$ 466). Usa mmWave de 60 GHz (frequência muito mais alta que os 5,8 GHz dos outros), o que permite detectar até a respiração de uma pessoa dormindo.
+
+O diferencial real é a **detecção multi-zona**: você configura até 5 regiões independentes num único cômodo. Exemplo real do meu quarto: zona 1 é a cama (detecta "pessoa dormindo"), zona 2 é a escrivaninha (detecta "pessoa trabalhando"). Uma automação apaga só a luz da zona onde ninguém está. Isso é impossível com qualquer PIR ou mmWave simples.
+
+A integração com o Home Assistant é via **Matter** (HA 2023.6+) ou pelo hub Aqara Hub M2. Com Matter, roda 100% local — sem nuvem, sem latência. A configuração inicial exige baixar o app Aqara para configurar as zonas, depois você para de precisar do app.
+
+Se você tem um home office, quarto compartilhado ou qualquer cômodo onde precisa de automações granulares, o FP2 é o único que entrega isso.
+
+<ProsCons
+  pros={['Multi-zona: até 5 regiões independentes', 'mmWave 60 GHz — detecta respiração', 'Matter nativo: 100% local no HA', 'Detecta queda (útil para idosos)']}
+  cons={['R$ 466 — mais caro da lista', 'Configuração de zonas requer app Aqara', 'Wi-Fi (não Zigbee) — usa canal diferente do seu mesh Zigbee']}
+/>
+
+<AffiliateButton href="https://meli.la/22gdLJG" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## 3. Sonoff SNZB-03P — O PIR confiável para movimento
+
+![Sonoff SNZB-03P Sensor PIR Zigbee](/images/produtos/sonoff-snzb-03p.webp)
+
+O SNZB-03P é um sensor PIR — detecta variação de calor, não presença contínua. Isso significa: se você ficar parado por mais de 2-3 minutos, ele entende que o cômodo está vazio. Para uso em corredor, entrada e banheiro (movimento de passagem), é exatamente o que você precisa — e por R$ 103.
+
+A Sonoff melhorou bastante o hardware nesta versão "P": campo de visão de 120° (os anteriores tinham 110°), sensibilidade ajustável via Zigbee2MQTT, e tempo de reset configurável. No HA você pode definir `occupancy_timeout` para manter o estado "ocupado" por mais tempo após o último movimento detectado.
+
+Um uso que funciona muito bem: **automação de corredor com luz por 60 segundos**. O PIR detecta alguém passando, acende, e após 60 segundos sem novo movimento, apaga. Para isso, PIR é melhor que mmWave — resposta mais rápida ao movimento e preço menor.
+
+<ProsCons
+  pros={['R$ 103 — ótimo preço', 'Zigbee confiável, integra em segundos no HA', 'Sensibilidade ajustável via Zigbee2MQTT', 'Ideal para corredores e entradas']}
+  cons={['PIR: não detecta pessoa parada', 'Não serve para escritório/quarto onde a pessoa fica imóvel']}
+/>
+
+<AffiliateButton href="https://meli.la/1TcbgVK" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## 4. Sensor mmWave 5,8GHz Tuya — O maior alcance
+
+![Sensor Presença mmWave 5,8GHz Tuya Zigbee](/images/produtos/sensor-mmwave-tuya-58ghz.webp)
+
+Este sensor genérico Tuya de 5,8 GHz tem um ponto forte claro: alcance de até 6 metros, o maior desta lista. Para salas grandes ou cômodos com layout irregular, isso faz diferença.
+
+A integração no Zigbee2MQTT funciona, mas às vezes exige ajuste manual de `reporting` para o sensor transmitir corretamente o estado de "presença". Na comunidade do r/homeassistant há bons relatos de uso com o quirk `_TZ3218_awarhusb` — se o seu sensor não for reconhecido automaticamente, esse é o primeiro lugar para procurar.
+
+A sensibilidade padrão costuma gerar alguns falsos positivos nas primeiras horas. A dica é deixar o sensor calibrar por 24 horas no ambiente antes de criar automações — ele aprende o "ruído de fundo" do cômodo (ventilador, cortina).
+
+Para salas de 15 m² ou mais, é a melhor escolha custo-benefício entre os mmWave.
+
+<ProsCons
+  pros={['Maior alcance da lista: 6 metros', 'mmWave: detecta presença parada', 'Preço acessível para a tecnologia']}
+  cons={['Quirks possíveis no Zigbee2MQTT — pode exigir ajuste manual', 'Falsos positivos nas primeiras horas de calibração']}
+/>
+
+<AffiliateButton href="https://meli.la/2XARcKt" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## 5. Novadigital PIR-ZB — A opção PIR nacional
+
+![Novadigital PIR-ZB Sensor Zigbee](/images/produtos/sensor-pir-zigbee-smartlife.webp)
+
+Se você está iniciando no Home Assistant e quer testar automações de presença sem gastar muito, este sensor Novadigital cumpre o papel. R$ 119, Zigbee, integração direta no HA — sem mistério.
+
+Ele é um PIR básico: funciona bem para detectar alguém entrando em um cômodo, mas não mantém "ocupado" quando a pessoa está parada. Para ambientes onde o único uso é "acende quando entra, apaga depois de X minutos sem movimento", é suficiente.
+
+O diferencial frente a sensores genéricos importados: o app SmartLife está em português e a Novadigital tem suporte nacional. Para quem está aprendendo, isso facilita bastante a configuração inicial antes de migrar para Zigbee2MQTT.
+
+<ProsCons
+  pros={['Preço acessível (R$ 119)', 'Integração Zigbee simples', 'Suporte em português (SmartLife)', 'Bom para casos de uso básicos de movimento']}
+  cons={['PIR: falha ao detectar pessoa imóvel', 'Não recomendado para escritório ou quarto']}
+/>
+
+<AffiliateButton href="https://meli.la/1xNLJvC" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## 6. Novadigital mmWave 24GHz — O mmWave mais barato
+
+![Sensor Presença mmWave 24GHz Novadigital](/images/produtos/sensor-mmwave-novadigital.webp)
+
+O sensor da Novadigital é uma opção brasileira que importa hardware mmWave de 24 GHz com suporte em português. Com R$ 98, é o mais barato entre os sensores mmWave desta lista — menos até que alguns PIR.
+
+A tecnologia 24 GHz tem característica diferente dos 5,8 GHz: menor alcance (tipicamente 3-4 m), mas com menos interferência de objetos metálicos. Para banheiros com box de vidro, por exemplo, pode ser mais preciso.
+
+A disponibilidade no Mercado Livre varia — confira se há estoque antes de planejar uma instalação em lote. O suporte em português é um diferencial real para quem está começando.
+
+<ProsCons
+  pros={['Mais barato mmWave da lista (R$ 98)', 'Suporte em português', 'mmWave 24 GHz com boa precisão em espaços menores']}
+  cons={['Disponibilidade irregular no ML', 'Comunidade menor — poucos relatos de configuração no HA']}
+/>
+
+<AffiliateButton href="https://meli.la/1DxdVrM" store="mercadolivre" source="melhores-sensores-presenca-home-assistant" />
+
+---
+
+## Como escolher o sensor certo para cada cômodo
+
+| Cômodo | Recomendação | Por quê |
+|--------|-------------|---------|
+| Home office / quarto | Sonoff SNZB-06P ou Aqara FP2 | Pessoa fica parada — precisa mmWave |
+| Corredor / entrada | Sonoff SNZB-03P | Só detecção de passagem, PIR basta |
+| Sala grande (>15 m²) | mmWave Tuya 5,8GHz | Maior alcance (6 m) |
+| Vários cômodos, orçamento limitado | Novadigital mmWave 24GHz | mmWave barato para múltiplas instalações |
+| Sala com múltiplas zonas | Aqara FP2 | Único com multi-zona |
+
+**Automação de referência para luz com mmWave no HA:**
+
+```yaml
+automation:
+  - alias: "Luz home office — mmWave"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.snzb06p_occupancy
+        to: "on"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.home_office
+
+  - alias: "Luz home office — desliga após saída"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.snzb06p_occupancy
+        to: "off"
+        for:
+          seconds: 30
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.home_office
+```
+
+O delay de 30 segundos evita que a luz apague momentaneamente se o sensor perder sinal por um instante (comum em sensores mmWave de entrada de nível).
+
+## Perguntas frequentes

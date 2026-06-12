@@ -1,0 +1,184 @@
+---
+title: 'Shelly 1 Mini Gen3 vs Sonoff Mini R4: qual comprar?'
+description: 'Comparativo honesto entre os dois relés Wi-Fi mais usados no Home Assistant. Integração local, Matter, preço e instalação sem fio neutro.'
+pubDate: 2026-06-23
+category: 'casa-inteligente'
+tags: ['home assistant', 'relay wifi', 'shelly', 'sonoff', 'automação residencial', 'interruptor inteligente']
+priceCheckedAt: '12/06/2026'
+draft: true
+featured: false
+author: 'Márcio Costa'
+products:
+  - name: 'Shelly 1 Mini Gen3 Interruptor Wi-Fi'
+    brand: 'Shelly'
+    rating: 4.7
+    price: 222
+    image: '/images/produtos/shelly-1-mini-gen3.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1bN1Jbq'
+    pros:
+      - 'Integração local nativa no Home Assistant — sem nuvem, sem flash'
+      - 'Matter nativo: funciona com qualquer hub compatível'
+      - 'Menor form factor do mercado: cabe em qualquer caixa elétrica'
+    cons:
+      - 'Preço mais alto: R$ 222'
+      - 'Não monitora consumo de energia (diferente do Shelly Plus 1PM)'
+  - name: 'Sonoff Mini R4 Interruptor Wi-Fi'
+    brand: 'Sonoff'
+    rating: 4.5
+    price: 78
+    image: '/images/produtos/sonoff-mini-r4.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1GjLFHh'
+    pros:
+      - 'Preço imbatível: R$ 78'
+      - 'Modo DIY: controle local via HTTP sem precisar flashar'
+      - 'Suporta Tasmota e ESPHome via flash USB'
+    cons:
+      - 'Padrão usa nuvem eWeLink — precisa de configuração extra para rodar local'
+      - 'Sem suporte a Matter (apenas eWeLink, DIY, ou firmware alternativo)'
+faq:
+  - question: 'O Shelly 1 Mini Gen3 funciona sem fio neutro?'
+    answer: 'Não para o modelo 1 Mini padrão — ele precisa do neutro. Se você não tem neutro na caixa de luz, olhe para o Shelly 1 Mini PM Gen3 com capacitor ou o Shelly Bypass. Verifique o esquema elétrico da sua instalação antes de comprar.'
+  - question: 'O Sonoff Mini R4 funciona sem nuvem no Home Assistant?'
+    answer: 'Sim, com o Modo DIY habilitado via app eWeLink (gratuito). Com o DIY ativo, o Mini R4 expõe uma API HTTP local que o HA acessa via integração eWeLink Cloud ou via HTTP request. Para 100% local sem nuvem, o caminho é flashar com Tasmota ou ESPHome via OTA ou USB.'
+  - question: 'Qual a diferença entre Shelly 1 Mini Gen3 e Shelly Plus 1PM?'
+    answer: 'O Plus 1PM tem medição de consumo de energia (watts/kWh em tempo real), o Mini Gen3 não. O Mini Gen3 é menor e mais barato. Para automações simples de liga/desliga, o Mini serve. Para monitorar o consumo de um aparelho específico, precisa do 1PM.'
+  - question: 'Posso usar Tasmota no Shelly 1 Mini Gen3?'
+    answer: 'Sim, via OTA sem abrir o hardware — o Shelly aceita upload de firmware via interface web. O Tasmota tem suporte oficial para os modelos Shelly Gen3. Mas a integração nativa do HA já é excelente; só vale a pena flashar se você precisar de funcionalidades específicas do Tasmota.'
+  - question: 'Qual relay instalar em um apartamento com muitos interruptores?'
+    answer: 'Para escalar em quantidade, o Sonoff Mini R4 com Tasmota é mais econômico. Para uma instalação limpa sem flash e com Matter, o Shelly Gen3 é superior. A maioria dos instaladores profissionais usa Shelly para instalações mais exigentes e Sonoff quando o orçamento é o fator principal.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Shelly e Sonoff são os dois relés Wi-Fi mais instalados em setups de Home Assistant no Brasil — e estão em categorias de preço completamente diferentes. O Shelly 1 Mini Gen3 custa R$ 222 e funciona local nativamente. O Sonoff Mini R4 custa R$ 78 e funciona na nuvem por padrão, mas tem caminhos bem documentados para rodar local.
+
+Qual faz mais sentido para você depende de três fatores: quantos relés você vai instalar, quanto quer mexer na configuração, e se precisa de Matter. Vai direto ao ponto.
+
+## Comparação rápida
+
+<ComparisonTable
+  source="shelly-1-mini-gen3-vs-sonoff-mini-r4"
+  priceDate="12/06/2026"
+  rows={[
+    { name: 'Shelly 1 Mini Gen3', brand: 'Shelly', rating: 4.7, price: 222, highlight: 'Melhor integração nativa HA', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1bN1Jbq' }] },
+    { name: 'Sonoff Mini R4', brand: 'Sonoff', rating: 4.5, price: 78, highlight: 'Melhor custo-benefício', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1GjLFHh' }] },
+  ]}
+/>
+
+| Característica | Shelly 1 Mini Gen3 | Sonoff Mini R4 |
+|---|---|---|
+| Preço | R$ 222 | R$ 78 |
+| Protocolo padrão | HTTP local / Matter | eWeLink (nuvem) |
+| Local sem flash? | ✅ Sim (nativo) | ⚠️ Com Modo DIY |
+| Matter | ✅ Sim | ❌ Não |
+| Tasmota/ESPHome | ✅ Via OTA | ✅ Via flash |
+| Monitoramento de energia | ❌ Não | ❌ Não |
+| Dimensões | 29×35×16 mm | 39×33×17 mm |
+| Carga máxima | 8 A / 1760 W | 16 A / 3520 W |
+| Precisa de neutro? | ✅ Sim | ✅ Sim |
+
+---
+
+## Shelly 1 Mini Gen3
+
+![Shelly 1 Mini Gen3 Interruptor Wi-Fi](/images/produtos/shelly-1-mini-gen3.webp)
+
+O Shelly 1 Mini Gen3 é o menor relay Wi-Fi do mercado — 29×35×16 mm. Isso não é detalhe: em caixas de luz de embutir brasileiras (tipo 4×2), o espaço é disputado com fios, e o mini cabe onde outros não cabem.
+
+### Integração local com Home Assistant
+
+É aqui que o Shelly se destaca de verdade. Ao ligar na rede, o HA detecta automaticamente via discovery (protocolo mDNS). Sem nenhuma configuração extra, sem conta em nuvem. A integração oficial do Shelly no HA comunica direto pelo IP local — o dispositivo não precisa de internet para funcionar.
+
+Para quem está começando, isso é um alívio: você não precisa saber nada sobre Tasmota, DIY mode ou flash. Compra, instala, pareia, pronto.
+
+### Matter nativo
+
+O Gen3 suporta Matter nativo. Na prática: se você amanhã quiser migrar para Apple HomeKit, Google Home ou Amazon Alexa, o Shelly funciona sem precisar de bridge intermediária. Para quem está construindo um setup que precisa ser compatível com múltiplas plataformas, isso vale muito.
+
+### Limitações
+
+- **Sem monitoramento de energia**: se você quer saber quantos watts aquele ar-condicionado está consumindo, precisa do Shelly Plus 1PM (que mede potência em tempo real). O Mini não mede.
+- **Carga de 8A**: para maioria dos usos domésticos (lâmpadas, ventiladores, luminárias) é mais que suficiente. Para cargas pesadas (aquecedor, bomba d'água), verifique a demanda.
+- **Precisa de neutro**: sem neutro na caixa de luz, o Mini não funciona. Isso é comum em instalações elétricas mais antigas.
+
+<ProsCons
+  pros={['Integração local 100% sem nuvem — detectado automaticamente pelo HA', 'Matter nativo: compatível com Apple HomeKit, Google Home, Amazon Alexa', 'Menor relay do mercado — cabe em qualquer caixa']}
+  cons={['R$ 222 — 3x mais caro que o Sonoff', 'Sem medição de consumo de energia', 'Carga máxima de 8A (suficiente, mas menor que o Sonoff)']}
+/>
+
+<AffiliateButton href="https://meli.la/1bN1Jbq" store="mercadolivre" source="shelly-1-mini-gen3-vs-sonoff-mini-r4" />
+
+---
+
+## Sonoff Mini R4
+
+![Sonoff Mini R4 Interruptor Wi-Fi](/images/produtos/sonoff-mini-r4.webp)
+
+O Sonoff Mini R4 é o relay mais vendido no Brasil por um motivo simples: R$ 78. Para quem está automatizando 10-15 pontos de luz num apartamento, a diferença de R$ 144 por unidade (comparado ao Shelly) representa mais de R$ 1.400 de economia total.
+
+### Funcionamento local no Home Assistant
+
+Por padrão, o Mini R4 usa a nuvem eWeLink. Para Home Assistant, há três caminhos para rodar local:
+
+**1. Modo DIY (mais fácil, sem flash)**
+
+Pelo app eWeLink, você habilita o Modo DIY. Com isso, o dispositivo expõe uma API HTTP local. A integração `SonoffLAN` do HA (HACS) então comunica diretamente sem nuvem. Funciona sem nenhum hardware adicional.
+
+```yaml
+# configuration.yaml com SonoffLAN (HACS)
+sonoff:
+  username: !secret ewelink_user
+  password: !secret ewelink_pass
+  # depois de configurar, desativa a nuvem e mantém só local
+```
+
+**2. Tasmota (flash sem abrir o hardware)**
+
+O Mini R4 suporta flash OTA via interface web — sem precisar de soldador. Acesse o IP do dispositivo no modo DIY, faça upload do firmware Tasmota, e pronto. Com Tasmota, o HA detecta via MQTT local ou via integração Tasmota nativa.
+
+**3. ESPHome**
+
+Para quem já usa ESPHome no setup (muito comum em quem tem ESP32 e sensores DIY), é possível gravar o ESPHome no Mini R4. A vantagem é ter uma integração unificada com o resto dos dispositivos ESPHome.
+
+### Carga de 16A
+
+Diferente do Shelly 8A, o Mini R4 suporta 16A — equivalente a cargas de até 3.500W em 220V. Para uso em aquecedores de passagem, bombas, ou equipamentos mais pesados, isso importa.
+
+<ProsCons
+  pros={['R$ 78 — o relay Wi-Fi mais barato com integração HA documentada', 'Modo DIY: local sem flash, sem soldar', 'Suporte a Tasmota e ESPHome via OTA', 'Carga de 16A — suporta equipamentos mais pesados']}
+  cons={['Padrão usa nuvem eWeLink — exige configuração extra para rodar local', 'Sem Matter', 'Sem medição de consumo de energia']}
+/>
+
+<AffiliateButton href="https://meli.la/1GjLFHh" store="mercadolivre" source="shelly-1-mini-gen3-vs-sonoff-mini-r4" />
+
+---
+
+## Em qual cenário cada um ganha?
+
+**Escolha o Shelly 1 Mini Gen3 se:**
+- Você quer a configuração mais simples possível — plug-and-play local no HA
+- Precisa de Matter para integrar com outras plataformas (HomeKit, Google Home)
+- Está instalando em caixas de luz com pouco espaço
+- Prefere pagar mais para ter menos configuração
+
+**Escolha o Sonoff Mini R4 se:**
+- Está automatizando muitos pontos e o orçamento importa
+- Tem disposição para configurar o Modo DIY ou flashar com Tasmota
+- Precisa de carga maior (16A) para equipamentos pesados
+- Já usa ESPHome e quer integração unificada
+
+## Veredicto
+
+Para um apartamento com 3-5 interruptores, o **Shelly 1 Mini Gen3** é a escolha de menor atrito: você instala, o HA detecta, e acabou. Se o seu tempo vale mais que R$ 144 por ponto, o Shelly paga a diferença.
+
+Para automações em escala — 10+ pontos, ou um projeto onde o custo por unidade importa — o **Sonoff Mini R4 com Modo DIY ou Tasmota** entrega a mesma funcionalidade por um terço do preço. A curva de aprendizado existe, mas está bem documentada na comunidade brasileira de HA.
+
+Eu uso os dois no meu setup: Shelly nos quartos (onde quero Matter para integrar com o HomePod), Sonoff no corredor e lavanderia (onde só preciso de liga/desliga confiável e barato).
+
+## Perguntas frequentes
