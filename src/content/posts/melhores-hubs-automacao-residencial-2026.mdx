@@ -1,0 +1,210 @@
+---
+title: 'Os 5 melhores hubs de automação residencial em 2026'
+description: 'Compare os melhores hubs de automação residencial: Sonoff, Amazon, Google e Broadlink. Qual centraliza melhor sua casa inteligente?'
+pubDate: 2026-06-29
+category: 'automacao-residencial'
+tags: ['automacao', 'casa-inteligente', 'hub', 'zigbee', 'alexa', 'google-home']
+featured: true
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '23/06/2026'
+products:
+  - name: 'Sonoff NSPanel Pro'
+    brand: 'Sonoff'
+    rating: 4.6
+    price: 895.92
+    image: '/images/produtos/sonoff-nspanel-pro.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2J1a1C2'
+    pros:
+      - 'Touchscreen 3,95" embutido — controla tudo sem abrir app'
+      - 'Gateway Zigbee nativo: conecta sensores e lâmpadas sem hub extra'
+      - 'Compatível com Home Assistant, Alexa e Google Home'
+    cons:
+      - 'Instalação requer eletricista (vai na caixa de interruptor)'
+      - 'App eWeLink depende de nuvem — offline tem limitações'
+  - name: 'Xiaomi Smart Home Hub 2'
+    brand: 'Xiaomi'
+    rating: 4.5
+    price: 288.17
+    image: '/images/produtos/xiaomi-smart-home-hub-2.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2KnUBjn'
+    pros:
+      - 'Multi-protocolo: Zigbee 3.0 + Bluetooth + ponte Matter'
+      - 'Bridge Matter — conecta o ecossistema Xiaomi à Alexa, Google e HomeKit'
+      - 'Sensor de temperatura e luz embutido'
+    cons:
+      - 'Configuração inicial passa pelo app Mi Home'
+      - 'Integração avançada com Home Assistant exige ajustes'
+  - name: 'Aqara Hub M2'
+    brand: 'Aqara'
+    rating: 4.6
+    price: 367.90
+    image: '/images/produtos/aqara-hub-m2.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/13b7gcn'
+    pros:
+      - 'Gateway Zigbee 3.0 + emissor infravermelho (IR) num só aparelho'
+      - 'Ponte para Alexa, Google e Apple HomeKit — multi-ecossistema'
+      - 'Funciona com Home Assistant via integração Aqara/HomeKit'
+    cons:
+      - 'Sem tela — controle por app ou voz de outro assistente'
+      - 'IR depende de linha de visada com o aparelho'
+  - name: 'Broadlink RM4 Pro'
+    brand: 'Broadlink'
+    rating: 4.4
+    price: 475.50
+    image: '/images/produtos/broadlink-rm4-pro.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1umYnqG'
+    pros:
+      - 'Controla qualquer aparelho por IR e RF — ar-condicionado, TV, ventilador'
+      - 'Ideal para automatizar equipamentos antigos sem Wi-Fi'
+      - 'Integra com Home Assistant via integração oficial'
+    cons:
+      - 'Não controla dispositivos Zigbee/Z-Wave — só IR/RF'
+      - 'Alcance de IR limitado a linha de visada'
+  - name: 'Sonoff Zigbee Bridge Pro'
+    brand: 'Sonoff'
+    rating: 4.5
+    price: 186.42
+    image: '/images/produtos/sonoff-zbbridge-pro.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2mxq532'
+    pros:
+      - 'Gateway Zigbee dedicado — conecta até 128 dispositivos Zigbee'
+      - 'Flashável com Tasmota/ZHA para uso local sem nuvem'
+      - 'Mais barato que o NSPanel — ideal para quem só precisa do gateway'
+    cons:
+      - 'Sem tela ou interface física — 100% via app/HA'
+      - 'Versão Pro requer atualização de firmware para uso com HA'
+faq:
+  - question: 'Qual a diferença entre hub e assistente de voz?'
+    answer: 'O assistente de voz (Alexa, Google Assistente) é a interface de controle por voz. O hub é o dispositivo que centraliza e conecta os dispositivos inteligentes da sua casa. Muitos produtos modernos combinam funções — como o Aqara Hub M2, que junta gateway Zigbee, emissor IR e ponte para Alexa, Google e HomeKit.'
+  - question: 'Preciso de um hub para ter casa inteligente?'
+    answer: 'Depende. Se todos os seus dispositivos forem Wi-Fi (Tuya, Tasmota, Sonoff), não precisa de hub — eles se conectam direto ao roteador. O hub é necessário quando você usa protocolos como Zigbee, Z-Wave ou Thread, que precisam de um gateway para se comunicar com a rede Wi-Fi.'
+  - question: 'Home Assistant funciona sem hub dedicado?'
+    answer: 'Sim. O Home Assistant roda num Raspberry Pi, mini-PC ou no próprio Home Assistant Green/Yellow. Para adicionar Zigbee ao HA sem hub externo, use um adaptador USB Zigbee (como o SONOFF Zigbee 3.0 USB Dongle Plus) direto no servidor.'
+  - question: 'Qual hub funciona offline (sem internet)?'
+    answer: 'O Home Assistant é o campeão de uso local. Com ele e um adaptador Zigbee, sua automação funciona 100% offline. O Sonoff NSPanel Pro e o ZB Bridge Pro flashados com Tasmota/ZHA também funcionam em modo local. Hubs baseados em nuvem (Mi Home, Aqara Home) têm funções limitadas sem internet.'
+  - question: 'Hub Zigbee ou hub Wi-Fi: qual escolher?'
+    answer: 'Zigbee usa menos energia, tem melhor alcance com repetidores e é mais confiável em redes grandes. Wi-Fi é mais simples de instalar mas sobrecarrega o roteador com muitos dispositivos. Para menos de 10 dispositivos, Wi-Fi funciona bem. Para mais de 10, ou se quiser escalar, Zigbee vale o investimento no hub.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Você tem uma lâmpada inteligente aqui, um sensor de presença ali, o ar-condicionado com controle IR… e nenhum deles conversa com o outro. É aqui que entra o **hub de automação residencial**: o dispositivo que centraliza tudo e faz a casa funcionar de verdade como uma unidade coordenada.
+
+Neste guia, selecionamos os **5 melhores hubs** para diferentes perfis — do hub acessível que conecta todos os ecossistemas até o maker que quer controle local total com Home Assistant.
+
+## Comparativo rápido
+
+<ComparisonTable
+  source="melhores-hubs-automacao-residencial-2026"
+  priceDate="23/06/2026"
+  rows={[
+    { name: 'Sonoff NSPanel Pro', brand: 'Sonoff', rating: 4.6, price: 895.92, highlight: 'Tela + Zigbee embutido', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2J1a1C2' }] },
+    { name: 'Xiaomi Smart Home Hub 2', brand: 'Xiaomi', rating: 4.5, price: 288.17, highlight: 'Zigbee + BLE + ponte Matter', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2KnUBjn' }] },
+    { name: 'Aqara Hub M2', brand: 'Aqara', rating: 4.6, price: 367.90, highlight: 'Zigbee + IR + multi-ecossistema', stores: [{ store: 'mercadolivre', url: 'https://meli.la/13b7gcn' }] },
+    { name: 'Broadlink RM4 Pro', brand: 'Broadlink', rating: 4.4, price: 475.50, highlight: 'IR/RF — controla AC e TV', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1umYnqG' }] },
+    { name: 'Sonoff Zigbee Bridge Pro', brand: 'Sonoff', rating: 4.5, price: 186.42, highlight: 'Gateway Zigbee puro', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2mxq532' }] },
+  ]}
+/>
+
+## 1. Sonoff NSPanel Pro — o melhor hub com tela
+
+![Sonoff NSPanel Pro](/images/produtos/sonoff-nspanel-pro.webp)
+
+O NSPanel Pro é o hub mais completo desta lista: tem uma **tela touchscreen de 3,95"** embutida, **gateway Zigbee nativo** e compatibilidade com Alexa, Google Home e — o diferencial para makers — **Home Assistant**. Você instala no lugar de um interruptor comum e passa a ter um painel de controle físico na parede.
+
+A instalação exige eletricista (vai na caixa elétrica de 3×4), mas depois disso é o dispositivo mais versátil da lista. Com Zigbee embutido, você conecta sensores, lâmpadas e tomadas sem precisar de outro gateway.
+
+<ProsCons pros={['Tela touchscreen + gateway Zigbee num só dispositivo', 'Compatível com Home Assistant — controle local completo', 'Visual profissional na parede']} cons={['Requer instalação elétrica', 'App eWeLink depende de nuvem sem configuração extra']} />
+
+<AffiliateButton href="https://meli.la/2J1a1C2" store="mercadolivre" source="melhores-hubs-automacao-residencial-2026" />
+
+## 2. Xiaomi Smart Home Hub 2 — a ponte multi-protocolo
+
+![Xiaomi Smart Home Hub 2](/images/produtos/xiaomi-smart-home-hub-2.webp)
+
+O Smart Home Hub 2 da Xiaomi é o coringa multi-protocolo desta lista: fala **Zigbee 3.0, Bluetooth/BLE e funciona como ponte Matter**. Na prática, ele conecta o vasto ecossistema de sensores e dispositivos Xiaomi e, via Matter, expõe tudo para **Alexa, Google Home e Apple HomeKit** — algo que poucos hubs nessa faixa de preço fazem.
+
+Ainda traz **sensor de temperatura e luz embutidos**. Para quem quer um hub acessível que converse com todos os ecossistemas, é a escolha mais versátil. A configuração inicial passa pelo app Mi Home; a integração mais profunda com Home Assistant é possível, mas pede alguns ajustes.
+
+<ProsCons pros={['Zigbee + Bluetooth + ponte Matter num só aparelho', 'Expõe o ecossistema Xiaomi para Alexa, Google e HomeKit', 'Sensores de temperatura e luz embutidos']} cons={['Setup inicial pelo app Mi Home', 'Integração avançada com HA exige ajustes']} />
+
+<AffiliateButton href="https://meli.la/2KnUBjn" store="mercadolivre" source="melhores-hubs-automacao-residencial-2026" />
+
+## 3. Aqara Hub M2 — Zigbee + infravermelho num só
+
+![Aqara Hub M2](/images/produtos/aqara-hub-m2.webp)
+
+O Aqara M2 é o hub "faz-tudo" da casa inteligente: além de **gateway Zigbee 3.0** para sensores e lâmpadas, ele tem **emissor de infravermelho (IR) embutido** — controla ar-condicionado, TV e ventilador como o Broadlink, só que no mesmo aparelho que centraliza o Zigbee.
+
+O grande trunfo é a **compatibilidade multi-ecossistema**: ele faz ponte para **Alexa, Google Home e Apple HomeKit**. Para quem usa iPhone, é um dos poucos hubs acessíveis com HomeKit nativo. Integra com Home Assistant via Aqara/HomeKit. Não tem tela, mas no conceito de "central que conecta tudo" é difícil de bater nessa faixa de preço.
+
+<ProsCons pros={['Gateway Zigbee 3.0 + emissor IR no mesmo aparelho', 'Ponte para Alexa, Google e HomeKit', 'HomeKit nativo — raro nessa faixa de preço']} cons={['Sem tela ou interface física', 'IR precisa de linha de visada']} />
+
+<AffiliateButton href="https://meli.la/13b7gcn" store="mercadolivre" source="melhores-hubs-automacao-residencial-2026" />
+
+## 4. Broadlink RM4 Pro — o hub para aparelhos antigos (IR/RF)
+
+![Broadlink RM4 Pro](/images/produtos/broadlink-rm4-pro.webp)
+
+Tem ar-condicionado sem Wi-Fi? Ventilador de teto sem controle app? O Broadlink RM4 Pro é a solução: ele aprende os sinais **infravermelho (IR) e radiofrequência (RF)** de qualquer controle remoto e passa a enviá-los via Wi-Fi, sob comando do app ou do Home Assistant.
+
+É o complemento perfeito para uma casa inteligente que tem equipamentos mais antigos. Não substitui um hub Zigbee, mas resolve o problema dos aparelhos "burros" de forma elegante e barata.
+
+<ProsCons pros={['Automatiza qualquer aparelho com IR ou RF', 'Integra com Home Assistant nativamente', 'Solução econômica para eletrodomésticos antigos']} cons={['Não gerencia Zigbee/Z-Wave', 'Depende de linha de visada para IR']} />
+
+<AffiliateButton href="https://meli.la/1umYnqG" store="mercadolivre" source="melhores-hubs-automacao-residencial-2026" />
+
+## 5. Sonoff Zigbee Bridge Pro — gateway Zigbee dedicado
+
+![Sonoff Zigbee Bridge Pro](/images/produtos/sonoff-zbbridge-pro.webp)
+
+Para quem quer um **gateway Zigbee puro e barato**, o ZB Bridge Pro é o caminho. Conecta até 128 dispositivos Zigbee à sua rede Wi-Fi e, quando flashado com Tasmota ou integrado via ZHA/Zigbee2MQTT ao Home Assistant, funciona **100% local** — sem depender de servidores da Sonoff.
+
+É a opção mais técnica da lista, ideal para quem já usa Home Assistant e quer expandir o número de sensores e lâmpadas Zigbee sem pagar pelo NSPanel Pro.
+
+<ProsCons pros={['Gateway Zigbee para até 128 dispositivos', 'Flashável para uso 100% local com HA', 'Preço mais acessível da lista']} cons={['Sem interface física ou tela', 'Configuração mais técnica']} />
+
+<AffiliateButton href="https://meli.la/2mxq532" store="mercadolivre" source="melhores-hubs-automacao-residencial-2026" />
+
+## Como escolher o hub certo para você
+
+| Perfil | Recomendação |
+|--------|-------------|
+| Quer conectar todos os ecossistemas | Xiaomi Smart Home Hub 2 |
+| Usa iPhone/HomeKit | Aqara Hub M2 |
+| Maker com Home Assistant | Sonoff NSPanel Pro ou ZB Bridge Pro |
+| Quer automatizar AC/TV antigos | Broadlink RM4 Pro ou Aqara Hub M2 |
+| Quer escalar Zigbee com HA | Sonoff ZB Bridge Pro |
+
+A boa notícia é que esses hubs não são excludentes: muitos makers usam o ZB Bridge Pro como gateway Zigbee + o RM4 Pro para IR/RF + o Home Assistant amarrando tudo. Comece pelo que resolve o seu problema mais urgente.
+
+## Perguntas frequentes
+
+**Qual a diferença entre hub e assistente de voz?**
+Assistente de voz (Alexa, Google) é a interface de controle por voz. Hub é o dispositivo que conecta os equipamentos. Muitos produtos combinam funções, como o Aqara Hub M2 (Zigbee + IR + ponte Alexa/Google/HomeKit).
+
+**Preciso de hub para ter casa inteligente?**
+Só se usar dispositivos Zigbee, Z-Wave ou Thread. Dispositivos Wi-Fi (Tuya, Tasmota) se conectam direto ao roteador sem hub.
+
+**Qual hub funciona offline?**
+Home Assistant + adaptador USB Zigbee é o campeão local. NSPanel Pro e ZB Bridge Pro flashados com Tasmota também funcionam sem internet.
+
+**Hub Zigbee ou Wi-Fi?**
+Para até 10 dispositivos, Wi-Fi resolve. Para mais de 10 ou para escalar, Zigbee é mais confiável e não sobrecarrega o roteador.
+
+---
+
+*Links do Mercado Livre aparecem como **Rede Caseira** — o perfil de afiliado da rede de sites do autor. [Saiba mais](/sobre/).*

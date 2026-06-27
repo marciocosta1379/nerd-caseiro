@@ -1,0 +1,148 @@
+---
+title: 'Zigbee vs Wi-Fi: qual protocolo para casa inteligente?'
+description: 'Zigbee ou Wi-Fi para automação residencial? Compare consumo, alcance, latência e custo para escolher o protocolo certo para sua casa.'
+pubDate: 2026-06-30
+category: 'automacao-residencial'
+tags: ['zigbee', 'wifi', 'protocolo', 'casa-inteligente', 'home-assistant']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '23/06/2026'
+products:
+  - name: 'Sonoff ZBMINIL2 (Zigbee)'
+    brand: 'Sonoff'
+    rating: 4.6
+    price: 134.28
+    image: '/images/produtos/sonoff-zbminil2.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2NxLtU5'
+    pros:
+      - 'Zigbee: consome ~0,3W em stand-by (10x menos que Wi-Fi)'
+      - 'Forma malha com outros dispositivos Zigbee — alcance cresce com a rede'
+      - 'Latência de resposta <100ms — notavelmente mais rápido'
+    cons:
+      - 'Requer gateway/hub Zigbee para funcionar'
+      - 'Configuração mais técnica que Wi-Fi'
+  - name: 'Sonoff Mini R4 (Wi-Fi)'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 74.90
+    image: '/images/produtos/sonoff-mini-r4.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1GjLFHh'
+    pros:
+      - 'Wi-Fi: conecta direto ao roteador, sem hub adicional'
+      - 'App e configuração simples — pronto em minutos'
+      - 'Flashável com Tasmota para uso local'
+    cons:
+      - 'Cada dispositivo consome endereço IP e banda Wi-Fi'
+      - 'Com muitos dispositivos, pode sobrecarregar o roteador'
+  - name: 'Sonoff Zigbee USB Dongle Plus'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 349.62
+    image: '/images/produtos/sonoff-zigbee-dongle-plus.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1PxnKq5'
+    pros:
+      - 'Transforma qualquer PC/Raspberry Pi em gateway Zigbee'
+      - 'Compatível com ZHA e Zigbee2MQTT no Home Assistant'
+      - 'Chip TI CC2652P — o mais compatível do mercado'
+    cons:
+      - 'Exige servidor Home Assistant sempre ligado'
+      - 'Não funciona sozinho sem software de automação'
+faq:
+  - question: 'Zigbee funciona sem internet?'
+    answer: 'Sim — Zigbee é um protocolo de rádio local (2,4GHz). Junto com o Home Assistant, você tem automações 100% offline. A internet só é necessária se você quiser controlar de fora de casa ou usar assistentes de voz na nuvem.'
+  - question: 'Quantos dispositivos Wi-Fi o roteador suporta?'
+    answer: 'Roteadores domésticos comuns suportam bem entre 20 e 30 dispositivos simultâneos. Com mais de 30 dispositivos IoT Wi-Fi, você começa a ter instabilidade. Zigbee não usa o roteador Wi-Fi — cada dispositivo Zigbee vira um repetidor da malha, sem impacto no roteador.'
+  - question: 'Posso misturar Zigbee e Wi-Fi na mesma casa?'
+    answer: 'Sim, e é o que a maioria dos makers faz. Dispositivos de alta demanda (câmeras, smart TVs) ficam no Wi-Fi. Sensores, lâmpadas e tomadas ficam no Zigbee. O Home Assistant integra os dois ecossistemas num só painel.'
+  - question: 'Zigbee e Wi-Fi usam a mesma frequência?'
+    answer: 'Ambos usam 2,4GHz, o que pode causar interferência. O Zigbee usa canais específicos (11-26) que evitam os canais Wi-Fi mais comuns (1, 6, 11). No Home Assistant, você pode ajustar o canal Zigbee para minimizar conflitos.'
+  - question: 'O que é Matter e como ele se relaciona?'
+    answer: 'Matter é um padrão mais novo que roda sobre Wi-Fi ou Thread (similar ao Zigbee em eficiência). Ele promete compatibilidade universal entre Amazon, Apple, Google e Samsung. No Brasil ainda está chegando — a maioria dos dispositivos acessíveis ainda é Zigbee ou Wi-Fi. Vale ficar de olho.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Se você está montando sua casa inteligente e se perdeu entre siglas — Zigbee, Wi-Fi, Z-Wave, Matter, Thread — não é por acaso. São protocolos diferentes, com vantagens reais distintas, e escolher o errado pode significar dores de cabeça à medida que a casa cresce.
+
+Neste guia prático, foco nos dois protocolos mais comuns no Brasil para quem usa **Home Assistant**: **Zigbee** e **Wi-Fi**. Vou comparar os dois em critérios concretos e dizer quando usar cada um.
+
+## A diferença fundamental
+
+| Critério | Zigbee | Wi-Fi |
+|----------|--------|-------|
+| Gateway necessário | Sim (hub ou dongle USB) | Não |
+| Topologia de rede | Malha (mesh) | Estrela (hub → dispositivo) |
+| Consumo em stand-by | ~0,1–0,3W | ~0,8–2W |
+| Latência de resposta | < 100ms | 200–500ms |
+| Limite de dispositivos | 128+ por gateway | ~30 por roteador |
+| Alcance por salto | 10–20m | 30–50m |
+| Custo de entrada | Mais alto (precisa de hub) | Mais baixo |
+| Funciona offline? | Sim (com HA local) | Depende do firmware |
+
+## Quando escolher Zigbee
+
+O Zigbee brilha quando você vai além de 10 dispositivos ou precisa de confiabilidade máxima. Cada dispositivo Zigbee cabeado (interruptor, tomada) vira automaticamente um **repetidor** da rede em malha — o alcance cresce com a própria rede, sem custo extra.
+
+Para **sensores de temperatura, presença e abertura de porta**, Zigbee é a escolha certa: consomem pouca energia (pilha dura 1–2 anos), têm latência baixa e não sobrecarregam o roteador.
+
+O custo de entrada é o maior obstáculo: você precisa de um gateway. A opção mais barata e técnica é o **Sonoff USB Dongle Plus** plugado num Raspberry Pi ou mini-PC com Home Assistant.
+
+![Sonoff Zigbee USB Dongle Plus](/images/produtos/sonoff-zigbee-dongle-plus.webp)
+
+<ProsCons pros={['Malha robusta: alcance cresce com cada dispositivo cabeado', 'Baixíssimo consumo em sensores a bateria', 'Até 128 dispositivos por gateway sem impactar o roteador', 'Latência <100ms — resposta quase instantânea']} cons={['Precisa de hub ou dongle + servidor HA', 'Configuração mais técnica que Wi-Fi', 'Menor ecossistema de produtos que Wi-Fi']} />
+
+<AffiliateButton href="https://meli.la/1PxnKq5" store="mercadolivre" source="zigbee-vs-wifi-automacao-residencial" />
+
+## Quando escolher Wi-Fi
+
+Wi-Fi é a escolha natural para quem está **começando** ou tem poucos dispositivos. Você plugou o Sonoff Mini R4, escaneou o QR code e em 3 minutos está controlando do celular. Sem hub, sem servidor, sem configuração extra.
+
+Para interruptores e tomadas num apartamento com até 15–20 dispositivos, Wi-Fi resolve bem. Flashado com **Tasmota**, você ainda ganha controle local — sem depender dos servidores Sonoff.
+
+![Sonoff Mini R4](/images/produtos/sonoff-mini-r4.webp)
+
+<ProsCons pros={['Zero configuração extra — conecta direto ao roteador', 'Ecossistema enorme (Tuya, Tasmota, Sonoff, TP-Link Tapo…)', 'Flashável com Tasmota para operação 100% local', 'Sem custo de entrada em hub']} cons={['Cada dispositivo ocupa IP e banda do roteador', 'Com 30+ dispositivos, roteador começa a engasgar', 'Consumo em stand-by maior que Zigbee']} />
+
+<AffiliateButton href="https://meli.la/1GjLFHh" store="mercadolivre" source="zigbee-vs-wifi-automacao-residencial" />
+
+## O que eu uso na prática
+
+Na minha casa, uso os dois em paralelo:
+
+- **Zigbee** para sensores (temperatura, presença, abertura de janela) e lâmpadas — bateria dura e resposta rápida.
+- **Wi-Fi + Tasmota** para interruptores e tomadas — Tasmota garante operação local mesmo sem internet.
+- **Home Assistant** como cérebro: integra os dois protocolos, cria automações cruzadas e roda no meu mini-PC sempre ligado.
+
+Se você está começando do zero, minha sugestão: **comece com 2–3 dispositivos Wi-Fi** para aprender o Home Assistant, depois adicione um **dongle Zigbee** quando quiser escalar com sensores e lâmpadas.
+
+## O que é Matter (e quando importa)?
+
+Matter é o padrão mais recente, apoiado por Amazon, Apple, Google e Samsung. Ele roda sobre Wi-Fi ou Thread (protocolo semelhante ao Zigbee em eficiência) e promete que qualquer dispositivo Matter vai funcionar com qualquer assistente, sem lock-in de fabricante.
+
+No Brasil, Matter está chegando aos poucos — alguns roteadores e dispositivos já suportam, mas o ecossistema de produtos acessíveis ainda é pequeno. **Para 2026, a decisão prática ainda é Zigbee ou Wi-Fi.** Daqui a 2–3 anos, Matter vai mudar o jogo.
+
+## Perguntas frequentes
+
+**Zigbee funciona sem internet?**
+Sim — é protocolo de rádio local. Com Home Assistant, 100% offline.
+
+**Quantos dispositivos Wi-Fi o roteador aguenta?**
+Roteadores domésticos comuns funcionam bem até ~30 dispositivos IoT simultâneos. Zigbee não usa o roteador.
+
+**Posso misturar Zigbee e Wi-Fi?**
+Sim, e é o que a maioria dos makers faz. HA integra os dois.
+
+**Zigbee e Wi-Fi interferem entre si?**
+Ambos usam 2,4GHz. Configure o canal Zigbee (ex.: canal 25) para evitar conflito com os canais Wi-Fi 1, 6 e 11.
+
+---
+
+*Links do Mercado Livre aparecem como **Rede Caseira** — o perfil de afiliado da rede de sites do autor. [Saiba mais](/sobre/).*

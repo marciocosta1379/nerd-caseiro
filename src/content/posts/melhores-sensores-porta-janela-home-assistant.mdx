@@ -1,0 +1,231 @@
+---
+title: 'Os 6 melhores sensores de porta e janela para Home Assistant'
+description: 'Compare os melhores sensores de abertura de porta e janela para Home Assistant: Zigbee e Wi-Fi, com preço, autonomia e compatibilidade.'
+pubDate: 2026-07-01
+category: 'automacao-residencial'
+tags: ['sensores', 'home-assistant', 'zigbee', 'porta', 'janela', 'seguranca']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '23/06/2026'
+products:
+  - name: 'Sonoff SNZB-04P (Zigbee)'
+    brand: 'Sonoff'
+    rating: 4.7
+    price: 129.90
+    image: '/images/produtos/sonoff-snzb-04p.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2dgwTaB'
+    pros:
+      - 'Zigbee 3.0 — compatível com ZHA, Z2M e Alexa Zigbee'
+      - 'Pilha CR2477 dura ~2 anos — trocar uma vez por ano é suficiente'
+      - 'Versão P tem sensor de temperatura integrado'
+    cons:
+      - 'Precisa de gateway Zigbee (hub, Echo ou dongle HA)'
+      - 'Design básico — sem acabamento premium'
+  - name: 'Aqara Door/Window Sensor P2'
+    brand: 'Aqara'
+    rating: 4.6
+    price: 222.01
+    image: '/images/produtos/aqara-sensor-porta-p2.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1yYrCNd'
+    pros:
+      - 'Compatível com HomeKit, Alexa, Google Home e HA via Matter/Zigbee'
+      - 'Design compacto e premium — discreto no batente'
+      - 'Bateria CR2032 dura ~2 anos'
+    cons:
+      - 'Precisa de hub Aqara para funcionar sem Matter'
+      - 'Preço mais alto que sensores genéricos'
+  - name: 'Tuya Zigbee Sensor Porta/Janela'
+    brand: 'Tuya'
+    rating: 4.3
+    price: 78.35
+    image: '/images/produtos/tuya-zigbee-sensor-porta.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1HbmZqY'
+    pros:
+      - 'Mais barato da lista — bom para quem quer cobrir muitas janelas'
+      - 'Integra com Zigbee2MQTT e ZHA no Home Assistant'
+      - 'Pequeno e discreto'
+    cons:
+      - 'Compatibilidade varia por lote — confirme o chip antes de comprar em quantidade'
+      - 'Sem temperatura integrada'
+  - name: 'Sonoff DW2-Wi-Fi'
+    brand: 'Sonoff'
+    rating: 4.4
+    price: 65.00
+    image: '/images/produtos/sonoff-dw2-wifi.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2fSMHW7'
+    pros:
+      - 'Wi-Fi direto — sem hub Zigbee necessário'
+      - 'Integra com Home Assistant via integração eWeLink Cloud ou local'
+      - 'Notificação de abertura no app mesmo fora de casa'
+    cons:
+      - 'Consome mais bateria que Zigbee — troca a cada 6–12 meses'
+      - 'Depende de nuvem eWeLink sem configuração extra'
+  - name: 'Shelly BLU Door/Window'
+    brand: 'Shelly'
+    rating: 4.5
+    price: 195.38
+    image: '/images/produtos/shelly-blu-door-window.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/19trjxX'
+    pros:
+      - 'Bluetooth de baixo consumo — bateria dura até 1,5 ano'
+      - 'Mede abertura, inclinação (tilt), luminosidade e temperatura'
+      - 'Integra ao HA via gateway BLU ou qualquer Shelly Wi-Fi como proxy BLE'
+    cons:
+      - 'Bluetooth, não Wi-Fi — precisa de um proxy/gateway para chegar ao HA'
+      - 'Alcance menor que Zigbee em casas grandes'
+  - name: 'Xiaomi Mi Door/Window Sensor 2'
+    brand: 'Xiaomi'
+    rating: 4.4
+    price: 139.90
+    image: '/images/produtos/xiaomi-mi-sensor-porta.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1EDNezd'
+    pros:
+      - 'Um dos sensores mais baratos e populares do mercado'
+      - 'Bluetooth de baixo consumo — bateria dura ~2 anos'
+      - 'Sensor de luz integrado — útil para automações por iluminação'
+    cons:
+      - 'Bluetooth — precisa de hub Xiaomi ou proxy BLE no Home Assistant'
+      - 'Configuração inicial passa pelo app Mi Home'
+faq:
+  - question: 'Sensor de porta precisa de hub?'
+    answer: 'Depende do protocolo. Sensores Zigbee precisam de um gateway Zigbee (hub, dongle USB ou Echo com Zigbee embutido). Sensores Wi-Fi conectam direto ao roteador sem hub. Se você já usa Home Assistant com dongle Zigbee, os sensores Zigbee são a melhor opção.'
+  - question: 'Quanto tempo dura a bateria de um sensor de porta?'
+    answer: 'Sensores Zigbee duram em média 1 a 2 anos com pilha CR2032 ou CR2477. Sensores Wi-Fi duram 6 a 12 meses. A diferença é o consumo: Zigbee entra em sono profundo entre as leituras, consumindo micro-amperes.'
+  - question: 'Sensor de abertura serve como alarme?'
+    answer: 'Ele deteta abertura e fecha/abre, mas não emite som sozinho. No Home Assistant, você cria uma automação que dispara uma notificação, aciona uma sirene ou acende as luzes quando a porta abrir fora do horário configurado. A lógica é sua — o sensor é o gatilho.'
+  - question: 'Quantos sensores posso ter no mesmo gateway Zigbee?'
+    answer: 'Um gateway Zigbee suporta até 128 dispositivos. Sensores de abertura são dispositivos "fim de rede" (não repetem sinal), então para casas grandes com muitos sensores, adicione alguns interruptores ou tomadas Zigbee cabeados que funcionem como repetidores.'
+  - question: 'Sensor de janela funciona em janela de correr?'
+    answer: 'Sim. O sensor é magnético: uma peça fica no batente fixo, a outra na parte que se move. Em janelas de correr, fixe uma peça no trilho fixo e outra na folha móvel. Funciona em qualquer janela desde que as duas peças fiquem a menos de ~1,5cm quando fechadas.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Um sensor de abertura de porta ou janela parece simples, mas é um dos dispositivos mais poderosos da automação residencial. Com ele, você sabe em tempo real o que está aberto ou fechado, cria automações que acendem a luz quando você entra em casa, desligam o ar-condicionado quando a janela abre, ou te notificam quando a porta da garagem ficou aberta há mais de 10 minutos.
+
+Selecionei os **6 melhores sensores para Home Assistant** — três Zigbee, um Wi-Fi e dois Bluetooth — com diferentes preços e funcionalidades.
+
+## Comparativo rápido
+
+<ComparisonTable
+  source="melhores-sensores-porta-janela-home-assistant"
+  priceDate="23/06/2026"
+  rows={[
+    { name: 'Sonoff SNZB-04P', brand: 'Sonoff', rating: 4.7, price: 129.90, highlight: 'Zigbee + temperatura — melhor custo/benefício', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2dgwTaB' }] },
+    { name: 'Aqara Door/Window P2', brand: 'Aqara', rating: 4.6, price: 222.01, highlight: 'Matter/Zigbee — premium', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1yYrCNd' }] },
+    { name: 'Tuya Zigbee Sensor', brand: 'Tuya', rating: 4.3, price: 78.35, highlight: 'Zigbee — mais barato', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1HbmZqY' }] },
+    { name: 'Sonoff DW2-Wi-Fi', brand: 'Sonoff', rating: 4.4, price: 65.00, highlight: 'Wi-Fi — sem hub', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2fSMHW7' }] },
+    { name: 'Shelly BLU Door/Window', brand: 'Shelly', rating: 4.5, price: 195.38, highlight: 'Bluetooth — bateria longa + tilt/temperatura', stores: [{ store: 'mercadolivre', url: 'https://meli.la/19trjxX' }] },
+    { name: 'Xiaomi Mi Sensor 2', brand: 'Xiaomi', rating: 4.4, price: 139.90, highlight: 'Bluetooth — barato e popular', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1EDNezd' }] },
+  ]}
+/>
+
+## 1. Sonoff SNZB-04P — o melhor custo/benefício Zigbee
+
+![Sonoff SNZB-04P](/images/produtos/sonoff-snzb-04p.webp)
+
+O SNZB-04P é a versão atualizada do popular SNZB-04, com o bônus de ter **sensor de temperatura integrado** — você monitora se a janela está aberta e a temperatura do cômodo com um único dispositivo. Zigbee 3.0, compatível com ZHA, Zigbee2MQTT e o Echo com Zigbee.
+
+Para cobrir várias portas e janelas a um custo razoável, este é o ponto de partida certo.
+
+<ProsCons pros={['Temperatura + abertura num sensor só', 'Zigbee 3.0 — compatibilidade ampla', 'Pilha dura ~2 anos']} cons={['Precisa de gateway Zigbee', 'Design simples']} />
+
+<AffiliateButton href="https://meli.la/2dgwTaB" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## 2. Aqara Door/Window Sensor P2 — o premium do Matter
+
+![Aqara Door/Window Sensor P2](/images/produtos/aqara-sensor-porta-p2.webp)
+
+O Aqara P2 suporta **Matter over Thread**, o que significa que funciona com qualquer ecossistema (Apple Home, Google Home, Alexa) sem depender de hub proprietário. É o sensor mais "à prova de futuro" da lista. Bateria CR2032, design compacto.
+
+Se você já tem um hub Aqara ou um roteador com Thread, é a escolha mais robusta para longo prazo.
+
+<ProsCons pros={['Matter + Thread — funciona com todos os ecossistemas', 'Design premium e discreto', 'Sem lock-in de fabricante']} cons={['Requer hub Aqara ou roteador Thread', 'Preço mais alto']} />
+
+<AffiliateButton href="https://meli.la/1yYrCNd" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## 3. Tuya Zigbee — o mais barato para escalar
+
+![Tuya Zigbee Sensor](/images/produtos/tuya-zigbee-sensor-porta.webp)
+
+Quando você quer cobrir **todas as janelas da casa** sem gastar muito, os sensores Tuya genéricos são os mais baratos. Integram com Zigbee2MQTT e ZHA no Home Assistant — com uma ressalva: a compatibilidade varia por fabricante/lote, então compre poucos primeiro para testar antes de comprar em quantidade.
+
+<ProsCons pros={['O mais barato para escalar — cobre muitas janelas', 'Funciona com Zigbee2MQTT e ZHA', 'Pequeno e discreto']} cons={['Compatibilidade varia por lote', 'Sem temperatura integrada']} />
+
+<AffiliateButton href="https://meli.la/1HbmZqY" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## 4. Sonoff DW2-Wi-Fi — Zigbee, sem hub
+
+![Sonoff DW2-Wi-Fi](/images/produtos/sonoff-dw2-wifi.webp)
+
+Se você não tem e não quer investir num gateway Zigbee, o DW2-Wi-Fi é a saída: conecta direto ao roteador e integra com o Home Assistant via integração eWeLink. Flashar com Tasmota ainda não é simples neste modelo, então você depende um pouco da nuvem — mas para a maioria dos usos (notificação de abertura) funciona bem.
+
+<ProsCons pros={['Wi-Fi direto — sem hub extra', 'Notificação em tempo real fora de casa', 'Integra com HA via eWeLink']} cons={['Bateria dura menos que Zigbee (6–12 meses)', 'Depende de nuvem eWeLink']} />
+
+<AffiliateButton href="https://meli.la/2fSMHW7" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## 5. Shelly BLU Door/Window — Bluetooth com bateria de anos
+
+![Shelly BLU Door/Window](/images/produtos/shelly-blu-door-window.webp)
+
+A Shelly aposentou o sensor Wi-Fi e hoje vende o **BLU Door/Window**, que usa **Bluetooth de baixíssimo consumo**: a bateria dura mais de um ano. Ele é o mais completo em sensores: além da abertura, mede **inclinação (tilt), luminosidade e temperatura**.
+
+O detalhe é a integração: por ser Bluetooth, ele precisa de um **gateway BLU** ou de qualquer dispositivo Shelly Wi-Fi atuando como **proxy BLE** para chegar ao Home Assistant. Quem já tem Shelly em casa integra de graça; quem não tem precisa contar o gateway no orçamento.
+
+<ProsCons pros={['Bateria Bluetooth dura mais de 1 ano', 'Abertura + tilt + luminosidade + temperatura', 'Integra ao HA via proxy BLE de qualquer Shelly Wi-Fi']} cons={['Bluetooth exige gateway/proxy para o HA', 'Alcance menor que Zigbee em casas grandes']} />
+
+<AffiliateButton href="https://meli.la/19trjxX" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## 6. Xiaomi Mi Door/Window Sensor 2 — o mais barato e popular
+
+![Xiaomi Mi Door/Window Sensor 2](/images/produtos/xiaomi-mi-sensor-porta.webp)
+
+Se o objetivo é **cobrir várias portas e janelas gastando pouco**, o Mi Sensor 2 é um dos mais vendidos do mundo. Bluetooth de baixo consumo (bateria dura cerca de 2 anos), compacto, e ainda traz um **sensor de luz** integrado — dá para criar automações que só disparam quando está escuro.
+
+Como é Bluetooth, ele precisa de um **hub Xiaomi** ou de um **proxy BLE** no Home Assistant (um ESP32 com ESPHome Bluetooth Proxy resolve bem e barato). A configuração inicial passa pelo app Mi Home.
+
+<ProsCons pros={['Um dos sensores mais baratos do mercado', 'Bateria dura ~2 anos', 'Sensor de luz integrado para automações']} cons={['Bluetooth — precisa de hub Xiaomi ou proxy BLE', 'Setup inicial pelo app Mi Home']} />
+
+<AffiliateButton href="https://meli.la/1EDNezd" store="mercadolivre" source="melhores-sensores-porta-janela-home-assistant" />
+
+## Como escolher
+
+- **Melhor custo/benefício Zigbee:** Sonoff SNZB-04P
+- **Sem hub Zigbee (Wi-Fi):** Sonoff DW2-Wi-Fi
+- **Mais sensores num só (tilt, luz, temp.):** Shelly BLU Door/Window
+- **Cobrir muitas janelas barato:** Tuya Zigbee genérico
+- **Mais barato (Bluetooth):** Xiaomi Mi Sensor 2
+- **À prova de futuro (Matter):** Aqara P2
+
+## Perguntas frequentes
+
+**Sensor de porta precisa de hub?**
+Sensores Zigbee precisam de gateway. Wi-Fi conectam direto ao roteador.
+
+**Quanto dura a bateria?**
+Zigbee: 1–2 anos. Wi-Fi: 6–12 meses. A diferença é o consumo em stand-by.
+
+**Sensor serve como alarme?**
+Não emite som sozinho. No HA você cria automações que disparam notificação, sirene ou luzes.
+
+**Funciona em janela de correr?**
+Sim — uma peça no trilho fixo, outra na folha móvel, a até ~1,5cm de distância.
+
+---
+
+*Links do Mercado Livre aparecem como **Rede Caseira** — o perfil de afiliado da rede de sites do autor. [Saiba mais](/sobre/).*

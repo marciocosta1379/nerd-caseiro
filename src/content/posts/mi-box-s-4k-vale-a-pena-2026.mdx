@@ -1,0 +1,159 @@
+---
+title: 'Mi Box S 4K: vale a pena comprar em 2026?'
+description: 'Review completo do Xiaomi Mi Box S 4K: desempenho, Android TV, aplicativos e comparação com Fire TV Stick 4K e Chromecast Google TV.'
+pubDate: 2026-07-03
+category: 'gadgets'
+tags: ['mi-box', 'xiaomi', 'android-tv', '4k', 'streaming', 'review']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '23/06/2026'
+products:
+  - name: 'Xiaomi Mi Box S 4K (2ª geração)'
+    brand: 'Xiaomi'
+    rating: 4.5
+    price: 589.99
+    image: '/images/produtos/xiaomi-mi-box-s-4k.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1Kr1JA5'
+    pros:
+      - 'Android TV oficial — Google Play Store completa, Chromecast embutido'
+      - '4K HDR10 + Dolby Audio — qualidade de imagem e som real para TV 4K'
+      - 'Google Assistente nativo + compatível com Home Assistant'
+    cons:
+      - 'Processador Amlogic S905X4 — interface leve; jogos pesados não rodam'
+      - '2GB RAM / 8GB armazenamento — pode travar com muitos apps instalados'
+  - name: 'Amazon Fire TV Stick 4K Max (2ª geração)'
+    brand: 'Amazon'
+    rating: 4.6
+    price: 389.00
+    image: '/images/produtos/amazon-fire-tv-stick-4k-max.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2PQQMaC'
+    pros:
+      - 'Wi-Fi 6E — mais rápido em redes novas'
+      - 'Alexa integrada + suporte a Matter e Thread'
+      - 'Interface fluida — mais RAM que o Mi Box S'
+    cons:
+      - 'Ecossistema Amazon — Prime Video em destaque, outros apps em segundo plano'
+      - 'Sem Google Play Store oficial — alguns apps precisam de sideload'
+  - name: 'Google TV Streamer 4K'
+    brand: 'Google'
+    rating: 4.6
+    price: 933.83
+    image: '/images/produtos/google-tv-streamer-4k.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1BHU9Mp'
+    pros:
+      - 'Sucessor oficial do Chromecast (2024) — Google TV com 32GB de armazenamento'
+      - 'Hub Matter/Thread embutido — vira central de casa inteligente'
+      - 'Processador mais rápido e 4GB de RAM — interface fluida'
+    cons:
+      - 'Mais caro que um dongle de streaming comum'
+      - 'Formato de caixa (não fica escondido atrás da TV como o dongle antigo)'
+faq:
+  - question: 'Mi Box S vs Google TV Streamer: qual escolher?'
+    answer: 'Depende do orçamento. O Google TV Streamer (sucessor oficial do Chromecast, 2024) tem interface mais moderna, hub Matter/Thread embutido e mais desempenho — mas custa bem mais. O Mi Box S tem Android TV com Google Play Store completa por um preço bem menor. Para Home Assistant, os dois integram bem via ADB.'
+  - question: 'Mi Box S roda Netflix em 4K?'
+    answer: 'Sim — o Mi Box S suporta Netflix em 4K com HDR10, desde que sua assinatura permita (plano Padrão com anúncios ou Premium). O dispositivo é certificado pelo Netflix (Netflix Ready Device Program), diferente de boxes genéricos que rodam Netflix em no máximo 1080p.'
+  - question: 'Qual a diferença entre Android TV e Google TV?'
+    answer: 'Android TV é a versão mais antiga da plataforma, com foco no launcher de apps. Google TV é a evolução (a partir de 2020) com foco em conteúdo recomendado, integrando catálogos de diferentes streamings numa interface unificada. O Mi Box S roda Android TV; o Chromecast roda Google TV.'
+  - question: 'Mi Box S tem Bluetooth?'
+    answer: 'Sim — Bluetooth 5.0. Conecta o controle remoto (incluído), fones Bluetooth e, com adaptador USB-OTG, controles de videogame via USB. Não substitui um console, mas para jogos casuais e emuladores funciona.'
+  - question: 'Consigo integrar o Mi Box S ao Home Assistant?'
+    answer: 'Sim — a integração ADB (Android Debug Bridge) do Home Assistant permite ligar, desligar, mudar volume, detectar o app em reprodução e até criar automações. Ex.: quando o Mi Box S ligar, HA dimma as luzes da sala automaticamente.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+O Mi Box S é um dos **media players mais vendidos do Brasil** — e por boas razões: tem Android TV oficial, suporta 4K HDR10 e custa menos que as alternativas americanas (Amazon e Google). Mas em 2026, ainda vale a pena ou já foi ultrapassado?
+
+Testei o Mi Box S na TV da sala por algumas semanas, comparei com o Fire TV Stick 4K Max e o Chromecast Google TV. Veja o resultado.
+
+## Especificações técnicas
+
+| Especificação | Mi Box S 4K |
+|---------------|-------------|
+| Processador | Amlogic S905X4 (quad-core Cortex-A55) |
+| RAM | 2 GB |
+| Armazenamento | 8 GB |
+| SO | Android TV 11 |
+| Resolução máxima | 4K UHD (3840×2160) |
+| HDR | HDR10, HLG |
+| Áudio | Dolby Audio, DTS-HD |
+| Conectividade | Wi-Fi 802.11 a/b/g/n/ac (5GHz), Bluetooth 5.0 |
+| Portas | HDMI 2.1, USB-A 2.0, entrada de energia |
+| Chromecast embutido | Sim (Chromecast built-in) |
+
+## Como o Mi Box S se sai na prática
+
+![Xiaomi Mi Box S 4K](/images/produtos/xiaomi-mi-box-s-4k.webp)
+
+O ponto forte do Mi Box S é o **Android TV oficial**: Google Play Store completa, Chromecast embutido para espelhar do celular, e Google Assistente integrado. Diferente de boxes genéricos chineses que rodam Android AOSP pirata, o Mi Box S tem licença Google — o que significa Netflix em 4K (não em 1080p como nos boxes não certificados), Disney+ e Prime Video funcionando normalmente.
+
+O processador Amlogic S905X4 com 2GB de RAM é suficiente para **streaming, YouTube e apps de vídeo**. A interface do Android TV navega de forma razoável, sem travamentos no uso diário. O que não roda: jogos pesados e apps que exigem muito processamento.
+
+O **Dolby Audio e 4K HDR10** fazem diferença real em TVs com boa calibração — filmes na Netflix Padrão 4K ficam notavelmente melhores que em 1080p.
+
+<ProsCons pros={['Android TV oficial — Google Play completa', '4K HDR10 + Dolby Audio certificado', 'Netflix 4K (certificado Netflix Ready)', 'Chromecast embutido + Google Assistente', 'Integra com Home Assistant via ADB']} cons={['2GB RAM — pode travar com muitos apps', '8GB armazenamento — instale só o essencial', 'Interface Android TV envelheceu vs Google TV', 'Sem Wi-Fi 6 — só ac (5GHz)']} />
+
+<AffiliateButton href="https://meli.la/1Kr1JA5" store="mercadolivre" source="mi-box-s-4k-vale-a-pena-2026" />
+
+## Comparativo com as alternativas
+
+<ComparisonTable
+  source="mi-box-s-4k-vale-a-pena-2026"
+  priceDate="23/06/2026"
+  rows={[
+    { name: 'Xiaomi Mi Box S 4K', brand: 'Xiaomi', rating: 4.5, price: 589.99, highlight: 'Android TV + Google Play completa', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1Kr1JA5' }] },
+    { name: 'Fire TV Stick 4K Max 2ª', brand: 'Amazon', rating: 4.6, price: 389.00, highlight: 'Wi-Fi 6E + Alexa + Matter', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2PQQMaC' }] },
+    { name: 'Google TV Streamer 4K', brand: 'Google', rating: 4.6, price: 933.83, highlight: 'Google TV + hub Matter/Thread', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1BHU9Mp' }] },
+  ]}
+/>
+
+### Fire TV Stick 4K Max (2ª geração)
+
+![Amazon Fire TV Stick 4K Max](/images/produtos/amazon-fire-tv-stick-4k-max.webp)
+
+O Fire TV tem interface mais fluida (mais RAM), Wi-Fi 6E e Alexa integrada. O ponto fraco é o ecossistema Amazon: a interface empurra Prime Video na sua cara e alguns apps (Google apps, em especial) não têm versão oficial. Se você assina Amazon Prime, é a escolha natural. Se prefere Google, vai se frustrar.
+
+<AffiliateButton href="https://meli.la/2PQQMaC" store="mercadolivre" source="mi-box-s-4k-vale-a-pena-2026" />
+
+### Google TV Streamer 4K
+
+![Google TV Streamer 4K](/images/produtos/google-tv-streamer-4k.webp)
+
+O Google descontinuou o Chromecast e lançou em 2024 o **Google TV Streamer** — agora em formato de caixa, com processador mais rápido, 4GB de RAM e 32GB de armazenamento. O grande diferencial é o **hub Matter/Thread embutido**: além de media player, ele vira central de casa inteligente. A interface Google TV agrega recomendações de múltiplos streamings numa tela só. É o mais completo dos três — e o mais caro. Para usuários Android, a integração com o ecossistema Google é impecável.
+
+<AffiliateButton href="https://meli.la/1BHU9Mp" store="mercadolivre" source="mi-box-s-4k-vale-a-pena-2026" />
+
+## Vale a pena em 2026?
+
+**Sim, para o preço que custa.** O Mi Box S entrega o que promete: Android TV oficial, 4K HDR, Netflix certificado e integração com Home Assistant. Não é o mais rápido nem o mais moderno, mas cumpre o papel de transformar qualquer TV em smart TV de forma confiável.
+
+Se você tem uma TV 4K sem smart TV integrada (ou com interface lenta), o Mi Box S é a entrada mais acessível para o ecossistema Google sem abrir mão de qualidade de imagem.
+
+**Prefira o Google TV Streamer** se puder gastar mais e quiser interface moderna com hub Matter/Thread embutido. **Prefira o Fire TV** se for do ecossistema Amazon/Alexa.
+
+## Perguntas frequentes
+
+**Mi Box S vs Google TV Streamer?**
+Google TV Streamer tem interface moderna e hub Matter/Thread, mas custa bem mais. Mi Box S tem Google Play completa por menos. Para HA, os dois integram bem.
+
+**Roda Netflix em 4K?**
+Sim — é certificado Netflix Ready. Requer assinatura que permita 4K.
+
+**Android TV vs Google TV?**
+Google TV é mais novo, foca em conteúdo recomendado agregado. Android TV é mais antigo, foca em apps. Mi Box S usa Android TV.
+
+**Integra com Home Assistant?**
+Sim — via integração ADB. Ligar/desligar, detectar app em reprodução, criar automações por horário.
+
+---
+
+*Links do Mercado Livre aparecem como **Rede Caseira** — o perfil de afiliado da rede de sites do autor. [Saiba mais](/sobre/).*
