@@ -41,7 +41,6 @@ async function main() {
     const pwd = await client.pwd();
     console.log(`Conectado. Dir de login: ${pwd}. ${stayInLoginDir ? 'Subindo no dir de login.' : `Indo para ${REMOTE_DIR}.`}`);
     if (!stayInLoginDir) await client.ensureDir(REMOTE_DIR);
-    await client.clearWorkingDir();
     await client.uploadFromDir(DIST_DIR);
 
     console.log('Deploy concluído com sucesso!');
