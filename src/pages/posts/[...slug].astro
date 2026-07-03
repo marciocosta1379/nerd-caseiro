@@ -69,7 +69,7 @@ const productSchemas = products.filter((p) => p.price != null).map((p) => ({
         seller: { '@type': 'Organization', name: 'Mercado Livre' },
         shippingDetails: {
           '@type': 'OfferShippingDetails',
-          shippingRate: { '@type': 'MonetaryAmount', minValue: 0, currency: 'BRL' },
+          shippingRate: { '@type': 'MonetaryAmount', minValue: 0, maxValue: 50, currency: 'BRL' },
           shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'BR' },
           deliveryTime: {
             '@type': 'ShippingDeliveryTime',
