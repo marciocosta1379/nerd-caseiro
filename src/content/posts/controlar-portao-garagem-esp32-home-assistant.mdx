@@ -1,0 +1,217 @@
+---
+title: 'Controle o portão da garagem com ESP32 e Home Assistant'
+description: 'Tutorial: transforme o motor do portão eletrônico em uma entidade cover do Home Assistant com ESP32, relé e sensor magnético. Código ESPHome incluso.'
+pubDate: 2026-07-09
+category: 'automacao-residencial'
+tags: ['home-assistant', 'esp32', 'esphome', 'portao', 'diy']
+featured: true
+draft: true
+priceCheckedAt: '02/07/2026'
+author: 'Márcio Costa'
+products:
+  - name: 'Placa ESP32 DevKit NodeMCU Wi-Fi/Bluetooth'
+    brand: 'ESP32'
+    rating: 4.6
+    price: 45
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/27hxVEq'
+    image: '/images/produtos/esp32-devkit-nodemcu-2.webp'
+    pros:
+      - 'Wi-Fi nativo — não precisa de gateway extra para falar com o Home Assistant'
+      - 'Roda ESPHome direto, sem escrever C++ manualmente'
+    cons:
+      - 'Exige noção básica de eletrônica de baixa tensão para as ligações'
+  - name: 'Módulo Relé 5V 1 Canal (Arduino/ESP32)'
+    brand: 'Genérico'
+    rating: 4.5
+    price: 12.49
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1BbGrhd'
+    image: '/images/produtos/modulo-rele-5v-1canal.webp'
+    pros:
+      - 'Isola eletricamente o ESP32 do circuito do motor do portão'
+      - 'Barato e fácil de achar — item padrão de qualquer kit de automação'
+    cons:
+      - 'A maioria dos módulos importados vem sem case — cuidado ao manusear com o portão energizado'
+  - name: 'Sensor Magnético de Contato Reed Switch (NC/NA)'
+    brand: 'Genérico'
+    rating: 4.3
+    price: 66.79
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2L11bkJ'
+    image: '/images/produtos/sensor-magnetico-reed-switch.webp'
+    pros:
+      - 'Dá ao Home Assistant o estado real do portão (aberto/fechado), não só "comando enviado"'
+      - 'Mesmo tipo de sensor usado em porta/janela — barato e fácil de instalar'
+    cons:
+      - 'Só informa dois estados (aberto/fechado) — não detecta posição intermediária'
+faq:
+  - question: 'Esse projeto funciona com qualquer motor de portão?'
+    answer: 'Funciona com qualquer motor eletrônico que tenha um botão físico de subir/abrir (a maioria dos motores residenciais brasileiros — PPA, Garen, Peccinin — usa um botão único que alterna abrir/parar/fechar a cada aperto). O relé simplesmente "aperta" esse botão eletronicamente. Motores muito antigos sem essa interface de botão podem precisar de uma adaptação diferente.'
+  - question: 'É seguro mexer na fiação do motor do portão?'
+    answer: 'O relé é ligado em paralelo aos terminais do botão físico existente (baixa tensão, geralmente 12-24V), não na rede 220V que alimenta o motor. Ainda assim, desligue o disjuntor do motor antes de abrir o quadro de comando, e se tiver qualquer dúvida sobre a fiação do seu modelo específico, consulte um eletricista ou o manual do fabricante.'
+  - question: 'Preciso trocar o controle remoto que já uso?'
+    answer: 'Não. O relé fica em paralelo com o botão existente — o controle remoto original continua funcionando normalmente. Você ganha uma forma adicional de acionar o portão (Home Assistant, automações, comando de voz), sem perder a forma antiga.'
+  - question: 'O sensor magnético detecta se o portão está "no meio do caminho"?'
+    answer: 'Não com apenas um sensor — ele só informa aberto ou fechado (os dois estados binários do reed switch). Para saber se o portão está em movimento, o Home Assistant pode inferir isso pelo tempo entre o comando e a mudança de estado do sensor, mas não há posição intermediária real sem um segundo sensor ou encoder.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+A maioria dos motores de portão eletrônico residencial (PPA, Garen, Peccinin e afins) já tem um botão físico de abrir/fechar dentro do quadro de comando — o mesmo botão que o instalador usa para testar o motor. Esse projeto aproveita exatamente esse botão: um relé controlado por ESP32 "aperta" esse botão eletronicamente sempre que você mandar um comando pelo Home Assistant, enquanto um sensor magnético informa se o portão está aberto ou fechado. O controle remoto original continua funcionando normalmente — você só ganha uma forma extra de acionar o portão.
+
+## O que você vai montar
+
+- Um **ESP32** rodando ESPHome, conectado ao seu Wi-Fi
+- Um **módulo relé** ligado em paralelo ao botão físico existente do motor do portão
+- Um **sensor magnético (reed switch)** instalado no portão para informar aberto/fechado
+- Uma entidade `cover` (tipo "garagem") no Home Assistant, com histórico e automações
+
+## Lista de materiais
+
+<ComparisonTable
+  source="controlar-portao-garagem-esp32-home-assistant"
+  rows={[
+    { name: 'Placa ESP32 DevKit NodeMCU Wi-Fi/Bluetooth', brand: 'ESP32', rating: 4.6, highlight: 'Cérebro do projeto', stores: [{ store: 'mercadolivre', url: 'https://meli.la/27hxVEq' }] },
+    { name: 'Módulo Relé 5V 1 Canal (Arduino/ESP32)', brand: 'Genérico', rating: 4.5, highlight: 'Aciona o botão do motor', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1BbGrhd' }] },
+    { name: 'Sensor Magnético de Contato Reed Switch (NC/NA)', brand: 'Genérico', rating: 4.3, highlight: 'Informa aberto/fechado', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2L11bkJ' }] },
+  ]}
+/>
+
+![Placa ESP32 DevKit NodeMCU](/images/produtos/esp32-devkit-nodemcu-2.webp)
+
+<AffiliateButton href="https://meli.la/27hxVEq" store="mercadolivre" source="controlar-portao-garagem-esp32-home-assistant" />
+
+Além dos três itens acima, você vai precisar de: alguns metros de cabo de campainha (2 vias, para o sensor magnético até o quadro de comando) e uma fonte 5V (a maioria dos quadros de comando de motor de portão já tem uma saída auxiliar de 12V/24V — dá para usar um pequeno conversor DC-DC, ou alimentar o ESP32 por um carregador USB comum próximo à tomada do motor).
+
+## Esquema de ligação
+
+```
+ESP32 GPIO5   →  Módulo relé (pino IN)
+Relé COM/NA   →  em paralelo com os 2 terminais do botão físico do motor
+ESP32 GPIO4   →  Sensor magnético (reed switch), com pull-up interno
+Sensor GND    →  GND do ESP32
+Relé VCC/GND  →  5V e GND do ESP32 (ou fonte externa, se o relé exigir mais corrente)
+```
+
+> **Importante:** desligue o disjuntor que alimenta o motor do portão antes de abrir o quadro de comando. O relé liga apenas nos terminais de baixa tensão do botão existente — nunca na rede 220V que alimenta o motor.
+
+O sensor magnético é instalado como qualquer sensor de porta/janela: o ímã fica na parte móvel do portão, e o sensor (reed switch) na parte fixa da estrutura, alinhados quando o portão está fechado.
+
+## Código ESPHome
+
+```yaml
+# esphome/portao-garagem.yaml
+esphome:
+  name: portao-garagem
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: "SUA_REDE"
+  password: "SUA_SENHA"
+
+api:
+  encryption:
+    key: "CHAVE_GERADA_PELO_ESPHOME"
+
+ota:
+  password: "SUA_SENHA_OTA"
+
+logger:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "Portão — fechado"
+    device_class: garage_door
+    id: sensor_portao_fechado
+
+output:
+  - platform: gpio
+    pin: GPIO5
+    id: rele_aciona_portao
+
+switch:
+  - platform: output
+    output: rele_aciona_portao
+    id: pulso_rele
+    name: "Portão — acionar motor (pulso)"
+
+cover:
+  - platform: template
+    name: "Portão da Garagem"
+    device_class: garage
+    lambda: |-
+      if (id(sensor_portao_fechado).state) {
+        return COVER_CLOSED;
+      } else {
+        return COVER_OPEN;
+      }
+    open_action:
+      - switch.turn_on: pulso_rele
+      - delay: 500ms
+      - switch.turn_off: pulso_rele
+    close_action:
+      - switch.turn_on: pulso_rele
+      - delay: 500ms
+      - switch.turn_off: pulso_rele
+    stop_action:
+      - switch.turn_on: pulso_rele
+      - delay: 500ms
+      - switch.turn_off: pulso_rele
+```
+
+O `lambda` do `cover` lê o sensor magnético para reportar o estado real (aberto/fechado) ao Home Assistant. Como o motor usa um único botão que alterna abrir/parar/fechar a cada pulso, as três ações (`open_action`, `close_action`, `stop_action`) fazem exatamente a mesma coisa: um pulso de 500ms no relé — é o motor que decide o que fazer com esse pulso, dependendo do estado em que ele já está. Ajuste a duração do pulso (`delay: 500ms`) se o seu motor precisar de um toque mais longo ou mais curto no botão — teste na prática e ajuste conforme necessário.
+
+## Automações recomendadas no Home Assistant
+
+```yaml
+automation:
+  - alias: "Portão — avisar se ficou aberto por mais de 10 minutos"
+    trigger:
+      - platform: state
+        entity_id: cover.portao_da_garagem
+        to: "open"
+        for:
+          minutes: 10
+    action:
+      - service: notify.mobile_app_seu_celular
+        data:
+          message: "O portão da garagem está aberto há 10 minutos."
+
+  - alias: "Portão — fechar automaticamente à noite se aberto"
+    trigger:
+      - platform: time
+        at: "22:00:00"
+    condition:
+      - condition: state
+        entity_id: cover.portao_da_garagem
+        state: "open"
+    action:
+      - service: cover.close_cover
+        entity_id: cover.portao_da_garagem
+```
+
+## Dicas e troubleshooting
+
+- **O relé aciona, mas o portão não responde:** confira se o botão físico do motor é do tipo "seco" (contato simples) e não exige uma tensão específica — alguns modelos usam 12V ou 24V no próprio botão, e nesse caso o relé precisa ser dimensionado para essa tensão, não para os 5V do ESP32.
+- **O sensor magnético mostra o estado errado:** troque o `inverted: true` por `false` no YAML (ou vice-versa) — depende de como o reed switch está fiado (normalmente aberto vs normalmente fechado).
+- **O portão abre mas o Home Assistant continua mostrando "fechado":** o problema é o alinhamento físico do ímã com o sensor — ajuste a distância e o ângulo até o estado mudar corretamente nos dois extremos (aberto e fechado).
+- **Quero saber se o portão está em movimento:** dá para estimar isso no Home Assistant com um `template` sensor que marca "abrindo/fechando" por alguns segundos após o comando, até o sensor magnético confirmar o novo estado — mas isso é aproximado, não uma leitura real de posição.
+
+> Ainda não tem o motor instalado? No [Reforma Caseira](https://reformacaseira.com.br/posts/como-instalar-motor-portao-eletronico), nosso site irmão de ferramentas e reforma, tem o passo a passo completo de como instalar o motor de portão eletrônico antes de partir para essa automação.
+
+---
+
+*Dúvidas sobre algum produto? [Fale com a gente](/contato/).*
