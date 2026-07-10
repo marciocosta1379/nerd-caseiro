@@ -33,8 +33,12 @@ npm run search       # Baixa imagens dos produtos (search-products.mjs)
 npm run scaffold     # Gera MDX a partir de JSON de produtos
 npm run og           # Gera os cartões og:image
 npm run publish-scheduled  # Publica posts com pubDate <= hoje
-npm run update-prices      # Atualiza preços via API do Mercado Livre
+npm run update-prices      # Atualiza preços via API do Mercado Livre (pode falhar, ver nota abaixo)
+npm run ml-scrape -- "<url1>" "<url2>"  # Coleta nome/preço/nota/imagem de produtos ML via Chrome real (CDP)
 ```
+
+### ⚠️ Pesquisa de produtos no Mercado Livre
+Desde 09/07/2026 o ML bloqueia acesso automatizado por qualquer via direta — WebFetch e `curl` caem num redirect de verificação anti-bot (`gz/account-verification`), e a própria API oficial (`update-prices.mjs`) passou a responder 404/403 mesmo com token válido. O que funciona: um Chrome **de verdade** controlado via CDP (`scripts/ml-cdp.mjs`), no mesmo molde do `petz-cdp.mjs` da rede. Abra o Chrome com `--remote-debugging-port=9222 --user-data-dir=<pasta temp>` antes de rodar `npm run ml-scrape`. Para página de catálogo com variação (cor/voltagem) sem opção selecionada, o preço vem `null` — nesse caso use `ml-cdp-nav.mjs` para abrir a página, escolha a variante na janela do Chrome, e `ml-cdp-read.mjs` lê a página atual sem navegar de novo. **Todo preço extraído é provisório** — confirme com o usuário antes de publicar (histórico de correções: ver memória da rede).
 
 ## Categorias válidas
 
