@@ -1,0 +1,237 @@
+---
+title: 'Sensor de vazamento de água com ESP32 e Home Assistant'
+description: 'Tutorial: monte um alarme de vazamento de água com ESP32, sensor de chuva/líquido e buzzer local. Código ESPHome testado e notificação no Home Assistant.'
+pubDate: 2026-07-16
+category: 'eletronica-maker'
+tags: ['home-assistant', 'esp32', 'esphome', 'vazamento de agua', 'diy']
+featured: true
+draft: true
+priceCheckedAt: '07/07/2026'
+author: 'Márcio Costa'
+products:
+  - name: 'Placa ESP32 DevKit NodeMCU Wi-Fi/Bluetooth'
+    brand: 'ESP32'
+    rating: 4.6
+    price: 45
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/27hxVEq'
+    image: '/images/produtos/esp32-devkit-nodemcu-3.webp'
+    pros:
+      - 'Wi-Fi nativo — notificação chega no celular sem gateway extra'
+      - 'ADC embutido lê o sensor analógico direto, sem placa conversora'
+    cons:
+      - 'Exige noção básica de eletrônica de baixa tensão para as ligações'
+  - name: 'Sensor de Chuva e Líquido (Água) com Cabo para Arduino/ESP32'
+    brand: 'Genérico'
+    rating: 4.5
+    price: 18.33
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2ZBYkjg'
+    image: '/images/produtos/sensor-chuva-liquido.webp'
+    pros:
+      - 'Barato e fácil de achar — o mesmo sensor usado em estação meteorológica DIY'
+      - 'Saída analógica permite calibrar a sensibilidade (poça grande vs poucas gotas)'
+    cons:
+      - 'Placa fica exposta ao contato com água — não é à prova d’água para submersão'
+  - name: 'Módulo Buzzer Ativo KY-012 5V'
+    brand: 'Genérico'
+    rating: 4.4
+    price: 22
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2GaPucr'
+    image: '/images/produtos/buzzer-ky012.webp'
+    pros:
+      - 'Alarme sonoro local funciona mesmo se o Wi-Fi cair — ninguém depende só da notificação'
+      - 'Liga direto num pino digital do ESP32, sem circuito adicional'
+    cons:
+      - 'Buzzer ativo é sempre no mesmo tom/volume — sem controle de intensidade'
+faq:
+  - question: 'Esse sensor detecta vazamento embaixo da pia ou só poça no chão?'
+    answer: 'Detecta contato direto de água com a placa do sensor — funciona bem posicionado no chão embaixo da pia, perto do aquecedor/máquina de lavar, ou em qualquer ponto onde um vazamento formaria poça. Ele não detecta umidade no ar nem vazamento dentro de uma parede/tubulação — para isso, seria necessário um sensor diferente (de umidade relativa ou pressão de linha).'
+  - question: 'Posso usar mais de um sensor no mesmo ESP32?'
+    answer: 'Sim — o ESP32 tem vários pinos ADC disponíveis. Basta repetir o bloco sensor/binary_sensor no YAML para cada pino usado, dando um nome diferente a cada sensor (ex.: "Vazamento — Cozinha", "Vazamento — Área de Serviço"), e o Home Assistant vai mostrar cada um como uma entidade separada.'
+  - question: 'O sensor pode ficar permanentemente em contato com um pouco de água?'
+    answer: 'Não é recomendado. A placa exposta (sem proteção) pode oxidar com o tempo se ficar molhada constantemente — o ideal é que ela normalmente esteja seca e só entre em contato com água no momento de um vazamento real. Para ambientes com umidade constante, considere aplicar verniz de proteção nos contatos elétricos (mantendo a superfície de detecção livre) ou trocar o sensor periodicamente.'
+  - question: 'Preciso de um relé para fechar o registro de água automaticamente?'
+    answer: 'Não é obrigatório — este tutorial cobre o alerta (notificação + alarme sonoro), que já resolve a maior parte do problema (agir rápido). Fechar o registro automaticamente exigiria uma eletroválvula compatível com a tubulação da casa e um relé de potência adequado — projeto mais complexo e específico para cada instalação hidráulica, fora do escopo deste guia.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+Vazamento de água que ninguém percebe a tempo é receita para conta alta, mofo e até dano estrutural. Um sensor de R$ 18 ligado a um ESP32 resolve isso: detecta o contato com água no chão (embaixo da pia, perto do aquecedor, atrás da máquina de lavar) e dispara notificação no Home Assistant **e** um alarme sonoro local — mesmo que o Wi-Fi caia justo na hora que você mais precisa saber.
+
+Vazamentos pequenos e lentos são os mais traiçoeiros: não formam poça grande o suficiente para você notar de relance, mas ao longo de semanas apodrecem rodapé, mancham parede e inflam a conta de água sem ninguém entender por quê. Colocar um sensor de R$ 18 exatamente nos pontos de risco resolve esse ponto cego — e como o alarme soa localmente (via buzzer) além de notificar o celular, você fica coberto mesmo num momento em que o Wi-Fi da casa cair ou o celular estiver no silencioso.
+
+## Onde instalar: os pontos de risco mais comuns
+
+Antes de sair comprando sensor para a casa toda, vale mapear onde um vazamento realmente aconteceria primeiro:
+
+- **Embaixo da pia da cozinha e do banheiro** — conexões de mangueira e sifão são os pontos mais comuns de gotejamento lento.
+- **Atrás/embaixo da máquina de lavar roupa** — mangueiras de entrada e saída de água sob pressão, e vibração da máquina pode afrouxar conexões com o tempo.
+- **Perto do aquecedor de água (boiler ou passagem)** — conexões hidráulicas expostas a variação de temperatura tendem a folgar mais rápido.
+- **Embaixo ou ao lado da caixa d'água/reservatório**, se for acessível — boia com defeito transborda sem ninguém perceber até secar o hidrômetro.
+- **Perto do ar-condicionado split**, no ponto de dreno — entupimento do dreno é causa comum de "vazamento" que na verdade é água de condensação acumulada.
+
+Um único sensor cobre bem um ponto específico. Para cobertura completa da casa, o caminho é repetir o circuito (visto na seção de variações, mais abaixo) em cada ponto de risco — não adianta um sensor só na cozinha se o vazamento real acontecer no banheiro do outro lado da casa.
+
+## O que você vai montar
+
+- Um **ESP32** rodando ESPHome, conectado ao seu Wi-Fi
+- Um **sensor de chuva/líquido** posicionado no chão, no ponto de risco de vazamento
+- Um **buzzer ativo** para alarme sonoro local, independente da notificação
+- Uma entidade `binary_sensor` (classe "umidade") no Home Assistant, com automação de notificação
+
+## Lista de materiais
+
+<ComparisonTable
+  source="sensor-vazamento-agua-esp32-home-assistant"
+  priceDate="07/07/2026"
+  rows={[
+    { name: 'Placa ESP32 DevKit NodeMCU Wi-Fi/Bluetooth', brand: 'ESP32', rating: 4.6, price: 45, highlight: 'Cérebro do projeto', stores: [{ store: 'mercadolivre', url: 'https://meli.la/27hxVEq' }] },
+    { name: 'Sensor de Chuva e Líquido com Cabo', brand: 'Genérico', rating: 4.5, price: 18.33, highlight: 'Detecta o contato com água', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2ZBYkjg' }] },
+    { name: 'Módulo Buzzer Ativo KY-012 5V', brand: 'Genérico', rating: 4.4, price: 22, highlight: 'Alarme sonoro local', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2GaPucr' }] },
+  ]}
+/>
+
+![Placa ESP32 DevKit NodeMCU](/images/produtos/esp32-devkit-nodemcu-3.webp)
+
+<AffiliateButton href="https://meli.la/27hxVEq" store="mercadolivre" source="sensor-vazamento-agua-esp32-home-assistant" />
+
+## Como o sensor funciona
+
+O sensor de chuva/líquido é uma placa com trilhas de cobre expostas em padrão de pente — quando seca, a resistência entre as trilhas é praticamente infinita (nenhuma corrente passa); quando a água toca as trilhas, ela conduz um pouco de corrente entre elas, e a placa entrega uma tensão analógica proporcional à quantidade de contato (poça grande = mais contato = sinal mais forte). É o mesmo princípio usado em sensores de chuva de estação meteorológica, só que aqui usado deitado no chão em vez de exposto ao tempo.
+
+Por entregar um valor **analógico** (não só ligado/desligado), o ESP32 lê a tensão pelo ADC (conversor analógico-digital) e o ESPHome converte esse valor num sensor binário (seco/molhado) usando um limiar (threshold) configurável — se o sinal passar do limiar, dispara o alarme.
+
+## Esquema de ligação
+
+```
+ESP32 GPIO34 (ADC)  →  Saída analógica (AO) do sensor de chuva/líquido
+ESP32 3V3            →  VCC do sensor de chuva/líquido
+ESP32 GND            →  GND do sensor de chuva/líquido (e GND do buzzer)
+ESP32 GPIO5          →  Pino de sinal (+) do buzzer ativo KY-012
+Buzzer GND           →  GND do ESP32
+```
+
+> **Posicionamento:** coloque o sensor deitado no chão, na área de maior risco de poça (embaixo da pia, atrás da máquina de lavar, perto do aquecedor de água). O cabo permite deixar o ESP32 em um ponto mais protegido, longe de qualquer risco de respingo direto.
+
+## Código ESPHome
+
+```yaml
+# esphome/vazamento-agua.yaml
+esphome:
+  name: vazamento-agua
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: "SUA_REDE"
+  password: "SUA_SENHA"
+
+api:
+  encryption:
+    key: "CHAVE_GERADA_PELO_ESPHOME"
+
+ota:
+  password: "SUA_SENHA_OTA"
+
+logger:
+
+sensor:
+  - platform: adc
+    pin: GPIO34
+    id: leitura_sensor_agua
+    attenuation: 11db
+    update_interval: 2s
+    name: "Leitura bruta sensor de água"
+    entity_category: diagnostic
+
+binary_sensor:
+  - platform: analog_threshold
+    sensor_id: leitura_sensor_agua
+    name: "Vazamento de Água"
+    device_class: moisture
+    threshold:
+      upper: 1.5
+      lower: 1.0
+    filters:
+      - delayed_on: 200ms
+      - delayed_off: 10s
+    on_press:
+      - switch.turn_on: alarme_sonoro
+    on_release:
+      - switch.turn_off: alarme_sonoro
+
+output:
+  - platform: gpio
+    pin: GPIO5
+    id: saida_buzzer
+
+switch:
+  - platform: output
+    output: saida_buzzer
+    id: alarme_sonoro
+    name: "Alarme sonoro vazamento"
+```
+
+O `sensor` do tipo `adc` lê a tensão bruta no pino GPIO34 continuamente (a cada 2 segundos). O `binary_sensor` do tipo `analog_threshold` converte essa leitura num estado seco/molhado: quando o valor sobe acima de `upper` (1.5V neste exemplo), considera "molhado"; só volta a "seco" quando cai abaixo de `lower` (1.0V) — essa diferença entre os dois limiares (histerese) evita que o sensor fique alternando de estado por causa de ruído elétrico bem na fronteira do limiar. Os filtros `delayed_on`/`delayed_off` seguram a mudança de estado por alguns instantes, para não disparar por um respingo passageiro nem desligar o alarme cedo demais.
+
+Os valores `upper`/`lower` (1.5V/1.0V) são um ponto de partida — a tensão exata que seu sensor específico entrega variando com água depende do modelo e da umidade ambiente. **Calibre na prática:** com o ESPHome rodando, molhe levemente o sensor e observe o valor de "Leitura bruta sensor de água" nos logs ou no Home Assistant, depois ajuste `upper`/`lower` para os valores reais que você observou.
+
+## Automação no Home Assistant
+
+```yaml
+automation:
+  - alias: "Vazamento de água — notificar"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.vazamento_de_agua
+        to: "on"
+    action:
+      - service: notify.mobile_app_seu_celular
+        data:
+          title: "⚠️ Vazamento de água detectado!"
+          message: "O sensor identificou água no local monitorado. Verifique agora."
+      - service: light.turn_on
+        target:
+          entity_id: light.sala
+        data:
+          flash: long
+```
+
+A automação acima notifica o celular assim que o sensor mudar para "molhado", e opcionalmente pisca uma luz da casa (útil se você estiver em outro cômodo e quiser um alerta visual imediato, não só no celular). Adapte o `entity_id` do `notify` para o app instalado no seu celular, e o `light.sala` para uma luz real da sua instalação (ou remova essa ação se preferir só a notificação).
+
+## Calibrando na prática (passo a passo)
+
+A parte que mais gera dúvida neste projeto não é o código — é achar o par `upper`/`lower` certo para o **seu** sensor específico, já que a tensão de saída varia por fabricante e até por umidade ambiente do dia. Um processo confiável:
+
+1. Depois de flashear o ESPHome, deixe o sensor completamente seco e abra os logs do dispositivo (ou o painel do Home Assistant) observando o valor de "Leitura bruta sensor de água" por 1-2 minutos — anote o valor de repouso (normalmente próximo de 0V, mas alguns sensores flutuam um pouco).
+2. Pingue **poucas** gotas de água nas trilhas (não afogue) e observe até onde o valor sobe — esse é o seu "vazamento leve".
+3. Despeje água suficiente para cobrir as trilhas por completo (simulando uma poça real) e observe o valor máximo.
+4. Defina `lower` um pouco acima do valor de repouso seco (para não disparar por umidade do ar) e `upper` entre o valor de "gotas leves" e o de "poça completa" — isso faz o alarme disparar já nas primeiras gotas, sem esperar virar poça grande.
+5. Seque bem o sensor com papel toalha antes de reinstalar no local definitivo — resíduo de água doce costuma evaporar rápido, mas água com sabão/produto de limpeza pode deixar resíduo condutor residual que atrapalha a leitura de repouso.
+
+## Variações do projeto
+
+- **Monitorar vários pontos com um ESP32 só:** o ESP32 tem múltiplos pinos ADC disponíveis (GPIO32, GPIO33, GPIO35, GPIO36, entre outros, dependendo da placa). Repita o par `sensor` (adc) + `binary_sensor` (analog_threshold) para cada sensor físico adicional, cada um com seu próprio `id` e `name` — o Home Assistant vai listar cada ponto monitorado como uma entidade independente, então você sabe exatamente qual cômodo disparou o alerta.
+- **Versão a pilha/bateria (sem fio):** para pontos sem tomada por perto, um ESP32 alimentado por poucas pilhas ou poucas baterias 18650 funciona, mas o consumo do Wi-Fi ligado o tempo todo reduz bastante a autonomia — vale pesquisar o modo `deep_sleep` do ESPHome, que liga o rádio só em intervalos, se a bateria for uma restrição real no seu caso.
+- **Alerta multicanal:** além da notificação push e do buzzer local, dá para somar uma automação que acende uma lâmpada inteligente em vermelho, manda mensagem para um grupo de WhatsApp (via integração de terceiros) ou aciona uma campainha existente — o `binary_sensor` já criado serve de gatilho para qualquer ação que o Home Assistant suportar.
+- **Combinar com desligamento automático:** para quem quer ir além do alerta e fechar o registro de água sozinho, o próximo passo natural é somar uma eletroválvula (compatível com a tubulação) acionada por um relé — mas isso é um projeto à parte, que exige atenção à pressão da rede e ao ponto certo de instalação hidráulica.
+
+## Dicas e troubleshooting
+
+- **O sensor não detecta a água mesmo molhado:** confira a ligação do AO ao GPIO34 e teste a leitura bruta antes de mexer no threshold — se a "Leitura bruta" não mudar nada ao molhar o sensor, o problema é na ligação, não no limiar.
+- **O alarme dispara sozinho sem motivo aparente:** normalmente é ruído elétrico ou threshold configurado baixo demais — aumente ligeiramente o valor de `upper` e confira se o `delayed_on` de 200ms é suficiente para filtrar picos rápidos.
+- **Quero silenciar o buzzer sem desligar o monitoramento:** adicione um segundo `switch` (tipo `template`) que force `alarme_sonoro` para desligado mesmo com o sensor ativo, e exponha esse switch como um botão "silenciar" separado no Home Assistant.
+- **Quero monitorar mais de um ponto:** repita os blocos `sensor` (com outro pino ADC, como GPIO35 ou GPIO32) e `binary_sensor` para cada sensor extra, dando nomes diferentes a cada um.
+
+---
+
+*Dúvidas sobre algum produto? [Fale com a gente](/contato/).*
