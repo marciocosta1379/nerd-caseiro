@@ -1,0 +1,117 @@
+---
+title: 'Aqara Hub M3: vale a pena o hub de automação em 2026?'
+description: 'Review do Aqara Hub M3: Zigbee, Thread, Matter e IR Blaster num só hub. Como integra com Home Assistant e se vale o preço em 2026.'
+pubDate: 2026-07-24
+category: 'casa-inteligente'
+tags: ['aqara', 'hub', 'zigbee', 'matter', 'review']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '14/07/2026'
+products:
+  - name: 'Hub Controlador M3 Aqara (Matter, Zigbee, Thread)'
+    brand: 'Aqara'
+    rating: 5.0
+    price: 886.92
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1cDKkab'
+    image: '/images/produtos/aqara-hub-m3-review.webp'
+    pros:
+      - 'Multiprotocolo real: Zigbee 3.0, Thread e Matter no mesmo hub, sem precisar de dispositivo separado para cada um'
+      - 'IR Blaster 360° controla aparelho antigo por infravermelho (ar-condicionado, TV) e ainda detecta quando o controle original foi usado'
+      - 'Sem microfone nem câmera — design pensado para privacidade, com armazenamento local criptografado (8GB eMMC)'
+      - 'Suporta até 127 dispositivos Zigbee/Thread — dificilmente vai faltar capacidade'
+    cons:
+      - 'Amostra de avaliações no Brasil ainda pequena (6) — nota alta, mas sem peso estatístico forte ainda'
+      - 'Integração com Home Assistant é via Matter/HomeKit, não uma integração nativa "de primeira classe" — para quem já usa Zigbee2MQTT ou ZHA com um coordenador dedicado, a arquitetura atual pode entregar mais controle'
+      - 'Preço bem acima de hubs de automação genéricos já cobertos neste site'
+faq:
+  - question: 'O Aqara Hub M3 substitui um coordenador Zigbee dedicado (tipo Sonoff Zigbee 3.0 USB) no Home Assistant?'
+    answer: 'Não exatamente — são arquiteturas diferentes. Um coordenador Zigbee dedicado com Zigbee2MQTT ou ZHA dá controle mais direto e "puro" dentro do Home Assistant, sem depender de bridge. O Aqara Hub M3 integra via Matter (comissionado primeiro no app Aqara Home, depois compartilhado para o Home Assistant) — funciona bem, mas é uma camada a mais entre o dispositivo e o HA. Para quem já é usuário avançado de Home Assistant com Zigbee2MQTT rodando, a troca não é um upgrade automático.'
+  - question: 'O que é Thread e por que importa?'
+    answer: 'Thread é um protocolo de rede sem fio de baixo consumo, criado para casa inteligente, que (assim como o Zigbee) forma uma rede mesh entre dispositivos — mas com a vantagem de já nascer pensado para o padrão Matter. O Hub M3 funciona como "border router" Thread, ou seja, ele faz a ponte entre dispositivos Thread e o resto da sua rede Wi-Fi/Ethernet — um recurso que só aparece em hubs mais recentes e completos.'
+  - question: 'O IR Blaster funciona com qualquer controle remoto?'
+    answer: 'Funciona com a maioria dos aparelhos que usam infravermelho tradicional (ar-condicionado split, TV, som), replicando os comandos do controle original. A vantagem do M3 sobre um "IR blaster" genérico é que ele também detecta quando alguém usa o controle remoto físico — então o Home Assistant sabe o estado real do aparelho, não só o que ele mesmo mandou.'
+  - question: 'Vale a pena esse investimento comparado a um hub mais barato?'
+    answer: 'Depende do que você já tem em casa. Se você já usa (ou pretende usar) sensores e dispositivos Aqara, HomeKit da Apple, ou quer um único hub com Zigbee + Thread + Matter + IR sem montar essa pilha com peças separadas, o preço mais alto se justifica pela conveniência de tudo-em-um. Se seu uso é mais simples (só Zigbee, só automação básica), um hub ou coordenador dedicado mais barato — já comparados neste site — entrega o essencial por bem menos.'
+  - question: 'Funciona sem depender da nuvem da Aqara?'
+    answer: 'O hub processa e armazena localmente (os 8GB eMMC criptografados), o que reduz a dependência de nuvem para o funcionamento básico. Ainda assim, o comissionamento inicial e algumas integrações (como o compartilhamento Matter para o Home Assistant) passam pelo app Aqara Home — não é 100% "local only" desde a primeira configuração.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+A Aqara é hoje uma das marcas mais respeitadas do mundo Zigbee/Matter, e o Hub M3 é o topo de linha — o primeiro hub da marca a reunir Zigbee 3.0, Thread e Matter num único aparelho, com IR Blaster embutido. Este review analisa se essa combinação justifica o preço bem acima de um hub de automação genérico, e como ele se encaixa (ou não) em quem já usa Home Assistant.
+
+![Aqara Hub M3](/images/produtos/aqara-hub-m3-review.webp)
+
+## Specs principais
+
+| Especificação | Aqara Hub M3 |
+|---|---|
+| Protocolos | Zigbee 3.0, Thread 1.3, Matter, Bluetooth, Wi-Fi dual-band |
+| Capacidade | Até 127 dispositivos Zigbee/Thread |
+| Conectividade | Wi-Fi, Ethernet com PoE, USB-C |
+| Armazenamento local | 8GB eMMC criptografado |
+| Recursos extra | IR Blaster 360° (envia e detecta comando infravermelho) |
+| Privacidade | Sem microfone, sem câmera |
+| Compatibilidade | Apple HomeKit, Google Home, Alexa, SmartThings, Home Assistant (via Matter) |
+| Preço (14/07/2026) | R$ 886,92 |
+
+## O que o Aqara acertou
+
+### Três protocolos, um hub só
+
+Zigbee, Thread e Matter cobrem praticamente todo o espectro de dispositivos de casa inteligente modernos — normalmente isso exigiria dois ou três aparelhos separados (um coordenador Zigbee, um border router Thread, um controlador Matter). O M3 resolve os três numa caixa só, o que simplifica bastante a topologia da rede para quem está montando a automação do zero.
+
+### IR Blaster que também "escuta"
+
+Muitos hubs têm IR blaster só para ENVIAR comando (ligar a TV, mudar canal). O diferencial do M3 é também DETECTAR quando o controle remoto físico original foi usado — então o Home Assistant sabe o estado real do ar-condicionado ou da TV, não só o que ele mesmo comandou. Isso evita o clássico problema de "o Home Assistant acha que o ar tá desligado, mas alguém ligou pelo controle físico".
+
+### Privacidade como decisão de design
+
+Sem microfone, sem câmera, com armazenamento local criptografado — para quem se preocupa com um hub de automação "ouvindo" a casa, o M3 endereça isso diretamente na engenharia do produto, não só em política de privacidade.
+
+## O que fica devendo
+
+### Não é a integração "mais pura" para Home Assistant avançado
+
+Este é o ponto mais importante para o público deste site: a integração do M3 com Home Assistant acontece via Matter — você comissiona o hub no app Aqara Home primeiro, depois compartilha os dispositivos para o Home Assistant através da integração Matter. Funciona, e expõe os dispositivos como entidades nativas depois de pareado, mas é uma camada a mais comparado a um coordenador Zigbee dedicado rodando Zigbee2MQTT ou ZHA direto no Home Assistant, que dá controle mais granular e sem depender do app de outra marca no meio do caminho.
+
+Se você já é usuário avançado de Home Assistant com Zigbee2MQTT funcionando bem, o M3 não é um upgrade automático — é uma arquitetura diferente, com trade-offs diferentes.
+
+### Amostra de avaliações ainda pequena no Brasil
+
+Com apenas 6 avaliações no Mercado Livre (embora todas 5 estrelas), ainda não há volume suficiente para confirmar estatisticamente a qualidade — trate a nota como sinal positivo preliminar.
+
+<ProsCons
+  pros={[
+    'Zigbee 3.0 + Thread + Matter num único hub',
+    'IR Blaster que também detecta uso do controle remoto original',
+    'Design com foco em privacidade (sem mic/câmera, storage local)',
+    'Suporta até 127 dispositivos',
+  ]}
+  cons={[
+    'Integração com Home Assistant via Matter, não nativa/direta como um coordenador Zigbee dedicado',
+    'Amostra de avaliações no Brasil ainda pequena',
+    'Preço bem acima de hubs genéricos',
+  ]}
+/>
+
+## Vale a pena?
+
+**Vale se você:**
+- Já usa ou pretende usar sensores/dispositivos Aqara ou o ecossistema Apple HomeKit
+- Quer um único hub cobrindo Zigbee, Thread e Matter, sem montar essa pilha com peças separadas
+- Tem aparelho antigo por infravermelho (ar-condicionado, TV) que quer trazer para a automação
+- Valoriza um design com foco declarado em privacidade
+
+**Não vale se você:**
+- Já tem um coordenador Zigbee dedicado com Zigbee2MQTT/ZHA rodando bem no Home Assistant e busca só expandir capacidade
+- Seu uso é básico (poucos sensores, automação simples) — um hub mais em conta resolve
+- Orçamento é a prioridade máxima nesta compra
+
+**Conclusão:** o Aqara Hub M3 é provavelmente o hub multiprotocolo mais completo que a marca já lançou, e o IR Blaster com detecção de uso é um recurso genuinamente útil que poucos concorrentes oferecem. Mas para o usuário de Home Assistant que já pensa em termos de "qual a arquitetura mais limpa", vale entender que a integração passa pelo Matter via app Aqara Home, não é um coordenador Zigbee "puro" — informação que pesa na decisão mais que a ficha técnica isolada.
+
+<AffiliateButton href="https://meli.la/1cDKkab" store="mercadolivre" source="aqara-hub-m3-review-2026" />

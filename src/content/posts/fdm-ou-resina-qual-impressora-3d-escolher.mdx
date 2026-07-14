@@ -1,0 +1,142 @@
+---
+title: 'FDM ou resina: qual impressora 3D escolher em 2026?'
+description: 'FDM vs resina: diferenças reais de detalhe, custo, bagunça e segurança. Comparamos a Elegoo Neptune 4 (FDM) e a Anycubic Photon Mono 4 10K (resina).'
+pubDate: 2026-07-21
+category: 'impressao-3d'
+tags: ['impressora 3d', 'fdm', 'resina', 'maker']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '14/07/2026'
+products:
+  - name: 'Elegoo Neptune 4 Impressora 3D FDM'
+    brand: 'Elegoo'
+    rating: 4.8
+    price: 2715
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1iXZj99'
+    image: '/images/produtos/elegoo-neptune-4-fdm.webp'
+    pros:
+      - 'Placa Klipper de fábrica — impressão rápida (até 500mm/s) sem precisar flashar firmware'
+      - 'Filamento (PLA/PETG) é barato, não-tóxico e a limpeza é só puxar a peça da mesa'
+      - 'Volume de impressão maior (22,5x22,5x26,5cm), bom para peças funcionais grandes'
+    cons:
+      - 'Camadas visíveis a olho nu — não é para miniatura com detalhe fino ou joia'
+      - 'Preço mais alto que a opção de resina desta comparação, mesmo sendo a tecnologia "mais simples"'
+  - name: 'Anycubic Photon Mono 4 10K Impressora 3D de Resina'
+    brand: 'Anycubic'
+    rating: 4.9
+    price: 1499
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1AtFE8W'
+    image: '/images/produtos/anycubic-photon-mono-4-resina.webp'
+    pros:
+      - 'Tela LCD mono 10K — detalhe muito acima do que qualquer FDM consegue reproduzir'
+      - 'Mais barata que a opção FDM desta comparação, e com mais avaliações (428) e nota maior (4,9)'
+      - 'Ideal para miniatura, joia, modelo odontológico e peça de detalhe fino'
+    cons:
+      - 'Resina líquida exige luva, ventilação e descarte correto — não pode jogar no ralo'
+      - 'Processo tem etapa extra de lavagem (álcool isopropílico) e cura UV depois de imprimir'
+      - 'Volume de impressão bem menor — não serve para peça grande'
+faq:
+  - question: 'Qual das duas é mais fácil para começar?'
+    answer: 'FDM, sem dúvida. O processo é "imprimiu, esfriou, tirou da mesa" — sem líquido, sem etapa extra, sem cuidado especial de descarte. Resina tem uma curva de aprendizado maior: manusear o líquido com luva, lavar a peça em álcool isopropílico, curar sob luz UV, e descartar sobra de resina corretamente (nunca no ralo ou lixo comum sem antes curar ao sol).'
+  - question: 'Resina é perigosa?'
+    answer: 'A resina líquida não curada é irritante para pele e olhos, e os vapores incomodam em ambiente fechado — use luvas nitrílicas, óculos de proteção e imprima em local ventilado. Depois de curada (sólida, pós-UV), a peça final é segura para manusear normalmente. Não é "veneno", mas exige cuidado básico de manuseio que o FDM dispensa.'
+  - question: 'Dá para fazer peça funcional grande em resina?'
+    answer: 'Tecnicamente sim, mas não é o forte da tecnologia — impressoras de resina para hobby têm volume de impressão pequeno (a Anycubic desta lista, por exemplo, é bem menor que a Elegoo FDM), e a resina costura mais e é mais frágil/quebradiça que filamentos como PETG. Para suporte, gabinete, peça de reposição ou protótipo funcional, FDM é a escolha certa.'
+  - question: 'Qual tem manutenção mais cara no dia a dia?'
+    answer: 'Resina, no acumulado: além da resina em si (consumível recorrente, como o filamento), a cuba/FEP (a película que separa a resina da tela LCD) se desgasta e precisa ser trocada periodicamente, e a própria tela LCD tem vida útil limitada. FDM tem menos peça de desgaste recorrente — principalmente o bico (nozzle), que dura bem mais tempo de uso.'
+  - question: 'Dá para ter as duas em casa?'
+    answer: 'Muitos makers experientes acabam tendo as duas — FDM para peça funcional do dia a dia (suporte, gabinete, gancho, adaptador) e resina para o que pede detalhe fino (miniatura de RPG, action figure, peça decorativa). Não são concorrentes diretas, são ferramentas para trabalhos diferentes.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Quem está entrando na impressão 3D esbarra logo na primeira grande decisão: FDM (filamento derretido) ou resina (cura por luz UV)? Não é uma questão de qual é "melhor" — são tecnologias com pontos fortes opostos, e escolher errado significa frustração com o tipo de peça que você realmente queria fazer. Comparamos uma representante de cada tecnologia para explicar a diferença de verdade, além da ficha técnica.
+
+## Como avaliamos
+
+- **Tecnologia de impressão** — como cada uma constrói a peça camada por camada, e o que isso significa na prática.
+- **Nível de detalhe** — resolução real alcançável em cada tecnologia.
+- **Facilidade de uso e limpeza** — o que muda no dia a dia de quem opera.
+- **Segurança e manuseio** — cuidados específicos de cada processo.
+- **Custo total** — não só o preço da impressora, mas o consumível recorrente.
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="fdm-ou-resina-qual-impressora-3d-escolher"
+  priceDate="14/07/2026"
+  rows={[
+    { name: 'Elegoo Neptune 4 (FDM)', brand: 'Elegoo', rating: 4.8, price: 2715, highlight: 'Peça funcional, sem bagunça', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1iXZj99' }] },
+    { name: 'Anycubic Photon Mono 4 10K (Resina)', brand: 'Anycubic', rating: 4.9, price: 1499, highlight: 'Detalhe fino, miniatura e joia', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1AtFE8W' }] },
+  ]}
+/>
+
+## Como funciona cada tecnologia
+
+**FDM (Fused Deposition Modeling)** derrete um filamento sólido (PLA, PETG, ABS) e deposita camada por camada através de um bico aquecido, como uma cola quente controlada por computador. É o processo mais intuitivo de visualizar e o mais barato de operar no dia a dia.
+
+**Resina (MSLA/LCD)** cura uma resina líquida fotossensível usando uma tela LCD que projeta a imagem de cada camada, endurecendo só a área exata da peça a cada exposição de luz UV. O resultado tem resolução muito maior — a tela "desenha" detalhes que o bico de uma FDM fisicamente não consegue reproduzir.
+
+## Elegoo Neptune 4 — FDM, peça funcional sem bagunça
+
+![Elegoo Neptune 4](/images/produtos/elegoo-neptune-4-fdm.webp)
+
+Com placa Klipper de fábrica, a Neptune 4 imprime rápido (até 500mm/s) sem precisar mexer em firmware — liga, fatia o arquivo, imprime. O filamento é barato, não exige cuidado especial de manuseio, e o pós-processamento é literalmente puxar a peça pronta da mesa. É a tecnologia certa para quem quer fazer suporte, gabinete, gancho, peça de reposição — o "trabalho pesado" da impressão 3D.
+
+O limite é o detalhe: camadas ficam visíveis a olho nu, e miniatura ou peça com textura fina perde muito na tradução para FDM.
+
+<ProsCons pros={['Placa Klipper — impressão rápida sem flashar firmware', 'Filamento barato e não-tóxico', 'Bom volume de impressão para peça grande']} cons={['Camadas visíveis, sem detalhe fino', 'Mais cara que a opção de resina desta comparação']} />
+
+<AffiliateButton href="https://meli.la/1iXZj99" store="mercadolivre" source="fdm-ou-resina-qual-impressora-3d-escolher" />
+
+---
+
+## Anycubic Photon Mono 4 10K — resina, detalhe fino
+
+![Anycubic Photon Mono 4](/images/produtos/anycubic-photon-mono-4-resina.webp)
+
+A tela LCD mono 10K entrega um nível de detalhe que nenhuma FDM alcança — ideal para miniatura de RPG, action figure, modelo odontológico ou peça de joalheria, onde textura fina e superfície lisa fazem toda a diferença. Com nota 4,9 e 428 avaliações, é também a opção mais validada desta comparação — e, surpreendentemente, mais barata que a Elegoo FDM.
+
+A contrapartida é o processo: depois de imprimir, a peça sai coberta de resina líquida e precisa ser lavada em álcool isopropílico, depois curada sob luz UV para ficar realmente sólida. Resina não curada irrita pele e olho — luva e ventilação são obrigatórias, e sobra de resina não pode ir pro ralo. O volume de impressão também é bem menor, sem espaço para peça grande.
+
+<ProsCons pros={['Detalhe muito superior ao FDM', 'Mais barata e com mais avaliações nesta comparação', 'Ideal para miniatura e peça de detalhe fino']} cons={['Exige luva, ventilação e descarte correto da resina', 'Processo tem etapa extra de lavagem e cura UV', 'Volume de impressão pequeno']} />
+
+<AffiliateButton href="https://meli.la/1AtFE8W" store="mercadolivre" source="fdm-ou-resina-qual-impressora-3d-escolher" />
+
+---
+
+## Em que cenário cada uma ganha
+
+- **Peça funcional (suporte, gabinete, gancho, adaptador):** FDM — mais barato, mais rápido para peça grande, sem bagunça.
+- **Miniatura, action figure, joia, modelo com detalhe fino:** Resina — a diferença de qualidade é enorme para esse tipo de peça.
+- **Primeira impressora, quer o processo mais simples:** FDM — sem manuseio de líquido, sem etapa de pós-processamento.
+- **Já tem experiência e quer o próximo nível de detalhe:** Resina — aceitando a curva de aprendizado extra.
+- **Quer as duas coisas:** não é incomum ter uma de cada — são ferramentas complementares, não concorrentes.
+
+## Perguntas frequentes
+
+**Qual é mais fácil para começar?**
+FDM — sem líquido, sem etapa extra de lavagem/cura, processo mais direto.
+
+**Resina é perigosa?**
+Não curada, irrita pele e olho — use luva, óculos e ventilação. Curada (peça pronta), é segura para manusear.
+
+**Dá para fazer peça funcional grande em resina?**
+Não é o forte da tecnologia — volume pequeno e material mais frágil. FDM é a escolha certa para isso.
+
+**Qual tem manutenção mais cara?**
+Resina, no acumulado — cuba/FEP e tela LCD se desgastam, além do consumível de resina em si.
+
+**Dá para ter as duas?**
+Sim, e é comum entre makers experientes — cada uma resolve um tipo de trabalho diferente.
+
+---
+
+*Dúvidas sobre algum modelo? [Fale com a gente](/contato/).*

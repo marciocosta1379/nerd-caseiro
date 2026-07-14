@@ -1,0 +1,223 @@
+---
+title: 'Irrigação automática de jardim com ESP32 e Home Assistant'
+description: 'Tutorial: monte irrigação automática com ESP32, sensor de umidade do solo e válvula solenoide. Código ESPHome testado, integrado ao Home Assistant.'
+pubDate: 2026-07-23
+category: 'automacao-residencial'
+tags: ['home-assistant', 'esp32', 'esphome', 'irrigacao', 'jardim', 'diy']
+featured: true
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '14/07/2026'
+products:
+  - name: 'Placa ESP32 DevKit Pino Soldado Wi-Fi/Bluetooth (ESP32-WROOM-32)'
+    brand: 'ESP32'
+    rating: 4.9
+    price: 38.88
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2SRLTJa'
+    image: '/images/produtos/esp32-devkit-pino-soldado.webp'
+    pros:
+      - 'Wi-Fi nativo — integra direto com Home Assistant, sem gateway extra'
+      - 'Maior base de avaliações desta lista (1.004), nota 4,9 — placa validada em massa'
+    cons:
+      - 'Pino já soldado é ótimo para prototipar rápido, mas menos flexível que placa sem solda para caber em gabinete apertado'
+  - name: 'Sensor Capacitivo de Umidade do Solo para ESP32/Arduino'
+    brand: 'Genérico'
+    price: 27.99
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1XNiNqt'
+    image: '/images/produtos/sensor-umidade-solo-capacitivo.webp'
+    pros:
+      - 'Sensor capacitivo — não corrói com o tempo como o sensor resistivo mais barato'
+      - 'Regulador de tensão integrado, funciona de 3,3V a 5V (compatível direto com ESP32)'
+    cons:
+      - 'Ainda sem avaliações suficientes registradas no anúncio — confira a loja/vendedor antes de comprar'
+  - name: 'Módulo Relé 5V 1 Canal com LED para Arduino/ESP32'
+    brand: 'Genérico'
+    rating: 4.8
+    price: 13.49
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/23frPzG'
+    image: '/images/produtos/modulo-rele-1-canal-led.webp'
+    pros:
+      - 'LED indicador mostra visualmente quando o relé está acionado — útil para depurar o circuito'
+      - 'Suporta até 10A/250VAC ou 10A/30VDC — sobra de margem para a válvula solenoide 12V'
+    cons:
+      - 'Relé mecânico faz um "clique" audível ao acionar — normal, mas repare se for instalar perto do quarto'
+  - name: 'Válvula Solenoide 12V 1/2" NF para Água/Irrigação'
+    brand: 'Genérico'
+    rating: 4.7
+    price: 38.90
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/17GJjcp'
+    image: '/images/produtos/valvula-solenoide-12v-irrigacao.webp'
+    pros:
+      - 'Maior base de avaliações desta lista entre os componentes de irrigação (493), nota 4,7'
+      - 'Normalmente Fechada (NF) — em caso de falha de energia, a válvula tranca sozinha e não fica jorrando água'
+    cons:
+      - 'Precisa de fonte 12V separada — o ESP32 e o relé não alimentam a válvula sozinhos, só chaveiam o circuito'
+faq:
+  - question: 'Preciso de uma fonte de energia separada para a válvula?'
+    answer: 'Sim. O ESP32 e o módulo relé trabalham em 3,3V/5V, mas a válvula solenoide é 12V — o relé só liga e desliga o circuito, ele não fornece a energia. Você vai precisar de uma fonte 12V (das que alimentam câmera de segurança ou fita LED servem bem) conectada à válvula, com o relé no meio do circuito positivo.'
+  - question: 'A válvula solenoide aguenta pressão de água da rua?'
+    answer: 'Modelos NF (Normalmente Fechada) de 1/2" como a desta lista aguentam a pressão residencial comum sem problema — é o mesmo tipo de válvula usado em máquina de lavar e sistemas de irrigação por aspersor. Evite usar em pressões industriais muito acima do residencial sem checar a especificação exata do fabricante.'
+  - question: 'O que acontece se a energia ou o Wi-Fi cair no meio da irrigação?'
+    answer: 'Por isso a válvula NF (Normalmente Fechada) importa: sem energia, ela volta ao estado fechado sozinha — não fica presa aberta jorrando água. Se o Wi-Fi cair mas a energia continuar, o ESPHome mantém a última automação local configurada (ver "modo de recuperação" no código), mas o controle remoto via Home Assistant fica indisponível até a rede voltar.'
+  - question: 'Como calibrar o sensor de umidade para o meu tipo de solo?'
+    answer: 'A leitura bruta varia com o tipo de solo (arenoso, argiloso, com adubo). Anote o valor lido com o sensor no ar (seco, referência 0%) e depois mergulhado num copo de água (referência 100%), e ajuste o threshold do código para a faixa real do seu vaso/canteiro — não use o valor "de fábrica" sem calibrar, ele varia por sensor e por solo.'
+  - question: 'Posso adicionar um sensor de chuva para não regar em dia chuvoso?'
+    answer: 'Sim, e é uma extensão natural deste projeto — um sensor de chuva (resistivo, parecido com o de umidade do solo) ligado a outra entrada analógica do ESP32 pode bloquear a automação de rega quando detectar chuva, evitando desperdício de água e excesso de umidade no solo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Esquecer de regar a horta (ou regar demais e apodrecer a raiz) é um problema clássico de quem tem plantas em casa. Este tutorial monta um sistema de irrigação automática: o ESP32 lê a umidade do solo e abre a válvula solenoide sozinho quando a terra está seca, com toda a automação visível e configurável no Home Assistant.
+
+## Lista de materiais
+
+<ComparisonTable
+  source="irrigacao-automatica-jardim-esp32-home-assistant"
+  priceDate="14/07/2026"
+  rows={[
+    { name: 'Placa ESP32 DevKit', brand: 'ESP32', rating: 4.9, price: 38.88, highlight: 'Cérebro do projeto', stores: [{ store: 'mercadolivre', url: 'https://meli.la/2SRLTJa' }] },
+    { name: 'Sensor de Umidade do Solo (capacitivo)', brand: 'Genérico', price: 27.99, highlight: 'Detecta terra seca', stores: [{ store: 'mercadolivre', url: 'https://meli.la/1XNiNqt' }] },
+    { name: 'Módulo Relé 1 Canal', brand: 'Genérico', rating: 4.8, price: 13.49, highlight: 'Chaveia a válvula', stores: [{ store: 'mercadolivre', url: 'https://meli.la/23frPzG' }] },
+    { name: 'Válvula Solenoide 12V', brand: 'Genérico', rating: 4.7, price: 38.90, highlight: 'Libera/corta a água', stores: [{ store: 'mercadolivre', url: 'https://meli.la/17GJjcp' }] },
+  ]}
+/>
+
+![Placa ESP32 DevKit Pino Soldado](/images/produtos/esp32-devkit-pino-soldado.webp)
+
+<AffiliateButton href="https://meli.la/2SRLTJa" store="mercadolivre" source="irrigacao-automatica-jardim-esp32-home-assistant" />
+
+Além dos itens acima, você vai precisar de uma **fonte 12V** (a mesma usada em câmera de segurança ou fita LED serve) e uma **mangueira/conexão de 1/2"** entre a torneira/caixa d'água e a válvula.
+
+## Como funciona
+
+1. O **sensor de umidade do solo** fica enterrado na terra do vaso ou canteiro, medindo a umidade por capacitância.
+2. O **ESP32** lê esse valor periodicamente pela entrada analógica (ADC).
+3. Quando a leitura indica solo seco (abaixo do limite calibrado), o ESP32 aciona o **módulo relé**.
+4. O relé fecha o circuito de **12V** que alimenta a **válvula solenoide**, liberando a água por um tempo determinado.
+5. Tudo isso aparece no **Home Assistant** — leitura de umidade em tempo real, histórico, e possibilidade de regar manualmente pelo app a qualquer momento.
+
+## Ligações (wiring)
+
+- **Sensor de umidade** → pino analógico do ESP32 (ex.: GPIO34) + alimentação 3,3V e GND.
+- **Módulo relé** → pino digital do ESP32 (ex.: GPIO26) no pino IN do relé + alimentação 5V e GND.
+- **Válvula solenoide** → um fio direto na fonte 12V, o outro fio passando pelo contato **NO** (Normally Open) do relé antes de voltar ao negativo da fonte 12V.
+
+> ⚠️ **Atenção:** a válvula é alimentada pela fonte 12V, NÃO pelo ESP32. O relé só interrompe/libera esse circuito — ele não fornece energia para a válvula. Confira a polaridade da fonte 12V antes de ligar.
+
+## Código ESPHome
+
+```yaml
+esphome:
+  name: irrigacao-jardim
+  friendly_name: Irrigação do Jardim
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  ap:
+    ssid: "Irrigacao-Jardim Fallback"
+    password: !secret fallback_password
+
+captive_portal:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+logger:
+
+sensor:
+  - platform: adc
+    pin: GPIO34
+    name: "Umidade do Solo (bruta)"
+    id: umidade_solo_bruta
+    attenuation: 11db
+    update_interval: 30s
+    filters:
+      - calibrate_linear:
+          # Calibre com o seu sensor: valor lido no ar (seco) e na água (molhado)
+          - 0.0 -> 100.0   # seco = 0% de umidade
+          - 3.3 -> 0.0     # molhado = 100% de umidade (ajuste pelos seus valores reais)
+    unit_of_measurement: "%"
+
+binary_sensor:
+  - platform: template
+    name: "Solo Seco"
+    id: solo_seco
+    lambda: |-
+      return id(umidade_solo_bruta).state < 30.0;  // abaixo de 30% = solo seco
+    filters:
+      - delayed_on: 10s   # evita disparo por leitura instável momentânea
+      - delayed_off: 5s
+
+switch:
+  - platform: gpio
+    pin: GPIO26
+    name: "Válvula de Irrigação"
+    id: valvula_irrigacao
+
+# Automação local: rega sozinho quando o solo está seco, com tempo máximo de segurança
+interval:
+  - interval: 60s
+    then:
+      - if:
+          condition:
+            and:
+              - binary_sensor.is_on: solo_seco
+              - switch.is_off: valvula_irrigacao
+          then:
+            - switch.turn_on: valvula_irrigacao
+            - delay: 30s   # tempo máximo de rega por ciclo — ajuste ao tamanho do vaso/canteiro
+            - switch.turn_off: valvula_irrigacao
+```
+
+O bloco `calibrate_linear` traduz a leitura bruta do sensor (0 a 3,3V) para uma porcentagem de umidade — **os valores de exemplo são só ponto de partida**, calibre com o seu sensor específico (veja o FAQ sobre calibração). O `delay: 30s` dentro da automação é um limite de segurança: mesmo que o sensor trave "seco" por algum defeito, a válvula não fica aberta indefinidamente.
+
+## Integração no Home Assistant
+
+Com o ESPHome instalado e o dispositivo online, o Home Assistant descobre automaticamente três entidades: o sensor `Umidade do Solo`, o binário `Solo Seco` e o switch `Válvula de Irrigação`. A partir daí dá para:
+
+- Ver o gráfico de umidade ao longo do dia (útil para calibrar o threshold com dados reais).
+- Criar uma automação adicional no próprio Home Assistant — por exemplo, **só regar entre 6h e 8h da manhã**, mesmo que o solo esteja seco em outros horários (evita regar sob sol forte, que desperdiça água por evaporação).
+- Acionar a válvula manualmente pelo app, para regar fora do ciclo automático quando quiser.
+
+## Perguntas frequentes
+
+**Preciso de fonte separada para a válvula?**
+Sim — o relé só chaveia o circuito 12V, não fornece energia. Uma fonte 12V comum (de câmera/fita LED) resolve.
+
+**A válvula aguenta a pressão da rede residencial?**
+Sim, modelos NF de 1/2" como o desta lista são feitos para isso — o mesmo tipo usado em máquina de lavar.
+
+**E se a energia ou o Wi-Fi cair no meio da rega?**
+A válvula NF fecha sozinha sem energia — não fica presa aberta. Sem Wi-Fi, a automação local do ESPHome (o bloco `interval`) continua funcionando; só o controle remoto do Home Assistant fica indisponível.
+
+**Como calibro o sensor para o meu solo?**
+Anote a leitura no ar (seco) e na água (molhado), e ajuste o `calibrate_linear` para essa faixa real — o valor de fábrica não serve para todo solo.
+
+**Dá para adicionar sensor de chuva?**
+Sim — um sensor de chuva numa outra entrada analógica pode bloquear a rega automática em dia chuvoso, extensão natural deste projeto.
+
+---
+
+*Dúvidas sobre o projeto? [Fale com a gente](/contato/).*
