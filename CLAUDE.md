@@ -85,7 +85,7 @@ products:
 - **Preço:** Mercado Livre pode exibir (`price` + `priceCheckedAt: 'DD/MM/AAAA'`). **Amazon não** (regra Amazon — só com PA-API).
 - **Recorrência (a joia):** filamento 3D é consumível → priorizar no calendário.
 - **Tutorial técnico (moat):** quando o post for tutorial de automação, incluir **código real e testado** (blocos ```yaml / ```cpp). O autor (programador) valida o código.
-- Títulos ≤ 70 caracteres; descrições meta ≤ 160.
+- Títulos entre 40-70 caracteres; descrições meta entre 120-160 caracteres. (Não só o máximo — o Bing Webmaster Tools sinaliza título/descrição **curtos demais** como erro de SEO moderado; evitar títulos telegráficos e descrições genéricas de uma linha.)
 - Posts saem com `draft: true` por padrão.
 - **Imagem de capa / og:image:** a foto do **1º produto** vira a capa nos cards e o cartão social (`scripts/make-og-images.mjs` → `public/images/og/<slug>.jpg`, JPG 1200×630). Coloque o produto principal em primeiro. **Nunca WebP na og:image** (WhatsApp não renderiza).
 - **Regra de ouro:** nunca invente specs. Confirme em ≥2 fontes confiáveis.
