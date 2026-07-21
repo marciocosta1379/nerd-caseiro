@@ -1,6 +1,6 @@
 ---
 name: lote-semanal
-description: Gera os posts da semana (seg–sex) para o Nerd Caseiro com APROVAÇÃO DO USUÁRIO EM ETAPAS. Use quando o usuário digitar /lote-semanal, pedir "gerar a semana" ou "criar os posts da semana". Nicho: automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets.
+description: Gera os posts da semana (7 dias, seg–dom) para o Nerd Caseiro com APROVAÇÃO DO USUÁRIO EM ETAPAS. Use quando o usuário digitar /lote-semanal, pedir "gerar a semana" ou "criar os posts da semana". Nicho: automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets.
 ---
 
 # Skill: Lote Semanal de Posts — Nerd Caseiro
@@ -20,10 +20,11 @@ sem a liberação final do usuário.
 
 ### 0. Gatilho
 O usuário dispara (`/lote-semanal [data da segunda]` ou "vamos gerar a semana"). Calcule as
-5 datas seg–sex a partir da data fornecida (ou pergunte a semana).
+**7 datas seg–dom** a partir da data fornecida (ou pergunte a semana). ⚠️ Desde 21/07/2026 a
+cadência é **diária (post todo dia, incluindo sábado e domingo)** — antes era só seg-sex.
 
 ### Gate 1 — TEMAS (aprovação)
-Sugira **5 temas** com data e tipo, e **espere aprovação**. Mix editorial do nicho:
+Sugira **7 temas** com data e tipo, e **espere aprovação**. Mix editorial do nicho:
 
 | Dia | Tipo | Peso |
 |-----|------|------|
@@ -32,6 +33,12 @@ Sugira **5 temas** com data e tipo, e **espere aprovação**. Mix editorial do n
 | Qua | Listicle "Top N" | tráfego |
 | Qui | **Tutorial técnico (o moat)** | autoridade |
 | Sex | Review individual | nicho |
+| Sáb | Review individual | nicho |
+| Dom | Review individual | nicho |
+
+O mix de fim de semana (Sáb/Dom = Review) é o padrão default — ajuste se o usuário pedir outro
+tipo ou tema específico para essas datas (ex.: pediu Amazon como loja e foco em review numa
+semana pontual).
 
 - **Tutorial técnico = o diferencial.** Pelo menos **1 por semana**, com **código real e
   testado** (Home Assistant YAML, ESPHome, sketch ESP32, config Klipper). O usuário, que é

@@ -17,7 +17,7 @@ Não ser "blog de gadget genérico" (compete com portais gigantes). Ter:
 
 ### Monetização — 3 motores
 - **Mercado Livre (principal):** maioria do hardware. ⚠️ A conta de afiliado é **única para a rede e o perfil se chama "Rede Caseira"** — os links ML do Nerd Caseiro saem com essa identidade. O `MLAvisoModal` avisa o visitante disso, e a página Sobre faz a disclosure da rede.
-- **Amazon Associados (secundária):** itens que faltam no ML. Tag em `.env` (`AMAZON_AFFILIATE_TAG`). ⚠️ Exige ~3 vendas/180d e PA-API travada → **preço da Amazon fica oculto** no lançamento.
+- **Amazon Associados (secundária):** itens que faltam no ML. ID de rastreamento próprio em `.env` (`AMAZON_AFFILIATE_TAG=nerdcaseiro-20`, cadastrado em 21/07/2026 — cada site da rede tem o seu: `reformacaseira-20`, `nerdcaseiro-20`, `abanou-20`). Exige ~3 vendas/180d e PA-API travada → **preço da Amazon fica oculto** no lançamento.
 - **Hotmart (digital):** cursos (Home Assistant, modelagem 3D, Arduino). Comissão alta.
 
 ### Sem YMYL

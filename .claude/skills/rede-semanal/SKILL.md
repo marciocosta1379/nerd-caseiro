@@ -26,8 +26,9 @@ Leia `E:\rede-caseira\REDE-EDITORIAL.md`: pontes disponíveis, o que já foi pub
 
 ### Gate 1 — TEMAS (aprovação)
 Proponha um **plano da semana cruzando os 3 sites**: quais sites recebem posts, quais temas, e
-**marque os pares-ponte** (post de um site que vai linkar o de outro). Não precisa todo site ter 5
-posts/semana — distribua conforme a estratégia. Apresente em tabela (Site · Dia · Tema · Tipo · Ponte→).
+**marque os pares-ponte** (post de um site que vai linkar o de outro). ⚠️ Cadência é **diária
+(7 dias, seg-dom)** desde 21/07/2026 — antes era só seg-sex. Não precisa todo site ter post todo
+dia — distribua conforme a estratégia. Apresente em tabela (Site · Dia · Tema · Tipo · Ponte→).
 **Espere aprovação.**
 
 ### Gate 2 — TÍTULOS (aprovação)

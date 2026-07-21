@@ -1,0 +1,76 @@
+---
+title: 'Raspberry Pi 5 16GB: vale a pena a versão com mais RAM?'
+description: 'Review do Raspberry Pi 5 16GB: quando os 16GB fazem diferença real e quando a versão 8GB (mais barata) já é suficiente para o seu projeto.'
+pubDate: 2026-07-28
+category: 'eletronica-maker'
+tags: ['raspberry pi', 'sbc', 'eletronica maker', 'home assistant']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 (16GB)'
+    brand: 'Raspberry Pi Foundation'
+    rating: 4.8
+    image: '/images/produtos/raspberry-pi-5-16gb-review.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DSPYPKRG?tag=nerdcaseiro-20'
+    pros:
+      - 'Mesmo processador do Pi 5 8GB (Broadcom BCM2712, quad-core Cortex-A76 a 2.4GHz) — a diferença é só a memória'
+      - '16GB abre espaço real para rodar múltiplas VMs/containers pesados ou modelos de IA locais maiores, sem trocar de placa depois'
+    cons:
+      - 'Custa consideravelmente mais que a versão 8GB para quem só vai rodar Home Assistant ou um servidor leve'
+faq:
+  - question: 'Vale a pena pagar mais caro pelos 16GB, ou o 8GB já resolve?'
+    answer: 'Para a grande maioria dos projetos caseiros — Home Assistant, Pi-hole, servidor de mídia leve, automação — os 8GB já sobram, e a diferença de preço não se justifica. Os 16GB fazem sentido quando você vai rodar várias coisas pesadas ao mesmo tempo (múltiplos containers Docker, um modelo de IA local maior, uma VM completa) ou quer margem para não precisar trocar de placa daqui a um ano se o projeto crescer.'
+  - question: 'O Raspberry Pi 5 16GB roda Home Assistant bem?'
+    answer: 'Roda tranquilamente, e com folga — o Home Assistant OS completo consome uma fração pequena dos 16GB disponíveis, sobrando bastante margem para complementos (add-ons), automações complexas e até alguns containers extras rodando ao lado, algo que já pode apertar num Pi de 2GB ou 4GB conforme a instalação cresce.'
+  - question: 'Existe Raspberry Pi mais novo que o 5?'
+    answer: 'Não, até a publicação deste review (julho de 2026) o Pi 5 continua sendo a geração principal mais recente — o que saiu de novo em 2026 foram variantes do Pi 4 (uma versão de 3GB e uma revisão com RAM dupla, motivadas pelo custo de memória) e acessórios como o AI HAT+ 2 para o Pi 5, não uma nova geração de placa.'
+  - question: 'A versão 16GB esquenta mais que a 8GB?'
+    answer: 'Não de forma perceptível — o consumo de energia e a geração de calor do Pi 5 vêm majoritariamente do processador, que é idêntico entre as versões de memória. Como em qualquer Pi 5 usado por longos períodos ou com carga alta, um case com dissipador (ou o Active Cooler oficial) ajuda a manter a temperatura sob controle, independente da versão de RAM escolhida.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+O Raspberry Pi 5 já é a geração atual desde 2023, mas a variante de **16GB de RAM** é a novidade mais recente e relevante da linha em 2026 — não saiu um "Pi 6", e o que apareceu de novo neste ano foram só variantes do Pi 4 mais antigo. Testamos se os 16GB realmente fazem diferença no dia a dia de projeto maker, ou se é gasto desnecessário para a maioria dos casos.
+
+## O que muda em relação ao Pi 5 padrão
+
+O processador é **exatamente o mesmo**: Broadcom BCM2712, quad-core ARM Cortex-A76 a 2,4GHz, GPU VideoCore VII com suporte a OpenGL ES 3.1 e Vulkan 1.2, saída dupla HDMI 4K60 com HDR. A única mudança real é a memória RAM, que salta para 16GB LPDDR4X-4267 — o dobro da versão de 8GB, que já era a "topo de linha" mais comum até pouco tempo atrás.
+
+![Raspberry Pi 5 16GB](/images/produtos/raspberry-pi-5-16gb-review.webp)
+
+<ProsCons pros={['Mesmo processador do Pi 5 8GB — nenhuma perda de desempenho de CPU/GPU', '16GB dá margem real para múltiplos containers, VMs ou modelos de IA locais maiores']} cons={['Custa bem mais que a versão 8GB para quem só roda um projeto leve']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DSPYPKRG?tag=nerdcaseiro-20" store="amazon" source="raspberry-pi-5-16gb-vale-a-pena" />
+
+## Para quem os 16GB fazem diferença
+
+- **Home Assistant + vários add-ons rodando junto** — instalação que já cresceu bastante, com muita automação, integração e complemento ativo.
+- **Vários containers Docker ao mesmo tempo** — quem usa o Pi como mini-servidor caseiro, rodando várias aplicações simultâneas (Pi-hole, Home Assistant, servidor de arquivo, dashboard).
+- **Modelos de IA local** — reconhecimento de voz local (Whisper), classificação de imagem de câmera de segurança, ou qualquer modelo que precise carregar bastante coisa na memória de uma vez.
+- **Máquina virtual completa** — rodar uma VM inteira dentro do Pi, cenário raro em projeto caseiro mas real para quem usa como mini-servidor de testes.
+
+## Para quem o 8GB (mais barato) já resolve
+
+Para a esmagadora maioria dos projetos deste site — automatizar a casa com Home Assistant, um servidor de mídia leve, um projeto pontual de eletrônica com o Pi como cérebro — os 8GB já sobram tranquilamente, e a diferença de preço para os 16GB não se paga. Só vale a versão maior se você já sabe que vai empilhar bastante coisa rodando ao mesmo tempo, ou quer margem de sobra para não pensar em trocar de placa daqui a um ano.
+
+## Perguntas frequentes
+
+**Vale a pena pagar mais pelos 16GB?**
+Só se você for rodar múltiplos containers pesados, VM completa ou IA local maior. Para Home Assistant e projetos leves, o 8GB já resolve.
+
+**Roda Home Assistant bem?**
+Sim, com folga — sobra bastante margem de memória mesmo com vários add-ons e automações rodando.
+
+**Existe Pi mais novo que o 5?**
+Não até julho de 2026 — o que saiu de novo foram variantes do Pi 4, não uma nova geração.
+
+**Esquenta mais que a versão 8GB?**
+Não perceptivelmente — o calor vem do processador, que é idêntico entre as versões de memória.
+
+---
+
+*Dúvidas sobre o Raspberry Pi 5? [Fale com a gente](/contato/).*

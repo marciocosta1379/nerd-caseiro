@@ -1,0 +1,78 @@
+---
+title: 'SwitchBot Curtain 3: vale a pena automatizar a cortina?'
+description: 'Review do SwitchBot Curtain 3: motor sem fiação para cortina, instalação em 30 segundos, compatibilidade e se vale mais que o projeto DIY com ESP32.'
+pubDate: 2026-07-31
+category: 'casa-inteligente'
+tags: ['switchbot', 'cortina automatica', 'casa inteligente']
+featured: false
+draft: true
+author: 'Márcio Costa'
+priceCheckedAt: '19/07/2026'
+products:
+  - name: 'SwitchBot Curtain 3 - Abridor de Cortina Inteligente'
+    brand: 'SwitchBot'
+    price: 652.40
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/28Vun2d'
+    image: '/images/produtos/switchbot-curtain-3-review.webp'
+    pros:
+      - 'Instalação sem parafuso, sem furo e sem fiação — encaixa direto na haste ou trilho em cerca de 30 segundos'
+      - 'Motor 2x mais forte que a geração anterior, suporta cortina de até 15-16kg, com operação ultrassilenciosa (menos de 25dB)'
+    cons:
+      - 'Precisa do SwitchBot Hub (vendido separado) para integração com Alexa/Google/Matter — sozinho, só funciona por Bluetooth direto pelo app'
+faq:
+  - question: 'O SwitchBot Curtain 3 funciona em qualquer tipo de cortina?'
+    answer: 'A tecnologia RoverHook do Curtain 3 garante compatibilidade com a grande maioria das hastes de cortina redondas, de 10 a 40mm de diâmetro — cobre praticamente todo padrão residencial comum no Brasil. Para trilho tipo "U" (embutido no teto), existe uma versão específica U-rail. Cortina muito pesada, cortina blackout dupla-camada ou modelo com formato muito fora do padrão vale checar a compatibilidade específica antes de comprar.'
+  - question: 'Preciso do Hub para o Curtain 3 funcionar?'
+    answer: 'Não para o uso básico — o motor funciona sozinho via Bluetooth direto do celular, controlando abertura/fechamento e agendamento pelo app SwitchBot. O Hub (vendido separado) é necessário só para: controle remoto de fora de casa (sem estar no alcance do Bluetooth), integração com Alexa/Google Home/Siri, e compatibilidade Matter/HomeKit. Para automação real com Home Assistant, o Hub praticamente vira obrigatório.'
+  - question: 'Compensa mais o SwitchBot pronto ou um projeto DIY com ESP32?'
+    answer: 'Depende do que você valoriza. O SwitchBot é plug-and-play — 30 segundos de instalação, sem soldar nada, com app pronto e suporte oficial. Um projeto DIY com ESP32 e motor de passo custa uma fração do preço em componentes, mas exige montar a estrutura mecânica (trilho, correia, suporte) do zero, algo que o SwitchBot já resolve pronto de fábrica. Para quem já tem trilho ou haste convencional e quer resolver rápido, o pronto compensa; para quem gosta do processo maker e quer economizar, o DIY vale o esforço.'
+  - question: 'A bateria dura quanto tempo?'
+    answer: 'Com a bateria de 3300mAh, o uso típico (algumas aberturas/fechamentos por dia) rende em torno de 8 meses por carga completa, recarregável via USB-C. Uso mais intenso (muitos ciclos por dia, ou combinado com automações frequentes) reduz esse tempo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Cortina automática sempre pareceu coisa de instalação complexa e cara — trilho motorizado embutido, obra, eletricista. O SwitchBot Curtain 3 propõe o oposto: um motor que se encaixa na haste ou trilho que você já tem, sem fiação, sem parafuso, em segundos. Testamos se a proposta realmente entrega isso na prática.
+
+## Instalação — o principal argumento de venda
+
+![SwitchBot Curtain 3](/images/produtos/switchbot-curtain-3-review.webp)
+
+A instalação sem parafuso, sem furo e sem dano à haste é o maior diferencial do produto: o motor simplesmente encaixa na haste ou trilho existente, alimentado por bateria recarregável interna (3300mAh, USB-C), sem precisar de tomada por perto nem fiação elétrica nova. A tecnologia RoverHook garante encaixe firme numa faixa ampla de diâmetro de haste (10-40mm), cobrindo a maioria dos modelos residenciais comuns.
+
+<ProsCons pros={['Instalação sem parafuso, furo ou fiação — minutos, não horas', 'Motor 2x mais forte, silencioso (<25dB), suporta até 15-16kg']} cons={['Precisa do Hub (separado) para Alexa/Google/Matter/automação real']} />
+
+<AffiliateButton href="https://meli.la/28Vun2d" store="mercadolivre" source="switchbot-curtain-3-vale-a-pena" />
+
+## Motor e silêncio
+
+O motor desta terceira geração é o dobro da potência da geração anterior, suportando cortina de até 15-16kg (dependendo da versão rod ou U-type) — cobre desde cortina leve até modelo blackout mais pesado. A operação abaixo de 25dB é perceptível na prática: dá pra programar abertura automática de manhã sem acordar ninguém com o barulho do motor.
+
+## O que falta sem o Hub
+
+Sozinho, o Curtain 3 funciona bem via Bluetooth direto do app — abrir, fechar, agendar horário. Mas para o que costuma interessar mais quem lê este site (automação de verdade, integração com Home Assistant, controle por voz via Alexa/Google, funcionar fora de casa) o **SwitchBot Hub é praticamente obrigatório**, e é vendido à parte — importante somar esse custo antes de decidir, já que o preço "de entrada" do Curtain 3 sozinho não conta essa peça.
+
+## Pronto ou fazer um DIY com ESP32?
+
+Quem já leu os tutoriais deste site sabe que dá para automatizar cortina com ESP32 e um motor de passo, por uma fração do custo em componentes. A diferença real está no trabalho: o SwitchBot já resolve a parte mecânica (like encaixar no trilho, tracionar o tecido) pronta de fábrica, enquanto o projeto DIY exige montar essa estrutura você mesmo — trilho, correia, suporte impresso ou comprado à parte. Para quem quer resolver rápido e não se importa de pagar por isso, o pronto compensa. Para quem gosta do processo maker e quer economizar, vale o esforço extra do DIY.
+
+## Perguntas frequentes
+
+**Funciona em qualquer cortina?**
+A tecnologia RoverHook cobre hastes de 10-40mm, a maioria dos modelos residenciais. Cortina muito pesada ou trilho fora do padrão, confira a compatibilidade antes.
+
+**Precisa do Hub?**
+Não para uso básico via Bluetooth. Para Alexa/Google/Matter e automação com Home Assistant, sim.
+
+**Compensa mais que um DIY com ESP32?**
+Depende do que você valoriza — o pronto resolve a parte mecânica em minutos; o DIY custa menos em componentes mas exige montar a estrutura você mesmo.
+
+**Quanto dura a bateria?**
+Em torno de 8 meses por carga com uso típico, recarregável via USB-C.
+
+---
+
+*Dúvidas sobre o produto? [Fale com a gente](/contato/).*

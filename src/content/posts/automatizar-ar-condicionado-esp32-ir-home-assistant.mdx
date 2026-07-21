@@ -1,0 +1,143 @@
+---
+title: 'Automatize o ar-condicionado com ESP32 e Home Assistant'
+description: 'Tutorial: transforme qualquer ar-condicionado com controle remoto infravermelho num dispositivo do Home Assistant usando ESP32, ESPHome e um módulo IR.'
+pubDate: 2026-07-30
+category: 'automacao-residencial'
+tags: ['esp32', 'esphome', 'home assistant', 'ar-condicionado', 'infravermelho']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: '5x Módulo Receptor Infravermelho KY-022 para Arduino/ESP32'
+    brand: 'Genérico'
+    rating: 5.0
+    price: 32.00
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2Pkj85X'
+    image: '/images/produtos/ky022-receptor-infravermelho-5x-v3.webp'
+    pros:
+      - 'Vem em kit de 5 unidades — sobra para outros projetos ou para substituir se queimar um'
+      - 'Funciona com qualquer marca de ar-condicionado — o método é clonar o código do controle físico, não depender de protocolo específico'
+    cons:
+      - 'É só o receptor — o LED emissor (para retransmitir) é um componente separado, comum e barato, vendido à parte'
+faq:
+  - question: 'Esse método funciona com qualquer marca de ar-condicionado?'
+    answer: 'Sim — a técnica usada aqui (capturar o código bruto do controle remoto original e retransmitir esse mesmo código) não depende de saber o protocolo ou a marca do seu ar-condicionado. Funciona porque você está literalmente clonando o sinal que o controle físico já envia, então qualquer aparelho controlado por infravermelho é compatível.'
+  - question: 'Preciso saber programar para fazer esse tutorial?'
+    answer: 'Não precisa saber programar em C/C++ tradicional — o ESPHome usa configuração em YAML, que é mais parecido com preencher um formulário estruturado do que escrever código. O passo mais técnico é copiar a sequência de números que aparece no log ao capturar o código do controle, e colar no lugar certo do arquivo.'
+  - question: 'O que fazer se meu ar-condicionado tiver muitas combinações de temperatura/modo?'
+    answer: 'Para cada combinação que você quiser controlar via Home Assistant (ex.: "23°C frio", "desligar", "26°C frio"), repita o processo de captura uma vez, criando um botão separado para cada uma. Não precisa capturar todas as combinações possíveis do controle — normalmente 3 a 5 botões (ligar numa temperatura de referência, mudar para outra comum, e desligar) já cobrem o uso do dia a dia.'
+  - question: 'Existe um jeito mais rápido, sem capturar código manualmente?'
+    answer: 'Se o seu ar-condicionado for de uma marca com protocolo IR bem documentado (Coolix é comum em vários splits vendidos no Brasil), o ESPHome tem suporte nativo via plataforma climate específica, que já sabe montar o código certo para qualquer temperatura sem você precisar capturar nada manualmente. Mas nem toda marca tem esse suporte pronto — o método de captura manual deste tutorial funciona como alternativa universal quando não há suporte nativo para o seu modelo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Ar-condicionado com controle remoto infravermelho é um dos aparelhos mais comuns em casa que ainda fica de fora da automação — diferente de lâmpada ou tomada, não dá pra simplesmente trocar por uma versão "smart" sem trocar o aparelho inteiro. A solução é um **IR blaster**: um ESP32 com um módulo infravermelho que aprende o código do seu controle físico e depois consegue reenviar esse comando pelo Home Assistant, de qualquer marca de ar-condicionado.
+
+## O que você vai precisar
+
+![5x Módulo Receptor Infravermelho KY-022](/images/produtos/ky022-receptor-infravermelho-5x-v3.webp)
+
+Além do módulo receptor KY-022 (usado só na etapa de captura do código), você precisa de um **ESP32 dev board** (qualquer modelo genérico serve), um **LED infravermelho comum** (o emissor, barato e fácil de achar separado — não precisa ser um kit específico) e o controle remoto físico original do seu ar-condicionado.
+
+<ProsCons pros={['Kit de 5 unidades, sobra para outros projetos', 'Funciona com qualquer marca de ar-condicionado']} cons={['É só o receptor — o LED emissor é vendido à parte']} />
+
+<AffiliateButton href="https://meli.la/2Pkj85X" store="mercadolivre" source="automatizar-ar-condicionado-esp32-ir-home-assistant" />
+
+## Como funciona
+
+O princípio é simples: o receptor IR "escuta" o sinal que o controle remoto original envia quando você aperta um botão, e o ESPHome mostra esse sinal como uma sequência de números (tempos de ligado/desligado, em microssegundos) no log. Você copia essa sequência e guarda como um comando — depois, o ESP32 usa o LED emissor para reenviar exatamente esse mesmo padrão, e o ar-condicionado reage como se tivesse recebido do controle original. Não importa a marca: você está clonando o sinal, não interpretando um protocolo.
+
+## Passo 1: configuração base do ESPHome
+
+Comece com o receptor e o transmissor configurados no `remote_receiver` e `remote_transmitter` do ESPHome:
+
+```yaml
+esphome:
+  name: ir-blaster-ar-condicionado
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+logger:
+
+remote_receiver:
+  pin:
+    number: GPIO14
+    inverted: true
+  dump: raw
+  idle: 8ms
+
+remote_transmitter:
+  pin: GPIO4
+  carrier_duty_percent: 50%
+```
+
+O `remote_receiver` fica ligado ao pino do módulo receptor (GPIO14 no exemplo); o `remote_transmitter` fica ligado ao LED emissor (GPIO4). O `dump: raw` é o que faz o ESPHome mostrar o código capturado no log.
+
+## Passo 2: capture o código do seu controle
+
+Suba essa configuração para o ESP32 (`esphome run nome-do-arquivo.yaml`) e abra o log em tempo real. Aponte o controle remoto físico do ar-condicionado para o receptor e aperte o botão que você quer capturar (por exemplo, "ligar em 23°C, modo frio"). O log vai mostrar algo parecido com isto:
+
+```
+[18:32:01][D][remote.raw:xxx]: Received Raw: 9024, -4512, 650, -1690, 650, -1690, 650, -560, 650, -560, ...
+```
+
+Copie essa sequência completa de números — é o código exato do seu controle para aquele botão específico.
+
+## Passo 3: crie os botões no Home Assistant
+
+Com o código capturado, adicione um `button` no ESPHome para cada função que você quer controlar, colando a sequência capturada:
+
+```yaml
+button:
+  - platform: template
+    name: "Ar-condicionado Ligar 23C Frio"
+    on_press:
+      - remote_transmitter.transmit_raw:
+          code: [9024, -4512, 650, -1690, 650, -1690, 650, -560, 650, -560]
+          # cole aqui a sequência completa capturada no passo 2
+
+  - platform: template
+    name: "Ar-condicionado Desligar"
+    on_press:
+      - remote_transmitter.transmit_raw:
+          code: [9024, -4512, 650, -560, 650, -1690, 650, -1690, 650, -560]
+          # capture o código do botão "desligar" do seu controle e cole aqui
+```
+
+Repita o processo (capturar no log → colar num novo `button`) para cada combinação que você usa no dia a dia — normalmente ligar numa temperatura de referência, trocar para outra comum, e desligar já cobrem a maior parte do uso real.
+
+## Passo 4: use no Home Assistant
+
+Depois de subir essa configuração, os botões aparecem automaticamente como entidades no Home Assistant (via integração ESPHome, que se conecta sozinha se `api:` estiver configurado). A partir daí, dá para criar automações normais: ligar o ar-condicionado quando a temperatura do cômodo passar de um valor (com um sensor de temperatura), desligar quando todo mundo sair de casa, ou incluir num "cenário de dormir" que ativa vários dispositivos de uma vez.
+
+> ⚡ Quer também acompanhar o consumo de energia do ar-condicionado, não só ligá-lo remotamente? Veja o tutorial de [monitor de consumo elétrico com ESP32 e Home Assistant](https://nerdcaseiro.com.br/posts/monitor-consumo-eletrico-esp32-home-assistant/) — combina bem com essa automação.
+
+## Perguntas frequentes
+
+**Funciona com qualquer marca?**
+Sim — o método clona o sinal do controle original, não depende de protocolo ou marca específica.
+
+**Preciso saber programar?**
+Não precisa de C/C++ tradicional — o ESPHome usa YAML, mais parecido com preencher um formulário. O passo técnico é copiar o código capturado no log.
+
+**E se meu ar-condicionado tiver muitas combinações?**
+Não precisa capturar tudo — normalmente 3 a 5 botões (ligar numa temperatura, trocar pra outra, desligar) já cobrem o uso do dia a dia.
+
+**Existe um jeito mais rápido?**
+Se o seu ar-condicionado usar um protocolo comum (como Coolix), o ESPHome tem suporte nativo que monta o código sozinho, sem captura manual — mas nem toda marca tem esse suporte pronto.
+
+---
+
+*Dúvidas sobre a automação? [Fale com a gente](/contato/).*
