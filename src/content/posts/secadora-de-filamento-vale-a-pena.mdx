@@ -1,0 +1,84 @@
+---
+title: 'Caixa secadora de filamento: vale a pena pra impressão 3D?'
+description: 'Review da secadora de filamento SUNLU S1 Plus: resolve filamento úmido que causa cordas e entupimento? Veja quando compensa e quando não vale.'
+pubDate: 2026-08-01
+category: 'impressao-3d'
+tags: ['secadora de filamento', 'impressao 3d', 'filamento', 'sunlu']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'SUNLU FilaDryer S1 Plus — Secador de Filamento'
+    brand: 'SUNLU'
+    rating: 4.4
+    image: '/images/produtos/sunlu-s1-plus-secador-filamento.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08C9RZPMN?tag=nerdcaseiro-20'
+    pros:
+      - 'Seca durante a impressão — o filamento passa direto da caixa para a extrusora, sem precisar interromper o trabalho'
+      - 'Temperatura ajustável de 35°C a 55°C e timer de 0 a 24h, cobrindo PLA, PETG, ABS e a maioria dos filamentos comuns'
+    cons:
+      - 'Comporta um carretel por vez — quem alterna muito de cor ou material vai querer um modelo de 2 ou 4 bobinas'
+faq:
+  - question: 'Como saber se o meu filamento está úmido?'
+    answer: 'Os sinais mais claros aparecem durante a impressão: estalos ou pequenos "pops" saindo da extrusora (é a água virando vapor), fios finos atravessando áreas vazias da peça (stringing), superfície com aspecto áspero ou fosco onde deveria ser liso, e camadas com adesão ruim que descolam depois. Filamento novo recém-aberto raramente apresenta isso; o problema aparece em rolos abertos há semanas ou meses guardados fora de embalagem selada.'
+  - question: 'Quanto tempo preciso secar o filamento?'
+    answer: 'Para a maioria dos filamentos comuns, de 3 a 6 horas já resolve — é o padrão de fábrica da própria SUNLU (6h). Filamentos mais higroscópicos, como nylon ou PETG que ficou muito tempo exposto, podem precisar de mais tempo. Não é um processo que precisa ser feito toda vez: só quando o rolo passou tempo demais fora da embalagem ou quando os sintomas de umidade aparecem na impressão.'
+  - question: 'Dá para usar o forno de casa em vez de comprar uma secadora?'
+    answer: 'Tecnicamente é possível, mas é arriscado: fornos domésticos têm variação de temperatura grande (às vezes 20°C ou mais em relação ao que marca no painel) e podem passar do ponto de amolecimento do filamento, deformando o carretel inteiro. Além disso, o forno não permite imprimir com o filamento dentro, que é o principal ganho prático de uma secadora dedicada.'
+  - question: 'PLA precisa de secadora ou só filamentos técnicos?'
+    answer: 'PLA absorve menos umidade que nylon ou PETG, mas absorve. Em regiões úmidas do Brasil — litoral, ou qualquer lugar no verão com umidade alta —, um rolo de PLA aberto há alguns meses pode apresentar stringing e estalos claramente. Quem imprime só de vez em quando e usa o rolo rápido raramente precisa; quem tem vários rolos abertos girando ao longo de meses se beneficia.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Filamento úmido é a causa mais subestimada de impressão ruim. A peça sai com fios atravessando vãos, superfície áspera, camadas descolando — e a maioria das pessoas culpa a impressora, a temperatura ou o modelo antes de desconfiar do rolo que está aberto há três meses em cima da bancada. Testamos se uma caixa secadora dedicada resolve isso de verdade.
+
+## O problema: filamento é higroscópico
+
+Praticamente todo filamento de impressão 3D absorve umidade do ar. Quando esse filamento passa pela extrusora a 200°C, a água que ele absorveu vira vapor instantaneamente — e é isso que causa os estalos audíveis durante a impressão, as bolhas microscópicas que deixam a superfície fosca e o stringing (aqueles fios finos entre as partes da peça). Nylon e PETG são os mais sensíveis, mas PLA também sofre, especialmente em regiões de umidade alta.
+
+## Como a SUNLU S1 Plus funciona
+
+É basicamente uma câmara aquecida com ventilador de circulação interna e um furo de saída para o filamento. Você coloca o carretel dentro, define temperatura (35°C a 55°C) e tempo (0 a 24h), e o ar aquecido circula pela câmara puxando a umidade para fora. O detalhe que importa: **dá para imprimir com o filamento dentro dela** — o fio sai pelo furo direto para a extrusora, então a secagem continua acontecendo durante todo o trabalho, em vez de o rolo voltar a absorver umidade enquanto a impressão de 12 horas roda.
+
+![SUNLU FilaDryer S1 Plus](/images/produtos/sunlu-s1-plus-secador-filamento.webp)
+
+<ProsCons pros={['Seca durante a impressão — o filamento sai direto para a extrusora', 'Temperatura de 35°C a 55°C cobre PLA, PETG, ABS e a maioria dos filamentos']} cons={['Comporta só um carretel por vez']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08C9RZPMN?tag=nerdcaseiro-20" store="amazon" source="secadora-de-filamento-vale-a-pena" />
+
+## Quando compensa
+
+- **Você tem vários rolos abertos girando há meses.** É o cenário clássico: comprou 4 cores, usa uma de cada vez, e as outras três ficam meses expostas.
+- **Mora em região úmida.** Litoral, ou qualquer lugar onde a umidade relativa passa dos 70% com frequência.
+- **Imprime PETG, nylon ou TPU.** Esses absorvem bem mais rápido que PLA e degradam a qualidade de forma perceptível em semanas.
+- **Já teve impressão longa arruinada.** Uma peça de 15 horas que falha na camada 400 por causa de umidade custa mais em filamento e tempo do que a secadora.
+
+## Quando não vale
+
+Se você imprime esporadicamente e consome cada rolo em poucas semanas, guardando o resto em saco selado com sílica, o ganho é pequeno. Um kit de sacos a vácuo com sílica resolve o armazenamento por uma fração do preço — a secadora só vira necessária quando o volume de impressão (ou o clima) faz a umidade voltar mais rápido do que o armazenamento consegue segurar.
+
+## Vale a pena?
+
+Vale para quem imprime com regularidade e já perdeu peça por causa de umidade — nesse perfil, ela se paga rápido. O modelo de um carretel dá conta de quem imprime uma cor por vez; quem alterna muito entre materiais no mesmo projeto vai achar limitante e deve olhar direto para as versões de 2 ou 4 bobinas, que custam consideravelmente mais. Para o maker ocasional, vale começar com armazenamento selado e só migrar para a secadora se o problema persistir.
+
+## Perguntas frequentes
+
+**Como sei se meu filamento está úmido?**
+Estalos na extrusora, stringing, superfície fosca e camadas descolando são os sinais mais claros.
+
+**Quanto tempo preciso secar?**
+De 3 a 6 horas resolve na maioria dos casos — o padrão de fábrica é 6h.
+
+**Dá para usar o forno de casa?**
+Dá, mas é arriscado: a variação de temperatura pode deformar o carretel, e não permite imprimir com o filamento dentro.
+
+**PLA precisa de secadora?**
+Absorve menos que nylon ou PETG, mas absorve — em região úmida e com rolo aberto há meses, sim.
+
+---
+
+*Dúvidas sobre secagem de filamento? [Fale com a gente](/contato/).*

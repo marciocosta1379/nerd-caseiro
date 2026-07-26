@@ -1,0 +1,121 @@
+---
+title: 'SSD externo ou HD externo: qual usar para backup em casa?'
+description: 'Comparamos SSD e HD externo de 1TB para backup doméstico: velocidade, preço por GB, durabilidade e qual faz mais sentido para cada tipo de uso.'
+pubDate: 2026-08-04
+category: 'home-office'
+tags: ['ssd externo', 'hd externo', 'backup', 'armazenamento']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'HD Externo Toshiba Canvio Basics 1TB'
+    brand: 'Toshiba'
+    rating: 4.8
+    image: '/images/produtos/toshiba-canvio-basics-1tb-hd.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20'
+    pros:
+      - 'Mais barato por GB — é o argumento central do HD e o que ainda faz ele valer para backup de arquivo morto'
+      - 'Nota 4,8 com mais de 20 mil avaliações, num formato de produto maduro e sem surpresa'
+    cons:
+      - 'Tem partes móveis — uma queda com o disco girando pode significar perda total dos dados'
+  - name: 'SSD Portátil SanDisk 1TB (USB-C, até 800 MB/s)'
+    brand: 'SanDisk'
+    rating: 4.7
+    image: '/images/produtos/sandisk-ssd-portatil-1tb.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20'
+    pros:
+      - 'Até 800 MB/s contra os ~120 MB/s típicos de um HD externo — a diferença aparece de forma óbvia em backup grande'
+      - 'Sem partes móveis: aguenta queda, transporte e uso em movimento muito melhor que um HD'
+    cons:
+      - 'Custa bem mais pela mesma capacidade — a diferença de preço só se justifica se a velocidade ou a portabilidade importarem'
+faq:
+  - question: 'Para backup que fica guardado em casa, vale pagar mais pelo SSD?'
+    answer: 'Normalmente não. Se o disco vai ficar parado numa gaveta e ser conectado uma vez por semana ou por mês para copiar arquivos, a velocidade extra do SSD é usada por poucos minutos e o resto do tempo não faz diferença nenhuma. Nesse cenário, o HD entrega o dobro de capacidade pelo mesmo dinheiro, o que importa muito mais para backup.'
+  - question: 'SSD dura mais que HD?'
+    answer: 'Depende do tipo de desgaste. O SSD não tem partes móveis, então resiste muito melhor a queda, vibração e transporte — o HD pode perder tudo numa queda com o disco girando. Por outro lado, as células de memória do SSD têm um limite de ciclos de escrita. Para uso de backup doméstico, esse limite é alto demais para ser atingido na prática, então na prática o SSD tende a ser mais confiável no dia a dia.'
+  - question: 'Um backup só num disco externo é suficiente?'
+    answer: 'Não. A regra usada em TI é a 3-2-1: três cópias dos dados, em dois tipos de mídia diferentes, sendo uma delas fora de casa. Um único disco externo guardado na mesma casa que o computador não protege contra incêndio, roubo ou enchente — e discos falham, tanto SSD quanto HD. O disco externo é uma boa camada, mas idealmente combinado com alguma cópia em nuvem.'
+  - question: 'Posso usar o disco externo para rodar programas ou jogos?'
+    answer: 'Aí a conta muda completamente e o SSD ganha com folga. Rodar software direto do disco externo exige leitura aleatória constante, que é exatamente onde o HD é mais lento — o jogo demora a carregar, o programa trava em operações de disco. Com SSD via USB-C a experiência fica próxima de um disco interno. Se o plano é rodar coisas e não só guardar, SSD.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+A escolha entre SSD e HD externo costuma ser apresentada como "SSD é melhor, só é mais caro" — o que não é exatamente verdade quando o assunto é backup. Dependendo de como você usa o disco, o HD continua sendo a escolha mais racional. Comparamos dois modelos de 1TB para deixar claro em que cenário cada um ganha.
+
+## A diferença que realmente importa: velocidade
+
+Um HD externo típico entrega em torno de 120 MB/s. O SSD SanDisk desta comparação chega a 800 MB/s — cerca de 6 vezes mais rápido. Na prática: copiar 500 GB leva algo em torno de 70 minutos no HD contra pouco mais de 10 minutos no SSD.
+
+Isso é enorme se você faz backup grande com frequência, ou trabalha com arquivos pesados (vídeo, foto RAW, máquinas virtuais). E é praticamente irrelevante se você conecta o disco uma vez por mês para copiar alguns gigabytes de documento e foto.
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="ssd-externo-ou-hd-externo-backup"
+  rows={[
+    { name: 'HD Toshiba Canvio Basics 1TB', brand: 'Toshiba', rating: 4.8, highlight: 'Mais barato por GB', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20' }] },
+    { name: 'SSD SanDisk Portátil 1TB', brand: 'SanDisk', rating: 4.7, highlight: 'Até 800 MB/s, resistente a queda', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## HD externo: quando ainda é a escolha certa
+
+![HD Externo Toshiba Canvio Basics 1TB](/images/produtos/toshiba-canvio-basics-1tb-hd.webp)
+
+O argumento do HD é simples e continua de pé: **capacidade por real gasto**. Para backup de arquivo morto — a foto de 2015, o projeto que você terminou ano passado, a coleção de documentos —, o que importa é caber tudo, não copiar rápido. O disco fica guardado, é conectado esporadicamente, e a velocidade só aparece nos minutos da cópia.
+
+O risco real do HD é mecânico: ele tem prato girando e cabeçote se movendo. Uma queda com o disco em funcionamento pode destruir os dados de forma irrecuperável. Guardado numa gaveta e manuseado com cuidado, isso raramente acontece — mas é um risco que o SSD simplesmente não tem.
+
+<ProsCons pros={['Mais barato por GB — mais espaço pelo mesmo dinheiro', '4,8 de nota com mais de 20 mil avaliações']} cons={['Partes móveis: queda com o disco girando pode causar perda total']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20" store="amazon" source="ssd-externo-ou-hd-externo-backup" />
+
+---
+
+## SSD externo: quando compensa pagar a mais
+
+![SSD Portátil SanDisk 1TB](/images/produtos/sandisk-ssd-portatil-1tb.webp)
+
+O SSD ganha em três situações concretas: quando o disco anda com você (mochila, viagem, trabalho externo), quando você copia volumes grandes com frequência, e quando pretende rodar programas direto dele. Nesses casos a diferença não é conforto — é tempo real de trabalho e risco real de perda por dano físico.
+
+Sem partes móveis, ele aguenta o tipo de tratamento que mata um HD: ser jogado na mochila, sofrer solavanco no transporte, ser desconectado de forma desajeitada. Combinado com USB-C, a velocidade fica próxima o suficiente de um disco interno para uso sério.
+
+<ProsCons pros={['Até 800 MB/s — backup grande em minutos, não em horas', 'Sem partes móveis: aguenta transporte e queda muito melhor']} cons={['Bem mais caro pela mesma capacidade']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20" store="amazon" source="ssd-externo-ou-hd-externo-backup" />
+
+---
+
+## Como escolher
+
+1. **Disco fica em casa, backup mensal de documentos e fotos?** HD — o dinheiro economizado compra mais espaço, que é o que importa aqui.
+2. **Disco anda com você na mochila?** SSD, sem discussão. O risco de queda é o argumento definitivo.
+3. **Copia centenas de GB com frequência (vídeo, foto RAW)?** SSD — a diferença de tempo é grande demais para ignorar.
+4. **Quer rodar programa ou jogo direto do disco externo?** SSD. HD externo para isso é uma experiência ruim.
+
+> 💾 Um disco externo só não é backup completo. A regra 3-2-1 (três cópias, duas mídias, uma fora de casa) existe porque disco falha, casa pega fogo e ladrão leva o computador junto com o HD que estava do lado.
+
+## Perguntas frequentes
+
+**Para backup guardado em casa, vale o SSD?**
+Normalmente não — a velocidade é usada por poucos minutos e o HD entrega mais espaço pelo mesmo valor.
+
+**SSD dura mais que HD?**
+Resiste muito melhor a queda e transporte. As células têm limite de escrita, mas inatingível em uso doméstico.
+
+**Um disco externo já é backup suficiente?**
+Não — não protege contra incêndio, roubo ou falha do próprio disco. Combine com nuvem.
+
+**Dá para rodar programas do disco externo?**
+Com SSD sim, com boa experiência. Com HD, é lento e frustrante.
+
+---
+
+*Dúvidas sobre backup e armazenamento? [Fale com a gente](/contato/).*

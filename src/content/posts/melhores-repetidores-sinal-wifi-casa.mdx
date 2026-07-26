@@ -1,0 +1,173 @@
+---
+title: 'Os melhores repetidores de sinal Wi-Fi para casa'
+description: 'Comparamos 4 repetidores Wi-Fi: do clássico TL-WA850RE ao extensor mesh Wi-Fi 6. Qual resolve de vez o cômodo sem sinal da sua casa.'
+pubDate: 2026-08-07
+category: 'redes-wifi'
+tags: ['repetidor wifi', 'extensor wifi', 'redes', 'mesh']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link RE305 AC1200 Dual Band'
+    brand: 'TP-Link'
+    rating: 4.6
+    image: '/images/produtos/tplink-re305-ac1200.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B075KFFSMR?tag=nerdcaseiro-20'
+    pros:
+      - 'Dual band de verdade (2,4 e 5 GHz simultâneos) — a faixa de 5 GHz é o que evita o repetidor virar gargalo de velocidade'
+      - 'Tem porta Ethernet e modo AP, permitindo usar como ponto de acesso cabeado em vez de só repetir sinal'
+    cons:
+      - 'Não forma malha mesh unificada — o aparelho cria uma rede estendida, e a troca entre redes não é tão transparente quanto num sistema mesh real'
+  - name: 'TP-Link TL-WA850RE 300Mbps'
+    brand: 'TP-Link'
+    rating: 4.6
+    image: '/images/produtos/tplink-tlwa850re-repetidor.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B00A0VCJPI?tag=nerdcaseiro-20'
+    pros:
+      - 'Mais de 206 mil avaliações — provavelmente o repetidor mais vendido e testado do Brasil, com nota 4,6'
+      - 'Configuração por botão WPS: pluga na tomada, aperta um botão no roteador e outro nele, e está pronto'
+    cons:
+      - 'Só 2,4 GHz a 300Mbps — não serve para quem quer manter velocidade alta, apenas para levar sinal onde não chega nada'
+  - name: 'TP-Link RE200 Mesh AC750'
+    brand: 'TP-Link'
+    rating: 4.5
+    image: '/images/produtos/tplink-re200-mesh-ac750.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0755PV4H7?tag=nerdcaseiro-20'
+    pros:
+      - 'Compatível com OneMesh: com roteador TP-Link compatível, forma uma rede única de verdade, sem trocar de SSID pela casa'
+      - 'Dual band AC750 por um preço intermediário, bom meio-termo entre o TL-WA850RE e o RE305'
+    cons:
+      - 'O recurso mesh só funciona se o roteador principal também for TP-Link compatível com OneMesh — com roteador de operadora, vira repetidor comum'
+  - name: 'Intelbras EX 1500 Extensor Mesh Wi-Fi 6'
+    brand: 'Intelbras'
+    rating: 4.4
+    image: '/images/produtos/intelbras-ex1500-wifi6-mesh.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DG9814VC?tag=nerdcaseiro-20'
+    pros:
+      - 'Único da lista com Wi-Fi 6, que lida melhor com muitos dispositivos conectados ao mesmo tempo — cenário real de casa com automação'
+      - 'Marca brasileira com assistência técnica nacional e cobertura declarada de até 100m²'
+    cons:
+      - 'Volume de avaliações ainda pequeno (158) e o ganho do Wi-Fi 6 só aparece se os dispositivos da casa também forem Wi-Fi 6'
+faq:
+  - question: 'Repetidor Wi-Fi corta a velocidade da internet pela metade?'
+    answer: 'Nos modelos de banda única, sim, na prática. O repetidor precisa receber e retransmitir o sinal usando o mesmo rádio e a mesma faixa, o que efetivamente divide a capacidade. Modelos dual band contornam isso usando uma faixa para falar com o roteador e outra para atender os dispositivos, mantendo bem mais velocidade. Por isso o dual band é o critério mais importante se você quer velocidade, não só cobertura.'
+  - question: 'Repetidor ou sistema mesh: qual escolher?'
+    answer: 'Mesh é tecnicamente superior — cria uma rede única em que o dispositivo troca de ponto sem perder conexão, com um único nome de rede. Repetidor comum geralmente cria uma segunda rede (às vezes com sufixo _EXT), e o celular só troca quando o sinal fica ruim o suficiente, causando aquele momento de conexão travada. Mas mesh custa várias vezes mais. Se o problema é um cômodo específico sem sinal, o repetidor resolve por muito menos.'
+  - question: 'Onde devo instalar o repetidor?'
+    answer: 'No meio do caminho entre o roteador e a área sem sinal, num ponto onde o repetidor ainda receba sinal bom. O erro clássico é instalar já dentro do cômodo problemático: ali o sinal que chega é fraco, e o repetidor só vai amplificar um sinal ruim, entregando conexão instável. A regra prática é procurar o último ponto da casa onde o Wi-Fi original ainda funciona bem.'
+  - question: 'Wi-Fi 6 vale a pena num repetidor?'
+    answer: 'O ganho principal do Wi-Fi 6 não é velocidade bruta para um dispositivo, e sim eficiência com muitos dispositivos simultâneos — exatamente o cenário de uma casa com automação, câmeras, TVs e celulares todos conectados. Mas o benefício só se materializa se os dispositivos também forem Wi-Fi 6. Numa casa onde tudo é Wi-Fi 5 ou anterior, o extensor Wi-Fi 6 funciona, mas você paga por uma capacidade que não usa.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Quase toda casa tem aquele cômodo onde o Wi-Fi não chega direito — quarto dos fundos, área de serviço, garagem. Trocar o roteador inteiro resolve, mas custa caro. O repetidor é a solução barata, desde que você escolha o tipo certo: o modelo errado leva sinal para o cômodo e mata a velocidade no caminho. Comparamos 4 opções, do repetidor simples ao extensor mesh Wi-Fi 6.
+
+## O critério que mais importa: banda única ou dual band
+
+Um repetidor de banda única recebe o sinal do roteador e retransmite usando o mesmo rádio na mesma faixa. O resultado é a capacidade sendo dividida — na prática, algo próximo da metade da velocidade.
+
+Modelos dual band usam faixas diferentes para as duas tarefas (falar com o roteador e atender os dispositivos), preservando bem mais velocidade. É a diferença entre "agora tem sinal, mas está lento" e "agora funciona".
+
+**Regra prática:** se o objetivo é só ter algum sinal onde não havia nenhum (câmera na garagem, celular na área de serviço), banda única resolve e é mais barato. Se você quer assistir vídeo ou trabalhar naquele cômodo, dual band.
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="melhores-repetidores-sinal-wifi-casa"
+  rows={[
+    { name: 'TP-Link RE305 AC1200', brand: 'TP-Link', rating: 4.6, highlight: 'Melhor dual band da lista', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B075KFFSMR?tag=nerdcaseiro-20' }] },
+    { name: 'TP-Link TL-WA850RE', brand: 'TP-Link', rating: 4.6, highlight: 'O mais vendido (206 mil avaliações)', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B00A0VCJPI?tag=nerdcaseiro-20' }] },
+    { name: 'TP-Link RE200 Mesh AC750', brand: 'TP-Link', rating: 4.5, highlight: 'Mesh com roteador TP-Link', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0755PV4H7?tag=nerdcaseiro-20' }] },
+    { name: 'Intelbras EX 1500 Wi-Fi 6', brand: 'Intelbras', rating: 4.4, highlight: 'Único com Wi-Fi 6', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0DG9814VC?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. TP-Link RE305 AC1200 — o melhor equilíbrio
+
+![TP-Link RE305 AC1200](/images/produtos/tplink-re305-ac1200.webp)
+
+Dual band de verdade, com 2,4 e 5 GHz operando simultaneamente — é o que impede o repetidor de virar gargalo. Tem porta Ethernet, o que permite dois usos extras: ligar um dispositivo cabeado (TV, console) no cômodo distante, ou usar o aparelho em modo AP, criando um ponto de acesso alimentado por cabo em vez de repetir sinal pelo ar (solução tecnicamente muito melhor, se você tiver como passar o cabo).
+
+<ProsCons pros={['Dual band simultâneo — não vira gargalo de velocidade', 'Porta Ethernet e modo AP para uso como ponto de acesso cabeado']} cons={['Não forma malha mesh unificada de verdade']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B075KFFSMR?tag=nerdcaseiro-20" store="amazon" source="melhores-repetidores-sinal-wifi-casa" />
+
+---
+
+## 2. TP-Link TL-WA850RE — o mais vendido do Brasil
+
+![TP-Link TL-WA850RE](/images/produtos/tplink-tlwa850re-repetidor.webp)
+
+Com mais de 206 mil avaliações e nota 4,6, é provavelmente o repetidor mais testado do país. A instalação é o ponto forte: pluga na tomada, aperta o WPS do roteador e o botão dele, pronto — sem app, sem configuração de rede. A limitação é clara: só 2,4 GHz a 300Mbps. Serve perfeitamente para levar sinal onde não chega nada (câmera externa, dispositivo de automação, celular na área de serviço), mas não para manter velocidade alta.
+
+<ProsCons pros={['206 mil avaliações com nota 4,6 — validação sem paralelo na categoria', 'Instalação por botão WPS, sem app nem configuração']} cons={['Só 2,4 GHz a 300Mbps — leva sinal, não velocidade']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B00A0VCJPI?tag=nerdcaseiro-20" store="amazon" source="melhores-repetidores-sinal-wifi-casa" />
+
+---
+
+## 3. TP-Link RE200 Mesh AC750 — mesh se o roteador ajudar
+
+![TP-Link RE200 Mesh AC750](/images/produtos/tplink-re200-mesh-ac750.webp)
+
+Dual band AC750 num preço intermediário, com uma carta na manga: compatibilidade OneMesh. Se o seu roteador principal também for TP-Link com suporte a OneMesh, os dois formam uma rede única de verdade — mesmo nome de rede, troca transparente entre pontos, sem aquele momento de conexão presa numa rede fraca.
+
+O detalhe que muda tudo: **isso só funciona se o roteador for compatível**. Com o roteador padrão da operadora, ele opera como repetidor dual band comum — ainda bom, mas sem o benefício que justifica escolher ele.
+
+<ProsCons pros={['Forma rede mesh única com roteador TP-Link OneMesh', 'Dual band AC750 por preço intermediário']} cons={['O mesh só funciona com roteador TP-Link compatível — com roteador de operadora vira repetidor comum']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0755PV4H7?tag=nerdcaseiro-20" store="amazon" source="melhores-repetidores-sinal-wifi-casa" />
+
+---
+
+## 4. Intelbras EX 1500 — o único Wi-Fi 6
+
+![Intelbras EX 1500 Wi-Fi 6 Mesh](/images/produtos/intelbras-ex1500-wifi6-mesh.webp)
+
+Único da lista com Wi-Fi 6, cuja vantagem principal não é velocidade bruta, e sim eficiência quando há muitos dispositivos conectados ao mesmo tempo — cenário real de uma casa com automação, câmeras, TVs, celulares e computadores todos disputando a rede. Marca brasileira com assistência nacional e cobertura declarada de até 100m².
+
+A ressalva: o ganho do Wi-Fi 6 só se materializa se os dispositivos também forem Wi-Fi 6. Numa casa onde tudo ainda é Wi-Fi 5, você paga por capacidade que não vai usar tão cedo.
+
+<ProsCons pros={['Wi-Fi 6 lida melhor com muitos dispositivos simultâneos', 'Marca nacional com assistência técnica no Brasil']} cons={['Amostra de avaliações pequena e o ganho depende de ter dispositivos Wi-Fi 6']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DG9814VC?tag=nerdcaseiro-20" store="amazon" source="melhores-repetidores-sinal-wifi-casa" />
+
+---
+
+## Como escolher
+
+1. **Só precisa de sinal onde não chega nada?** TL-WA850RE — o mais barato e mais testado, resolve.
+2. **Quer manter velocidade para vídeo e trabalho?** RE305 AC1200 — dual band é o que importa aqui.
+3. **Seu roteador é TP-Link com OneMesh?** RE200 — aproveite a rede unificada de verdade.
+4. **Casa com muitos dispositivos e equipamento novo?** Intelbras EX 1500 pelo Wi-Fi 6.
+
+> 📶 Antes de comprar, teste onde instalar: o repetidor precisa ficar num ponto onde ainda **recebe sinal bom**, não dentro do cômodo problemático. Amplificar um sinal já fraco só entrega conexão instável.
+
+## Perguntas frequentes
+
+**Repetidor corta a velocidade pela metade?**
+Nos de banda única, sim na prática. Dual band contorna isso usando faixas separadas.
+
+**Repetidor ou mesh?**
+Mesh é superior mas custa várias vezes mais. Para um cômodo específico, repetidor resolve.
+
+**Onde instalar?**
+No meio do caminho, no último ponto onde o Wi-Fi original ainda funciona bem — nunca dentro do cômodo sem sinal.
+
+**Wi-Fi 6 vale a pena?**
+Só se os dispositivos da casa também forem Wi-Fi 6 — senão você paga por capacidade não usada.
+
+---
+
+*Dúvidas sobre cobertura de Wi-Fi? [Fale com a gente](/contato/).*
