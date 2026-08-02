@@ -1,0 +1,455 @@
+---
+title: 'Servidor de mídia em casa com Raspberry Pi e Jellyfin'
+description: 'Tutorial completo: monte um servidor de mídia caseiro com Raspberry Pi 5 e Jellyfin, com HD externo, montagem automática e integração ao Home Assistant.'
+pubDate: 2026-08-12
+category: 'eletronica-maker'
+tags: ['raspberry pi', 'jellyfin', 'servidor de mídia', 'tutorial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 Model B 4GB Anatel'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    image: '/images/produtos/raspberry-pi-5-4gb.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    pros:
+      - 'A versão de 4GB é suficiente com folga para Jellyfin servindo alguns clientes simultâneos em reprodução direta'
+      - 'Versão com homologação Anatel, o que importa para garantia e suporte no Brasil'
+    cons:
+      - 'O Pi 5 exige fonte USB-C de 5V/5A para alimentar periféricos com folga — a fonte antiga do Pi 4 não dá conta'
+  - name: 'SanDisk Cartão microSDXC Ultra 128GB Classe 10 100MB/s'
+    brand: 'SanDisk'
+    rating: 4.8
+    image: '/images/produtos/sandisk-microsd-128gb.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08HYFLMFJ?tag=nerdcaseiro-20'
+    pros:
+      - '128GB dão folga para o sistema, os metadados e as capas que o Jellyfin baixa para a biblioteca'
+      - 'SanDisk é a marca com melhor histórico de confiabilidade em cartão para Raspberry Pi'
+    cons:
+      - 'Cartão microSD é o componente que mais falha em Raspberry Pi ligado 24 horas por dia — planeje backup'
+  - name: 'HD Externo Toshiba 1TB Canvio Basics USB 3.0'
+    brand: 'Toshiba'
+    rating: 4.8
+    image: '/images/produtos/hd-externo-toshiba-1tb.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20'
+    pros:
+      - 'Melhor custo por terabyte da lista — para armazenar mídia, capacidade importa mais que velocidade'
+      - 'Nota 4,8 com volume alto de avaliações, entre os HDs externos mais vendidos do país'
+    cons:
+      - 'HD mecânico alimentado pela USB pode exigir mais corrente do que o Pi entrega com folga, causando desconexões'
+  - name: 'SanDisk SSD Portátil 1TB USB-C até 800 MB/s'
+    brand: 'SanDisk'
+    rating: 4.7
+    image: '/images/produtos/sandisk-ssd-portatil-1tb.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20'
+    pros:
+      - 'Sem partes móveis: silencioso, mais tolerante a vibração e com consumo bem menor que o de um HD mecânico'
+      - 'Consumo baixo reduz o risco de o Pi reiniciar por falta de corrente no barramento USB'
+    cons:
+      - 'Custo por terabyte muito maior que o do HD, e a velocidade extra não faz diferença para servir vídeo'
+  - name: 'Gabinete ElectroCookie para Raspberry Pi 5 em alumínio com ventoinha'
+    brand: 'ElectroCookie'
+    rating: 4.5
+    image: '/images/produtos/gabinete-electrocookie-pi5.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CV79ND9Z?tag=nerdcaseiro-20'
+    pros:
+      - 'Refrigeração ativa é praticamente obrigatória no Pi 5 sob carga contínua, que é o caso de um servidor ligado direto'
+      - 'Corpo em alumínio ajuda na dissipação passiva além da ventoinha'
+    cons:
+      - 'Ventoinha faz ruído — se o servidor vai ficar na sala, considere um dissipador passivo maior'
+faq:
+  - question: 'Raspberry Pi 5 aguenta rodar um servidor de mídia?'
+    answer: 'Aguenta bem, desde que a expectativa seja reprodução direta e não transcodificação pesada. Quando o aplicativo cliente consegue reproduzir o arquivo no formato original, o Pi basicamente lê do disco e envia pela rede, o que exige muito pouco processamento — nesse cenário ele serve vários clientes simultâneos sem dificuldade. O problema aparece quando o cliente não suporta o formato e o servidor precisa converter o vídeo em tempo real. Aí a carga é de processamento puro, e o Pi 5 sofre. O caminho é montar a biblioteca em formatos amplamente compatíveis e configurar os clientes para reproduzir direto.'
+  - question: 'Jellyfin ou Plex: qual escolher?'
+    answer: 'Jellyfin é software livre, sem conta obrigatória, sem assinatura e sem recursos bloqueados atrás de plano pago — tudo roda no seu servidor e nada depende de um serviço externo. Plex tem interface mais polida, aplicativos clientes mais maduros em algumas plataformas e uma configuração inicial mais amigável, mas exige conta e reserva parte dos recursos para assinantes. Para quem monta a coisa em casa justamente para não depender de serviço de terceiro, Jellyfin é a escolha coerente. Para quem quer que simplesmente funcione com o mínimo de configuração, Plex costuma dar menos trabalho.'
+  - question: 'Preciso de HD externo ou o cartão microSD basta?'
+    answer: 'Precisa de armazenamento externo, por dois motivos. Espaço é o óbvio: uma biblioteca de vídeo consome muito mais que qualquer cartão razoável comporta. O segundo motivo é mais importante e menos comentado: cartão microSD tem número limitado de ciclos de escrita e é o componente que mais falha em Raspberry Pi ligado continuamente. Manter só o sistema no cartão e toda a mídia num disco externo isola o risco — se o cartão morrer, você regrava o sistema em vinte minutos e a biblioteca está intacta.'
+  - question: 'Dá para acessar o servidor fora de casa?'
+    answer: 'Dá, mas exponha com cuidado. Abrir a porta do Jellyfin diretamente para a internet coloca um serviço no seu IP público, sujeito a varredura automatizada, e qualquer falha não corrigida vira porta de entrada para a rede doméstica inteira. As abordagens mais seguras são usar uma VPN para entrar na sua própria rede e acessar como se estivesse em casa, ou colocar um proxy reverso com HTTPS e autenticação na frente. Se a ideia é assistir na casa de alguém de vez em quando, a VPN resolve com muito menos risco.'
+  - question: 'Por que meu HD externo desconecta sozinho no Raspberry Pi?'
+    answer: 'Quase sempre é alimentação. HD mecânico de 2,5 polegadas puxa um pico de corrente ao iniciar o prato, e esse pico pode exceder o que a porta USB do Pi entrega com folga — especialmente se a fonte não for adequada. O sintoma clássico é o disco sumir do sistema no meio de uma reprodução ou logo depois de ligar. As soluções são usar fonte de alimentação adequada ao Pi 5, usar um hub USB com fonte própria, ou trocar o HD mecânico por um SSD, que consome bem menos.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Toda coleção de filme, série e foto que você acumulou está espalhada em HD externo, pendrive e pastas do computador — e você nunca assiste, porque dá trabalho achar e conectar. Um servidor de mídia resolve isso: a biblioteca inteira aparece organizada, com capa e sinopse, em qualquer TV, celular ou navegador da casa.
+
+E resolve sem mensalidade, sem nuvem e sem depender de um serviço que pode mudar de política amanhã.
+
+Este tutorial monta esse servidor com **Raspberry Pi 5 e Jellyfin**, do zero até a integração com o Home Assistant.
+
+## Antes de começar: a limitação que define o projeto
+
+Vale saber disso antes de comprar qualquer coisa, porque muda a forma de montar a biblioteca.
+
+Servidor de mídia opera em dois modos:
+
+**Reprodução direta (Direct Play).** O aplicativo cliente consegue tocar o arquivo no formato original. O servidor só lê do disco e manda pela rede. Exige quase nada de processamento — o Pi 5 serve vários clientes simultâneos assim, sem suar.
+
+**Transcodificação.** O cliente não suporta o formato, e o servidor precisa converter o vídeo em tempo real. Isso é trabalho pesado de processamento.
+
+O ponto importante: **o Raspberry Pi 5 não é uma boa máquina de transcodificação**. Ele não trouxe o codificador H.264 por hardware que existia no Pi 4 — o que ele tem é decodificação HEVC. Na prática, transcodificar no Pi 5 recai sobre a CPU, e a CPU não dá conta com fluidez.
+
+**A consequência prática:** monte a biblioteca em formatos amplamente compatíveis (H.264 em contêiner MP4 ou MKV, áudio AAC) e configure os clientes para reproduzir direto. Fazendo isso, o Pi 5 é um servidor excelente. Contando com transcodificação, ele vai decepcionar.
+
+## Lista de materiais
+
+<ComparisonTable
+  source="servidor-midia-raspberry-pi-jellyfin"
+  rows={[
+    { name: 'Raspberry Pi 5 4GB', brand: 'Raspberry Pi', rating: 4.7, highlight: 'O cérebro do servidor', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk microSD 128GB', brand: 'SanDisk', rating: 4.8, highlight: 'Sistema e metadados', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08HYFLMFJ?tag=nerdcaseiro-20' }] },
+    { name: 'HD Externo Toshiba 1TB', brand: 'Toshiba', rating: 4.8, highlight: 'Melhor custo por TB', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk SSD Portátil 1TB', brand: 'SanDisk', rating: 4.7, highlight: 'Silencioso e sem quedas de USB', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20' }] },
+    { name: 'Gabinete ElectroCookie Pi 5', brand: 'ElectroCookie', rating: 4.5, highlight: 'Refrigeração ativa', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CV79ND9Z?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+### Raspberry Pi 5 4GB
+
+![Raspberry Pi 5 Model B 4GB](/images/produtos/raspberry-pi-5-4gb.webp)
+
+4GB são suficientes com folga para Jellyfin em reprodução direta. Os 8GB só se justificam se você pretende rodar outras coisas na mesma máquina — Home Assistant, Pi-hole, um servidor de arquivos.
+
+⚠️ **Sobre a fonte:** o Pi 5 precisa de fonte USB-C de **5V/5A** para alimentar periféricos com folga. A fonte do Pi 4 funciona para o básico, mas com disco externo conectado ela vira a causa de reinício aleatório. É o erro mais comum de quem migra do Pi 4.
+
+<ProsCons pros={['4GB são suficientes com folga para Jellyfin em reprodução direta', 'Versão homologada pela Anatel, relevante para garantia no Brasil']} cons={['Exige fonte USB-C de 5V/5A — a fonte do Pi 4 causa reinícios com disco conectado']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="servidor-midia-raspberry-pi-jellyfin" />
+
+### SanDisk microSD 128GB
+
+![SanDisk microSDXC Ultra 128GB](/images/produtos/sandisk-microsd-128gb.webp)
+
+O cartão guarda o sistema, o banco de metadados e as capas que o Jellyfin baixa — que ocupam mais do que se imagina numa biblioteca grande. 128GB dão folga confortável.
+
+**Mas trate o cartão como peça de consumo.** Ele tem número limitado de ciclos de escrita e é o componente que mais falha em Raspberry Pi ligado 24 horas por dia. É justamente por isso que a mídia fica no disco externo: quando o cartão morrer — e ele vai —, você regrava o sistema e a biblioteca continua intacta.
+
+<ProsCons pros={['128GB acomodam sistema, banco de metadados e capas com folga', 'SanDisk tem o melhor histórico de confiabilidade em cartão para Raspberry Pi']} cons={['microSD é o componente que mais falha em Pi ligado 24/7 — planeje o backup']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08HYFLMFJ?tag=nerdcaseiro-20" store="amazon" source="servidor-midia-raspberry-pi-jellyfin" />
+
+### O armazenamento: HD ou SSD?
+
+![HD Externo Toshiba 1TB Canvio Basics](/images/produtos/hd-externo-toshiba-1tb.webp)
+
+**HD Toshiba 1TB** tem o melhor custo por terabyte, e para armazenar vídeo capacidade importa muito mais que velocidade — servir um filme por rede local não chega perto de saturar nem um HD mecânico lento.
+
+O risco é elétrico: HD de 2,5" alimentado pela USB puxa um **pico de corrente ao iniciar o prato**, e esse pico pode exceder o que o Pi entrega com folga. O sintoma é característico — o disco some do sistema no meio de uma reprodução.
+
+<ProsCons pros={['Melhor custo por terabyte — para mídia, capacidade vale mais que velocidade', 'Nota 4,8 entre os HDs externos mais vendidos do país']} cons={['Pico de corrente na partida pode causar desconexões se a alimentação não tiver folga']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0BQX6DVWY?tag=nerdcaseiro-20" store="amazon" source="servidor-midia-raspberry-pi-jellyfin" />
+
+![SanDisk SSD Portátil 1TB](/images/produtos/sandisk-ssd-portatil-1tb.webp)
+
+**SanDisk SSD 1TB** resolve exatamente esse problema: sem prato girando, o consumo é muito menor e o pico de partida desaparece. É silencioso e tolera vibração — relevante num aparelho que vai ficar ligado direto num móvel da sala.
+
+A velocidade extra é irrelevante para servir vídeo, e o custo por terabyte é bem maior. Você paga pela **estabilidade e pelo silêncio**, não pelo desempenho.
+
+<ProsCons pros={['Consumo baixo elimina o risco de reinício por falta de corrente no USB', 'Silencioso e sem partes móveis — melhor para equipamento ligado 24/7 na sala']} cons={['Custo por terabyte muito maior, e a velocidade extra não serve para nada aqui']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20" store="amazon" source="servidor-midia-raspberry-pi-jellyfin" />
+
+### Gabinete com refrigeração ativa
+
+![Gabinete ElectroCookie para Raspberry Pi 5](/images/produtos/gabinete-electrocookie-pi5.webp)
+
+Não é opcional aqui. O Pi 5 esquenta bastante, e servidor ligado direto significa **carga contínua**. Sem refrigeração adequada ele reduz a frequência do processador para se proteger, e o desempenho cai justamente quando você está assistindo.
+
+O corpo de alumínio ajuda na dissipação passiva além da ventoinha.
+
+Se o servidor vai ficar na sala, considere que **ventoinha faz ruído**. Um dissipador passivo grande pode ser a escolha melhor nesse caso.
+
+<ProsCons pros={['Refrigeração ativa é praticamente obrigatória no Pi 5 sob carga contínua', 'Alumínio agrega dissipação passiva à ventoinha']} cons={['Ruído da ventoinha incomoda se o servidor ficar na sala']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CV79ND9Z?tag=nerdcaseiro-20" store="amazon" source="servidor-midia-raspberry-pi-jellyfin" />
+
+---
+
+## Passo 1 — Sistema no cartão
+
+Grave o **Raspberry Pi OS Lite (64-bit)** com o Raspberry Pi Imager. Sem interface gráfica: o servidor não precisa, e ela só consome memória e ciclos de disco.
+
+Antes de gravar, abra as **configurações avançadas** do Imager (ícone de engrenagem) e já deixe pronto:
+
+- Hostname: `jellyfin`
+- Habilitar SSH com senha ou chave
+- Usuário e senha
+- Wi-Fi, se não for usar cabo
+
+> 📡 **Use cabo de rede se puder.** Servir vídeo por Wi-Fi funciona, mas o cabo elimina de uma vez travamento por interferência e disputa de banda — que é a causa número um de "o servidor está lento" em instalação doméstica.
+
+Ligue o Pi e conecte:
+
+```bash
+ssh usuario@jellyfin.local
+```
+
+Atualize o sistema antes de qualquer coisa:
+
+```bash
+sudo apt update && sudo apt full-upgrade -y
+sudo reboot
+```
+
+## Passo 2 — Monte o disco automaticamente
+
+Este é o passo que a maioria dos tutoriais faz mal, e o resultado é um servidor que perde a biblioteca toda vez que reinicia.
+
+Conecte o disco e identifique ele:
+
+```bash
+lsblk -f
+```
+
+Você vai ver algo como `sda1` com um `UUID` e o tipo de sistema de arquivos. **Anote o UUID.**
+
+Se o disco estiver em exFAT ou NTFS (comum em disco que veio formatado de fábrica), instale o suporte:
+
+```bash
+# exFAT
+sudo apt install -y exfat-fuse exfatprogs
+
+# NTFS
+sudo apt install -y ntfs-3g
+```
+
+Crie o ponto de montagem:
+
+```bash
+sudo mkdir -p /mnt/midia
+```
+
+Edite o `/etc/fstab`:
+
+```bash
+sudo nano /etc/fstab
+```
+
+Adicione **uma** das linhas abaixo, conforme o sistema de arquivos do seu disco, trocando o UUID pelo seu:
+
+```bash
+# Para disco ext4 (recomendado se você puder formatar)
+UUID=cole-seu-uuid-aqui  /mnt/midia  ext4   defaults,nofail  0  2
+
+# Para disco exFAT
+UUID=CO-LE  /mnt/midia  exfat  defaults,uid=1000,gid=1000,umask=002,nofail  0  0
+
+# Para disco NTFS
+UUID=cole-seu-uuid-aqui  /mnt/midia  ntfs-3g  defaults,uid=1000,gid=1000,umask=002,nofail  0  0
+```
+
+⚠️ **O `nofail` é essencial.** Sem ele, se o disco não estiver presente no boot, o Raspberry Pi trava na inicialização e você precisa de teclado e monitor para recuperar. Com `nofail`, ele apenas ignora e sobe normalmente.
+
+Monte e confirme:
+
+```bash
+sudo mount -a
+df -h /mnt/midia
+```
+
+Se o `df` mostrar o tamanho do disco, está certo. **Reinicie e confira de novo** — é o teste que garante que a montagem sobrevive ao boot:
+
+```bash
+sudo reboot
+```
+
+## Passo 3 — Instale o Jellyfin
+
+O projeto mantém um instalador oficial para sistemas baseados em Debian, que é o caso do Raspberry Pi OS:
+
+```bash
+curl https://repo.jellyfin.org/install-debuntu.sh | sudo bash
+```
+
+> Rodar script direto da internet com `sudo` merece o cuidado de sempre: esse é o método publicado pelo próprio projeto, mas se você preferir inspecionar antes, baixe primeiro (`curl -o install.sh https://repo.jellyfin.org/install-debuntu.sh`), leia, e só então execute.
+
+Confirme que subiu:
+
+```bash
+sudo systemctl status jellyfin
+```
+
+Deve aparecer `active (running)`. Garanta que ele inicia junto com o sistema:
+
+```bash
+sudo systemctl enable jellyfin
+```
+
+## Passo 4 — Permissão de leitura no disco
+
+O Jellyfin roda com um usuário próprio, e ele precisa conseguir ler a pasta da mídia. Em disco **ext4**, ajuste o grupo:
+
+```bash
+sudo chown -R root:jellyfin /mnt/midia
+sudo chmod -R 755 /mnt/midia
+```
+
+Em disco **exFAT ou NTFS**, permissão POSIX não se aplica do mesmo jeito — quem manda são as opções `uid`, `gid` e `umask` que você colocou no `fstab`. Se o Jellyfin não enxergar os arquivos, adicione o usuário dele ao seu grupo:
+
+```bash
+sudo usermod -aG $USER jellyfin
+sudo systemctl restart jellyfin
+```
+
+## Passo 5 — Configuração inicial
+
+Abra no navegador de qualquer máquina da rede:
+
+```
+http://jellyfin.local:8096
+```
+
+Se o `.local` não resolver, descubra o IP do Pi:
+
+```bash
+hostname -I
+```
+
+E acesse `http://IP-DO-PI:8096`.
+
+O assistente vai pedir idioma, usuário administrador e as bibliotecas. Ao adicionar uma biblioteca, aponte para as subpastas de `/mnt/midia` — por exemplo `/mnt/midia/filmes` e `/mnt/midia/series`, separadas por tipo de conteúdo. Isso importa: o Jellyfin usa o tipo da biblioteca para decidir como buscar metadados.
+
+### Organize os arquivos assim
+
+O reconhecimento automático de capa e sinopse depende da nomenclatura. O padrão que funciona:
+
+```
+/mnt/midia/filmes/O Nome do Filme (2024)/O Nome do Filme (2024).mkv
+/mnt/midia/series/Nome da Serie/Season 01/Nome da Serie S01E01.mkv
+```
+
+O ano entre parênteses nos filmes resolve a maioria dos casos de identificação errada — sem ele, títulos com refilmagem viram loteria.
+
+## Passo 6 — Force a reprodução direta
+
+Esta é a configuração que faz o Pi 5 ser um bom servidor.
+
+No painel administrativo, em **Painel → Reprodução**, revise as opções de transcodificação. Em cada **cliente** (aplicativo na TV, celular, navegador), busque a configuração de qualidade e escolha a opção de qualidade máxima ou original em vez de um limite de banda — limite de banda é o que faz o cliente pedir transcodificação sem necessidade.
+
+Você confere se está funcionando pelo próprio painel: com algo tocando, vá em **Painel → Atividade**. Se aparecer *Direct Play*, o Pi está apenas lendo e enviando. Se aparecer *Transcodificando*, alguma coisa forçou a conversão — normalmente um limite de qualidade no cliente ou um formato de áudio incompatível.
+
+## Passo 7 — Integre ao Home Assistant
+
+Aqui a coisa fica interessante, porque o servidor deixa de ser só um repositório e vira parte da automação da casa.
+
+O Home Assistant tem integração nativa com Jellyfin. Adicione em **Configurações → Dispositivos e Serviços → Adicionar Integração → Jellyfin**, informando `http://IP-DO-PI:8096` e as credenciais.
+
+Isso cria entidades `media_player` para cada sessão. Com elas, a automação clássica de cinema em casa:
+
+```yaml
+automation:
+  - alias: "Cinema — escurece a sala quando o filme começa"
+    trigger:
+      - platform: state
+        entity_id: media_player.jellyfin_tv_da_sala
+        to: "playing"
+    condition:
+      - condition: sun
+        after: sunset
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.sala
+        data:
+          brightness_pct: 15
+          transition: 3
+      - service: switch.turn_off
+        target:
+          entity_id: switch.luz_led_estante
+
+  - alias: "Cinema — acende quando pausa ou termina"
+    trigger:
+      - platform: state
+        entity_id: media_player.jellyfin_tv_da_sala
+        to: "paused"
+      - platform: state
+        entity_id: media_player.jellyfin_tv_da_sala
+        to: "idle"
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.sala
+        data:
+          brightness_pct: 70
+          transition: 3
+```
+
+Ajuste os `entity_id` para os nomes que aparecem no seu Home Assistant — eles variam conforme o nome do cliente que você configurou no Jellyfin.
+
+## Passo 8 — Backup (não pule)
+
+O cartão microSD vai falhar em algum momento. O que você não quer perder é a **configuração**: usuários, bibliotecas, progresso de reprodução, capas.
+
+```bash
+sudo systemctl stop jellyfin
+sudo tar -czf /mnt/midia/backup-jellyfin-$(date +%F).tar.gz \
+  /var/lib/jellyfin /etc/jellyfin
+sudo systemctl start jellyfin
+```
+
+Repare que o backup vai para o **disco externo**, não para o cartão — guardar o backup no componente que vai falhar não ajuda muito.
+
+Para automatizar semanalmente, coloque isso num script e agende no cron:
+
+```bash
+sudo crontab -e
+```
+
+```
+0 4 * * 0 /usr/local/bin/backup-jellyfin.sh
+```
+
+## Problemas comuns
+
+**O disco some no meio da reprodução.**
+Alimentação. Use fonte de 5V/5A no Pi 5, ou um hub USB com fonte própria, ou troque o HD mecânico por SSD.
+
+**O Pi reinicia sozinho.**
+Mesma causa na maioria dos casos. Confira também a temperatura: `vcgencmd measure_temp`.
+
+**A biblioteca sumiu depois do reboot.**
+O disco não montou. Confira `/etc/fstab` e rode `sudo mount -a` para ver o erro.
+
+**Está transcodificando sem necessidade.**
+Limite de qualidade configurado no cliente, ou faixa de áudio incompatível. Ajuste o cliente para qualidade original.
+
+**Vídeo travando pela rede.**
+Wi-Fi. Cabo resolve na maioria dos casos.
+
+> 🔒 **Sobre acessar de fora de casa:** não abra a porta 8096 no roteador. Isso expõe o serviço a varredura automatizada e transforma qualquer falha não corrigida em porta de entrada para a rede inteira. Use VPN para entrar na sua própria rede, ou coloque um proxy reverso com HTTPS e autenticação na frente. Para assistir na casa de alguém de vez em quando, a VPN resolve com muito menos risco.
+
+## Perguntas frequentes
+
+**O Pi 5 aguenta?**
+Aguenta bem em reprodução direta. Transcodificação pesada não é para ele — monte a biblioteca em formatos compatíveis.
+
+**Jellyfin ou Plex?**
+Jellyfin é livre, sem conta e sem assinatura. Plex é mais polido e mais fácil de configurar, mas exige conta.
+
+**Preciso de HD externo?**
+Precisa. Por espaço e, principalmente, para isolar a biblioteca do cartão microSD, que é o que falha.
+
+**Dá para acessar de fora?**
+Dá, mas por VPN ou proxy reverso com HTTPS — nunca abrindo a porta direto no roteador.
+
+**Por que o HD desconecta?**
+Alimentação insuficiente no pico de partida. Fonte adequada, hub com fonte própria ou SSD resolvem.
+
+---
+
+*Montou o seu e travou em alguma etapa? [Fale com a gente](/contato/).*

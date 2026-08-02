@@ -6,6 +6,18 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--", "--port", "4455"],
       "port": 4455
+    },
+    {
+      "name": "reformacaseira-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "E:/site", "run", "dev", "--", "--port", "4456"],
+      "port": 4456
+    },
+    {
+      "name": "abanou-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "E:/Site_afiliado_2", "run", "dev", "--", "--port", "4457"],
+      "port": 4457
     }
   ]
 }
