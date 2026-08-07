@@ -1,0 +1,452 @@
+---
+title: 'Sensor de qualidade do ar com ESP32 e Home Assistant'
+description: 'Monte um medidor de CO2 e compostos voláteis com ESP32 e ESPHome. Código completo, qual sensor escolher e o que cada número significa.'
+pubDate: 2026-08-19
+category: 'eletronica-maker'
+tags: ['esp32', 'esphome', 'home assistant', 'qualidade do ar']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Placa ESP32 DevKit 30 Pinos Wi-Fi e Bluetooth'
+    brand: 'Genérica'
+    rating: 4.8
+    image: '/images/produtos/esp32-devkit-30pinos.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0D51XCM7R?tag=nerdcaseiro-20'
+    pros:
+      - 'Nota 4,8 e o formato de 30 pinos já soldado é o mais documentado, com pinagem que bate com a maioria dos tutoriais'
+      - 'Wi-Fi integrado dispensa qualquer módulo extra para falar com o Home Assistant'
+    cons:
+      - 'Placa genérica pode vir com regulador de tensão fraco, o que causa reinício quando o sensor puxa corrente na leitura'
+  - name: 'Módulo Sensor de CO2 SCD30 Medição Ambiental I2C'
+    brand: 'Sensirion'
+    image: '/images/produtos/scd30-co2.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0GRGTRFXQ?tag=nerdcaseiro-20'
+    pros:
+      - 'Mede CO2 real por infravermelho (NDIR), não estimado — é o único tipo de leitura que serve para decidir ventilar um cômodo'
+      - 'Traz temperatura e umidade no mesmo módulo, cobrindo o essencial com um sensor só'
+    cons:
+      - 'É o mais caro da lista e precisa de alguns minutos ligado até a leitura estabilizar depois de energizar'
+  - name: 'Módulo Sensor Ambiental BME680 4 em 1'
+    brand: 'Bosch Sensortec'
+    rating: 4.7
+    image: '/images/produtos/bme680-4em1.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FQJFK4CL?tag=nerdcaseiro-20'
+    pros:
+      - 'Sensor Bosch com temperatura, umidade, pressão e resistência de gás num módulo só, e com nota 4,7'
+      - 'A leitura de pressão barométrica é útil para automação de ventilação e como dado meteorológico local'
+    cons:
+      - 'A saída de gás é uma resistência em ohms, não uma medida direta de CO2 — indica mudança na qualidade do ar, não o valor'
+  - name: 'Módulo ENS160 + AHT21 Qualidade do Ar eCO2 TVOC com Temperatura e Umidade'
+    brand: 'Genérica'
+    rating: 3.4
+    image: '/images/produtos/ens160-aht21.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C6KBBGZS?tag=nerdcaseiro-20'
+    pros:
+      - 'Combina sensor de compostos voláteis com temperatura e umidade na mesma placa, o que simplifica a montagem'
+      - 'Tem suporte nativo no ESPHome, incluindo compensação por temperatura e umidade'
+    cons:
+      - 'Nota 3,4 é a mais baixa da lista, e o eCO2 dele é estimado a partir de compostos voláteis, não medido'
+  - name: 'Módulo Sensor de Qualidade do Ar SGP30 TVOC e eCO2 I2C'
+    brand: 'Sensirion'
+    image: '/images/produtos/sgp30-tvoc.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FXGXP6JF?tag=nerdcaseiro-20'
+    pros:
+      - 'Sensor Sensirion com suporte maduro no ESPHome e boa resposta a compostos voláteis de produto de limpeza e tinta'
+      - 'Mais barato que o SCD30, sendo uma entrada acessível para monitorar tendência de qualidade do ar'
+    cons:
+      - 'O eCO2 é estimado a partir de TVOC — ele não substitui um sensor NDIR quando o que importa é o CO2 real'
+faq:
+  - question: 'Qual a diferença entre CO2 real e eCO2 estimado?'
+    answer: 'É a diferença entre medir e inferir, e ela muda completamente o que você pode concluir do número. Sensores NDIR, como o SCD30, medem dióxido de carbono diretamente pela absorção de luz infravermelha numa faixa específica, então o valor reflete a concentração real no ar. Sensores de compostos orgânicos voláteis, como SGP30 e ENS160, medem outra coisa e calculam um equivalente de CO2 a partir dela. Em ambiente ocupado por pessoas, a estimativa costuma acompanhar a tendência razoavelmente, mas ela se descola bastante quando há álcool, produto de limpeza ou tinta no ar. Se o objetivo é decidir quando abrir a janela, o NDIR é o que dá resposta confiável.'
+  - question: 'Esses sensores medem poeira e material particulado?'
+    answer: 'Não medem, e essa é uma confusão importante. Todos os sensores deste tutorial trabalham com gases: dióxido de carbono, compostos orgânicos voláteis e, no caso do BME680, uma resistência que varia com a composição gasosa do ar. Material particulado, o famoso PM2.5 e PM10, é medido por outro princípio, com sensores ópticos a laser que contam partículas em suspensão. Se o seu objetivo é acompanhar poeira de obra, fumaça ou poluição externa, é um sensor de particulado que você precisa, e ele é um módulo diferente dos listados aqui.'
+  - question: 'Qual valor de CO2 é considerado alto num ambiente?'
+    answer: 'A referência mais usada parte do ar externo, que costuma ficar em torno de 400 a 450 ppm. Ambiente interno bem ventilado tende a permanecer abaixo de 800 ppm. A partir de 1000 ppm começa a faixa que diversas normas de qualidade de ar interno usam como limite recomendado para ambientes ocupados, e acima de 1500 ppm muitas pessoas relatam sonolência e dificuldade de concentração. O valor absoluto importa menos que a curva: ver o número subir durante uma reunião de duas horas com a porta fechada, e cair em minutos ao abrir a janela, é o que torna o sensor útil.'
+  - question: 'Preciso calibrar o sensor de CO2?'
+    answer: 'Sensores NDIR de consumo costumam trazer um mecanismo de autocalibração que assume que, em algum momento do período, o ambiente atinge a concentração do ar externo. Isso funciona bem em cômodo que é ventilado regularmente, e funciona mal em ambiente que fica fechado por dias, porque o sensor passa a tratar um valor alto como se fosse a referência do ar limpo. Se o seu cômodo é ventilado com frequência, deixe a autocalibração ligada e não se preocupe. Se ele fica fechado, vale desligar a autocalibração e fazer uma calibração manual deixando o sensor ao ar livre por um tempo, conforme a documentação do componente.'
+  - question: 'Dá para alimentar o ESP32 e o sensor pela mesma fonte USB?'
+    answer: 'Dá, e é a montagem normal desse projeto, já que o consumo somado é modesto. O ponto de atenção é a qualidade da fonte e do cabo, não a capacidade total. Fonte fraca ou cabo USB longo e fino causam queda de tensão, e o sintoma clássico é o ESP32 reiniciar sozinho justamente no momento em que o sensor faz a leitura e puxa mais corrente. Se o seu módulo ficar reiniciando em intervalos regulares, troque o cabo por um mais curto e de melhor bitola antes de suspeitar da placa ou do código.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Você sente sono no fim da tarde no escritório fechado. O quarto amanhece abafado. A sala com muita gente parece pesada.
+
+Na maior parte das vezes, isso tem um número — e ele é o **CO2**. Só que "parece abafado" não é dado, e sem dado você não automatiza nada.
+
+Este tutorial monta um sensor de qualidade do ar com **ESP32 e ESPHome**, integrado ao Home Assistant, com código completo e testado.
+
+## Primeiro: o que esses sensores medem (e o que não medem)
+
+Vale começar por aqui, porque a categoria é cheia de nome parecido com significado diferente.
+
+**CO2 real (NDIR).** O sensor mede dióxido de carbono diretamente, pela absorção de luz infravermelha. É o número confiável para decidir **quando ventilar**. É o caso do **SCD30**.
+
+**eCO2 (estimado).** O sensor mede **compostos orgânicos voláteis** e calcula um "equivalente de CO2" a partir disso. Acompanha a tendência em ambiente ocupado, mas se descola bastante quando há álcool, produto de limpeza ou tinta no ar. É o caso do **SGP30** e do **ENS160**.
+
+**Resistência de gás.** O **BME680** entrega uma resistência em ohms que varia com a composição do ar. Indica **mudança**, não valor absoluto.
+
+⚠️ **Nenhum deles mede poeira.** Material particulado — PM2.5 e PM10 — é medido por sensor **óptico a laser**, que conta partículas em suspensão. É outro módulo, com outro princípio. Se o seu objetivo é acompanhar poeira de obra ou fumaça, é esse que você precisa, e ele não está nesta lista.
+
+## Materiais
+
+<ComparisonTable
+  source="sensor-qualidade-ar-esp32-home-assistant"
+  rows={[
+    { name: 'ESP32 DevKit 30 pinos', brand: 'Genérica', rating: 4.8, highlight: 'O cérebro do projeto', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0D51XCM7R?tag=nerdcaseiro-20' }] },
+    { name: 'SCD30 (CO2 real NDIR)', brand: 'Sensirion', highlight: 'O único que mede CO2 de verdade', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0GRGTRFXQ?tag=nerdcaseiro-20' }] },
+    { name: 'BME680 4 em 1', brand: 'Bosch Sensortec', rating: 4.7, highlight: 'Temp, umidade, pressão e gás', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0FQJFK4CL?tag=nerdcaseiro-20' }] },
+    { name: 'SGP30 (TVOC e eCO2)', brand: 'Sensirion', highlight: 'Entrada acessível em voláteis', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0FXGXP6JF?tag=nerdcaseiro-20' }] },
+    { name: 'ENS160 + AHT21', brand: 'Genérica', rating: 3.4, highlight: 'Voláteis com temp e umidade', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0C6KBBGZS?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+### ESP32 DevKit 30 pinos
+
+![Placa ESP32 DevKit 30 Pinos](/images/produtos/esp32-devkit-30pinos.webp)
+
+Nota 4,8. O formato de **30 pinos já soldado** é o mais documentado, e a pinagem bate com a maioria dos tutoriais — o que economiza tempo quando algo não funciona.
+
+⚠️ **O defeito típico de placa genérica** é regulador de tensão fraco: o ESP32 reinicia quando o sensor puxa corrente na leitura. Se isso acontecer, o culpado costuma ser a fonte ou o cabo, não o código.
+
+<ProsCons pros={['Formato de 30 pinos é o mais documentado, com pinagem que bate com os tutoriais', 'Wi-Fi integrado dispensa módulo extra para falar com o Home Assistant']} cons={['Regulador fraco em placa genérica causa reinício quando o sensor puxa corrente']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0D51XCM7R?tag=nerdcaseiro-20" store="amazon" source="sensor-qualidade-ar-esp32-home-assistant" />
+
+### SCD30 — o sensor que eu recomendo
+
+![Módulo Sensor de CO2 SCD30](/images/produtos/scd30-co2.webp)
+
+É o **único da lista que mede CO2 de verdade**, por NDIR. E CO2 é justamente a métrica que responde à pergunta prática — *preciso abrir a janela?* — porque ele sobe com a **respiração das pessoas** no ambiente.
+
+Traz temperatura e umidade no mesmo módulo, cobrindo o essencial com um sensor só.
+
+**É o mais caro da lista**, e precisa de alguns minutos ligado até a leitura estabilizar depois de energizar. Se o orçamento permitir apenas um sensor, que seja este.
+
+<ProsCons pros={['Mede CO2 real por NDIR — a única leitura que serve para decidir ventilar', 'Traz temperatura e umidade no mesmo módulo']} cons={['O mais caro da lista e leva alguns minutos para estabilizar após ligar']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0GRGTRFXQ?tag=nerdcaseiro-20" store="amazon" source="sensor-qualidade-ar-esp32-home-assistant" />
+
+### BME680 — o mais versátil
+
+![Módulo Sensor Ambiental BME680](/images/produtos/bme680-4em1.webp)
+
+Sensor **Bosch** com nota **4,7** — a melhor da lista entre os sensores. Entrega temperatura, umidade, **pressão barométrica** e resistência de gás num módulo só.
+
+A pressão é o extra que ninguém espera usar e acaba usando: serve como dado meteorológico local e como gatilho de automação de ventilação.
+
+**A saída de gás é uma resistência em ohms**, não CO2. Ela indica que **algo mudou** na composição do ar — útil para detectar produto de limpeza ou cozimento, inútil para saber se o cômodo está abafado de gente.
+
+<ProsCons pros={['Sensor Bosch com a melhor nota da lista, medindo temperatura, umidade, pressão e gás', 'A pressão barométrica é útil como dado local e como gatilho de automação']} cons={['A saída de gás é resistência em ohms — indica mudança, não valor de CO2']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FQJFK4CL?tag=nerdcaseiro-20" store="amazon" source="sensor-qualidade-ar-esp32-home-assistant" />
+
+### SGP30 e ENS160 — as alternativas em voláteis
+
+![Módulo Sensor SGP30](/images/produtos/sgp30-tvoc.webp)
+
+O **SGP30** é Sensirion, com suporte maduro no ESPHome e boa resposta a compostos voláteis de produto de limpeza e tinta. Mais barato que o SCD30, é uma entrada acessível para acompanhar **tendência**.
+
+<ProsCons pros={['Sensirion com suporte maduro no ESPHome e boa resposta a voláteis de limpeza e tinta', 'Mais barato que o SCD30, bom para acompanhar tendência']} cons={['O eCO2 é estimado a partir de TVOC — não substitui NDIR quando o CO2 real importa']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FXGXP6JF?tag=nerdcaseiro-20" store="amazon" source="sensor-qualidade-ar-esp32-home-assistant" />
+
+![Módulo ENS160 + AHT21](/images/produtos/ens160-aht21.webp)
+
+O **ENS160 + AHT21** junta voláteis com temperatura e umidade na mesma placa, e tem suporte nativo no ESPHome **com compensação** por temperatura e umidade — o que melhora a leitura.
+
+**Nota 3,4 é a mais baixa da lista**, e vale ler as avaliações antes. Em módulo de sensor genérico, a variação entre unidades é real.
+
+<ProsCons pros={['Voláteis com temperatura e umidade na mesma placa, com compensação nativa no ESPHome', 'Simplifica a montagem por reduzir o número de módulos']} cons={['Nota 3,4, a mais baixa da lista, e o eCO2 é estimado, não medido']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C6KBBGZS?tag=nerdcaseiro-20" store="amazon" source="sensor-qualidade-ar-esp32-home-assistant" />
+
+---
+
+## Passo 1 — Ligação I2C
+
+Todos esses sensores falam **I2C**, o que significa a mesma ligação de 4 fios para qualquer um deles — e permite ligar vários no **mesmo barramento**, desde que os endereços não colidam.
+
+| Sensor | ESP32 |
+|---|---|
+| VIN / VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO21 |
+| SCL | GPIO22 |
+
+⚠️ **Confira a tensão do seu módulo.** Alguns aceitam 5V, outros só 3,3V. Ligar 5V num módulo de 3,3V queima o sensor. Na dúvida, use **3V3** — todos os listados funcionam nela.
+
+## Passo 2 — Configuração base do ESPHome
+
+Crie um novo dispositivo no ESPHome e use esta base:
+
+```yaml
+esphome:
+  name: sensor-ar-sala
+  friendly_name: Sensor de Ar da Sala
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+logger:
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Sensor-Ar Fallback"
+    password: !secret fallback_password
+
+captive_portal:
+
+# Barramento I2C compartilhado por todos os sensores
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+  id: bus_a
+```
+
+O `scan: true` é importante no começo: ao ligar, o log mostra os endereços encontrados no barramento. Se o seu sensor não aparecer ali, o problema é **ligação**, não código — e você economiza horas depurando a coisa errada.
+
+## Passo 3 — O sensor
+
+Escolha o bloco do seu sensor e cole abaixo da configuração base.
+
+### SCD30 (CO2 real — recomendado)
+
+```yaml
+sensor:
+  - platform: scd30
+    address: 0x61
+    update_interval: 60s
+    co2:
+      name: "CO2 Sala"
+      id: co2_sala
+      accuracy_decimals: 0
+      filters:
+        - median:
+            window_size: 5
+            send_every: 5
+    temperature:
+      name: "Temperatura Sala"
+      accuracy_decimals: 1
+    humidity:
+      name: "Umidade Sala"
+      accuracy_decimals: 0
+    automatic_self_calibration: true
+```
+
+O filtro de **mediana** suaviza picos espúrios: uma leitura estranha isolada não dispara automação à toa.
+
+Sobre o `automatic_self_calibration`: ele assume que, em algum momento, o ambiente atinge a concentração do ar externo. **Deixe ligado se o cômodo é ventilado com frequência.** Se ele fica fechado por dias, desligue e calibre manualmente conforme a documentação do componente — senão o sensor passa a tratar um valor alto como referência de ar limpo.
+
+### BME680
+
+```yaml
+sensor:
+  - platform: bme680
+    address: 0x77
+    update_interval: 60s
+    temperature:
+      name: "Temperatura Sala"
+      accuracy_decimals: 1
+    pressure:
+      name: "Pressão Sala"
+    humidity:
+      name: "Umidade Sala"
+      accuracy_decimals: 0
+    gas_resistance:
+      name: "Resistência de Gás Sala"
+      id: gas_sala
+```
+
+Alguns módulos usam o endereço `0x76` em vez de `0x77`. O `scan: true` diz qual é o seu.
+
+### SGP30
+
+```yaml
+sensor:
+  - platform: sgp30
+    address: 0x58
+    update_interval: 60s
+    eco2:
+      name: "eCO2 Sala"
+      accuracy_decimals: 0
+    tvoc:
+      name: "TVOC Sala"
+      accuracy_decimals: 0
+```
+
+### ENS160 + AHT21
+
+```yaml
+sensor:
+  - platform: aht10
+    variant: AHT20
+    address: 0x38
+    update_interval: 60s
+    temperature:
+      name: "Temperatura Sala"
+      id: temp_sala
+    humidity:
+      name: "Umidade Sala"
+      id: umid_sala
+
+  - platform: ens160
+    address: 0x53
+    update_interval: 60s
+    eco2:
+      name: "eCO2 Sala"
+    tvoc:
+      name: "TVOC Sala"
+    aqi:
+      name: "Índice de Qualidade do Ar"
+    compensation:
+      temperature: temp_sala
+      humidity: umid_sala
+```
+
+O bloco `compensation` é o que faz o ENS160 usar a temperatura e a umidade do AHT21 para corrigir a própria leitura. Sem ele, a medição fica bem menos confiável.
+
+## Passo 4 — Grave e adicione ao Home Assistant
+
+Grave via USB na primeira vez; depois disso, as atualizações vão pelo ar (OTA).
+
+O Home Assistant descobre o dispositivo automaticamente em **Configurações → Dispositivos e Serviços**. Se não aparecer, adicione manualmente pela integração ESPHome usando o IP do módulo.
+
+## Passo 5 — Automação: avisar quando o ar ficar ruim
+
+Aqui o sensor deixa de ser um número na tela e passa a servir para alguma coisa.
+
+```yaml
+automation:
+  - alias: "Ar — avisar quando o CO2 subir"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.co2_sala
+        above: 1200
+        for:
+          minutes: 10
+    condition:
+      - condition: time
+        after: "07:00:00"
+        before: "23:00:00"
+    action:
+      - service: notify.mobile_app_meu_celular
+        data:
+          title: "Abra a janela"
+          message: >-
+            CO2 da sala em {{ states('sensor.co2_sala') }} ppm.
+            Ventilação recomendada.
+
+  - alias: "Ar — luz de aviso na estante"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.co2_sala
+        above: 1500
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.fita_estante
+        data:
+          rgb_color: [255, 60, 0]
+          brightness_pct: 40
+
+  - alias: "Ar — voltou ao normal"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.co2_sala
+        below: 900
+    action:
+      - service: light.turn_off
+        target:
+          entity_id: light.fita_estante
+```
+
+O `for: minutes: 10` no primeiro gatilho evita notificação por pico momentâneo — alguém passar perto do sensor respirando já mexe na leitura.
+
+Ajuste os `entity_id` para os nomes que aparecem no seu Home Assistant.
+
+## O que os números significam
+
+| CO2 (ppm) | O que indica |
+|---|---|
+| 400 – 450 | Ar externo, referência |
+| até 800 | Ambiente interno bem ventilado |
+| 800 – 1000 | Aceitável, começando a acumular |
+| 1000 – 1500 | Acima do recomendado por normas de ar interno |
+| acima de 1500 | Muita gente relata sonolência e queda de concentração |
+
+**O valor absoluto importa menos que a curva.** O que torna o sensor útil é ver o número subir durante uma reunião de duas horas com a porta fechada — e cair em minutos quando você abre a janela. Isso muda comportamento de um jeito que nenhum conselho genérico consegue.
+
+## Problemas comuns
+
+**O sensor não aparece no log.**
+Problema de ligação. Confira SDA/SCL (podem estar invertidos), a tensão de alimentação e se o `scan: true` está ativo.
+
+**O ESP32 reinicia sozinho em intervalos regulares.**
+Alimentação. Cabo USB longo e fino ou fonte fraca causam queda de tensão quando o sensor puxa corrente. Troque o cabo por um curto e de melhor bitola antes de suspeitar do código.
+
+**Leitura de CO2 muito alta e que nunca desce.**
+Autocalibração num cômodo que fica fechado. Ventile bem por algumas horas ou desligue a autocalibração e calibre manualmente.
+
+**Temperatura lida acima da real.**
+O ESP32 esquenta e aquece o sensor por proximidade. Afaste o módulo da placa com fios mais longos, ou use `filters: - offset: -1.5` para compensar depois de comparar com um termômetro confiável.
+
+**eCO2 disparando sem gente no cômodo.**
+Comportamento esperado em sensor de voláteis: álcool, produto de limpeza e tinta disparam a leitura. É por isso que o NDIR é outra história.
+
+> 🌬️ **Um uso além do conforto:** corte de porcelanato, lixamento e pintura mudam a composição do ar de um jeito que os sensores de voláteis registram bem. Vale lembrar, porém, que **o risco maior nesses serviços é o material particulado** — a poeira de sílica —, e ele exige um sensor óptico de PM2.5, que é outro módulo. A gente tratou dos cuidados com essa poeira [no comparativo de serra mármore e esmerilhadeira](https://reformacaseira.com.br/posts/serra-marmore-ou-esmerilhadeira-porcelanato/) no Reforma Caseira.
+
+## Como escolher o sensor
+
+1. **Quer saber quando ventilar?** SCD30. CO2 real é a única leitura que responde isso.
+2. **Quer o máximo de dados por módulo?** BME680 — e a melhor nota da lista.
+3. **Orçamento apertado, quer acompanhar tendência?** SGP30.
+4. **Quer voláteis com temperatura e umidade juntos?** ENS160 + AHT21, ciente da nota 3,4.
+5. **Quer medir poeira de obra?** Nenhum destes. Procure sensor de particulado a laser.
+
+## Perguntas frequentes
+
+**CO2 real ou eCO2 estimado?**
+NDIR mede de verdade; eCO2 é inferido de voláteis e se descola com álcool, limpeza e tinta no ar.
+
+**Medem poeira?**
+Não. Particulado exige sensor óptico a laser, que é outro módulo com outro princípio.
+
+**Qual valor de CO2 é alto?**
+Externo fica em 400–450 ppm; acima de 1000 passa do recomendado; acima de 1500 dá sonolência.
+
+**Preciso calibrar?**
+Autocalibração funciona bem em cômodo ventilado. Em ambiente fechado por dias, desligue e calibre manual.
+
+**Dá para alimentar tudo por USB?**
+Dá. Se reiniciar sozinho, o problema é cabo fino ou fonte fraca, não capacidade.
+
+---
+
+*Montou o seu e travou em alguma etapa? [Fale com a gente](/contato/).*
