@@ -1,0 +1,402 @@
+---
+title: 'Tablet barato como painel do Home Assistant na parede'
+description: 'Transforme um tablet Android num painel de parede do Home Assistant: kiosk sem barras, tela que acorda com presença e carga controlada para não inchar.'
+pubDate: 2026-08-24
+category: 'automacao-residencial'
+tags: ['home assistant', 'tablet', 'painel', 'automação', 'tutorial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Samsung Galaxy Tab A11+ 128GB 6GB RAM Wi-Fi'
+    brand: 'Samsung'
+    rating: 4.8
+    image: '/images/produtos/galaxy-tab-a11-plus.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0G4SLJNFF?tag=nerdcaseiro-20'
+    pros:
+      - 'Está entre os quinze mais vendidos de Informática da Amazon Brasil, com 4,8'
+      - 'Tela grande e 6GB de RAM: o painel continua fluido mesmo com dashboard cheio de cartões'
+    cons:
+      - 'É a opção mais cara da lista — para um painel que fica na parede o dia todo, pode ser mais tablet do que o necessário'
+  - name: 'Samsung Galaxy Tab A11 64GB 4GB RAM Tela 8.7"'
+    brand: 'Samsung'
+    rating: 4.7
+    image: '/images/produtos/galaxy-tab-a11-87.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FV11G92G?tag=nerdcaseiro-20'
+    pros:
+      - '8,7 polegadas é o tamanho que some melhor na parede sem virar um monitor pendurado'
+      - '629 avaliações com 4,7, e atualizações de sistema da Samsung por vários anos'
+    cons:
+      - '4GB de RAM pedem um dashboard mais enxuto para não engasgar em transição de aba'
+  - name: 'Tablet Positivo Vision TAB 7 Octa-Core 3GB RAM 64GB'
+    brand: 'Positivo'
+    rating: 4.3
+    image: '/images/produtos/positivo-vision-tab7.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DCH2G5PC?tag=nerdcaseiro-20'
+    pros:
+      - 'Mais de mil avaliações e o menor custo da lista — é o tablet "descartável" ideal para virar painel fixo'
+      - 'Para exibir um dashboard e aceitar toque, 3GB dão conta com folga'
+    cons:
+      - 'Nota 4,3 e ciclo de atualização curto: não use esse tablet para nada além do painel'
+  - name: 'Suporte de Parede para Tablet com Rotação 360° e Base de Metal'
+    brand: 'Genérica'
+    rating: 4.6
+    image: '/images/produtos/suporte-parede-360.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CQ1S62XV?tag=nerdcaseiro-20'
+    pros:
+      - '570 avaliações com 4,6, e a rotação de 360° permite alternar entre retrato e paisagem'
+      - 'Base de metal segura melhor o toque repetido que o suporte plástico'
+    cons:
+      - 'Suporte articulado deixa o tablet mais afastado da parede — some menos que o modelo fixo'
+  - name: 'Splin Suporte de Parede Universal para Tablet com Parafuso e Bucha'
+    brand: 'Splin'
+    rating: 4.3
+    image: '/images/produtos/splin-suporte-parede.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08B8T349N?tag=nerdcaseiro-20'
+    pros:
+      - 'Fixação com parafuso e bucha: painel que recebe toque o dia inteiro não pode depender de fita'
+      - 'Perfil simples, que deixa o tablet mais rente à parede'
+    cons:
+      - 'Sem articulação: você define o ângulo na hora de furar e não muda depois'
+faq:
+  - question: 'Preciso de um tablet potente para usar como painel?'
+    answer: 'Não. A tarefa é exibir uma página web e responder ao toque, o que qualquer tablet moderno de entrada faz sem esforço. O que realmente importa num painel de parede não é desempenho de pico, e sim três outras coisas: a tela ligar e desligar de forma confiável, o aparelho aguentar ficar permanentemente na tomada e o sistema não travar depois de dias ligado. Por isso o tablet mais barato costuma ser a escolha racional aqui, com uma condição: dedique o aparelho a essa função. Painel que também é o tablet das crianças vai sair da parede, sair do modo quiosque e desconfigurar.'
+  - question: 'Deixar o tablet carregando o tempo todo estraga a bateria?'
+    answer: 'Estraga, e esse é o problema mais real desse projeto. Bateria de íon-lítio sofre quando fica permanentemente em carga máxima, e o resultado típico em painéis mantidos assim por meses é o inchaço da célula, que chega a deformar a traseira do aparelho e a empurrar a tela. Existem três abordagens: usar o recurso de limite de carga do próprio sistema, quando o fabricante oferece; usar aplicativos de quiosque que permitem parar a carga em um percentual definido; ou controlar a alimentação por fora, com uma tomada inteligente que liga e desliga conforme o nível da bateria informado pelo próprio tablet. A terceira é a que este tutorial automatiza.'
+  - question: 'Qual a diferença entre usar o app do Home Assistant e um app de quiosque?'
+    answer: 'O aplicativo oficial do Home Assistant é excelente como cliente pessoal, no seu celular, mas ele não foi desenhado para viver preso numa parede. Aplicativos de quiosque resolvem justamente o que falta nesse cenário: travam o aparelho numa única página, escondem barra de status e navegação, impedem que alguém saia do painel, retomam sozinhos depois de reiniciar e — o mais importante para automação — expõem controle de tela, brilho, sensor de movimento e nível de bateria como entidades dentro do Home Assistant. É isso que permite escrever automações que acordam o painel quando alguém chega perto.'
+  - question: 'Como faço o painel acordar quando alguém se aproxima?'
+    answer: 'Há dois caminhos, e eles se complementam. O primeiro usa um sensor de presença ou de movimento que você já tenha na automação da casa: quando ele detecta alguém, uma automação liga a tela do tablet. O segundo usa a detecção do próprio aparelho, disponível em apps de quiosque, que acorda a tela por proximidade ou por movimento captado pela câmera frontal. Na prática, quem tem sensor de presença no ambiente costuma preferir o primeiro, porque ele acorda o painel antes de a pessoa chegar à frente dele. O tutorial abaixo traz a automação pronta para esse caso.'
+  - question: 'Vale a pena usar um tablet velho que eu já tenho?'
+    answer: 'Vale muito, e é a melhor forma de começar sem gastar nada. Três coisas costumam limitar: navegador antigo demais para renderizar o painel corretamente, bateria já degradada e a impossibilidade de instalar aplicativos atuais em versões muito antigas de Android. Se o aparelho abre o painel no navegador e a tela responde bem ao toque, ele serve. Uma dica prática para tablet com bateria já ruim: nesse caso específico, manter na tomada permanentemente incomoda menos, porque não há muito o que preservar — mas fique atento a qualquer sinal de inchaço e descarte o aparelho se ele aparecer.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Você montou o Home Assistant, automatizou luz, tomada e portão — e continua pegando o celular, desbloqueando e abrindo o app para apagar a luz da sala.
+
+Um **tablet na parede** resolve isso. E o interessante é que a peça mais barata do projeto é justamente o tablet: a tarefa é exibir uma página e responder ao toque, algo que qualquer aparelho de entrada faz sem esforço.
+
+O que separa um painel que funciona de um tablet pendurado na parede são três detalhes: **quiosque**, **tela que acorda sozinha** e **carga controlada**. Vamos aos três.
+
+## O que você vai precisar
+
+- Um tablet Android (novo ou aquele que está na gaveta)
+- Suporte de parede
+- Carregador e cabo — de preferência com o cabo saindo para baixo
+- Home Assistant já rodando na rede
+- Uma tomada inteligente, se você quiser controlar a carga (recomendado)
+
+> ⚠️ **O problema que ninguém conta:** tablet permanentemente em carga máxima **incha a bateria**. Depois de alguns meses, a célula deforma e chega a empurrar a tela para fora. A parte final deste tutorial resolve isso.
+
+## Tabela comparativa
+
+<ComparisonTable
+  source="tablet-painel-home-assistant"
+  rows={[
+    { name: 'Galaxy Tab A11+ 128GB', brand: 'Samsung', rating: 4.8, highlight: 'Tela grande, 6GB — o mais folgado', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0G4SLJNFF?tag=nerdcaseiro-20' }] },
+    { name: 'Galaxy Tab A11 8.7"', brand: 'Samsung', rating: 4.7, highlight: 'O tamanho que some na parede', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0FV11G92G?tag=nerdcaseiro-20' }] },
+    { name: 'Positivo Vision TAB 7', brand: 'Positivo', rating: 4.3, highlight: 'O mais barato — painel dedicado', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0DCH2G5PC?tag=nerdcaseiro-20' }] },
+    { name: 'Suporte de parede 360°', brand: 'Genérica', rating: 4.6, highlight: 'Alterna retrato e paisagem', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CQ1S62XV?tag=nerdcaseiro-20' }] },
+    { name: 'Splin Suporte com parafuso', brand: 'Splin', rating: 4.3, highlight: 'Fixo e rente à parede', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08B8T349N?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Galaxy Tab A11+ — o mais folgado
+
+![Samsung Galaxy Tab A11+ 128GB 6GB RAM Wi-Fi](/images/produtos/galaxy-tab-a11-plus.webp)
+
+Está entre os **quinze mais vendidos de Informática** da Amazon Brasil, com 4,8. Tela grande e 6GB de RAM mantêm o painel fluido mesmo com dashboard carregado de cartões, gráficos e câmeras.
+
+Um ponto que pesa a favor da Samsung em projeto de longo prazo: **anos de atualização de sistema**. Painel de parede fica ligado por anos, e navegador desatualizado é o que mais quebra dashboard moderno com o tempo.
+
+**É a opção mais cara da lista.** Para um aparelho que vai exibir uma página o dia inteiro, pode ser mais tablet do que o necessário — a não ser que você queira também streaming de câmera em tempo real ou interfone com vídeo.
+
+<ProsCons pros={['Entre os quinze mais vendidos de Informática da Amazon, com 4,8', 'Tela grande e 6GB de RAM: painel fluido mesmo com dashboard pesado']} cons={['A mais cara da lista — pode ser mais tablet do que um painel precisa']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0G4SLJNFF?tag=nerdcaseiro-20" store="amazon" source="tablet-painel-home-assistant" />
+
+---
+
+## 2. Galaxy Tab A11 8.7" — o tamanho que some na parede
+
+![Samsung Galaxy Tab A11 64GB 4GB RAM Tela 8.7 polegadas](/images/produtos/galaxy-tab-a11-87.webp)
+
+629 avaliações com 4,7. As **8,7 polegadas** são, na prática, o tamanho que melhor resolve o problema estético do projeto: grande o suficiente para tocar botões sem errar, pequeno o suficiente para não parecer um monitor pendurado no corredor.
+
+Mantém a vantagem de atualizações da Samsung.
+
+**4GB de RAM** pedem um dashboard mais enxuto. Nada dramático — mas se você planeja três abas com câmeras ao vivo e gráficos de energia, o modelo maior vai transitar melhor.
+
+<ProsCons pros={['8,7" é o tamanho que some melhor na parede sem virar um monitor pendurado', '629 avaliações com 4,7, com anos de atualização de sistema']} cons={['4GB pedem dashboard mais enxuto para não engasgar em transição de aba']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FV11G92G?tag=nerdcaseiro-20" store="amazon" source="tablet-painel-home-assistant" />
+
+---
+
+## 3. Positivo Vision TAB 7 — o painel dedicado
+
+![Tablet Positivo Vision TAB 7 Octa-Core 3GB RAM 64GB](/images/produtos/positivo-vision-tab7.webp)
+
+Mais de mil avaliações e o **menor custo da lista**. Este é o tablet certo se você pensa como eu penso: painel de parede é **equipamento dedicado**, não um tablet que também serve para outras coisas.
+
+Para exibir um dashboard e aceitar toque, 3GB dão conta com folga. Não há nada nessa tarefa que exija mais.
+
+**Nota 4,3 e ciclo de atualização curto.** É por isso que a recomendação vem com condição: **não use esse aparelho para mais nada**. Como painel dedicado, cumpre bem e libera orçamento para o resto da automação.
+
+<ProsCons pros={['Mais de mil avaliações e o menor custo da lista — ideal como painel dedicado', 'Para exibir dashboard e aceitar toque, 3GB dão conta com folga']} cons={['Nota 4,3 e ciclo de atualização curto: dedique o aparelho só ao painel']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DCH2G5PC?tag=nerdcaseiro-20" store="amazon" source="tablet-painel-home-assistant" />
+
+---
+
+## 4. Suporte de parede 360° — quando você ainda não decidiu o ângulo
+
+![Suporte de Parede para Tablet com Rotação 360° e Base de Metal](/images/produtos/suporte-parede-360.webp)
+
+570 avaliações com 4,6. A **rotação de 360°** permite alternar entre retrato e paisagem depois de instalado — e isso importa mais do que parece, porque a orientação ideal depende do dashboard, e você provavelmente vai reorganizar o seu algumas vezes.
+
+A **base de metal** aguenta melhor o toque repetido. Painel de parede recebe dezenas de toques por dia, e suporte plástico com articulação tende a folgar.
+
+**A contrapartida é o afastamento:** suporte articulado deixa o tablet mais longe da parede, então ele "some" menos que um modelo fixo.
+
+<ProsCons pros={['570 avaliações com 4,6, e a rotação 360° permite alternar retrato e paisagem', 'Base de metal aguenta melhor o toque repetido que o suporte plástico']} cons={['Articulado afasta o tablet da parede — some menos que o modelo fixo']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CQ1S62XV?tag=nerdcaseiro-20" store="amazon" source="tablet-painel-home-assistant" />
+
+---
+
+## 5. Splin Suporte com parafuso — o mais rente à parede
+
+![Splin Suporte de Parede Universal para Tablet com Parafuso e Bucha](/images/produtos/splin-suporte-parede.webp)
+
+Fixação com **parafuso e bucha**. Vale insistir nesse ponto: painel que recebe toque o dia inteiro não pode depender de fita dupla face. Fita cede com calor e com uso, e o tablet cai — normalmente sobre o piso duro.
+
+O perfil simples deixa o aparelho mais rente à parede, que é o acabamento mais discreto.
+
+**Sem articulação:** o ângulo é definido na hora de furar. Meça a altura pensando em quem mais vai usar — painel instalado na altura dos olhos de um adulto fica inutilizável para criança, e vice-versa.
+
+<ProsCons pros={['Fixação com parafuso e bucha — painel de toque diário não pode depender de fita', 'Perfil simples, deixa o tablet mais rente à parede']} cons={['Sem articulação: o ângulo é definido na hora de furar e não muda depois']} />
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08B8T349N?tag=nerdcaseiro-20" store="amazon" source="tablet-painel-home-assistant" />
+
+---
+
+## Passo 1 — Preparar o tablet
+
+Antes de qualquer configuração de software, ajuste o sistema:
+
+1. **Desative o bloqueio de tela.** Painel com senha não é painel.
+2. **Desative a rotação automática** e fixe a orientação que você vai usar.
+3. **Tempo de tela ligada: nunca desligar.** Quem vai controlar isso é a automação, não o sistema.
+4. **Conecte no Wi-Fi** e reserve um IP fixo para o tablet no seu roteador — você vai precisar dele.
+5. **Desative atualizações automáticas de app.** Atualização no meio da noite é a causa mais comum de painel amanhecer fora do modo quiosque.
+
+## Passo 2 — Modo quiosque (o que trava o painel na tela certa)
+
+Instale um aplicativo de quiosque para Android — **Fully Kiosk Browser** é o mais usado nesse cenário, e é o que integra ao Home Assistant. Na configuração dele:
+
+- **Start URL:** o endereço do seu dashboard, por exemplo `http://192.168.1.10:8123/lovelace/painel`
+- Ative o início automático ao ligar o aparelho
+- Ative o modo tela cheia e esconda a barra de status e a de navegação
+- Ative a proteção por senha nas configurações do próprio app
+- Ative a **API remota**, que é o que expõe o tablet ao Home Assistant
+
+No Home Assistant, adicione a integração correspondente. Ela cria as entidades que usaremos abaixo — tela, brilho, movimento e bateria.
+
+> 💡 Os nomes de entidade variam conforme o nome que você deu ao dispositivo. Confira os seus em **Ferramentas do desenvolvedor → Estados** e substitua nos exemplos.
+
+## Passo 3 — Esconder cabeçalho e menu lateral do dashboard
+
+Mesmo em tela cheia, o dashboard do Home Assistant continua mostrando o cabeçalho e a barra lateral, que num painel só ocupam espaço.
+
+A forma mais simples de resolver é o plugin **kiosk-mode** (instalável via HACS). Depois de instalado, basta declarar no topo da configuração YAML do seu dashboard:
+
+```yaml
+kiosk_mode:
+  hide_header: true
+  hide_sidebar: true
+```
+
+Se você quiser esconder as barras **somente** no tablet, e manter a navegação normal quando abrir o mesmo dashboard pelo celular, use a variante por usuário:
+
+```yaml
+kiosk_mode:
+  user_settings:
+    - users:
+        - painel_sala
+      hide_header: true
+      hide_sidebar: true
+```
+
+Criar um **usuário exclusivo para o painel** no Home Assistant é uma boa prática por outro motivo também: você limita o que aquele usuário enxerga e evita que alguém mexa em configuração pelo tablet da parede.
+
+## Passo 4 — A tela que acorda com presença
+
+Painel aceso 24 horas é desperdício de energia, incomoda à noite e acelera o desgaste da tela. O comportamento correto é: **desligado por padrão, acende quando alguém chega**.
+
+Se você já tem um sensor de presença no ambiente:
+
+```yaml
+automation:
+  - alias: "Painel: acorda a tela com presença"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.sensor_presenca_sala
+        to: "on"
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.tablet_sala_screen
+
+  - alias: "Painel: apaga a tela sem presença"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.sensor_presenca_sala
+        to: "off"
+        for: "00:02:00"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.tablet_sala_screen
+```
+
+O `for: "00:02:00"` evita o efeito pisca-pisca: a tela só apaga depois de dois minutos sem detecção, e não a cada vez que o sensor oscila.
+
+**Bônus — brilho por período do dia.** Painel com brilho de meio-dia às três da manhã ilumina o corredor inteiro:
+
+```yaml
+  - alias: "Painel: brilho noturno"
+    trigger:
+      - platform: time
+        at: "22:00:00"
+    action:
+      - service: number.set_value
+        target:
+          entity_id: number.tablet_sala_screen_brightness
+        data:
+          value: 20
+
+  - alias: "Painel: brilho diurno"
+    trigger:
+      - platform: time
+        at: "07:00:00"
+    action:
+      - service: number.set_value
+        target:
+          entity_id: number.tablet_sala_screen_brightness
+        data:
+          value: 180
+```
+
+## Passo 5 — A carga controlada (o que salva a bateria)
+
+Este é o passo que quase todo tutorial ignora, e é o que decide se o seu painel vai durar anos ou vai inchar em alguns meses.
+
+A ideia: **ligue o tablet numa tomada inteligente** e deixe o Home Assistant manter a bateria numa faixa saudável, em vez de 100% permanente.
+
+```yaml
+  - alias: "Painel: mantém a bateria entre 40% e 80%"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.tablet_sala_battery_level
+        above: 80
+      - platform: numeric_state
+        entity_id: sensor.tablet_sala_battery_level
+        below: 40
+    action:
+      - choose:
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.tablet_sala_battery_level
+                above: 80
+            sequence:
+              - service: switch.turn_off
+                target:
+                  entity_id: switch.tomada_painel_sala
+          - conditions:
+              - condition: numeric_state
+                entity_id: sensor.tablet_sala_battery_level
+                below: 40
+            sequence:
+              - service: switch.turn_on
+                target:
+                  entity_id: switch.tomada_painel_sala
+```
+
+O tablet passa a oscilar entre 40% e 80%, que é uma faixa muito mais gentil com a célula do que carga máxima contínua.
+
+**Uma proteção que vale acrescentar:** se o Home Assistant cair, a tomada fica no último estado. Configure a tomada inteligente para **ligar por padrão ao restaurar energia** — assim, na pior hipótese, o tablet fica carregando, e não descarregando até desligar.
+
+Se o seu tablet oferece limite de carga nativo no próprio sistema, use os dois: o nativo como principal, a automação como reforço.
+
+## Passo 6 — Um dashboard que funciona no dedo
+
+Painel de parede não é a tela do computador. Três ajustes fazem diferença:
+
+- **Botões grandes.** Dedo não tem a precisão do mouse. Cartões pequenos geram toque errado, e toque errado numa parede significa desligar a luz de outro cômodo.
+- **Poucas abas.** Uma tela principal com o essencial e, no máximo, duas secundárias. Painel com sete abas ninguém usa.
+- **Volte para a tela inicial sozinho.** Configure o app de quiosque para recarregar a URL inicial após alguns minutos de inatividade — assim o painel nunca amanhece parado numa tela de configuração que alguém abriu.
+
+## Problemas comuns
+
+**O painel sai do modo quiosque sozinho.** Quase sempre é atualização automática de aplicativo. Desative.
+
+**A tela não acende pela automação.** Confirme que a API remota do app de quiosque está ativa e que o tablet está com IP fixo — se o IP mudou, a integração perde o aparelho.
+
+**O tablet desconecta do Wi-Fi durante a noite.** Desative a economia de energia do Wi-Fi nas opções do desenvolvedor e a otimização de bateria para o app de quiosque.
+
+**A traseira do tablet começou a estufar.** Pare imediatamente. Bateria inchada não é estética, é risco — desconecte, não fure, não pressione, e descarte em ponto de coleta de eletrônicos.
+
+## Como escolher
+
+1. **Vai usar um tablet que já tem?** Comece por ele — só confirme que o navegador abre o dashboard.
+2. **Painel dedicado, orçamento curto?** Positivo Vision TAB 7.
+3. **Quer tela grande com câmeras ao vivo?** Galaxy Tab A11+.
+4. **Discrição na parede?** Galaxy Tab A11 8,7" com o suporte Splin.
+5. **Ainda não decidiu a orientação?** Suporte 360°.
+
+## O que colocar no painel
+
+O painel só é útil se mostrar o que você realmente decide olhando para a parede. Na prática, o que costuma valer é: luzes do ambiente, cena de sair e chegar, câmera da porta, temperatura e — se você monitora — consumo elétrico.
+
+Vários desses vêm dos projetos que já publicamos aqui: [sensores de presença](/posts/melhores-sensores-presenca-home-assistant/) para acordar o painel, [monitor de consumo elétrico com ESP32](/posts/monitor-consumo-eletrico-esp32-home-assistant/) para o cartão de energia e [tomadas inteligentes](/posts/melhores-plugues-tomadas-inteligentes/) — que, além de comandarem o que você quiser, são o que controla a carga do próprio tablet neste tutorial.
+
+## Quer aprender Home Assistant do começo?
+
+Se você está montando a casa inteligente do zero e quer o caminho estruturado — instalação, integrações, dashboard e automações —, o curso [Casa Inteligente com Home Assistant, Alexa e Mapa 3D](https://go.hotmart.com/B107181927J?dp=1) cobre exatamente esse percurso.
+
+<AffiliateButton href="https://go.hotmart.com/B107181927J?dp=1" store="hotmart" source="tablet-painel-home-assistant" />
+
+## Perguntas frequentes
+
+**Preciso de tablet potente?**
+Não. Exibir dashboard e responder ao toque qualquer aparelho de entrada faz. Dedique o aparelho ao painel.
+
+**Carregar o tempo todo estraga a bateria?**
+Estraga — incha a célula. Use limite nativo, recurso do app de quiosque ou a automação de tomada deste tutorial.
+
+**App do Home Assistant ou app de quiosque?**
+Quiosque. Ele trava a tela, esconde as barras e expõe tela, brilho e bateria como entidades.
+
+**Como acordar o painel com presença?**
+Sensor de presença acionando `switch.turn_on` na entidade de tela do tablet — automação pronta acima.
+
+**Vale usar tablet velho?**
+Vale muito. Só confira o navegador, a bateria e se ele instala o app de quiosque.
+
+---
+
+*Montando o painel da sua casa? [Fale com a gente](/contato/).*
