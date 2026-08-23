@@ -17,12 +17,63 @@ export async function getStaticPaths() {
     guias: 'Guias de Compra',
   };
 
+
+  // Título e meta descrição próprios por categoria: o padrão anterior
+  // (`${label} — Reviews e Guias`) gerava títulos curtos demais para o Bing.
+  const categorySeo: Record<string, { title: string; description: string }> = {
+    'automacao-residencial': {
+      title: 'Automação residencial com Home Assistant e ESP32',
+      description: 'Tutoriais com código testado de Home Assistant, ESPHome e ESP32: automatize luz, portão, cortina e irrigação sem depender da nuvem de ninguém.',
+    },
+    'casa-inteligente': {
+      title: 'Casa inteligente: lâmpadas, sensores, hubs e câmeras',
+      description: 'Lâmpadas e tomadas inteligentes, sensores, fechaduras, hubs e câmeras comparados: o que funciona junto, o que trava e o que vale o investimento.',
+    },
+    'impressao-3d': {
+      title: 'Impressão 3D: impressoras, filamentos e ajustes finos',
+      description: 'Impressoras FDM e resina, filamentos PLA, PETG e ABS, secagem e solução de falhas de impressão: o guia de quem imprime de verdade em casa.',
+    },
+    'eletronica-maker': {
+      title: 'Eletrônica maker: ESP32, Arduino e Raspberry Pi',
+      description: 'Projetos e componentes de eletrônica maker com ESP32, Arduino e Raspberry Pi: sensores, kits iniciantes e montagens com código real e testado.',
+    },
+    'ferramentas-maker': {
+      title: 'Ferramentas maker: solda, multímetro e bancada',
+      description: 'Ferro e estação de solda, multímetro, fonte e organização de bancada: o que realmente falta na sua para os projetos pararem de travar no meio.',
+    },
+    gadgets: {
+      title: 'Gadgets de tecnologia úteis para a casa e o dia a dia',
+      description: 'Gadgets testados de verdade: smartwatch, leitor digital, rastreador, umidificador e acessórios que resolvem algo concreto na rotina da casa.',
+    },
+    'audio-video': {
+      title: 'Áudio e vídeo: streaming, smart TV, fones e som',
+      description: 'Fire TV, Chromecast, Roku, smart TVs, fones e caixas de som comparados: o que muda entre os sistemas e como montar o entretenimento da sala.',
+    },
+    'redes-wifi': {
+      title: 'Redes e Wi-Fi: roteadores mesh, repetidores e cabo',
+      description: 'Roteadores mesh, repetidores e cabeamento comparados: como resolver o Wi-Fi fraco no fundo da casa e quando o cabo entrega o que o sem fio não dá.',
+    },
+    'energia-backup': {
+      title: 'Energia e backup: nobreak, DPS, pilhas e power bank',
+      description: 'Nobreak, filtro de linha com DPS, estação portátil, pilhas e power bank: como manter internet, computador e aparelhos vivos na queda de energia.',
+    },
+    'home-office': {
+      title: 'Home office: monitor, teclado, hub USB-C e impressora',
+      description: 'Monitores, suportes, teclados, hubs USB-C, webcams e impressoras comparados: como montar uma mesa de trabalho que aguenta oito horas por dia.',
+    },
+    guias: {
+      title: 'Guias de tecnologia caseira explicados sem enrolação',
+      description: 'Guias completos de automação, casa inteligente, impressão 3D e home office: o conceito, a escolha certa e os erros que custam caro na prática.',
+    },
+  };
+
   const allPosts = await getCollection('posts', ({ data }) => !data.draft);
 
   return Object.keys(categoryLabels).map((slug) => ({
     params: { slug },
     props: {
       label: categoryLabels[slug],
+      seo: categorySeo[slug],
       posts: allPosts
         .filter((p) => p.data.category === slug)
         .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()),
@@ -31,7 +82,7 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const { label, posts } = Astro.props;
+const { label, seo, posts } = Astro.props;
 
 function formatDate(date: Date) {
   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' });
@@ -39,8 +90,8 @@ function formatDate(date: Date) {
 ---
 
 <BaseLayout
-  title={`${label} — Reviews e Guias`}
-  description={`Tutoriais, reviews e guias de compra sobre ${label.toLowerCase()} para sua casa inteligente.`}
+  title={seo?.title ?? `${label} — Reviews e Guias`}
+  description={seo?.description ?? `Tutoriais, reviews e guias de compra sobre ${label.toLowerCase()} para sua casa inteligente.`}
 >
   <div class="container section">
     <nav class="cat-breadcrumb" aria-label="Navegação por categoria">

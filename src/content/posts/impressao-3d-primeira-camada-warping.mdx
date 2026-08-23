@@ -1,0 +1,514 @@
+---
+title: 'Primeira camada e warping: o guia de diagnóstico e correção'
+description: 'Peça descolando ou canto levantando? Diagnóstico por sintoma, o cálculo do offset de Z, perfis testados e os 7 itens que corrigem de verdade.'
+pubDate: 2026-08-31
+category: 'impressao-3d'
+tags: ['impressão 3d', 'primeira camada', 'warping', 'aderência', 'calibração', 'tutorial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'YOOPAI placa magnética PEI + PEO dupla face'
+    brand: 'YOOPAI'
+    rating: 4.7
+    image: '/images/produtos/yoopai-pei-peo.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CNP6KJX9?tag=nerdcaseiro-20'
+    pros:
+      - 'Dupla face: PEI texturizado de um lado, PEO liso do outro — dois acabamentos numa chapa só'
+      - 'Aço mola flexível: você torce a chapa e a peça solta sozinha, sem espátula'
+      - 'Resolve de uma vez o problema de mesa de vidro que descola no canto'
+      - '234 avaliações com média 4,7'
+    cons:
+      - 'Precisa conferir a medida da sua mesa antes — chapa errada não tem conserto'
+      - 'A base magnética adesiva exige superfície limpa e curada antes do primeiro uso'
+  - name: 'HICTOP folha PEI dupla face 310x310mm magnética'
+    brand: 'HICTOP'
+    rating: 4.5
+    image: '/images/produtos/hictop-pei-310.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08PFH3G82?tag=nerdcaseiro-20'
+    pros:
+      - 'Medida 310x310 mm cobre CR-10, Ender Extender e mesas grandes de 300 mm'
+      - 'Face lisa para acabamento espelhado e face texturizada para aderência máxima'
+      - '309 avaliações com média 4,5 — histórico sólido para acessório de nicho'
+    cons:
+      - 'Chapa grande empena mais fácil se guardada em pé sem apoio'
+      - 'A face lisa exige controle de offset mais fino que a texturizada'
+  - name: 'Geeetech bastões de cola para mesa de impressão (6un)'
+    brand: 'Geeetech'
+    rating: 4.6
+    image: '/images/produtos/geeetech-cola-bastao.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B5F9Q9XG?tag=nerdcaseiro-20'
+    pros:
+      - 'Seis bastões: dura anos, e é a solução mais barata para warping de canto'
+      - 'Funciona nos dois sentidos — aumenta aderência no PLA e serve de separador no PETG'
+      - 'Cola PVP sai com água morna, sem solvente'
+    cons:
+      - 'É paliativo: se a mesa está desnivelada, a cola só adia o problema'
+      - 'Acumula camada com o uso; precisa lavar a chapa de tempos em tempos'
+  - name: 'Lokkr bastões de cola Creality para mesa 3D (3un)'
+    brand: 'Lokkr'
+    rating: 4.8
+    image: '/images/produtos/lokkr-cola-creality.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CYY4Y8W4?tag=nerdcaseiro-20'
+    pros:
+      - 'Média 4,8 — a nota mais alta entre os adesivos verificados'
+      - 'Formulação específica para mesa aquecida, não escorre a 60 °C'
+      - 'Três unidades resolvem o uso doméstico por muito tempo'
+    cons:
+      - 'Menos unidades que o pacote da Geeetech pelo mesmo tipo de produto'
+      - '76 avaliações: histórico mais curto'
+  - name: 'SUNLU S1 Plus — secador de filamento com ventilação'
+    brand: 'SUNLU'
+    rating: 4.4
+    image: '/images/produtos/sunlu-s1-plus-secador.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08C9RZPMN?tag=nerdcaseiro-20'
+    pros:
+      - 'Ataca a causa que ninguém suspeita: filamento úmido arruína a primeira camada'
+      - 'Ventilação forçada circula ar em vez de só aquecer ambiente saturado'
+      - 'Imprime direto de dentro — resolve umidade em impressão de 12 h ou mais'
+      - '3.113 avaliações com média 4,4'
+    cons:
+      - 'É o item mais caro da lista; só compensa com uso frequente'
+      - 'Não resolve nada se o problema for nivelamento ou offset de Z'
+  - name: 'Kit 14 bicos nozzle M6 0,4mm em latão (MK8)'
+    brand: 'Genérico'
+    rating: 4.4
+    image: '/images/produtos/bicos-nozzle-04mm.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07CB7VYB2?tag=nerdcaseiro-20'
+    pros:
+      - 'Bico gasto ou parcialmente entupido é causa clássica de primeira camada irregular'
+      - '14 unidades: você troca sem hesitar, que é justamente o ponto'
+      - 'Padrão MK8/M6 — o mais comum em Ender, CR-10, Kobra e similares'
+      - '397 avaliações com média 4,4'
+    cons:
+      - 'Latão desgasta rápido com filamento carregado de fibra ou brilho'
+      - 'Confira o padrão de rosca da sua impressora antes — nem toda usa M6'
+  - name: 'Creality placa de aço mola texturizada Ender 3 V3 SE'
+    brand: 'Creality'
+    rating: 4.3
+    image: '/images/produtos/creality-spring-steel-ender3v3se.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CW8YQY1V?tag=nerdcaseiro-20'
+    pros:
+      - 'Peça oficial Creality: encaixe e medida garantidos na Ender 3 V3 SE'
+      - 'Superfície texturizada dá aderência alta e ainda esconde marca na base da peça'
+      - 'Aço mola flexível — a peça solta por torção'
+    cons:
+      - 'Serve para uma família específica de impressora, não é universal'
+      - 'Nota 4,3 e 73 avaliações: o menor histórico da lista'
+faq:
+  - question: 'Qual a diferença entre primeira camada ruim e warping?'
+    answer: 'São problemas diferentes com causas diferentes. Primeira camada ruim aparece imediatamente: linhas separadas, material que não gruda, filete transparente ou esmagado demais — e a causa costuma ser offset de Z, nivelamento ou superfície suja. Warping aparece depois: a peça aderiu bem, imprimiu vinte camadas e então o canto começou a levantar. A causa aí é contração térmica — o plástico esfria, encolhe e a força supera a aderência. Confundir os dois faz você mexer no parâmetro errado.'
+  - question: 'Por que só o canto da peça levanta?'
+    answer: 'Porque canto é onde a contração se concentra. Conforme cada camada esfria, ela encolhe e puxa as camadas de baixo. No meio da peça, essa força é equilibrada pelos vizinhos em todas as direções; no canto, ela só tem um lado para puxar, e o vetor resultante aponta para cima. É por isso que arredondar cantos no modelo, ou adicionar um brim, resolve mais warping que aumentar a temperatura da mesa.'
+  - question: 'Qual a temperatura de mesa correta?'
+    answer: 'Para PLA, 55 a 60 °C é a faixa útil — acima disso a base da peça amolece e você ganha "elephant foot". Para PETG, 70 a 80 °C. Para ABS, 100 a 110 °C, e mesmo assim ele empena sem câmara fechada. Um erro comum é subir a mesa achando que resolve warping: o que resolve warping é reduzir o gradiente de temperatura entre a peça e o ar, e para isso fechar a impressora funciona muito melhor que aquecer mais a base.'
+  - question: 'Devo usar brim, raft ou nenhum dos dois?'
+    answer: 'Brim é a resposta certa na maioria dos casos: ele adiciona um contorno de algumas linhas ao redor da base, ampliando a área de aderência sem gastar material significativo, e sai com a unha. Raft constrói uma plataforma inteira embaixo da peça — gasta muito material, aumenta o tempo e deixa a base feia, mas salva peça com contato mínimo com a mesa. Comece sem nada. Se levantar canto, brim de 5 a 8 mm. Raft, só para peça com base minúscula.'
+  - question: 'Preciso trocar a mesa de vidro por PEI?'
+    answer: 'Não precisa, mas quase sempre compensa. Vidro dá acabamento espelhado excelente e é barato, porém a aderência depende de adesivo e a peça costuma soltar sozinha quando a mesa esfria — o que causa warping quando ela solta antes da hora. PEI sobre aço mola adere quimicamente com o plástico quente, segura durante a impressão e libera quando esfria, e você tira a peça torcendo a chapa. É o upgrade que mais reduz frustração por real gasto na impressão 3D.'
+  - question: 'Filamento úmido atrapalha a primeira camada?'
+    answer: 'Muito. A água absorvida vira vapor no bico e sai junto com o plástico, formando microbolhas dentro do filete. Uma primeira camada com microbolhas não sela contra a mesa — ela tem ar dentro e área de contato menor do que aparenta. O sintoma que denuncia é estalo durante a extrusão. Se a sua primeira camada piorou de um mês para o outro sem você mexer em nada, e o filamento está aberto há semanas, suspeite da umidade antes de mexer no offset.'
+  - question: 'Quando trocar o bico?'
+    answer: 'Bico de latão dura entre 300 e 800 horas com PLA e PETG comuns; com filamento carregado de fibra de carbono, brilho metálico ou madeira, cai para algumas dezenas de horas. O sintoma de bico gasto é o furo que virou oval ou aumentou: a primeira camada sai com largura irregular, a peça fica com paredes inconsistentes e o ajuste de fluxo não corrige. Como bico é o item mais barato da impressora, a regra prática é: na dúvida, troque antes de investigar mais.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Toda impressão 3D que dá errado dá errado por dois motivos, e eles são frequentemente confundidos.
+
+O primeiro é a **primeira camada**: o material não gruda, sai em linhas separadas, fica transparente demais ou esmagado demais. Você vê isso nos primeiros dois minutos.
+
+O segundo é **warping**: a peça grudou bem, imprimiu por uma hora e aí o canto começou a levantar, descolando da mesa e arrastando a geometria toda. Você vê isso na hora errada — quando já investiu tempo e material.
+
+São problemas diferentes, com causas diferentes e correções diferentes. Confundir os dois é o motivo pelo qual muita gente fica meses ajustando offset de Z para resolver um problema que era contração térmica.
+
+Este post é o **fluxo de diagnóstico** que eu uso, em ordem, do sintoma até a correção. Com os números, os testes e o que eu efetivamente comprei quando o ajuste de software não bastou.
+
+## Parte 1 — A física, em três parágrafos
+
+Termoplástico expande quando aquece e **contrai quando esfria**. O PLA contrai algo próximo de 0,3 a 0,5% ao esfriar da temperatura de extrusão até a ambiente; o ABS contrai de 0,7 a 1,5%. Não parece muito — até você fazer a conta em uma peça de 200 mm: 0,5% são **1 milímetro** de encolhimento.
+
+Enquanto a peça imprime, ela é uma pilha de camadas em temperaturas diferentes. A camada que acabou de sair do bico está quente e no tamanho máximo; a de dez camadas abaixo já esfriou e encolheu. A camada quente, ao esfriar, tenta encolher também — e as camadas frias abaixo dela resistem. Isso gera **tensão interna acumulada**.
+
+Essa tensão precisa ir para algum lugar. Se a aderência com a mesa for maior que ela, a peça fica presa e a tensão permanece dentro do material. Se a aderência for menor, a peça **levanta** — e ela levanta pelo canto, porque no canto a força de contração só tem uma direção para puxar, enquanto no meio da peça ela é equilibrada pelos vizinhos.
+
+Daí saem as duas estratégias que funcionam contra warping, e nenhuma delas é "aumentar a temperatura da mesa":
+
+1. **Aumentar a aderência** (superfície melhor, adesivo, brim, área de contato maior)
+2. **Reduzir a tensão** (esfriar mais devagar, fechar a impressora, arredondar cantos no modelo)
+
+## Parte 2 — Diagnóstico por sintoma
+
+Antes de mexer em qualquer parâmetro, identifique o sintoma. Imprima um **quadrado de teste de primeira camada** (um retângulo de 100×100 mm com uma camada de altura) e olhe de perto.
+
+| O que você vê | O que é | O que corrigir |
+|---|---|---|
+| Linhas separadas, dá pra ver a mesa entre elas | Bico longe demais | Baixar o offset de Z |
+| Filete transparente, quase sem espessura | Bico perto demais, esmagando | Subir o offset de Z |
+| Material acumulando em rugas na frente do bico | Muito perto + fluxo alto | Subir Z e revisar fluxo |
+| Um canto bom e o oposto ruim | Mesa desnivelada | Nivelar (não é offset) |
+| Gruda no meio, não gruda nas bordas | Mesa côncava/convexa | Malha de nivelamento (mesh) |
+| Adere e depois o canto levanta | **Warping** | Aderência + controle térmico |
+| Base da peça alargada, tipo pé de elefante | Mesa quente demais ou Z baixo | Baixar temperatura da mesa |
+| Estalos durante a extrusão | Filamento úmido | Secar o filamento |
+| Largura de filete variando sem motivo | Bico gasto ou parcialmente entupido | Trocar o bico |
+
+A regra mais importante desta tabela: **nivelamento e offset de Z são coisas diferentes.**
+
+Nivelamento é deixar a mesa **paralela** ao plano de movimento do bico. Offset de Z é a **distância** entre o bico e a mesa quando a impressora acha que está no zero. Se um canto está bom e o outro ruim, o problema é nivelamento, e mexer no offset só vai trocar qual canto está errado.
+
+## Parte 3 — Calibrando o offset de Z com número, não com feeling
+
+O método do papel — deslizar uma folha entre o bico e a mesa até sentir arrasto — é um ponto de partida, não uma calibração. Uma folha sulfite comum tem cerca de 0,1 mm, e "sentir arrasto" é uma medida que varia de pessoa para pessoa e de dia para dia.
+
+O método que funciona:
+
+**Passo 1.** Aqueça tudo antes de calibrar. Mesa na temperatura de trabalho, bico na temperatura de trabalho. Metal dilata: uma mesa a 60 °C não está na mesma posição que uma mesa a 25 °C, e calibrar frio significa recalibrar quente.
+
+**Passo 2.** Limpe o bico. Uma gota de plástico solidificada na ponta muda a referência e você calibra em cima do resíduo.
+
+**Passo 3.** Imprima um quadrado de uma camada e ajuste o offset **ao vivo**, durante a impressão. Praticamente todo firmware moderno permite (Baby Steps no Marlin, Z-Offset em tempo real no Klipper).
+
+**Passo 4.** O alvo visual: os filetes devem estar **levemente esmagados e tocando um no outro**, sem vale entre eles, e a superfície deve parecer fosca e uniforme — não brilhante e transparente (perto demais) nem com linhas visíveis separadas (longe demais).
+
+**Passo 5.** Anote o valor. Quando você trocar a chapa de impressão, esse valor muda — uma chapa PEI de 0,8 mm tem espessura diferente de uma de vidro de 4 mm.
+
+No Klipper, é isso que você salva:
+
+```ini
+# printer.cfg — offset salvo após calibração com a mesa quente
+[stepper_z]
+position_endstop: 0.0
+position_max: 250
+
+[bltouch]
+z_offset: 2.485   # valor obtido com PROBE_CALIBRATE, mesa a 60 °C
+
+# Malha de nivelamento: compensa mesa côncava/convexa
+[bed_mesh]
+speed: 120
+horizontal_move_z: 5
+mesh_min: 20, 20
+mesh_max: 215, 215
+probe_count: 5, 5
+algorithm: bicubic
+```
+
+E o trecho de start G-code que evita o erro mais comum de todos — sondar a mesa fria:
+
+```gcode
+; START G-CODE — sempre sondar com a mesa já quente
+M140 S{material_bed_temperature_layer_0}   ; liga a mesa
+M104 S150                                  ; bico em 150 °C: quente, mas sem escorrer
+M190 S{material_bed_temperature_layer_0}   ; ESPERA a mesa chegar na temperatura
+M109 S150                                  ; espera o bico
+G28                                        ; só agora faz o home
+BED_MESH_CALIBRATE                         ; e só agora mede a mesa
+M104 S{material_print_temperature_layer_0} ; aquece o bico para o valor final
+M109 S{material_print_temperature_layer_0}
+G1 Z2.0 F3000
+G1 X0.1 Y20 Z0.3 F5000.0
+G1 X0.1 Y200.0 Z0.3 F1500.0 E15           ; linha de purga na lateral
+G1 X0.4 Y200.0 Z0.3 F5000.0
+G1 X0.4 Y20 Z0.3 F1500.0 E30
+G92 E0
+```
+
+Os dois detalhes que fazem esse bloco valer a pena: **M190 antes do G28** (a mesa dilata quando aquece, então medir fria dá um mapa errado) e **bico a 150 °C durante a sondagem** (quente o suficiente para não haver plástico solidificado na ponta, frio o suficiente para não escorrer e sujar a mesa).
+
+## Parte 4 — Os parâmetros de fatiamento que importam
+
+Depois do offset, é aqui que o resto se resolve. Valores de partida testados:
+
+| Parâmetro | PLA | PETG | Por quê |
+|---|---|---|---|
+| Altura da 1ª camada | 0,2-0,3 mm | 0,25-0,3 mm | Primeira camada mais alta perdoa mesa imperfeita |
+| Largura de extrusão da 1ª camada | 120% | 120% | Filete mais largo = mais área de contato |
+| Velocidade da 1ª camada | 20 mm/s | 20 mm/s | Devagar dá tempo de aderir |
+| Temp. do bico na 1ª camada | +5 a +10 °C | +5 °C | Mais quente adere melhor à mesa |
+| Temp. da mesa | 55-60 °C | 70-80 °C | Acima disso, "pé de elefante" |
+| Ventoinha na 1ª camada | **0%** | **0%** | Resfriar a primeira camada é sabotagem |
+| Ventoinha a partir da 2ª | 100% | 30-50% | PETG odeia ventilação forte |
+| Brim (se necessário) | 5-8 mm | 5-8 mm | Amplia a área de aderência |
+
+Três desses merecem destaque porque são os mais ignorados:
+
+**Ventoinha a 0% na primeira camada.** Isso não é negociável. A camada precisa de tempo com o plástico ainda mole para se conformar à superfície e criar contato mecânico. Ligar a ventoinha logo mata a aderência antes que ela exista. Muita gente tem perfil com ventoinha a 100% desde a camada 1 e não faz ideia de que esse é o problema.
+
+**Largura de extrusão a 120%.** Um filete 20% mais largo tem 20% mais área tocando a mesa, pelo mesmo caminho percorrido. É o ajuste de melhor retorno por esforço na primeira camada.
+
+**Ventoinha a 30-50% no PETG a partir da 2ª camada.** PETG com ventilação forte fica quebradiço e as camadas não colam entre si. É o contrário do PLA, e o perfil padrão de muito fatiador não faz essa distinção.
+
+## Parte 5 — Superfície: onde o dinheiro resolve
+
+Se você ajustou offset, nivelou, corrigiu o perfil e ainda tem problema, o gargalo é a **superfície**. Aqui é onde comprar realmente resolve.
+
+| Superfície | Aderência | Solta a peça? | Manutenção |
+|---|---|---|---|
+| Vidro liso | baixa sem adesivo | quando esfria (às vezes cedo demais) | álcool isopropílico |
+| Vidro com cola PVP | alta | depois de esfriar | lavar de vez em quando |
+| **PEI texturizado** | alta | torcendo a chapa | isopropílico |
+| **PEI liso (PEO)** | muito alta | torcendo a chapa | isopropílico, sem tocar com a mão |
+| Fita azul de pintor | média | descolando a fita | trocar a fita |
+
+O detalhe que ninguém conta sobre PEI: **a gordura da sua mão é o inimigo**. Passar o dedo na chapa deixa uma película que reduz a aderência naquele ponto específico — e depois você fica procurando problema no offset. Limpe com álcool isopropílico antes de cada impressão importante e segure a chapa pelas bordas.
+
+E o inverso vale para PETG: ele adere **demais** em PEI liso, a ponto de arrancar lasca da superfície ao soltar. Nesse caso, a cola em bastão vira **separador**, não adesivo — uma camada fina de PVP entre o PETG e o PEI para o plástico não fundir com a superfície.
+
+## Comparativo dos itens que corrigem
+
+<ComparisonTable
+  specLabel="Resolve"
+  rows={[
+    { name: 'YOOPAI placa magnética PEI + PEO dupla face', brand: 'YOOPAI', rating: 4.7, spec: 'aderência', highlight: 'Duas superfícies numa chapa, solta por torção', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CNP6KJX9?tag=nerdcaseiro-20' }] },
+    { name: 'HICTOP folha PEI dupla face 310x310mm', brand: 'HICTOP', rating: 4.5, spec: 'aderência (mesa grande)', highlight: 'Medida para CR-10 e mesas de 300 mm', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08PFH3G82?tag=nerdcaseiro-20' }] },
+    { name: 'Geeetech bastões de cola (6un)', brand: 'Geeetech', rating: 4.6, spec: 'aderência / separador', highlight: 'Aumenta aderência no PLA, separa no PETG', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0B5F9Q9XG?tag=nerdcaseiro-20' }] },
+    { name: 'Lokkr bastões de cola Creality (3un)', brand: 'Lokkr', rating: 4.8, spec: 'aderência', highlight: 'Formulado para mesa aquecida, não escorre', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CYY4Y8W4?tag=nerdcaseiro-20' }] },
+    { name: 'SUNLU S1 Plus (secador)', brand: 'SUNLU', rating: 4.4, spec: 'umidade', highlight: 'Ataca a causa que ninguém suspeita', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08C9RZPMN?tag=nerdcaseiro-20' }] },
+    { name: 'Kit 14 bicos nozzle M6 0,4mm', brand: 'Genérico', rating: 4.4, spec: 'extrusão irregular', highlight: 'Bico gasto é causa clássica e barata de resolver', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B07CB7VYB2?tag=nerdcaseiro-20' }] },
+    { name: 'Creality placa de aço mola Ender 3 V3 SE', brand: 'Creality', rating: 4.3, spec: 'aderência (Ender)', highlight: 'Peça oficial, encaixe garantido', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CW8YQY1V?tag=nerdcaseiro-20' }] },
+  ]}
+  source="impressao-3d-primeira-camada-warping"
+/>
+
+## 1. YOOPAI PEI + PEO dupla face — o upgrade de maior impacto
+
+![YOOPAI placa magnética PEI + PEO dupla face](/images/produtos/yoopai-pei-peo.webp)
+
+Se você tem uma impressora com mesa de vidro ou com aquele adesivo texturizado original que já está descascando, esta é a compra que mais reduz frustração por real gasto na impressão 3D.
+
+A chapa é de aço mola com PEI dos dois lados: **texturizado** em uma face (aderência alta, esconde marca na base) e **liso/PEO** na outra (aderência ainda maior, acabamento espelhado na base). Duas superfícies para casos diferentes, sem comprar duas chapas.
+
+E o ganho operacional é imediato: acabou a impressão, você tira a chapa do ímã, **torce**, e a peça salta. Nada de espátula, nada de peça arrancada com estilete, nada de risco na superfície.
+
+Com 234 avaliações e média 4,7, é o item de melhor reputação entre as chapas verificadas.
+
+<ProsCons
+  pros={['Duas superfícies numa chapa: PEI texturizado e PEO liso', 'Aço mola: a peça solta por torção, sem espátula', 'Resolve de vez o vidro que descola no canto', '234 avaliações com média 4,7', 'A base magnética serve para trocar chapas depois']}
+  cons={['Confira a medida da sua mesa antes de comprar', 'A base adesiva precisa de superfície limpa e tempo de cura', 'Muda o offset de Z: recalibre depois de instalar']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CNP6KJX9?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se a sua impressora já saiu de fábrica com PEI sobre aço mola em bom estado, você não vai notar diferença. Verifique antes se a chapa atual só precisa de uma limpeza com isopropílico.
+
+## 2. HICTOP PEI 310×310 mm — para mesa grande
+
+![HICTOP folha PEI dupla face 310x310mm magnética](/images/produtos/hictop-pei-310.webp)
+
+Mesma tecnologia da anterior, no tamanho que resolve o problema de quem tem **CR-10, Ender Extender ou qualquer mesa de 300 mm**. Chapa de 310×310 mm é uma medida que some das prateleiras justamente porque a maioria dos fabricantes de acessório só cobre a 235×235 da Ender 3.
+
+Também é dupla face: lisa e texturizada.
+
+309 avaliações com média 4,5. Um alerta prático: **chapa grande empena** se guardada em pé apoiada só numa borda. Guarde deitada ou presa ao ímã.
+
+<ProsCons
+  pros={['310x310 mm cobre CR-10, Ender Extender e mesas de 300 mm', 'Face lisa para acabamento espelhado e texturizada para aderência', '309 avaliações com média 4,5', 'Acompanha base magnética adesiva']}
+  cons={['Empena se guardada em pé sem apoio', 'A face lisa exige offset mais fino que a texturizada', 'Peça grande demora mais para uniformizar a temperatura']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08PFH3G82?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se a sua mesa é 235×235 (Ender 3 e derivadas), esta chapa vai sobrar por todos os lados e atrapalhar o home. Compre na medida certa.
+
+## 3. Geeetech bastões de cola (6 unidades) — o paliativo que funciona
+
+![Geeetech bastões de cola para mesa de impressão](/images/produtos/geeetech-cola-bastao.webp)
+
+Cola PVP em bastão é a solução mais barata para warping de canto, e ela tem um uso duplo que muita gente não conhece.
+
+**No PLA sobre vidro:** aumenta a aderência. Passe uma camada fina, cruzada, na área onde a peça vai ficar.
+
+**No PETG sobre PEI:** funciona como **separador**. PETG adere tão bem ao PEI que pode arrancar lasca da superfície ao soltar — uma película de PVP entre os dois impede a fusão e protege a chapa. É o oposto do uso convencional, e é o motivo pelo qual quem imprime PETG mantém um bastão na bancada mesmo tendo PEI.
+
+Seis bastões duram anos em uso doméstico. E sai com água morna, sem solvente.
+
+<ProsCons
+  pros={['Seis bastões: a solução mais barata para warping de canto', 'Uso duplo: aderência no PLA, separador no PETG sobre PEI', 'Cola PVP sai com água morna, sem solvente', '216 avaliações com média 4,6']}
+  cons={['É paliativo: não corrige mesa desnivelada nem offset errado', 'Acumula camada com o uso — precisa lavar a chapa periodicamente', 'Aplicação irregular cria pontos de aderência diferente']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B5F9Q9XG?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se o seu problema é primeira camada com linhas separadas, cola não resolve — isso é offset de Z. Corrija a causa antes de mascarar.
+
+## 4. Lokkr bastões Creality (3 unidades) — a nota mais alta
+
+![Lokkr bastões de cola Creality para mesa 3D](/images/produtos/lokkr-cola-creality.webp)
+
+Mesma categoria, formulação específica para **mesa aquecida**. É uma diferença real: cola escolar comum amolece e escorre a 60 °C, formando poças que criam pontos de altura diferente na primeira camada.
+
+Média **4,8** — a nota mais alta entre os adesivos verificados aqui. Três unidades resolvem o uso doméstico por muito tempo.
+
+A escolha entre este e o Geeetech é basicamente quantidade contra reputação: seis bastões com 4,6, ou três com 4,8.
+
+<ProsCons
+  pros={['Média 4,8 — a maior nota entre os adesivos verificados', 'Formulação para mesa aquecida: não escorre a 60 °C', 'Três unidades atendem uso doméstico por muito tempo', 'Aplicação limpa, sem grumo']}
+  cons={['Menos unidades que o pacote da Geeetech', '76 avaliações: histórico mais curto', 'Como todo adesivo, é correção de sintoma, não de causa']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CYY4Y8W4?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se você imprime todo dia e usa muito adesivo, o pacote de seis da Geeetech tem custo por unidade melhor.
+
+## 5. SUNLU S1 Plus — a causa que ninguém investiga
+
+![Secador de filamento SUNLU S1 Plus](/images/produtos/sunlu-s1-plus-secador.webp)
+
+Este é o item que entra na lista por um motivo que quase nunca aparece em tutorial de primeira camada: **filamento úmido não sela contra a mesa**.
+
+A água absorvida vira vapor a 200 °C e forma microbolhas dentro do filete. Um filete com bolha tem menos material sólido em contato com a superfície do que aparenta ter — a aderência cai sem que nada visível tenha mudado no seu setup.
+
+O sinal que denuncia: **a primeira camada piorou sem você ter mexido em nada**, e o filamento está aberto há semanas. Junto vem o estalo durante a extrusão.
+
+O S1 Plus tem ventilação forçada — importante, porque caixa sem ventilador só aquece ar parado, e ar parado saturado não seca mais. E você **imprime de dentro dele**, o que mantém o filamento seco durante as 12 ou 18 horas de uma impressão longa.
+
+3.113 avaliações com média 4,4.
+
+<ProsCons
+  pros={['Ataca uma causa real e frequentemente ignorada da má aderência', 'Ventilação forçada: circula ar em vez de aquecer ambiente saturado', 'Imprime direto de dentro — mantém seco em impressão longa', '3.113 avaliações com média 4,4', 'Serve para PLA, PETG, TPU e nylon']}
+  cons={['O item mais caro da lista — só compensa com uso frequente', 'Não resolve nada se a causa for nivelamento ou offset', 'Cabe um carretel por vez']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08C9RZPMN?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se você imprime só PLA, uma vez por mês, e guarda o filamento em saco zip com sílica, a umidade não é o seu gargalo. Vá para a chapa PEI.
+
+## 6. Kit 14 bicos 0,4 mm — a peça descartável que ninguém troca
+
+![Kit de bicos nozzle 0,4 mm em latão para impressora 3D](/images/produtos/bicos-nozzle-04mm.webp)
+
+Bico é o item mais barato e mais castigado da impressora, e é onde se esconde uma causa clássica de primeira camada irregular: **furo gasto ou parcialmente entupido**.
+
+O desgaste faz o furo aumentar e perder a forma circular. O resultado é filete com largura variável, que o ajuste de fluxo não corrige, porque o problema não é quanto plástico entra — é por onde ele sai.
+
+Vida útil aproximada de bico de latão:
+
+| Filamento | Vida útil aproximada |
+|---|---|
+| PLA e PETG comuns | 300-800 h |
+| PLA com brilho metálico | 50-150 h |
+| Qualquer coisa com fibra de carbono | 10-50 h |
+
+Comprar 14 unidades muda o comportamento: você troca sem pensar duas vezes, que é exatamente o que se deve fazer com uma peça consumível barata. **Padrão MK8/M6** — confira o da sua impressora, que é o mais comum em Ender, CR-10, Kobra e similares, mas não é universal.
+
+<ProsCons
+  pros={['Bico gasto é causa clássica de primeira camada irregular', '14 unidades: você troca sem hesitar, que é o comportamento certo', 'Padrão MK8/M6, o mais comum em impressoras de entrada', '397 avaliações com média 4,4']}
+  cons={['Latão desgasta rápido com fibra ou filamento com brilho', 'Confira o padrão de rosca da sua impressora — nem toda é M6', 'Trocar o bico exige aquecer e apertar com o hotend quente']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07CB7VYB2?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se a sua impressora usa hotend proprietário (Bambu, Creality K1, Prusa MK4), este kit não serve. Confirme o padrão antes.
+
+## 7. Creality placa de aço mola Ender 3 V3 SE — a oficial
+
+![Creality placa de aço mola texturizada Ender 3 V3 SE](/images/produtos/creality-spring-steel-ender3v3se.webp)
+
+Se a sua impressora é da família **Ender 3 V3 SE**, a vantagem aqui é medida e encaixe garantidos: peça oficial Creality, sem risco de sobrar 3 mm e atrapalhar o home.
+
+Superfície texturizada, que dá aderência alta e ainda esconde qualquer marca na base da peça — útil quando a base fica à vista.
+
+73 avaliações com média 4,3, o menor histórico da lista. Mas é peça oficial e específica, o que muda o cálculo: você não está apostando em compatibilidade.
+
+<ProsCons
+  pros={['Peça oficial Creality: encaixe e medida garantidos na Ender 3 V3 SE', 'Superfície texturizada dá aderência alta e disfarça marca na base', 'Aço mola — a peça solta por torção', 'Substitui a chapa original desgastada sem adaptação']}
+  cons={['Serve para uma família específica de impressora', 'Nota 4,3 e 73 avaliações: o menor histórico da lista', 'Só uma face útil, ao contrário das dupla face']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CW8YQY1V?tag=nerdcaseiro-20" store="amazon" source="impressao-3d-primeira-camada-warping" />
+
+**Quando NÃO comprar:** se a sua impressora não é dessa família, vá para a chapa universal na medida da sua mesa.
+
+## Parte 6 — Warping específico, além da primeira camada
+
+Se a primeira camada está perfeita e mesmo assim o canto levanta na camada 30, o problema é **térmico**, e a correção é outra:
+
+**Feche a impressora.** Uma barraca de acampamento infantil, um armário de MDF, uma caixa de acrílico — qualquer coisa que reduza a corrente de ar. Sem corrente de ar, a peça esfria mais devagar e uniformemente, e o gradiente de temperatura que gera tensão diminui. Para ABS, isso não é opcional.
+
+**Reduza a ventoinha.** Ventilação forte acelera exatamente o resfriamento que causa a contração. Em PETG, 30-50% já é o teto. Em ABS, praticamente zero.
+
+**Arredonde os cantos no modelo.** Um filete de 3 mm nos cantos da base distribui a tensão em vez de concentrá-la em um ponto. É a correção de CAD que resolve mais warping do que qualquer parâmetro de fatiamento.
+
+**Use brim de 5 a 8 mm.** Ele amplia a área de aderência exatamente onde a força de levantamento é maior — nas bordas.
+
+**Ative "mouse ears"** (discos finos nos cantos, disponíveis no OrcaSlicer e como modificador em outros fatiadores). É brim seletivo: só nos pontos críticos, com muito menos material.
+
+## Checklist de diagnóstico, na ordem certa
+
+- [ ] **A mesa está nivelada?** Um canto bom e outro ruim = nivelamento, não offset.
+- [ ] **O offset foi calibrado com a mesa quente?** Metal dilata. Calibrar frio é recalibrar depois.
+- [ ] **A superfície está limpa?** Álcool isopropílico. Gordura de dedo derruba a aderência local.
+- [ ] **A ventoinha está a 0% na primeira camada?** Se não estiver, corrija isso antes de tudo.
+- [ ] **A largura de extrusão da 1ª camada está em 120%?** Ganho grande, custo zero.
+- [ ] **A velocidade da 1ª camada está em 20 mm/s?** Rápido demais não adere.
+- [ ] **O filamento está seco?** Estalo na extrusão = umidade. Nenhum ajuste corrige isso.
+- [ ] **O bico está gasto?** Filete de largura irregular. Troque antes de investigar mais.
+- [ ] **A temperatura da mesa está correta?** PLA 55-60 °C, PETG 70-80 °C. Mais não é melhor.
+- [ ] **Se é warping: a impressora está exposta a corrente de ar?** Fechar resolve mais que qualquer parâmetro.
+
+## Como escolher, em uma linha cada
+
+1. **Mesa de vidro que descola no canto?** YOOPAI PEI + PEO — o upgrade de maior impacto.
+2. **Mesa de 300 mm ou CR-10?** HICTOP 310×310, na medida certa.
+3. **Só precisa de aderência barata agora?** Geeetech, seis bastões.
+4. **Quer o adesivo mais bem avaliado?** Lokkr Creality.
+5. **A primeira camada piorou sozinha e o filamento está velho?** SUNLU S1 Plus.
+6. **Filete com largura irregular que o fluxo não corrige?** Kit de bicos 0,4 mm.
+7. **Tem Ender 3 V3 SE e a chapa original gastou?** A oficial Creality.
+
+> 🧪 **O teste de 10 minutos que economiza dias:** imprima um quadrado de 100×100 mm com uma camada, sem brim, com o offset atual. Fotografe de perto, com luz rasante. Compare com a tabela de diagnóstico da Parte 2 antes de mexer em qualquer parâmetro. Noventa por cento dos problemas de primeira camada são identificáveis nesse único teste — e ele custa dois gramas de filamento.
+
+Duas coisas que ajudam e não estão na lista de compras: se a impressão 3D já virou rotina, vale organizar a bancada — a gente reuniu [ideias de organização de oficina feitas com impressão 3D](https://reformacaseira.com.br/posts/organizar-oficina-impressao-3d-ideias/) lá no Reforma Caseira. E se o problema for o **filamento**, e não a máquina, o [comparativo de marcas de filamento](/posts/filamento-3d-voolt3d-bambu-masterprint/) explica o que muda de um para o outro.
+
+## Perguntas frequentes
+
+**Primeira camada ruim e warping são a mesma coisa?**
+Não. Primeira camada ruim aparece nos primeiros minutos (offset, nivelamento, superfície). Warping aparece depois (contração térmica).
+
+**Por que só o canto levanta?**
+Porque no canto a força de contração só tem uma direção para puxar. No meio, os vizinhos equilibram.
+
+**Qual a temperatura de mesa correta?**
+PLA 55-60 °C, PETG 70-80 °C, ABS 100-110 °C. Subir mais causa pé de elefante, não resolve warping.
+
+**Brim ou raft?**
+Brim quase sempre. Raft só para peça com base minúscula.
+
+**Preciso trocar vidro por PEI?**
+Não precisa, mas é o upgrade com melhor retorno na impressão 3D.
+
+**Filamento úmido atrapalha a aderência?**
+Muito. Microbolhas reduzem a área real de contato. Estalo na extrusão é o sinal.
+
+**Quando trocar o bico?**
+300-800 h com PLA/PETG; muito menos com fibra ou brilho. Na dúvida, troque — é a peça mais barata.
+
+## Fontes consultadas
+
+- Documentação oficial do **Klipper** sobre `bed_mesh`, `PROBE_CALIBRATE` e configuração de offset de Z
+- Documentação do **Marlin Firmware** sobre Babystepping, `M190`/`M109` e ordem de aquecimento no start G-code
+- Manuais do **PrusaSlicer** e do **OrcaSlicer** sobre parâmetros de primeira camada, brim, raft e "mouse ears"
+- Fichas técnicas (TDS) de fabricantes de PLA, PETG e ABS quanto a contração linear e temperatura de mesa
+- Discussões técnicas em **r/3Dprinting** e **r/FixMyPrint** sobre diagnóstico de primeira camada por sintoma visual
+- Testes práticos do autor em impressora FDM cartesiana com Klipper e sonda BLTouch
+
+---
+
+*Travou em um sintoma que não está na tabela? [Manda uma foto da primeira camada](/contato/) — costuma dar pra identificar pela imagem.*
