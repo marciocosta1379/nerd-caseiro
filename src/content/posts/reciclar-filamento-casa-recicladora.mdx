@@ -1,0 +1,287 @@
+---
+title: 'Reciclar filamento em casa: a recicladora caseira compensa?'
+description: 'Extrusora, triturador e bobinador custam caro e entregam tolerância pior que a de fábrica. Veja a conta real e o que reduz o desperdício de verdade.'
+pubDate: 2026-09-05
+category: 'impressao-3d'
+tags: ['impressao-3d', 'filamento', 'pla', 'sustentabilidade']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Creality Space Pi Secador de Filamento 2 kg'
+    brand: 'Creality'
+    rating: 4.1
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0D22D1L46?tag=nerdcaseiro-20'
+    image: '/images/produtos/creality-space-pi-secador.webp'
+    pros:
+      - 'Comporta carretel de 2 kg, tamanho que a maioria dos secadores não aceita'
+      - 'Permite imprimir com o filamento dentro, secando durante o trabalho'
+    cons:
+      - 'Nota 4,1: relatos de variação de temperatura entre unidades'
+      - 'Ocupa espaço considerável ao lado da impressora'
+  - name: 'Sovol SH01 Secador de Filamento com Suporte de Carretel'
+    brand: 'Sovol'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09686Z5R3?tag=nerdcaseiro-20'
+    image: '/images/produtos/sovol-sh01-desidratador.webp'
+    pros:
+      - 'Melhor avaliado da faixa, nota 4,4'
+      - 'Suporte de carretel embutido: seca e alimenta a impressora ao mesmo tempo'
+    cons:
+      - 'Aceita apenas carretel de 1 kg'
+      - 'Sem controle de umidade, só de temperatura e tempo'
+  - name: 'Voolt3D Filamento PLA Preto 1 kg 1,75 mm Nacional'
+    brand: 'Voolt3D'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20'
+    image: '/images/produtos/voolt3d-pla-preto.webp'
+    pros:
+      - 'Nacional: sem espera de importação nem imposto surpresa'
+      - 'Tolerância de fábrica melhor do que qualquer extrusora caseira entrega'
+    cons:
+      - 'Preto puro esconde detalhe fino em peça de teste'
+      - 'Como todo PLA, precisa de armazenamento seco'
+  - name: 'Mini Balança Digital de Precisão 0,01 g até 500 g'
+    brand: 'Genérica'
+    rating: 5.0
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0H3QYRFFW?tag=nerdcaseiro-20'
+    image: '/images/produtos/balanca-precisao-001g.webp'
+    pros:
+      - 'Resolução de 0,01 g: dá para medir o peso real de cada peça'
+      - 'Barata e resolve o cálculo de custo por impressão'
+    cons:
+      - 'Limite de 500 g: não pesa carretel cheio'
+      - 'Sem calibração de fábrica documentada'
+faq:
+  - question: 'Quanto custa uma extrusora de filamento caseira?'
+    answer: 'A Felfil Evo, uma das referências do mercado, sai por 799 euros montada, 699 em kit completo e 349 no kit básico. E ela sozinha não recicla suas impressões: parte de pellets. Para moer peças velhas você precisa também do triturador, vendido à parte. No Brasil, somando importação e impostos, o conjunto passa fácil dos cinco dígitos em reais.'
+  - question: 'O filamento reciclado em casa fica bom?'
+    answer: 'Fica utilizável, não fica ótimo. A Felfil Evo entrega tolerância de mais ou menos 0,07 mm, que a própria fabricante descreve como equivalente a carretel comercial de entrada. Filamento bom de fábrica trabalha entre 0,02 e 0,03 mm. Extrusora sem medição a laser em linha varia mais ainda, e variação de diâmetro vira sub ou superextrusão na peça.'
+  - question: 'Posso misturar PLA e ABS na mesma extrusão?'
+    answer: 'Não. PLA degrada acima de 230 °C e ABS precisa de temperatura mais alta. Extrudar os dois juntos a 240 °C queima o PLA, gera bolhas e impurezas, e o filamento sai quebradiço e inutilizável. Reciclagem exige separar o material por tipo antes de triturar.'
+  - question: 'Quanto tempo leva para produzir um carretel reciclado?'
+    answer: 'A Felfil Evo produz entre 100 e 150 gramas por hora. Um carretel de 750 g leva de cinco a sete horas de extrusão. Some o tempo de triturar as peças e de bobinar o resultado e um único carretel consome praticamente um dia de trabalho da máquina.'
+  - question: 'Então o que fazer com as impressões falhas e os suportes?'
+    answer: 'Separe por tipo de plástico e procure um ponto de coleta que aceite PLA, ou um serviço de reciclagem de filamento. Muita loja de impressão 3D aceita devolução de sobra. E ataque a causa: a maior parte do desperdício de filamento vem de falha de primeira camada e de filamento úmido, os dois com solução barata.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Todo mundo que imprime em 3D chega nesse ponto. A caixa de peças falhas, suporte quebrado, brim descolado e teste de calibração enche, você olha aquilo e pensa: isso é plástico bom, dá para derreter e virar filamento de novo.
+
+A ideia é boa. É correta em princípio: PLA é termoplástico, derrete e resolidifica. A reciclagem doméstica de filamento existe, funciona e tem equipamento comercial para isso.
+
+O que quase ninguém faz é a conta. E quando você faz, a resposta muda bastante.
+
+Este post é sobre essa conta. Vou mostrar quanto custa o equipamento de verdade, que qualidade ele entrega, quanto tempo leva, e por que na maioria absoluta dos casos domésticos o dinheiro rende muito mais atacando o desperdício pela outra ponta. Se você imprime por hobby ou faz pequena produção, provavelmente vai economizar mais com um secador de R$ 300 do que com uma extrusora de cinco dígitos.
+
+## O que uma "recicladora caseira" realmente é
+
+Reciclar filamento em casa não é uma máquina. São três.
+
+**Triturador (shredder).** Mói as peças até virarem flocos de tamanho aproximado de pellet. Sem isso a extrusora não engole peça inteira. É a etapa mais barulhenta e a que mais exige robustez mecânica.
+
+**Extrusora.** Derrete os flocos e empurra por um bico calibrado, formando o fio de 1,75 mm. Aqui é onde mora a qualidade, ou a falta dela.
+
+**Bobinador (spooler).** Puxa o fio na velocidade certa e enrola no carretel. Se puxar rápido demais o filamento afina; devagar demais, engrossa. Sem bobinador com controle de tração, o diâmetro oscila.
+
+Fabricantes conhecidos do setor incluem Filabot, Filafab, 3devo, Felfil, Redetek, Noztek, Filastruder e OmniDynamics. As máquinas variam entre 300 °C e 400 °C de temperatura máxima e produzem de 150 g/h a 1 kg/h nos modelos industriais.
+
+O detalhe que muita gente descobre tarde: **a extrusora sozinha não recicla suas impressões.** Ela parte de pellet virgem. Para transformar peça velha em filamento você precisa do triturador também — que é vendido separado.
+
+## A conta, com números reais
+
+Vou usar a Felfil Evo como referência porque é uma das opções mais acessíveis do mercado e publica preço aberto:
+
+| Item | Preço |
+|---|---|
+| Felfil Evo montada | € 799 |
+| Felfil Evo kit completo | € 699 |
+| Felfil Evo kit básico | € 349 |
+| Triturador (Shredder+) | vendido à parte |
+| Bobinador (Spooler+) | vendido à parte |
+
+A própria fabricante reconhece o padrão: *"a maioria dos clientes que recicla acaba com os três"* — e por isso vende o conjunto em pacote.
+
+Agora traga para o Brasil. Equipamento importado, frete internacional, imposto de importação e ICMS. O conjunto completo passa com folga dos R$ 15.000. E isso na hipótese otimista de nada travar na alfândega.
+
+Do outro lado da conta: **filamento PLA nacional de 1 kg custa por volta de R$ 100.** Mesmo ignorando o custo de energia da extrusão, o desgaste das máquinas e o seu tempo, o ponto de equilíbrio fica acima de **150 kg de filamento reciclado**.
+
+Cento e cinquenta quilos. Para dar dimensão: se você imprime um carretel de 1 kg por mês, o que já é um uso intenso para hobby, são mais de doze anos até o equipamento se pagar. E ele não vai durar doze anos.
+
+## A qualidade que você recebe
+
+Suponha que o preço não fosse problema. O filamento sai bom?
+
+Sai **utilizável**, não sai ótimo. A Felfil Evo entrega tolerância de diâmetro de **±0,07 mm**, número que a própria fabricante descreve como equivalente a carretel comercial de entrada. Filamento de fábrica de boa qualidade trabalha entre ±0,02 e ±0,03 mm.
+
+Essa diferença não é cosmética. Variação de diâmetro vira variação de volume extrudado: onde o fio está mais grosso a impressora superextruda, onde está mais fino ela subextruda. O resultado aparece como parede irregular, camada com brilho desigual e, nos casos ruins, falha de adesão entre camadas.
+
+As extrusoras industriais resolvem isso com **medição a laser em tempo real** e resfriamento controlado em tanque de água a 20-30 °C, corrigindo a tração conforme o diâmetro varia. Extrusora de bancada de baixo custo geralmente não tem medição em linha — e sem realimentação, o diâmetro oscila livre.
+
+Some o tempo: a Evo produz **100 a 150 gramas por hora**. Um carretel de 750 g leva de cinco a sete horas de extrusão contínua. Com trituração e bobinagem, é praticamente um dia de máquina por carretel.
+
+## A armadilha que estraga o material
+
+Existe um erro técnico que inutiliza a batelada inteira e vale conhecer mesmo que você nunca compre uma extrusora: **misturar tipos de plástico**.
+
+PLA degrada acima de **230 °C**. ABS precisa de temperatura de extrusão mais alta. Se você joga os dois juntos numa extrusora ajustada em 240 °C para dar conta do ABS, o PLA queima. O resultado é filamento com bolhas e impurezas, quebradiço, que parte na alimentação da impressora.
+
+Por isso a separação por tipo de material é etapa obrigatória, não recomendação. E é aqui que a reciclagem doméstica fica trabalhosa de verdade: separar peça por peça uma caixa de restos misturados, sabendo qual era PLA, qual era PETG e qual era ABS, é um trabalho chato que ninguém conta no vídeo de unboxing.
+
+O PLA é o mais fácil de reciclar dos três — extrusão entre 190 e 210 °C — e por isso é onde qualquer tentativa doméstica deve começar. PETG e ABS são mais exigentes.
+
+## O que realmente reduz o seu desperdício
+
+Se o objetivo é gastar menos filamento e jogar menos plástico fora, existem três caminhos que custam uma fração do equipamento de reciclagem e resolvem muito mais.
+
+**1. Secar o filamento.** PLA absorve umidade do ar. Filamento úmido estala na extrusão, faz bolha, produz superfície opaca e aumenta muito a taxa de falha. Um secador resolve, custa poucas centenas de reais, e o carretel que você ia jogar fora volta a imprimir.
+
+**2. Acertar a primeira camada.** A maior fonte isolada de peça no lixo é falha de adesão no começo. Não custa nada além de tempo de calibração.
+
+**3. Armazenar seco.** Carretel aberto em cima da bancada absorve umidade em dias. Caixa hermética com sílica custa quase nada.
+
+E para o que ainda assim sobrar: separe por tipo e procure ponto de coleta que aceite PLA. Muita loja de impressão 3D recebe sobra de volta.
+
+## Os equipamentos que valem o dinheiro
+
+<ComparisonTable
+  source="reciclar-filamento-casa-recicladora"
+  rows={[
+    { name: 'Creality Space Pi', brand: 'Creality', rating: 4.1, highlight: 'Aceita carretel de 2 kg', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0D22D1L46?tag=nerdcaseiro-20' }] },
+    { name: 'Sovol SH01', brand: 'Sovol', rating: 4.4, highlight: 'Melhor avaliado, seca e alimenta ao mesmo tempo', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B09686Z5R3?tag=nerdcaseiro-20' }] },
+    { name: 'Voolt3D PLA Preto 1 kg', brand: 'Voolt3D', rating: 4.7, highlight: 'Nacional, tolerância de fábrica', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20' }] },
+    { name: 'Balança de precisão 0,01 g', brand: 'Genérica', rating: 5.0, highlight: 'Mede o custo real de cada peça', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0H3QYRFFW?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Sovol SH01 — o melhor avaliado da faixa
+
+![Sovol SH01 Secador de Filamento com Suporte de Carretel](/images/produtos/sovol-sh01-desidratador.webp)
+
+Marca: Sovol · Nota 4,4
+
+É o secador com a melhor avaliação entre os modelos comuns no Brasil, e o que eu escolheria se fosse comprar um só. O suporte de carretel embutido é o detalhe que faz diferença no dia a dia: o filamento fica secando **enquanto alimenta a impressora**, então você não precisa parar o trabalho para desumidificar.
+
+Isso importa mais do que parece em impressão longa. Uma peça de dez horas com filamento que absorveu umidade no meio do caminho começa bem e termina com superfície ruim. Com o carretel dentro do secador, a umidade não volta.
+
+A limitação é o tamanho: aceita carretel de 1 kg, que é o padrão, mas deixa de fora os de 2 kg. E o controle é de temperatura e tempo apenas, sem leitura de umidade — você não sabe quando o filamento realmente secou, segue a tabela e confia.
+
+<ProsCons
+  pros={['Melhor nota da faixa, 4,4', 'Seca e alimenta a impressora ao mesmo tempo', 'Ocupa pouco espaço na bancada']}
+  cons={['Aceita apenas carretel de 1 kg', 'Sem leitura de umidade, só temperatura e tempo', 'Sem desligamento automático por umidade atingida']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09686Z5R3?tag=nerdcaseiro-20" store="amazon" source="reciclar-filamento-casa-recicladora" />
+
+---
+
+## 2. Creality Space Pi — para carretel de 2 kg
+
+![Creality Space Pi Secador de Filamento 2 kg](/images/produtos/creality-space-pi-secador.webp)
+
+Marca: Creality · Nota 4,1
+
+O diferencial é o volume interno: aceita carretel de 2 kg, tamanho que a maioria dos secadores da faixa não comporta. Se você compra filamento em carretel grande justamente para economizar por quilo, esse é o ponto que decide.
+
+A nota 4,1 é mais baixa que a do Sovol e vale entender o motivo. Os relatos recorrentes são de **variação de temperatura entre unidades** — alguns exemplares aquecem menos do que o painel indica. Não é defeito universal, mas é frequente o bastante para aparecer no agregado.
+
+Se você for por esse caminho, vale conferir a temperatura real com um termômetro independente nas primeiras secagens. É um teste de cinco minutos que evita achar que o filamento secou quando não secou.
+
+<ProsCons
+  pros={['Comporta carretel de 2 kg, raro na faixa', 'Permite imprimir com o carretel dentro', 'Marca com boa disponibilidade de peças no Brasil']}
+  cons={['Nota 4,1, com relatos de variação de temperatura entre unidades', 'Ocupa espaço considerável ao lado da impressora', 'Vale conferir a temperatura real com termômetro próprio']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0D22D1L46?tag=nerdcaseiro-20" store="amazon" source="reciclar-filamento-casa-recicladora" />
+
+---
+
+## 3. Voolt3D PLA Preto 1 kg — o filamento que a extrusora caseira não bate
+
+![Voolt3D Filamento PLA Preto 1 kg 1,75 mm Nacional](/images/produtos/voolt3d-pla-preto.webp)
+
+Marca: Voolt3D · Nota 4,7
+
+Coloco filamento novo nesta lista de propósito, porque ele é o termo de comparação da conta toda. É PLA nacional, 1,75 mm, carretel de 1 kg, nota 4,7.
+
+Ser nacional resolve dois problemas que pesam mais do que o preço da etiqueta: não tem espera de importação e não tem surpresa de imposto. Você pede hoje e imprime esta semana.
+
+E o ponto central: a tolerância de diâmetro que sai de uma linha de produção industrial, com medição a laser e resfriamento controlado, é melhor do que a de qualquer extrusora de bancada. Você está comprando consistência, que é exatamente o que a reciclagem caseira não entrega.
+
+O preto puro tem uma desvantagem prática pequena: esconde detalhe fino, o que atrapalha na hora de avaliar uma peça de calibração. Para teste, uma cor clara mostra mais.
+
+<ProsCons
+  pros={['Nacional: sem espera de importação nem imposto surpresa', 'Tolerância de fábrica melhor que qualquer extrusora caseira', 'Nota 4,7, das melhores entre os PLA nacionais']}
+  cons={['Preto esconde detalhe fino em peça de calibração', 'Como todo PLA, exige armazenamento seco', 'Carretel de 1 kg: quem imprime muito prefere 2 kg']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20" store="amazon" source="reciclar-filamento-casa-recicladora" />
+
+---
+
+## 4. Balança de precisão 0,01 g — para saber quanto custa de verdade
+
+![Mini Balança Digital de Precisão 0,01 g até 500 g](/images/produtos/balanca-precisao-001g.webp)
+
+Marca: Genérica · Nota 5,0
+
+Item barato que muda a forma como você enxerga o desperdício. Com resolução de 0,01 g dá para pesar cada peça impressa e cada suporte descartado, e converter isso em reais.
+
+A conta é direta: se o carretel de 1 kg custou R$ 100, cada grama custou R$ 0,10. Pese a caixa de peças falhas do mês e você descobre exatamente quanto dinheiro foi para o lixo. Na maioria dos casos o valor é bem menor do que a pessoa imaginava — e é justamente esse número que derruba o argumento econômico da recicladora.
+
+O limite de 500 g impede pesar carretel cheio, então ela não serve para estimar filamento restante. Para o que interessa aqui, medir peça e refugo, dá e sobra.
+
+<ProsCons
+  pros={['Resolução de 0,01 g: mede peça e refugo com precisão', 'Barata, se paga na primeira decisão que evita', 'Nota 5,0']}
+  cons={['Limite de 500 g: não pesa carretel cheio', 'Sem calibração de fábrica documentada', 'Prato pequeno para peças grandes']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0H3QYRFFW?tag=nerdcaseiro-20" store="amazon" source="reciclar-filamento-casa-recicladora" />
+
+---
+
+## Quando reciclar em casa faz sentido
+
+Para ser justo, existem casos em que a conta vira:
+
+- **Produção contínua de verdade.** Se você roda uma farm com várias impressoras e consome dezenas de quilos por mês, os 150 kg de ponto de equilíbrio chegam rápido.
+- **Acesso a pellet virgem barato.** A extrusora sozinha, sem triturador, transforma pellet em filamento. Pellet industrial custa uma fração do filamento pronto, e aí a economia não depende de reciclar nada.
+- **O projeto é o objetivo.** Se montar e calibrar a extrusora é a diversão, o retorno não é financeiro e a conta não importa. Nesse caso o kit básico da Evo, bem mais barato que a versão montada, é o caminho.
+
+Fora desses três cenários, a matemática não fecha para uso doméstico.
+
+## Perguntas frequentes
+
+**Quanto custa uma extrusora de filamento caseira?**
+A Felfil Evo sai por € 799 montada, € 699 em kit completo e € 349 no kit básico. E ela sozinha não recicla suas impressões: parte de pellets. Para moer peças velhas você precisa também do triturador, vendido à parte. No Brasil, somando importação e impostos, o conjunto passa fácil dos cinco dígitos em reais.
+
+**O filamento reciclado em casa fica bom?**
+Fica utilizável, não fica ótimo. A Felfil Evo entrega tolerância de ±0,07 mm, que a própria fabricante descreve como equivalente a carretel comercial de entrada. Filamento bom de fábrica trabalha entre ±0,02 e ±0,03 mm. Extrusora sem medição a laser em linha varia mais ainda, e variação de diâmetro vira sub ou superextrusão na peça.
+
+**Posso misturar PLA e ABS na mesma extrusão?**
+Não. PLA degrada acima de 230 °C e ABS precisa de temperatura mais alta. Extrudar os dois juntos a 240 °C queima o PLA, gera bolhas e impurezas, e o filamento sai quebradiço e inutilizável. Reciclagem exige separar o material por tipo antes de triturar.
+
+**Quanto tempo leva para produzir um carretel reciclado?**
+A Felfil Evo produz entre 100 e 150 gramas por hora. Um carretel de 750 g leva de cinco a sete horas de extrusão. Some o tempo de triturar e de bobinar e um único carretel consome praticamente um dia de trabalho da máquina.
+
+**Então o que fazer com as impressões falhas e os suportes?**
+Separe por tipo de plástico e procure um ponto de coleta que aceite PLA, ou um serviço de reciclagem de filamento. Muita loja de impressão 3D aceita devolução de sobra. E ataque a causa: a maior parte do desperdício vem de falha de primeira camada e de filamento úmido, os dois com solução barata.
+
+## Veredicto
+
+A recicladora caseira é uma boa ideia que não sobrevive à planilha. Entre extrusora, triturador e bobinador você gasta acima de R$ 15.000 no Brasil para produzir, a 100-150 g por hora, um filamento com tolerância de ±0,07 mm — pior que o carretel nacional de R$ 100 que chega amanhã na sua casa. O ponto de equilíbrio passa de 150 kg de material reciclado.
+
+Se o que te incomoda é a caixa de peças falhas enchendo, o caminho honesto é outro: **um secador resolve mais desperdício do que uma extrusora**, porque ataca a causa em vez da consequência. Filamento úmido e primeira camada mal calibrada produzem muito mais refugo do que qualquer pessoa consegue reciclar em casa.
+
+Agora, se você quer montar uma extrusora porque montar coisas é o ponto, aí a conversa é outra e a conta não importa. Só não compre esperando economizar.

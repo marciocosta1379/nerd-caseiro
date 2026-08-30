@@ -1,0 +1,284 @@
+---
+title: 'Home Assistant no Raspberry Pi: a instalação do zero'
+description: 'Passo a passo do Home Assistant OS no Raspberry Pi 5: o hardware que funciona, a gravação com o Imager e os ajustes que evitam dor de cabeça depois.'
+pubDate: 2026-09-11
+category: 'automacao-residencial'
+tags: ['home-assistant', 'raspberry-pi', 'tutorial', 'automacao-residencial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 Model B Anatel 4 GB'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    image: '/images/produtos/raspberry-pi-5-4gb.webp'
+    pros:
+      - '4 GB dão conta de Home Assistant com add-ons e banco de dados grande'
+      - 'Versão Anatel: homologada, com garantia no Brasil'
+    cons:
+      - 'Exige fonte USB-C de 27 W específica'
+      - 'Esquenta o suficiente para exigir refrigeração ativa'
+  - name: 'SanDisk Extreme microSDXC 64 GB UHS-I A2 com adaptador'
+    brand: 'SanDisk'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-extreme-64gb.webp'
+    pros:
+      - 'Classificação A2, que é o que a documentação oficial recomenda'
+      - '64 GB dão folga confortável para histórico e backups'
+    cons:
+      - 'Cartão SD tem vida finita: o banco do HA escreve muito'
+      - 'Falsificação é comum, compre de vendedor confiável'
+  - name: 'GeeekPi Fonte de Alimentação 27 W USB-C para Raspberry Pi 5'
+    brand: 'GeeekPi'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CQ2DL2RW?tag=nerdcaseiro-20'
+    image: '/images/produtos/geeekpi-fonte-27w.webp'
+    pros:
+      - 'Entrega os 27 W que o Pi 5 pede, com negociação PD correta'
+      - 'Evita o subtensão que causa reinício aleatório'
+    cons:
+      - 'Cabo fixo: se estragar, troca a fonte inteira'
+      - 'Plugue precisa conferir com o padrão brasileiro na hora da compra'
+  - name: 'ElectroCookie Case para Raspberry Pi 5 com Cooler RGB'
+    brand: 'ElectroCookie'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DLWKVQGT?tag=nerdcaseiro-20'
+    image: '/images/produtos/case-pi5-cooler-rgb.webp'
+    pros:
+      - 'Refrigeração ativa evita o throttling que deixa o Pi 5 lento'
+      - 'Protege a placa de poeira e de encostão'
+    cons:
+      - 'RGB é desnecessário em servidor que fica escondido'
+      - 'Cooler pequeno faz ruído audível em ambiente silencioso'
+faq:
+  - question: 'Preciso mesmo de cabo de rede para instalar?'
+    answer: 'Para a instalação, sim. A documentação oficial lista o cabo Ethernet como requisito: o Home Assistant OS sobe sem Wi-Fi configurado e precisa de rede para completar a primeira etapa e baixar o que falta. Depois que o sistema está no ar você configura o Wi-Fi pela interface e pode tirar o cabo, mas para servidor eu deixaria no cabo mesmo.'
+  - question: 'Qual cartão de memória usar?'
+    answer: 'A documentação oficial pede no mínimo 32 GB e recomenda cartão com classificação Application Class 2, o rótulo A2. Essa classificação existe justamente para uso como disco de sistema, com muita operação pequena e aleatória, que é exatamente o padrão do Home Assistant. Cartão de câmera comum, mesmo rápido em vídeo, se sai mal nisso.'
+  - question: 'Posso usar carregador de celular no Raspberry Pi 5?'
+    answer: 'Não. A documentação oficial avisa explicitamente para não usar carregador de celular. O Pi 5 pede fonte USB-C de 27 W com negociação PD correta, e carregador comum não entrega essa corrente sob carga. O sintoma é cruel de diagnosticar: a placa funciona bem parada e reinicia sozinha quando o processador exige mais.'
+  - question: 'Qual endereço acesso depois de ligar?'
+    answer: 'O endereço padrão é homeassistant.local, que no Pi 5 fica disponível em cerca de um minuto após o boot. Se o seu roteador não resolver esse nome, use homeassistant.local:8123 ou descubra o IP da placa na lista de dispositivos do roteador e acesse esse IP com :8123 no final.'
+  - question: 'Vale a pena trocar o cartão SD por SSD?'
+    answer: 'Vale, se o seu uso for para durar. O banco de dados do Home Assistant escreve o tempo todo, e cartão SD tem número finito de ciclos de escrita. Cartão bom aguenta bastante, mas SSD via USB ou pelo slot M.2 do Pi 5 elimina de vez a categoria de falha mais chata que existe: corrupção silenciosa que só aparece quando você precisa do backup.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Instalar o Home Assistant num Raspberry Pi é mais simples do que a fama sugere. O sistema tem uma imagem pronta, o gravador oficial já traz ela na lista, e o processo inteiro é gravar um cartão e ligar a placa.
+
+O que dá errado quase nunca é a instalação. É o hardware. Fonte que não entrega corrente, cartão de memória inadequado e falta de refrigeração respondem pela maioria dos "meu Home Assistant reinicia sozinho" que aparecem em fórum — e todos os três são problemas invisíveis, que se manifestam como instabilidade aleatória semanas depois.
+
+Este guia cobre as duas partes: o hardware que funciona de verdade, com os requisitos que a documentação oficial estabelece, e o passo a passo da instalação até o primeiro acesso.
+
+## O hardware, com os requisitos oficiais
+
+A documentação do Home Assistant é específica sobre o que é necessário:
+
+| Item | Requisito oficial |
+|---|---|
+| Placa | Raspberry Pi 5 com **fonte adequada** — a documentação avisa para **não usar carregador de celular** |
+| Cartão | **Mínimo 32 GB**, idealmente com classificação **Application Class 2** (rótulo A2) |
+| Leitor de cartão | Integrado ao notebook ou adaptador USB |
+| Rede | **Cabo Ethernet obrigatório** para a instalação (Wi-Fi pode ser configurado depois) |
+
+Vale destrinchar os dois requisitos que mais são ignorados.
+
+**A fonte.** O Pi 5 pede USB-C de 27 W com negociação PD correta. Carregador de celular comum não entrega essa corrente sob carga. O sintoma é traiçoeiro: a placa liga normalmente, funciona bem enquanto está ociosa e reinicia quando o processador exige mais — durante uma atualização, ao iniciar um add-on pesado. Você passa dias achando que é problema de software.
+
+**O cartão A2.** A classificação A2 não é sobre velocidade de transferência de arquivo grande, é sobre **operações pequenas e aleatórias por segundo**. Isso é exatamente o padrão de uso de um sistema operacional, e mais ainda de um Home Assistant gravando estado de sensor a cada poucos segundos. Cartão de câmera, mesmo com número grande de MB/s estampado, se sai mal nesse teste.
+
+## Passo 1: gravar o cartão
+
+O Raspberry Pi Imager já traz a imagem do Home Assistant, então você não precisa baixar nada por fora.
+
+1. Baixe e instale o **Raspberry Pi Imager** em `raspberrypi.com/software`.
+2. Abra o programa e clique em **OS** (escolher sistema operacional).
+3. Navegue até **Other specific-purpose OS → Home automation → Home Assistant**.
+4. Escolha a imagem do **Home Assistant OS correspondente ao seu hardware** — no caso, RPi 5.
+5. Insira o cartão no leitor e selecione ele como **Storage**.
+6. Clique em **Next** e depois em **Write**.
+7. Aguarde a gravação e a verificação, clique em **Finish** e ejete o cartão.
+
+Duas observações que economizam tempo:
+
+**Não use as personalizações do Imager.** O gravador oferece configurar usuário, Wi-Fi e SSH antes de gravar — isso é para o Raspberry Pi OS, não para o Home Assistant OS, que tem o próprio fluxo de configuração. Deixe tudo em branco.
+
+**Confira que escolheu a imagem do Pi 5.** A lista tem imagens para várias gerações de placa, e gravar a de outro modelo resulta em placa que não dá vídeo nem sobe na rede — falha que parece hardware queimado e não é.
+
+## Passo 2: primeiro boot
+
+1. Insira o cartão gravado no Raspberry Pi.
+2. Conecte o **cabo Ethernet** no roteador.
+3. Conecte a fonte por último.
+
+A placa vai iniciar e começar a preparar o sistema. Esse primeiro boot demora mais que os seguintes, porque ele expande o sistema de arquivos e baixa componentes.
+
+Não desligue no meio, mesmo que pareça travado. Interromper o primeiro boot é a forma mais fácil de corromper a instalação e ter que gravar tudo de novo.
+
+## Passo 3: primeiro acesso
+
+Depois de cerca de um minuto no Pi 5, abra o navegador em:
+
+```
+homeassistant.local
+```
+
+Se o nome não resolver — alguns roteadores não fazem resolução mDNS —, tente:
+
+```
+homeassistant.local:8123
+```
+
+E se ainda assim não abrir, entre na lista de dispositivos conectados do seu roteador, encontre o IP que a placa recebeu e acesse:
+
+```
+http://<IP-DA-PLACA>:8123
+```
+
+A tela de boas-vindas pede para criar o usuário administrador. Escolha uma senha real: esse painel vai controlar fechadura, câmera e tudo que você automatizar depois.
+
+Em seguida ele pede nome da casa, localização, fuso e sistema de unidades. A localização importa mais do que parece — várias automações dependem de nascer e pôr do sol calculados a partir dela.
+
+## Passo 4: os ajustes que evitam problema depois
+
+Com o sistema no ar, três coisas que eu faço antes de qualquer automação.
+
+**Fixe o IP da placa.** No seu roteador, reserve o IP por endereço MAC. Home Assistant que muda de IP quebra integração, atalho salvo e qualquer coisa apontando para o endereço antigo.
+
+**Configure backup automático.** Em Configurações, Sistema, Backups. Backup que mora só no cartão não protege contra a falha mais provável, que é o próprio cartão corromper. Aponte para um destino externo.
+
+**Ative a atualização, mas não automática.** Home Assistant tem ciclo de release rápido, e atualização pode quebrar integração. Prefira atualizar quando você tiver tempo de reverter, não às três da manhã sozinho.
+
+## O hardware recomendado
+
+<ComparisonTable
+  source="home-assistant-raspberry-pi-instalacao"
+  rows={[
+    { name: 'Raspberry Pi 5 4 GB Anatel', brand: 'Raspberry Pi', rating: 4.7, highlight: 'A placa: 4 GB com folga para add-ons', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk Extreme 64 GB A2', brand: 'SanDisk', rating: 4.8, highlight: 'Classificação A2, a que a documentação pede', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20' }] },
+    { name: 'GeeekPi Fonte 27 W USB-C', brand: 'GeeekPi', rating: 4.5, highlight: 'Os 27 W que o Pi 5 exige', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CQ2DL2RW?tag=nerdcaseiro-20' }] },
+    { name: 'ElectroCookie Case com cooler', brand: 'ElectroCookie', rating: 4.6, highlight: 'Refrigeração ativa contra throttling', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0DLWKVQGT?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Raspberry Pi 5 4 GB Anatel
+
+![Raspberry Pi 5 Model B Anatel 4 GB](/images/produtos/raspberry-pi-5-4gb.webp)
+
+Marca: Raspberry Pi · Nota 4,7
+
+Os 4 GB são o ponto certo para Home Assistant. Dão folga para rodar add-ons como Mosquitto, Zigbee2MQTT e Node-RED junto com o núcleo, e aguentam um banco de dados de histórico crescendo sem sufoco. A versão de 8 GB existe, mas para essa carga é dinheiro parado.
+
+A versão Anatel é a homologada para venda no Brasil, com garantia e suporte locais. Placa trazida por conta própria funciona igual, mas você fica sozinho se der problema — e placa com defeito de fábrica acontece.
+
+Os dois pontos de atenção são os mesmos de sempre e valem repetir porque são a origem da maioria das falhas: fonte de 27 W obrigatória e refrigeração necessária. O Pi 5 esquenta bem mais que o 4, e sem dissipação ele reduz o clock — o sistema fica lento sem nenhuma mensagem de erro explicando por quê.
+
+<ProsCons
+  pros={['4 GB com folga para add-ons e histórico grande', 'Versão Anatel homologada, garantia no Brasil', 'Bem mais rápido que o Pi 4 na mesma carga']}
+  cons={['Exige fonte USB-C de 27 W específica', 'Esquenta: precisa de refrigeração ativa', 'Preço no Brasil é bem acima do internacional']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="home-assistant-raspberry-pi-instalacao" />
+
+---
+
+## 2. SanDisk Extreme 64 GB A2
+
+![SanDisk Extreme microSDXC 64 GB UHS-I A2](/images/produtos/sandisk-extreme-64gb.webp)
+
+Marca: SanDisk · Nota 4,8
+
+Atende exatamente o que a documentação pede: acima dos 32 GB mínimos e com a classificação **A2**, que é o rótulo que indica bom desempenho em operações pequenas e aleatórias — o padrão de uso de um sistema operacional.
+
+Os 64 GB dão folga confortável. O banco de dados de histórico do Home Assistant cresce com o número de entidades e a frequência de atualização, e ficar apertado de espaço é problema chato de resolver com o sistema já em produção.
+
+Duas ressalvas. Cartão SD tem vida finita e o Home Assistant escreve muito; mesmo um cartão bom é consumível de médio prazo, não peça eterna. E cartão SanDisk é dos mais falsificados que existem — compre de vendedor confiável e desconfie de preço muito abaixo do mercado.
+
+<ProsCons
+  pros={['Classificação A2, exatamente o que a documentação recomenda', '64 GB dão folga para histórico e backups', 'Nota 4,8, referência da categoria']}
+  cons={['Cartão SD é consumível: o banco do HA escreve muito', 'Falsificação é comum, cuidado com o vendedor', 'SSD é mais confiável para uso longo']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20" store="amazon" source="home-assistant-raspberry-pi-instalacao" />
+
+---
+
+## 3. GeeekPi Fonte 27 W USB-C
+
+![GeeekPi Fonte de Alimentação 27 W USB-C para Raspberry Pi 5](/images/produtos/geeekpi-fonte-27w.webp)
+
+Marca: GeeekPi · Nota 4,5
+
+É o item que eu mais vejo as pessoas economizarem e mais se arrependerem. A documentação oficial avisa em letras claras para não usar carregador de celular, e o motivo é a negociação PD: o Pi 5 pede um perfil de tensão e corrente específico, e carregador comum entrega menos.
+
+O que acontece então é o pior tipo de falha — a intermitente. A placa liga, funciona parada, e reinicia sozinha quando o processador puxa mais carga. Você reinstala o sistema, troca o cartão, culpa um add-on, e o problema volta.
+
+Essa fonte entrega os 27 W com o perfil correto. O cabo é fixo, o que significa que dano no cabo condena a fonte inteira. E confira o padrão do plugue na hora da compra: nem toda listagem envia a versão brasileira.
+
+<ProsCons
+  pros={['Entrega os 27 W com negociação PD correta', 'Elimina a categoria de falha mais difícil de diagnosticar', 'Nota 4,5']}
+  cons={['Cabo fixo: dano no cabo condena a fonte', 'Confira o padrão do plugue antes de comprar', 'Mais cara que carregador genérico — e tem que ser']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CQ2DL2RW?tag=nerdcaseiro-20" store="amazon" source="home-assistant-raspberry-pi-instalacao" />
+
+---
+
+## 4. ElectroCookie Case com cooler
+
+![ElectroCookie Case para Raspberry Pi 5 com Cooler RGB](/images/produtos/case-pi5-cooler-rgb.webp)
+
+Marca: ElectroCookie · Nota 4,6
+
+Refrigeração ativa deixou de ser opcional no Pi 5. Sem ela, a placa atinge a temperatura de proteção e reduz o clock — e o efeito prático é um Home Assistant lento sem nenhuma mensagem de erro dizendo o motivo. Você acha que a placa é fraca quando na verdade ela está se protegendo.
+
+O case resolve isso e ainda protege de poeira e de encostão acidental, o que importa em algo que vai ficar ligado o ano inteiro num canto do rack.
+
+Duas críticas honestas. O RGB é inútil num servidor que fica escondido atrás do móvel, e você provavelmente vai querer desligar. E o cooler é pequeno, portanto agudo: em quarto silencioso, dá para ouvir. Se o Pi vai ficar perto de onde alguém dorme, procure versão com dissipador maior e ventoinha mais lenta.
+
+<ProsCons
+  pros={['Refrigeração ativa evita o throttling que deixa o Pi 5 lento', 'Protege de poeira e de encostão', 'Nota 4,6']}
+  cons={['RGB desnecessário em servidor escondido', 'Cooler pequeno é audível em ambiente silencioso', 'Montagem exige cuidado para não forçar a placa']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DLWKVQGT?tag=nerdcaseiro-20" store="amazon" source="home-assistant-raspberry-pi-instalacao" />
+
+---
+
+## Perguntas frequentes
+
+**Preciso mesmo de cabo de rede para instalar?**
+Para a instalação, sim. A documentação oficial lista o cabo Ethernet como requisito: o Home Assistant OS sobe sem Wi-Fi configurado e precisa de rede para completar a primeira etapa. Depois você configura o Wi-Fi pela interface, mas para servidor eu deixaria no cabo.
+
+**Qual cartão de memória usar?**
+No mínimo 32 GB e, idealmente, com classificação Application Class 2 — o rótulo A2. Essa classificação existe para uso como disco de sistema, com muita operação pequena e aleatória, que é o padrão do Home Assistant.
+
+**Posso usar carregador de celular no Raspberry Pi 5?**
+Não. A documentação avisa explicitamente para não usar. O Pi 5 pede fonte USB-C de 27 W com negociação PD correta. O sintoma da fonte fraca é cruel: funciona parado e reinicia sob carga.
+
+**Qual endereço acesso depois de ligar?**
+`homeassistant.local`, disponível em cerca de um minuto no Pi 5. Se o roteador não resolver o nome, use `homeassistant.local:8123` ou o IP da placa com `:8123` no final.
+
+**Vale a pena trocar o cartão SD por SSD?**
+Vale, se o uso for para durar. O banco do Home Assistant escreve o tempo todo e cartão SD tem ciclos finitos. SSD elimina a falha mais chata que existe: corrupção silenciosa que só aparece quando você precisa do backup.
+
+## Veredicto
+
+A instalação em si leva vinte minutos e o Raspberry Pi Imager faz o trabalho pesado. Se você seguir os quatro passos acima, vai estar com o Home Assistant no ar hoje.
+
+O que vale o seu cuidado é o hardware, e nele existe uma hierarquia clara de importância: **fonte de 27 W é inegociável**, cartão A2 é fortemente recomendado e refrigeração ativa evita o problema mais silencioso dos três. Economizar em qualquer um deles não dá erro na hora — dá instabilidade semanas depois, quando você já esqueceu o que comprou e vai culpar o software.
+
+E antes de automatizar qualquer coisa: **fixe o IP e configure backup externo**. As duas coisas levam cinco minutos e são o que separa um susto de uma tarde inteira reconstruindo a casa do zero.

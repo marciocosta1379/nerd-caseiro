@@ -1,0 +1,285 @@
+---
+title: '8 peças 3D para imprimir para a sua casa inteligente'
+description: 'Suporte de sensor, case de relé, calço de câmera e mais: peças que resolvem problemas reais de automação e que nenhuma loja vende do jeito que você precisa.'
+pubDate: 2026-09-07
+category: 'impressao-3d'
+tags: ['impressao-3d', 'automacao-residencial', 'esp32', 'petg']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Filamento Masterprint PETG Preto 1,75 mm 1 kg'
+    brand: 'Masterprint'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09WY3MSXN?tag=nerdcaseiro-20'
+    image: '/images/produtos/masterprint-petg-preto.webp'
+    pros:
+      - 'Aguenta calor de quadro elétrico e sol de janela melhor que PLA'
+      - 'Mais tenaz: encaixe com pressão não trinca'
+    cons:
+      - 'Mais difícil de imprimir que PLA, exige ajuste de retração'
+      - 'Tende a formar fios (stringing) se o filamento estiver úmido'
+  - name: 'Kit 30 Insertos Metálicos de Rosca M3 para Impressão 3D'
+    brand: 'Genérica'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CKTKTGC7?tag=nerdcaseiro-20'
+    image: '/images/produtos/inserto-latao-m3-30.webp'
+    pros:
+      - 'Transforma furo impresso em rosca de verdade, que abre e fecha várias vezes'
+      - 'Instala com a ponta do ferro de solda em poucos segundos'
+    cons:
+      - 'Precisa de furo com diâmetro correto no modelo, senão racha a peça'
+      - 'Exige ferro de solda: não dá para instalar a frio'
+  - name: 'Fita Dupla Face 3M VHB 4910 Transparente 19 mm x 5 m'
+    brand: '3M'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B075X9KRPZ?tag=nerdcaseiro-20'
+    image: '/images/produtos/fita-vhb-3m-4910.webp'
+    pros:
+      - 'Segura peça impressa na parede sem furar nem usar parafuso'
+      - 'Aguenta variação de temperatura melhor que fita comum'
+    cons:
+      - 'Praticamente definitiva: remover costuma arrancar a pintura'
+      - 'Precisa de superfície limpa e desengordurada para colar de verdade'
+  - name: 'Voolt3D Filamento PLA Preto 1 kg 1,75 mm Nacional'
+    brand: 'Voolt3D'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20'
+    image: '/images/produtos/voolt3d-pla-preto.webp'
+    pros:
+      - 'Fácil de imprimir: ideal para as peças que ficam em ambiente fresco'
+      - 'Nacional, sem espera de importação'
+    cons:
+      - 'Amolece perto de 60 °C: não serve para quadro elétrico nem janela ensolarada'
+      - 'Mais quebradiço que PETG em encaixe sob pressão'
+faq:
+  - question: 'PLA ou PETG para peça de automação?'
+    answer: 'Depende de onde a peça vai ficar. PLA começa a amolecer perto de 60 °C, o que é pouco para dentro de quadro elétrico, atrás de fonte chaveada ou em janela que pega sol direto. Nesses lugares use PETG. Para suporte de sensor em parede interna, organizador de cabo e case que fica em ambiente fresco, PLA resolve e é muito mais fácil de imprimir.'
+  - question: 'Posso imprimir case para coisa que liga na tomada?'
+    answer: 'Para eletrônica de baixa tensão, como ESP32 alimentado por fonte externa de 5 V, sim. Para qualquer coisa que tenha 127 ou 220 V dentro, não improvise: plástico impresso em FDM tem camadas com falhas microscópicas, não tem certificação de resistência a chama e não substitui caixa de passagem normatizada. O que rege isso é a NBR 5410, não o seu slicer.'
+  - question: 'Preciso de inserto de rosca ou posso parafusar direto no plástico?'
+    answer: 'Parafusar direto funciona uma ou duas vezes. Na terceira o furo espana, porque o parafuso está cortando rosca no próprio plástico a cada aperto. Se a peça vai ser aberta para trocar bateria ou ajustar sensor, o inserto de latão se paga na primeira manutenção.'
+  - question: 'Qual altura de camada usar nessas peças?'
+    answer: 'Para peça funcional, 0,2 mm resolve quase tudo e é o melhor equilíbrio entre tempo e resistência. Só desça para 0,12 mm em peça com detalhe fino visível, como frente de suporte que fica à mostra. Camada mais fina não deixa a peça mais forte: o que aumenta resistência é mais perímetro, não menos altura.'
+  - question: 'Como fixar as peças na parede sem furar?'
+    answer: 'Fita VHB de dupla face resolve na maioria dos casos, desde que a superfície esteja limpa e sem gordura. Passe álcool isopropílico antes e pressione firme por trinta segundos. O aviso importante é que ela é praticamente definitiva: em parede pintada, remover costuma levar a tinta junto.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+A automação residencial tem um problema silencioso: os acessórios que você precisa quase nunca existem. O sensor de presença vem com uma fita adesiva ruim e nenhum suporte que aponte para o lugar certo. O relé fica pendurado dentro do quadro por um fio. A câmera enxerga o teto porque a base não inclina.
+
+É exatamente o vão que a impressora 3D preenche. E é um dos melhores usos que existem para ela: peça pequena, rápida de imprimir, que resolve um incômodo diário e não tem equivalente à venda.
+
+Este guia é uma lista de oito peças que eu considero as de melhor retorno para quem tem impressora e casa automatizada. Não vou linkar arquivo pronto de nenhum repositório porque modelo some, muda de licença e nem sempre encaixa no seu dispositivo específico. O que eu dou aqui é o que importa mais: **para que serve, que material usar, e quais detalhes de projeto fazem a peça funcionar ou falhar.**
+
+## Antes de imprimir: a escolha do material
+
+Essa decisão define metade do resultado, e é onde a maioria erra.
+
+**PLA amolece perto de 60 °C.** Isso é menos do que parece. Dentro de um quadro elétrico fechado, atrás de uma fonte chaveada, ou num suporte de janela que pega sol da tarde, essa temperatura é alcançada com facilidade. Peça de PLA nesses lugares entorta, e entorta devagar, então você só percebe quando o sensor já está apontando para o lugar errado há semanas.
+
+**PETG aguenta mais e é mais tenaz.** Ele resiste a temperatura maior e, principalmente, não trinca em encaixe sob pressão — característica essencial em clipe, presilha e tampa que encaixa por pressão. O custo é ser mais chato de imprimir: exige retração bem ajustada e sofre com filamento úmido.
+
+A regra que eu uso:
+
+| Onde a peça vai ficar | Material |
+|---|---|
+| Parede interna, ambiente fresco, sem sol | PLA |
+| Quadro elétrico, perto de fonte, área técnica | PETG |
+| Janela, varanda, qualquer sol direto | PETG |
+| Encaixe por pressão, clipe, dobradiça | PETG |
+| Peça só decorativa ou de teste | PLA |
+
+## As 8 peças
+
+### 1. Suporte angulado para sensor de presença
+
+O sensor de presença, seja PIR ou mmWave, tem um cone de detecção. Colado reto na parede, metade desse cone vai para o teto e para o chão, onde não passa ninguém. Um suporte que incline entre 30 e 45 graus e permita girar no eixo vertical resolve o problema mais comum de automação de iluminação: a luz que não acende quando você entra, ou que apaga com você parado no sofá.
+
+**Detalhe de projeto:** faça o suporte em duas partes, com uma base que cola na parede e um berço que encaixa com atrito. Assim você reposiciona sem descolar tudo. Imprima em PETG se o sensor for alimentado por fonte.
+
+### 2. Case para relé Sonoff ou Shelly dentro da caixa 4x2
+
+Relé pequeno solto atrás do interruptor é a receita para o fio soltar na primeira vez que alguém mexer. Um berço impresso que segure o módulo e mantenha os terminais afastados da parede metálica da caixa resolve.
+
+**Aviso que não é opcional:** essa peça organiza, ela **não isola**. Ela vai dentro de uma caixa de embutir que já é o invólucro normatizado. Plástico FDM não tem classificação de resistência a chama e não substitui caixa de passagem. PETG obrigatório aqui, pelo calor.
+
+### 3. Calço de inclinação para câmera IP
+
+Câmera de mesa quase sempre vem com base fixa apontando reto. Um calço em cunha, com o ângulo que o seu cômodo pede, transforma uma câmera que filma parede numa que cobre a sala inteira. É a peça mais simples da lista e uma das que mais rende.
+
+**Detalhe de projeto:** faça um rebaixo no topo que abrace a base da câmera, e um furo passante para o cabo sair por trás. Cinco gramas de filamento.
+
+### 4. Suporte de parede para o hub Zigbee
+
+Hub jogado atrás do rack, encostado no metal, é meio caminho para alcance ruim. Um suporte que prenda o hub na parede, longe de superfície metálica e o mais alto possível, melhora a malha Zigbee de forma perceptível.
+
+**Detalhe de projeto:** deixe a traseira vazada para ventilação e inclua um canal para o cabo. Se o hub tiver antena, o suporte não pode envolvê-la.
+
+### 5. Organizador de fonte e cabo no rack
+
+Aquele emaranhado de cinco fontes na régua, cada uma tampando duas tomadas. Um pente impresso que segure as fontes lado a lado, com espaçamento correto, libera tomada e para de aquecer uma fonte contra a outra.
+
+**Detalhe de projeto:** meça as suas fontes, não copie modelo pronto — cada uma tem uma largura. PETG, porque fonte esquenta.
+
+Se a bagunça é maior que o rack e chega à bancada inteira, o Reforma Caseira tem um apanhado de [ideias para organizar a oficina com impressão 3D](https://reformacaseira.com.br/posts/organizar-oficina-impressao-3d-ideias/) que se aplica igual a um cantinho de eletrônica.
+
+### 6. Caixa para ESP32 com recorte de USB e sensor
+
+O projeto clássico de quem faz automação própria. Uma caixa com recorte na posição certa do USB, aberturas para o sensor respirar e furos de parafuso com inserto de latão para poder abrir depois.
+
+**Detalhe de projeto:** deixe 0,2 mm de folga em cada lado do recorte do USB. Modelo justo demais no CAD vira modelo que não encaixa na impressão, porque a extrusão sempre engorda um pouco a parede.
+
+### 7. Guia de cabo com adesivo para rodapé
+
+Cabo de sensor correndo pelo rodapé é feio e vira tropeço. Uma sequência de pequenas presilhas coladas ao longo do trajeto arruma tudo e custa dois gramas cada.
+
+**Detalhe de projeto:** faça a presilha em C com abertura levemente menor que o cabo, para ele encaixar sob pressão. PETG, porque PLA racha nesse tipo de encaixe.
+
+### 8. Suporte de tablet para painel de parede
+
+Se você usa tablet como painel do Home Assistant, o suporte comercial custa caro e raramente tem passagem de cabo no lugar certo. Um suporte impresso resolve com o furo exatamente onde o seu tablet tem a entrada de carga.
+
+**Detalhe de projeto:** essa peça é grande e fica à vista, então vale caprichar no acabamento. Considere imprimir de pé para esconder as camadas na face frontal.
+
+## Os materiais que essas peças pedem
+
+<ComparisonTable
+  source="pecas-3d-casa-inteligente"
+  rows={[
+    { name: 'Masterprint PETG Preto 1 kg', brand: 'Masterprint', rating: 4.5, highlight: 'Para quadro elétrico, sol e encaixe sob pressão', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B09WY3MSXN?tag=nerdcaseiro-20' }] },
+    { name: 'Voolt3D PLA Preto 1 kg', brand: 'Voolt3D', rating: 4.7, highlight: 'Para peça interna em ambiente fresco', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20' }] },
+    { name: 'Kit 30 insertos de rosca M3', brand: 'Genérica', rating: 4.6, highlight: 'Rosca de verdade em peça que abre e fecha', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CKTKTGC7?tag=nerdcaseiro-20' }] },
+    { name: 'Fita 3M VHB 4910 19 mm x 5 m', brand: '3M', rating: 4.8, highlight: 'Fixa na parede sem furar', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B075X9KRPZ?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Masterprint PETG Preto — o material das peças que esquentam
+
+![Filamento Masterprint PETG Preto 1,75 mm 1 kg](/images/produtos/masterprint-petg-preto.webp)
+
+Marca: Masterprint · Nota 4,5
+
+PETG é o material padrão para metade das peças desta lista, e o motivo é térmico. Onde o PLA amolece, ele segura. Isso cobre quadro elétrico, vizinhança de fonte chaveada e qualquer lugar com sol direto.
+
+A segunda vantagem é mecânica e importa tanto quanto: PETG é mais tenaz. Clipe, presilha e tampa de encaixe por pressão trabalham flexionando, e PLA nesse serviço trinca com o tempo. PETG dobra e volta.
+
+O preço é a impressão mais exigente. Ele forma fio entre as peças com facilidade, e a causa quase sempre é umidade no filamento somada a retração mal calibrada. Se você nunca imprimiu PETG, conte com uma sessão de ajuste antes de sair produzindo.
+
+<ProsCons
+  pros={['Aguenta o calor de quadro elétrico e de sol direto', 'Mais tenaz: encaixe sob pressão não trinca', 'Boa adesão entre camadas, peça sai resistente']}
+  cons={['Mais difícil de imprimir que PLA', 'Forma fios com facilidade se o filamento estiver úmido', 'Exige retração bem calibrada']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09WY3MSXN?tag=nerdcaseiro-20" store="amazon" source="pecas-3d-casa-inteligente" />
+
+---
+
+## 2. Voolt3D PLA Preto — para o resto
+
+![Voolt3D Filamento PLA Preto 1 kg 1,75 mm](/images/produtos/voolt3d-pla-preto.webp)
+
+Marca: Voolt3D · Nota 4,7
+
+Para suporte de sensor em parede interna, calço de câmera, presilha de cabo em cômodo fresco e qualquer peça que não veja calor, PLA é a escolha certa — e é bem mais fácil de acertar de primeira.
+
+É nacional, o que na prática significa não esperar importação e não tomar susto de imposto. Nota 4,7, das melhores entre os PLA vendidos por aqui.
+
+O limite é o de sempre e vale repetir: perto de 60 °C ele começa a ceder. Não use em quadro, não use atrás de fonte, não use em janela ensolarada. Nesses três lugares a peça vai entortar, e você vai descobrir tarde.
+
+<ProsCons
+  pros={['Fácil de imprimir, acerta de primeira', 'Nacional, sem espera nem imposto surpresa', 'Nota 4,7 entre os PLA nacionais']}
+  cons={['Amolece perto de 60 °C', 'Mais quebradiço em encaixe sob pressão', 'Exige armazenamento seco como todo PLA']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20" store="amazon" source="pecas-3d-casa-inteligente" />
+
+---
+
+## 3. Kit de insertos de rosca M3 — o detalhe que separa amador de acabado
+
+![Kit 30 Insertos Metálicos de Rosca M3](/images/produtos/inserto-latao-m3-30.webp)
+
+Marca: Genérica · Nota 4,6
+
+Parafusar direto no plástico impresso funciona uma vez, talvez duas. Na terceira o furo espana, porque a cada aperto o parafuso corta rosca nova no material. Em peça que você vai abrir para trocar bateria de sensor ou reposicionar placa, isso acontece rápido.
+
+O inserto de latão resolve de vez. Você deixa um furo no modelo, encosta a ponta do ferro de solda no inserto e ele afunda derretendo o plástico ao redor. Esfria em segundos e vira uma rosca metálica de verdade, que abre e fecha dezenas de vezes.
+
+O erro comum é o diâmetro do furo. Muito largo, o inserto gira solto; muito estreito, o plástico racha ao redor. Vale imprimir um cupom de teste com três ou quatro diâmetros antes de aplicar na peça boa.
+
+<ProsCons
+  pros={['Transforma furo impresso em rosca metálica durável', 'Instalação em segundos com ferro de solda', 'Kit de 30 peças cobre muitos projetos']}
+  cons={['Exige furo com diâmetro correto, senão racha', 'Precisa de ferro de solda: não instala a frio', 'Errar a profundidade deixa o inserto torto']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CKTKTGC7?tag=nerdcaseiro-20" store="amazon" source="pecas-3d-casa-inteligente" />
+
+---
+
+## 4. Fita 3M VHB 4910 — fixar sem furar
+
+![Fita Dupla Face 3M VHB 4910 Transparente](/images/produtos/fita-vhb-3m-4910.webp)
+
+Marca: 3M · Nota 4,8
+
+Peça impressa na parede sem furo é o que quase todo mundo quer, e a VHB é o que faz isso funcionar. Ela é bem mais firme que dupla face comum e aguenta variação de temperatura sem descolar, o que importa em suporte que fica perto de eletrônica morna.
+
+O procedimento é curto e não pode ser pulado: limpe a superfície com álcool isopropílico, espere secar, aplique e pressione firme por cerca de trinta segundos. A cola VHB trabalha por pressão, não por tempo de espera.
+
+E o aviso que evita arrependimento: ela é praticamente definitiva. Em parede pintada, tirar a peça costuma levar a tinta junto. Se você aluga, ou se a posição ainda pode mudar, use uma fita mais fraca no teste e só passe para a VHB quando tiver certeza.
+
+<ProsCons
+  pros={['Segura peça impressa na parede sem furar', 'Aguenta variação de temperatura melhor que dupla face comum', 'Nota 4,8, referência da categoria']}
+  cons={['Praticamente definitiva: remover arranca pintura', 'Exige superfície limpa e desengordurada', 'Não perdoa posicionamento errado']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B075X9KRPZ?tag=nerdcaseiro-20" store="amazon" source="pecas-3d-casa-inteligente" />
+
+---
+
+## Ajustes de fatiamento que valem para todas
+
+Alguns parâmetros que eu uso como padrão em peça funcional de automação:
+
+- **Altura de camada 0,2 mm.** Equilíbrio bom entre tempo e resistência. Camada mais fina não deixa a peça mais forte.
+- **3 perímetros.** É o que mais aumenta resistência em peça pequena, muito mais que preencher o interior.
+- **Preenchimento 20-25%.** Acima disso você gasta filamento e tempo sem ganho real em peça desse porte.
+- **Folga de 0,2 mm por lado** em qualquer recorte que precisa encaixar em algo físico. A extrusão sempre engorda a parede.
+- **Sem suporte quando der.** Reoriente a peça em vez de gerar suporte: o acabamento fica melhor e o pós-processamento some.
+
+## Perguntas frequentes
+
+**PLA ou PETG para peça de automação?**
+Depende de onde a peça vai ficar. PLA começa a amolecer perto de 60 °C, o que é pouco para dentro de quadro elétrico, atrás de fonte chaveada ou em janela que pega sol direto. Nesses lugares use PETG. Para suporte de sensor em parede interna, organizador de cabo e case em ambiente fresco, PLA resolve e é muito mais fácil de imprimir.
+
+**Posso imprimir case para coisa que liga na tomada?**
+Para eletrônica de baixa tensão, como ESP32 alimentado por fonte externa de 5 V, sim. Para qualquer coisa que tenha 127 ou 220 V dentro, não improvise: plástico impresso em FDM tem camadas com falhas microscópicas, não tem certificação de resistência a chama e não substitui caixa de passagem normatizada. O que rege isso é a NBR 5410, não o seu slicer.
+
+**Preciso de inserto de rosca ou posso parafusar direto no plástico?**
+Parafusar direto funciona uma ou duas vezes. Na terceira o furo espana, porque o parafuso corta rosca no próprio plástico a cada aperto. Se a peça vai ser aberta para trocar bateria ou ajustar sensor, o inserto se paga na primeira manutenção.
+
+**Qual altura de camada usar nessas peças?**
+Para peça funcional, 0,2 mm resolve quase tudo. Só desça para 0,12 mm em peça com detalhe fino visível. Camada mais fina não deixa a peça mais forte: o que aumenta resistência é mais perímetro.
+
+**Como fixar as peças na parede sem furar?**
+Fita VHB resolve na maioria dos casos, desde que a superfície esteja limpa e sem gordura. Passe álcool isopropílico antes e pressione firme por trinta segundos. Ela é praticamente definitiva: em parede pintada, remover costuma levar a tinta junto.
+
+## Veredicto
+
+De todas as oito, as que eu imprimiria primeiro são o **suporte angulado de sensor de presença** e o **calço de câmera**. As duas custam poucos gramas, levam menos de uma hora cada e corrigem um defeito que incomoda todo dia — sensor que não pega e câmera que filma o lugar errado.
+
+Se você só vai comprar um filamento, compre o PETG. Ele cobre as peças críticas, e as peças de ambiente fresco você imprime nele também sem problema. O contrário não vale: PLA em quadro elétrico é retrabalho garantido.
+
+E o item que mais melhora a impressão de peça funcional não é filamento nem material nenhum desta lista: é acertar a primeira camada e manter o filamento seco. Peça de automação é pequena, e peça pequena descola da mesa com uma facilidade que assusta.

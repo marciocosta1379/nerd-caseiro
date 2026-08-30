@@ -1,0 +1,274 @@
+---
+title: 'Quanto custa imprimir uma peça 3D: filamento, energia e tempo'
+description: 'A conta completa de uma impressão: gramas de filamento, consumo real em kWh, taxa de falha e desgaste da máquina. Com a fórmula pronta para você calcular a sua.'
+pubDate: 2026-09-09
+category: 'impressao-3d'
+tags: ['impressao-3d', 'filamento', 'custo', 'energia']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Wattímetro AC Tomada BR 110/220V 16A'
+    brand: 'Genérica'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B11FWZTG?tag=nerdcaseiro-20'
+    image: '/images/produtos/wattimetro-tomada-br.webp'
+    pros:
+      - 'Plugue padrão brasileiro, sem adaptador gambiarra'
+      - 'Acumula kWh: mede a impressão inteira, não só a potência instantânea'
+    cons:
+      - 'Sem registro histórico: perde a leitura se tirar da tomada'
+      - 'Display pequeno, ruim de ler atrás da bancada'
+  - name: 'EKAZA Tomada Inteligente 16A Wi-Fi com Medidor de Consumo'
+    brand: 'EKAZA'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20'
+    image: '/images/produtos/ekaza-tomada-inteligente-16a.webp'
+    pros:
+      - 'Registra o consumo no app: dá para acompanhar impressão longa sem estar perto'
+      - 'Integra com automação: permite alertar quando a impressão termina'
+    cons:
+      - 'Depende de nuvem do fabricante na configuração padrão'
+      - '16A pode ser justo para impressora grande com mesa aquecida potente'
+  - name: 'Balança Digital de Cozinha 5 kg com Precisão de 1 g'
+    brand: 'Genérica'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FF65RY56?tag=nerdcaseiro-20'
+    image: '/images/produtos/balanca-cozinha-5kg.webp'
+    pros:
+      - 'Até 5 kg: pesa carretel cheio, dá para saber quanto filamento sobrou'
+      - 'Função tara facilita descontar o peso do carretel vazio'
+    cons:
+      - 'Resolução de 1 g é grossa para peça muito pequena'
+      - 'Desliga sozinha rápido, atrapalha em pesagem demorada'
+  - name: 'Voolt3D Filamento PLA Preto 1 kg 1,75 mm Nacional'
+    brand: 'Voolt3D'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20'
+    image: '/images/produtos/voolt3d-pla-preto.webp'
+    pros:
+      - 'Carretel de 1 kg fecha a conta de custo por grama sem quebrar a cabeça'
+      - 'Nacional, preço estável e previsível'
+    cons:
+      - 'Carretel de 1 kg sai mais caro por grama que o de 2 kg'
+      - 'Precisa de armazenamento seco'
+faq:
+  - question: 'Quanto de energia uma impressora 3D gasta de verdade?'
+    answer: 'Depende muito da mesa aquecida, que é o componente que mais consome. O pico chega a algumas centenas de watts no aquecimento inicial, mas a média ao longo da impressão é bem menor, porque a mesa liga e desliga para manter a temperatura. Por isso não adianta olhar a etiqueta da fonte: o número que importa é o kWh acumulado, e para saber o seu você precisa medir com um wattímetro.'
+  - question: 'Como sei quantos gramas a peça tem antes de imprimir?'
+    answer: 'O próprio fatiador informa. Orca, Cura, PrusaSlicer e Bambu Studio mostram o peso estimado junto com o tempo. A estimativa costuma ser boa, com erro pequeno. Se quiser conferir, pese a peça pronta numa balança: a diferença entre o previsto e o real revela se o seu fluxo de extrusão está calibrado.'
+  - question: 'Preciso contar o desgaste da impressora no custo?'
+    answer: 'Se você imprime para vender, sim. Bico, correia, rolamento e chapa de impressão são consumíveis com vida útil. Uma forma simples é estimar a vida útil da máquina em horas, dividir o preço dela por esse número e somar esse valor por hora de impressão. Se é hobby, dá para ignorar sem prejuízo.'
+  - question: 'A taxa de falha entra na conta?'
+    answer: 'Entra, e muita gente esquece. Se uma em cada dez impressões falha na metade, você está gastando cerca de 5% a mais de filamento e energia do que a conta simples indica. Em produção, vale multiplicar o custo final por um fator que reflita a sua taxa real de falha.'
+  - question: 'Imprimir em casa sai mais barato que comprar pronto?'
+    answer: 'Para peça de reposição específica, quase sempre sim, porque o equivalente comercial ou não existe ou vem de importação. Para objeto comum de plástico produzido em escala, quase sempre não: injeção plástica em massa é imbatível. O ganho da impressão 3D é fazer o que ninguém vende, não competir em preço com o que já existe.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+"Quanto custou essa peça?" é a pergunta que todo mundo faz quando você mostra algo impresso. E a resposta que a maioria dá — "uns dois reais de filamento" — está incompleta.
+
+Filamento é só uma das três parcelas. Tem a energia, que ninguém mede e quase todo mundo chuta. Tem o desgaste da máquina, que só aparece quando o bico entope ou a correia folga. E tem a parcela mais esquecida de todas: **as impressões que falharam**, que consumiram filamento e energia e foram para o lixo.
+
+Este guia monta a conta completa. No fim você vai ter uma fórmula que serve para qualquer peça, e vai saber quais números precisa medir na sua própria impressora — porque alguns deles não dá para copiar de ninguém.
+
+## Parcela 1: filamento
+
+Essa é a fácil, e é a única que o fatiador já te entrega pronta.
+
+```
+custo do filamento = gramas da peça × (preço do carretel ÷ gramas do carretel)
+```
+
+Um carretel de 1 kg é 1.000 gramas. Se ele custou R$ 100, cada grama saiu por R$ 0,10.
+
+Orca Slicer, Cura, PrusaSlicer e Bambu Studio mostram o peso estimado da peça junto com o tempo, antes de você mandar imprimir. A estimativa costuma ser precisa.
+
+**Um teste que vale fazer:** pese a peça pronta numa balança e compare com o que o fatiador previu. Se a real está consistentemente acima da prevista, o seu fluxo de extrusão está alto — você está gastando mais material do que precisa em toda peça que imprime. Se está abaixo, o fluxo está baixo e as peças estão mais frágeis do que deveriam.
+
+**Não esqueça do que não é peça.** Skirt, brim, torre de purga e principalmente **suporte** entram no total. Em peça com muito suporte, o descarte pode passar de 30% do material gasto. O fatiador contabiliza isso no peso total; é só não confundir "peso da peça" com "filamento consumido".
+
+## Parcela 2: energia
+
+Aqui é onde quase todo mundo erra, e por um motivo específico: **olham a etiqueta da fonte.**
+
+A fonte de uma impressora comum é dimensionada para o pico, não para a média. E o pico só acontece no aquecimento inicial, quando mesa e bico sobem de temperatura ao mesmo tempo. Depois disso o consumo despenca, porque a mesa passa a ligar e desligar apenas para manter a temperatura.
+
+O componente que domina o consumo é a **mesa aquecida**. Uma impressão de PLA com mesa a 60 °C gasta bem menos que a mesma peça em ABS com mesa a 100 °C e câmara fechada. O bico consome pouco em comparação, e os motores quase nada.
+
+Por isso não existe um número universal para copiar. A fórmula é:
+
+```
+custo de energia = consumo medido (kWh) × tarifa (R$/kWh)
+```
+
+E o `consumo medido` você obtém plugando um wattímetro entre a tomada e a impressora, zerando o acumulador e rodando uma impressão inteira. Uma medição só já te dá o padrão da sua máquina, e a partir dela você extrapola por hora.
+
+**A tarifa** está na sua conta de luz. Use o valor com todos os impostos e a bandeira tarifária vigente, não a tarifa base — a diferença entre os dois é grande.
+
+Feita a medição uma vez, você passa a ter um custo por hora confiável e não precisa medir de novo, exceto quando mudar de material ou de temperatura de mesa.
+
+## Parcela 3: desgaste e falha
+
+Essas duas parcelas são opcionais para hobby e obrigatórias para quem vende.
+
+**Desgaste.** Bico, correia, rolamento, chapa de impressão e ventoinha são consumíveis. Uma forma simples de embutir isso:
+
+```
+custo por hora de máquina = preço da impressora ÷ vida útil estimada em horas
+```
+
+Não existe número oficial de vida útil, então você arbitra um valor conservador e revisa com o tempo. O ponto não é a precisão, é não fingir que a máquina é gratuita.
+
+**Taxa de falha.** Essa é a parcela mais honesta e a mais ignorada. Se uma em cada dez impressões falha pela metade, você desperdiça cerca de 5% do filamento e da energia totais. A correção é direta:
+
+```
+custo real = custo calculado ÷ (1 − taxa de desperdício)
+```
+
+E aqui vale a observação prática mais útil deste post: **atacar a taxa de falha rende mais que economizar em filamento.** Trocar um carretel por outro 10% mais barato economiza 10% da parcela de material. Derrubar a taxa de falha de 15% para 5% economiza mais que isso, em tudo, e ainda devolve o seu tempo.
+
+## A fórmula completa
+
+```
+custo total = [ (gramas × preço por grama)
+              + (kWh medido × tarifa)
+              + (horas × custo por hora de máquina) ]
+              ÷ (1 − taxa de falha)
+```
+
+Preencha uma vez os valores que são da sua realidade — preço por grama, kWh por hora da sua impressora, tarifa da sua conta, sua taxa de falha — e a conta de qualquer peça vira aritmética simples.
+
+## O que medir com
+
+<ComparisonTable
+  source="quanto-custa-imprimir-peca-3d"
+  rows={[
+    { name: 'Wattímetro AC Tomada BR 16A', brand: 'Genérica', rating: 4.4, highlight: 'Mede kWh acumulado, plugue brasileiro', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0B11FWZTG?tag=nerdcaseiro-20' }] },
+    { name: 'EKAZA Tomada Inteligente 16A com medidor', brand: 'EKAZA', rating: 4.7, highlight: 'Consumo no app, integra com automação', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20' }] },
+    { name: 'Balança de cozinha 5 kg, 1 g', brand: 'Genérica', rating: 4.5, highlight: 'Pesa carretel cheio e peça pronta', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0FF65RY56?tag=nerdcaseiro-20' }] },
+    { name: 'Voolt3D PLA Preto 1 kg', brand: 'Voolt3D', rating: 4.7, highlight: 'Carretel de 1 kg fecha a conta por grama', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Wattímetro de tomada — o mais direto
+
+![Wattímetro AC Tomada BR 110/220V 16A](/images/produtos/wattimetro-tomada-br.webp)
+
+Marca: Genérica · Nota 4,4
+
+É o instrumento certo para essa medição, e o motivo é que ele **acumula kWh**. Medidor que só mostra potência instantânea não serve: a impressora oscila o tempo todo entre picos de aquecimento e mínimos de manutenção, e ler o watt de um instante não diz nada sobre a impressão inteira.
+
+Plugue padrão brasileiro é um detalhe que importa mais do que parece — muito wattímetro barato vem com padrão europeu ou americano e você acaba com um adaptador solto atrás da bancada, que é justamente onde não se quer improviso com carga.
+
+As limitações são de conveniência: display pequeno, ruim de ler atrás de móvel, e sem memória persistente. Se alguém desplugar no meio da medição, você perde o acumulado e recomeça.
+
+<ProsCons
+  pros={['Acumula kWh: mede a impressão inteira, não só a potência do instante', 'Plugue padrão brasileiro, sem adaptador', 'Barato e resolve a medição de uma vez']}
+  cons={['Sem memória: perde a leitura se tirar da tomada', 'Display pequeno, ruim de ler atrás da bancada', 'Sem app nem histórico']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B11FWZTG?tag=nerdcaseiro-20" store="amazon" source="quanto-custa-imprimir-peca-3d" />
+
+---
+
+## 2. EKAZA Tomada Inteligente 16A — medir e automatizar
+
+![EKAZA Tomada Inteligente 16A Wi-Fi com Medidor de Consumo](/images/produtos/ekaza-tomada-inteligente-16a.webp)
+
+Marca: EKAZA · Nota 4,7
+
+Faz o mesmo trabalho de medição, mas registra no aplicativo. Para impressão de doze horas isso muda a experiência: você acompanha o consumo do celular em vez de ir até a bancada anotar número.
+
+O ganho extra é a automação. Com o consumo exposto, dá para montar uma regra que avisa quando a potência cai abaixo de um limiar por alguns minutos — que na prática significa que a impressão acabou ou que a máquina parou. É um sensor de fim de impressão de graça, sem mexer no firmware.
+
+Dois pontos de atenção. Na configuração padrão ela depende da nuvem do fabricante, o que incomoda quem faz automação local; existe caminho para uso local, mas dá trabalho. E os 16 A podem ficar justos para impressora grande com mesa aquecida potente — confira a corrente da sua antes.
+
+<ProsCons
+  pros={['Registra o consumo no app, acompanha impressão longa à distância', 'Permite automação de fim de impressão pela queda de potência', 'Nota 4,7']}
+  cons={['Depende de nuvem do fabricante na configuração padrão', '16 A pode ser justo para impressora grande', 'Mais cara que o wattímetro simples']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20" store="amazon" source="quanto-custa-imprimir-peca-3d" />
+
+---
+
+## 3. Balança de cozinha 5 kg — para fechar a parcela do material
+
+![Balança Digital de Cozinha 5 kg com Precisão de 1 g](/images/produtos/balanca-cozinha-5kg.webp)
+
+Marca: Genérica · Nota 4,5
+
+O limite de 5 kg é o que faz diferença aqui: ela pesa **carretel cheio**. Isso permite duas coisas que uma balança de bolso não faz.
+
+A primeira é saber quanto filamento sobrou. Pese o carretel, subtraia o peso do carretel vazio — que costuma vir impresso ou você anota quando acabar o primeiro — e você sabe exatamente quantos gramas restam. Fim do palpite sobre se dá para a próxima peça.
+
+A segunda é conferir a estimativa do fatiador. Pese a peça pronta, compare com o previsto e você descobre se o seu fluxo de extrusão está calibrado.
+
+A função tara ajuda bastante nesse fluxo. A resolução de 1 g é grossa para peça muito pequena — se você imprime miniatura, uma balança de 0,01 g serve melhor. E ela desliga sozinha rápido, o que atrapalha quando você está pesando e anotando ao mesmo tempo.
+
+<ProsCons
+  pros={['Até 5 kg: pesa carretel cheio e mostra quanto sobrou', 'Função tara facilita descontar o carretel vazio', 'Confere a estimativa de peso do fatiador']}
+  cons={['Resolução de 1 g é grossa para peça muito pequena', 'Desliga sozinha rápido', 'Prato pequeno para peça grande']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FF65RY56?tag=nerdcaseiro-20" store="amazon" source="quanto-custa-imprimir-peca-3d" />
+
+---
+
+## 4. Voolt3D PLA Preto 1 kg — o denominador da conta
+
+![Voolt3D Filamento PLA Preto 1 kg 1,75 mm](/images/produtos/voolt3d-pla-preto.webp)
+
+Marca: Voolt3D · Nota 4,7
+
+Carretel de 1 kg é o formato que mais facilita a conta: 1.000 gramas, divide o preço por mil e você tem o custo por grama direto, sem arredondamento.
+
+Sendo nacional, o preço é mais estável e previsível que o de importado, o que importa quando você está montando uma planilha de custo para orçar peça. Nota 4,7, das melhores entre os PLA vendidos aqui.
+
+O contraponto honesto: **carretel de 2 kg sai mais barato por grama.** Se o seu consumo justifica e você tem onde guardar seco, o formato maior reduz a parcela de material. O de 1 kg ganha em não sobrar filamento velho absorvendo umidade por meses.
+
+<ProsCons
+  pros={['1 kg fecha a conta de custo por grama sem arredondamento', 'Nacional: preço estável e previsível para orçar', 'Nota 4,7']}
+  cons={['Sai mais caro por grama que o carretel de 2 kg', 'Precisa de armazenamento seco', 'Preto dificulta avaliar peça de calibração']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B6W9XP4J?tag=nerdcaseiro-20" store="amazon" source="quanto-custa-imprimir-peca-3d" />
+
+---
+
+## Perguntas frequentes
+
+**Quanto de energia uma impressora 3D gasta de verdade?**
+Depende muito da mesa aquecida, que é o componente que mais consome. O pico chega a algumas centenas de watts no aquecimento inicial, mas a média é bem menor, porque a mesa liga e desliga para manter a temperatura. Não adianta olhar a etiqueta da fonte: o número que importa é o kWh acumulado, e para saber o seu você precisa medir.
+
+**Como sei quantos gramas a peça tem antes de imprimir?**
+O próprio fatiador informa. Orca, Cura, PrusaSlicer e Bambu Studio mostram o peso estimado junto com o tempo. Se quiser conferir, pese a peça pronta: a diferença entre previsto e real revela se o fluxo de extrusão está calibrado.
+
+**Preciso contar o desgaste da impressora no custo?**
+Se você imprime para vender, sim. Bico, correia, rolamento e chapa são consumíveis. Estime a vida útil em horas, divida o preço da máquina por esse número e some por hora de impressão. Se é hobby, dá para ignorar.
+
+**A taxa de falha entra na conta?**
+Entra, e muita gente esquece. Se uma em cada dez impressões falha na metade, você gasta cerca de 5% a mais de filamento e energia do que a conta simples indica.
+
+**Imprimir em casa sai mais barato que comprar pronto?**
+Para peça de reposição específica, quase sempre sim, porque o equivalente ou não existe ou vem de importação. Para objeto comum produzido em escala, quase sempre não: injeção plástica em massa é imbatível. O ganho da impressão 3D é fazer o que ninguém vende.
+
+## Veredicto
+
+Se você imprime por hobby, a conta que importa tem duas linhas: gramas vezes preço por grama, mais o consumo medido uma vez com wattímetro. As outras parcelas somam pouco e complicam sem necessidade.
+
+Se você imprime para vender, as quatro parcelas são obrigatórias — e a que mais vai te surpreender é a taxa de falha. É comum descobrir que o desperdício custa mais que a energia.
+
+E fica a conclusão que a planilha entrega de brinde: **o caminho mais rápido para baratear sua impressão não é comprar filamento mais barato, é falhar menos.** Filamento seco, primeira camada calibrada e fluxo de extrusão conferido derrubam a taxa de falha e mexem em todas as parcelas ao mesmo tempo.

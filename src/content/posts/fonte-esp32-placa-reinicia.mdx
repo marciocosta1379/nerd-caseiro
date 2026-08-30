@@ -1,0 +1,271 @@
+---
+title: 'Fonte para ESP32: por que a sua placa reinicia sozinha'
+description: 'Brownout, cabo USB fino e regulador sobrecarregado derrubam o ESP32 no pico de Wi-Fi. Veja como diagnosticar com multímetro e qual fonte resolve de verdade.'
+pubDate: 2026-09-13
+category: 'eletronica-maker'
+tags: ['esp32', 'eletronica-maker', 'fonte', 'troubleshooting']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Fonte de Alimentação 5V 2A Bivolt Plug P4 5,5 mm LBL'
+    brand: 'LBL'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK4YMB5T?tag=nerdcaseiro-20'
+    image: '/images/produtos/fonte-5v-2a-lbl.webp'
+    pros:
+      - '2 A dão folga larga sobre o pico de transmissão do ESP32'
+      - 'Bivolt: não queima se mudar de tomada'
+    cons:
+      - 'Plug P4 exige adaptador ou solda para chegar ao ESP32'
+      - 'Marca de distribuidora: qualidade varia entre lotes'
+  - name: 'Fonte Estabilizada Chaveada 5V 2A Bivolt Plug P4 2,1 x 5,5 mm'
+    brand: 'Genérica'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B082XK9F28?tag=nerdcaseiro-20'
+    image: '/images/produtos/fonte-5v-2a-estabilizada.webp'
+    pros:
+      - 'Chaveada e estabilizada: tensão firme mesmo com variação de carga'
+      - 'Bivolt automática, comum e fácil de repor'
+    cons:
+      - 'Sem blindagem boa, pode injetar ruído em circuito analógico'
+      - 'Cabo curto na maioria das versões'
+  - name: 'Placa ESP32 Dual Core Wi-Fi e Bluetooth Dev Kit V1 com cabo micro USB'
+    brand: 'Genérica'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20'
+    image: '/images/produtos/esp32-devkit-v1-cabo.webp'
+    pros:
+      - 'Vem com cabo, que já elimina uma das causas comuns de brownout'
+      - 'Dev Kit V1 é o formato mais documentado, todo tutorial serve'
+    cons:
+      - 'Regulador AMS1117 esquenta e limita a corrente disponível em 3,3 V'
+      - 'Micro USB é mais frágil que USB-C no encaixe'
+  - name: 'Multímetro Digital Minipa ET-1507B CAT III'
+    brand: 'Minipa'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07V4Y6PJD?tag=nerdcaseiro-20'
+    image: '/images/produtos/multimetro-et1507b.webp'
+    pros:
+      - 'Sem medir tensão sob carga você está adivinhando a causa'
+      - 'Minipa tem assistência e calibração no Brasil'
+    cons:
+      - 'Multímetro comum não captura queda de milissegundos: só a média'
+      - 'Categoria CAT III é mais do que um projeto de 5 V precisa'
+faq:
+  - question: 'O que é brownout no ESP32?'
+    answer: 'É uma proteção do próprio chip. O ESP32 monitora a tensão de alimentação e, se ela cair abaixo de um limiar, ele se reinicia de propósito para evitar operar de forma imprevisível. No log serial aparece a mensagem "Brownout detector was triggered". Ou seja: a placa não está com defeito, ela está avisando que a alimentação não deu conta.'
+  - question: 'Por que a placa reinicia só quando conecta no Wi-Fi?'
+    answer: 'Porque é aí que o consumo dispara. O rádio Wi-Fi do ESP32 puxa picos de corrente durante a transmissão que são muito maiores que o consumo em repouso. Fonte, cabo ou porta USB que aguentam a placa ociosa não aguentam esses picos, a tensão afunda por alguns milissegundos e o brownout dispara. Por isso o sintoma aparece exatamente no momento da conexão.'
+  - question: 'Posso alimentar o ESP32 pela porta USB do computador?'
+    answer: 'Para programar e testar, sim. Para deixar em produção, não é o ideal. Porta USB comum tem limite de corrente e muitas entregam bem menos que o nominal, principalmente hub sem alimentação própria. Para projeto que fica ligado, use fonte dedicada.'
+  - question: 'Cabo USB pode ser a causa?'
+    answer: 'Pode, e é uma das causas mais frequentes e mais ignoradas. Cabo fino e longo tem resistência suficiente para derrubar a tensão justamente no pico de corrente. Muito cabo barato é feito só para carregar e tem condutor de bitola mínima. Trocar por um cabo curto e mais grosso resolve uma parcela grande dos casos.'
+  - question: 'Capacitor no 5V resolve?'
+    answer: 'Ajuda bastante nos casos em que a fonte é adequada mas a resposta a transiente é lenta. Um capacitor eletrolítico de algumas centenas de microfarads perto do pino de alimentação funciona como reservatório local, fornecendo a corrente do pico enquanto a fonte reage. Não substitui fonte adequada, mas resolve o caso limítrofe.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+O projeto funciona na bancada. Você monta na caixa, liga na fonte, e a placa começa a reiniciar sozinha. Ou pior: funciona por horas e reinicia de madrugada, sem padrão aparente.
+
+O primeiro instinto é culpar o código. O segundo é culpar a placa. Na maioria esmagadora das vezes, o culpado é a **alimentação** — e mais especificamente, o comportamento do ESP32 no momento em que o rádio Wi-Fi transmite.
+
+Este guia explica o mecanismo, mostra como diagnosticar com multímetro em vez de tentativa e erro, e indica o que resolve em cada caso.
+
+## O mecanismo: por que reinicia no Wi-Fi
+
+O ESP32 tem um circuito de proteção chamado **detector de brownout**. Ele monitora a tensão de alimentação e, se ela cair abaixo de um limiar, reinicia o chip de propósito — porque operar com tensão insuficiente produz comportamento imprevisível, e reiniciar é mais seguro.
+
+Quando isso acontece, o log serial mostra a mensagem:
+
+```
+Brownout detector was triggered
+```
+
+Essa mensagem é a chave do diagnóstico. Ela não indica placa com defeito. Ela indica que **a alimentação não deu conta**, e o chip se protegeu.
+
+O motivo de o problema aparecer justamente na conexão Wi-Fi é o perfil de consumo. Em repouso, o ESP32 consome pouco. Quando o rádio transmite, o consumo dispara em picos curtos e intensos — muito acima da média. Fonte, cabo ou porta USB que sustentam a placa ociosa não sustentam esses picos. A tensão afunda por alguns milissegundos, o detector dispara, a placa reinicia, tenta conectar de novo e o ciclo se repete.
+
+É por isso que o sintoma clássico é: **liga normal, e reinicia quando tenta conectar.**
+
+## Os quatro suspeitos, em ordem de probabilidade
+
+### 1. O cabo USB
+
+É a causa mais comum e a mais ignorada. Muito cabo barato é feito apenas para carregar celular devagar e tem condutor de bitola mínima. Quanto mais fino e mais longo, maior a resistência — e maior a queda de tensão exatamente no instante do pico.
+
+Teste barato: troque por um cabo curto e visivelmente mais grosso. Se o problema sumir, era isso.
+
+### 2. A porta USB
+
+Porta de computador tem limite de corrente, e hub USB sem alimentação própria divide esse limite entre tudo que está plugado. Para programar e testar, serve. Para deixar rodando, não.
+
+### 3. A fonte
+
+Fonte subdimensionada, ou fonte que entrega a corrente nominal mas responde devagar a variação de carga. A segunda é mais traiçoeira: no papel a fonte tem folga, mas ela não acompanha um transiente de milissegundos.
+
+### 4. O regulador da própria placa
+
+Quase todo Dev Kit V1 usa um regulador linear AMS1117 para converter os 5 V em 3,3 V. Ele tem duas limitações relevantes: dissipa o excedente em calor e tem corrente máxima limitada.
+
+Se você alimenta a placa em 5 V **e** pendurou sensores no pino de 3,3 V, quem entrega corrente para todos é esse reguladorzinho. Ele esquenta, entra em proteção térmica e derruba a tensão. Sintoma idêntico ao de fonte fraca, causa completamente diferente.
+
+## Como diagnosticar com multímetro
+
+Chutar componente sai caro. Medir resolve em dez minutos.
+
+**Passo 1 — meça a tensão em repouso.** Ponta preta no GND, ponta vermelha no pino 5V (ou VIN) da placa, com ela ligada e ociosa. Deve estar próximo de 5 V. Se já está baixo aqui, o problema é fonte ou cabo, e nem precisa continuar.
+
+**Passo 2 — meça durante a conexão.** Mantenha as pontas e reinicie a placa observando o display no momento em que ela conecta ao Wi-Fi. Multímetro comum não captura uma queda de milissegundos, mas ele mostra a **média cair** — e queda visível de média num evento tão curto significa que o vale instantâneo foi bem mais fundo.
+
+**Passo 3 — meça o 3,3 V.** Se o 5 V está firme mas o 3,3 V oscila, o problema é o regulador da placa, não a fonte. Nesse caso a solução não é fonte maior: é tirar carga do pino 3,3 V, alimentando os sensores por um regulador separado.
+
+**Passo 4 — confirme no serial.** Abra o monitor serial e veja se aparece a mensagem de brownout. Ela confirma o diagnóstico de tensão e descarta laço infinito no código, que produz reinício por outro caminho — o watchdog.
+
+## As soluções, do mais barato ao mais definitivo
+
+1. **Trocar o cabo** por um curto e grosso. Custo quase zero, resolve boa parte dos casos.
+2. **Fonte dedicada de 5 V com folga.** Não alimente projeto permanente por porta de computador.
+3. **Capacitor eletrolítico perto do pino de alimentação.** Algumas centenas de microfarads funcionam como reservatório local, entregando a corrente do pico enquanto a fonte reage. Resolve o caso limítrofe.
+4. **Alimentar os sensores separadamente**, se o gargalo for o regulador de 3,3 V da placa.
+5. **Alimentar direto em 3,3 V** com regulador externo de qualidade, ignorando o AMS1117 — solução mais trabalhosa e mais definitiva.
+
+Uma coisa que eu **não** recomendo: desabilitar o detector de brownout por software. Existe essa opção, e ela resolve o sintoma escondendo o problema. A placa para de reiniciar e passa a operar com tensão insuficiente, o que produz corrupção de memória e comportamento errático — muito mais difícil de diagnosticar que um reinício honesto.
+
+## O que comprar
+
+<ComparisonTable
+  source="fonte-esp32-placa-reinicia"
+  rows={[
+    { name: 'Multímetro Minipa ET-1507B', brand: 'Minipa', rating: 4.8, highlight: 'Diagnosticar em vez de chutar', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B07V4Y6PJD?tag=nerdcaseiro-20' }] },
+    { name: 'ESP32 Dev Kit V1 com cabo', brand: 'Genérica', rating: 4.6, highlight: 'Já vem com cabo, elimina uma das causas', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20' }] },
+    { name: 'Fonte 5V 2A Bivolt LBL', brand: 'LBL', rating: 4.4, highlight: '2 A de folga sobre o pico de Wi-Fi', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CK4YMB5T?tag=nerdcaseiro-20' }] },
+    { name: 'Fonte 5V 2A chaveada estabilizada', brand: 'Genérica', rating: 4.4, highlight: 'Tensão firme sob variação de carga', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B082XK9F28?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Multímetro Minipa ET-1507B
+
+![Multímetro Digital Minipa ET-1507B CAT III](/images/produtos/multimetro-et1507b.webp)
+
+Marca: Minipa · Nota 4,8
+
+Sem medir tensão sob carga, você está trocando peça por palpite. E trocar fonte, cabo e placa até acertar sai mais caro que um multímetro.
+
+A Minipa é a marca com assistência e calibração no Brasil, o que importa em instrumento — multímetro descalibrado é pior que nenhum, porque te dá confiança numa leitura errada. Nota 4,8, a melhor deste comparativo.
+
+Uma limitação honesta que vale entender: **multímetro comum não captura queda de milissegundos.** Ele mostra a média. Para ver o vale instantâneo de verdade seria necessário osciloscópio. Na prática isso não impede o diagnóstico — se a média já cai de forma visível num evento tão curto, o vale foi bem mais fundo, e isso basta para confirmar a causa.
+
+A categoria CAT III é mais robustez do que um projeto de 5 V precisa, mas não atrapalha, e serve se você for medir rede elétrica algum dia.
+
+<ProsCons
+  pros={['Transforma chute em diagnóstico', 'Minipa tem assistência e calibração no Brasil', 'Nota 4,8, a melhor do grupo']}
+  cons={['Não captura queda de milissegundos: só a média', 'CAT III é mais do que um projeto de 5 V exige', 'Pontas de prova de série são grossas para pino de placa']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07V4Y6PJD?tag=nerdcaseiro-20" store="amazon" source="fonte-esp32-placa-reinicia" />
+
+---
+
+## 2. ESP32 Dev Kit V1 com cabo
+
+![Placa ESP32 Dual Core Dev Kit V1 com cabo micro USB](/images/produtos/esp32-devkit-v1-cabo.webp)
+
+Marca: Genérica · Nota 4,6
+
+O Dev Kit V1 é o formato mais documentado do ecossistema ESP32. Qualquer tutorial, qualquer pinagem, qualquer exemplo de ESPHome ou Arduino assume esse layout. Para quem está aprendendo, isso vale mais que qualquer especificação.
+
+Vir **com cabo** é um detalhe pequeno com efeito real neste contexto: elimina de saída uma das causas mais comuns de brownout, que é o cabo aleatório de gaveta.
+
+O ponto de atenção é o regulador AMS1117 que a placa usa. Ele esquenta e limita a corrente disponível no pino de 3,3 V. Se o seu projeto pendura vários sensores nesse pino, ele vira o gargalo — e o sintoma é idêntico ao de fonte fraca, o que confunde o diagnóstico. Vale lembrar disso antes de sair trocando fonte.
+
+O conector micro USB é mais frágil que USB-C no encaixe. Em projeto que vai ser aberto e fechado várias vezes, é onde costuma falhar primeiro.
+
+<ProsCons
+  pros={['Vem com cabo, elimina uma causa comum de brownout', 'Dev Kit V1 é o formato mais documentado: todo tutorial serve', 'Nota 4,6']}
+  cons={['Regulador AMS1117 esquenta e limita a corrente em 3,3 V', 'Micro USB é mais frágil que USB-C', 'Marca genérica: qualidade do regulador varia']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20" store="amazon" source="fonte-esp32-placa-reinicia" />
+
+---
+
+## 3. Fonte 5V 2A Bivolt LBL
+
+![Fonte de Alimentação 5V 2A Bivolt Plug P4 LBL](/images/produtos/fonte-5v-2a-lbl.webp)
+
+Marca: LBL · Nota 4,4
+
+Dois ampères dão folga larga sobre o pico de transmissão do ESP32, e folga é exatamente o que resolve brownout. Não adianta dimensionar pelo consumo médio: é o pico que derruba a placa.
+
+Ser bivolt evita o acidente clássico da fonte 127 V ligada em 220 V na mudança de casa ou na viagem. Em projeto que fica instalado, isso poupa um susto.
+
+O incômodo prático é o plug P4. O ESP32 não tem entrada P4, então você vai precisar de um adaptador com bornes ou soldar direto nos pinos VIN e GND. Não é difícil, mas é um passo a mais que ninguém menciona no anúncio.
+
+Sendo fonte de distribuidora, a qualidade varia entre lotes. Se o seu projeto for crítico, vale medir a tensão de saída antes de instalar.
+
+<ProsCons
+  pros={['2 A de folga larga sobre o pico de Wi-Fi', 'Bivolt: não queima ao mudar de tomada', 'Barata para o que resolve']}
+  cons={['Plug P4 exige adaptador ou solda para chegar ao ESP32', 'Marca de distribuidora: qualidade varia entre lotes', 'Sem indicação clara de qualidade de filtragem']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK4YMB5T?tag=nerdcaseiro-20" store="amazon" source="fonte-esp32-placa-reinicia" />
+
+---
+
+## 4. Fonte 5V 2A chaveada estabilizada
+
+![Fonte Estabilizada Chaveada 5V 2A Bivolt Plug P4](/images/produtos/fonte-5v-2a-estabilizada.webp)
+
+Marca: Genérica · Nota 4,4
+
+Alternativa com a mesma capacidade e o mesmo formato de plug. O termo que interessa na descrição é **estabilizada**: ela mantém a tensão firme mesmo quando a carga varia, que é precisamente o comportamento necessário quando o rádio do ESP32 dispara.
+
+Fonte não estabilizada entrega os 5 V nominais sem carga e afunda quando a corrente sobe — exatamente o cenário que produz brownout. É a diferença entre atender o número da etiqueta e atender o uso real.
+
+Duas ressalvas. Fonte chaveada barata costuma ter blindagem fraca e pode injetar ruído na alimentação, o que não incomoda em projeto digital mas atrapalha se você lê sensor analógico com precisão. E o cabo é curto na maioria das versões, o que às vezes obriga a usar extensão — voltando ao problema de queda de tensão que a gente está tentando resolver.
+
+<ProsCons
+  pros={['Estabilizada: tensão firme sob variação de carga', 'Bivolt automática, fácil de repor', 'Mesmo formato de plug, intercambiável com a LBL']}
+  cons={['Blindagem fraca pode injetar ruído em leitura analógica', 'Cabo curto na maioria das versões', 'Marca genérica, sem ficha técnica detalhada']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B082XK9F28?tag=nerdcaseiro-20" store="amazon" source="fonte-esp32-placa-reinicia" />
+
+---
+
+## Perguntas frequentes
+
+**O que é brownout no ESP32?**
+É uma proteção do próprio chip. Ele monitora a tensão e, se ela cai abaixo de um limiar, se reinicia de propósito para não operar de forma imprevisível. No log aparece "Brownout detector was triggered". A placa não está com defeito: ela está avisando que a alimentação não deu conta.
+
+**Por que a placa reinicia só quando conecta no Wi-Fi?**
+Porque é aí que o consumo dispara. O rádio puxa picos de corrente muito maiores que o consumo em repouso. Fonte, cabo ou porta que aguentam a placa ociosa não aguentam o pico, a tensão afunda e o brownout dispara.
+
+**Posso alimentar o ESP32 pela porta USB do computador?**
+Para programar e testar, sim. Para produção, não é o ideal. Porta USB tem limite de corrente e hub sem alimentação própria entrega ainda menos.
+
+**Cabo USB pode ser a causa?**
+Pode, e é das mais frequentes. Cabo fino e longo tem resistência suficiente para derrubar a tensão no pico. Trocar por cabo curto e mais grosso resolve boa parte dos casos.
+
+**Capacitor no 5V resolve?**
+Ajuda quando a fonte é adequada mas responde devagar a transiente. Um eletrolítico de algumas centenas de microfarads perto do pino funciona como reservatório local. Não substitui fonte adequada, mas resolve o caso limítrofe.
+
+## Veredicto
+
+A ordem de investigação que economiza dinheiro é esta: **cabo, porta, fonte, regulador**. Nessa sequência, do mais barato para o mais trabalhoso. A maioria dos casos morre no primeiro ou no segundo item.
+
+Se você vai comprar uma coisa só, compre o **multímetro**. Ele transforma um problema que se resolve por tentativa e erro — trocando fonte, cabo e placa até parar — num diagnóstico de dez minutos. E serve para o resto da vida do hobby.
+
+E a recomendação que vale mais que qualquer produto: **nunca desabilite o detector de brownout para "resolver" o reinício.** Ele é o mensageiro, não a doença. Silenciá-lo troca um reinício visível por corrupção silenciosa de memória, que é infinitamente pior de diagnosticar.

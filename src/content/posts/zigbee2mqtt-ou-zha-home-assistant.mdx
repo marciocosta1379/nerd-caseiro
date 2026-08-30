@@ -1,0 +1,262 @@
+---
+title: 'Zigbee2MQTT ou ZHA: qual usar no Home Assistant em 2026'
+description: 'ZHA é nativo e simples; Zigbee2MQTT exige broker MQTT mas suporta muito mais dispositivo. Veja a diferença real e como decidir antes de montar a rede.'
+pubDate: 2026-09-08
+category: 'automacao-residencial'
+tags: ['home-assistant', 'zigbee', 'zigbee2mqtt', 'zha', 'mqtt']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Zigbee 3.0 Dongle USB EFR32MG24 Coordenador para Home Assistant'
+    brand: 'Genérica'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0GGY9KS3P?tag=nerdcaseiro-20'
+    image: '/images/produtos/dongle-efr32mg24.webp'
+    pros:
+      - 'Chip EFR32MG24: firmware EmberZNet, suportado por ZHA e Zigbee2MQTT'
+      - 'Antena externa melhora bastante o alcance em casa de alvenaria'
+    cons:
+      - 'Precisa de cabo extensor USB para não sofrer interferência da porta 3.0'
+      - 'Marca genérica: suporte depende do vendedor'
+  - name: 'Gateway USB Zigbee 3.0 com CP2102N e EFR32MG21'
+    brand: 'Genérica'
+    rating: 4.0
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0G24L33V5?tag=nerdcaseiro-20'
+    image: '/images/produtos/gateway-zigbee-cp2102n.webp'
+    pros:
+      - 'Conversor serial CP2102N é bem reconhecido no Linux'
+      - 'EFR32MG21 é o chip mais comum em coordenador Zigbee doméstico'
+    cons:
+      - 'Nota 4,0, abaixo do EFR32MG24'
+      - 'Nem todas as versões vêm com antena externa'
+  - name: 'Raspberry Pi 5 Model B Anatel 4 GB'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    image: '/images/produtos/raspberry-pi-5-4gb.webp'
+    pros:
+      - 'Dá conta de Home Assistant, Mosquitto e Zigbee2MQTT juntos com folga'
+      - 'Versão Anatel: homologada para venda no Brasil'
+    cons:
+      - 'Exige fonte USB-C de 27 W: carregador de celular não serve'
+      - 'Esquenta o bastante para pedir dissipador ou cooler'
+faq:
+  - question: 'Qual a diferença prática entre ZHA e Zigbee2MQTT?'
+    answer: 'ZHA é uma integração nativa do Home Assistant: você pluga o dongle, adiciona a integração e acabou. Zigbee2MQTT é um programa separado que conversa com o Home Assistant por meio de um broker MQTT, normalmente o Mosquitto. Isso significa duas peças a mais para instalar e manter, em troca de suporte a muito mais modelo de dispositivo e de ferramentas melhores de diagnóstico.'
+  - question: 'Zigbee2MQTT precisa mesmo de um broker MQTT?'
+    answer: 'Precisa. A documentação oficial é explícita: o sistema deve ter um broker MQTT instalado, e o Mosquitto é o recomendado. No Home Assistant OS isso é um add-on que instala em dois cliques, então na prática não é difícil, mas é um componente a mais que pode quebrar.'
+  - question: 'Dá para trocar de ZHA para Zigbee2MQTT sem reparear tudo?'
+    answer: 'Na maioria dos casos não. A troca de stack normalmente exige parear os dispositivos de novo, um por um. Em casa com trinta sensores isso é uma tarde inteira. É justamente por isso que vale decidir com calma antes de montar a rede, e não depois.'
+  - question: 'Qual coordenador comprar?'
+    answer: 'Os dois firmwares dominantes são o zStack, dos chips Texas Instruments CC2652, e o EmberZNet, dos Silicon Labs EFR32MG21 e EFR32MG24. Ambos são suportados por ZHA e por Zigbee2MQTT. Prefira modelo com antena externa e sempre use um cabo extensor USB.'
+  - question: 'Por que preciso de cabo extensor no dongle Zigbee?'
+    answer: 'Porque porta USB 3.0 emite ruído justamente na faixa de 2,4 GHz, que é onde o Zigbee opera. Dongle plugado direto no computador ou no Raspberry Pi sofre queda de alcance mensurável. Um extensor de um metro afastando o dongle do gabinete resolve, e é o ajuste mais barato que existe em rede Zigbee.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Você comprou o dongle Zigbee, plugou no Home Assistant e descobriu que existem dois caminhos para fazer a mesma coisa. Um chama ZHA, aparece na lista de integrações e instala em dois cliques. O outro chama Zigbee2MQTT, é um add-on separado, exige um broker MQTT no meio e tem uma interface web própria.
+
+A pergunta natural é qual é o melhor. A resposta honesta é que os dois funcionam bem, resolvem o mesmo problema por caminhos diferentes, e a escolha errada custa caro por um motivo específico: **trocar de um para o outro depois normalmente obriga a parear todos os dispositivos de novo.**
+
+Numa casa com trinta sensores, isso é uma tarde perdida. Por isso vale gastar quinze minutos decidindo agora.
+
+Este guia compara os dois pelo que importa na prática, mostra a configuração real de cada um e termina com uma recomendação por perfil.
+
+## A diferença de arquitetura, em uma imagem mental
+
+**ZHA** é uma integração que roda **dentro** do Home Assistant. O dongle conversa direto com o HA. Uma peça, um processo.
+
+```
+[Dongle Zigbee] --USB--> [Home Assistant + ZHA]
+```
+
+**Zigbee2MQTT** é um programa **separado**. Ele fala com o dongle, traduz tudo para mensagens MQTT e publica num broker. O Home Assistant lê essas mensagens e cria as entidades sozinho, por descoberta automática.
+
+```
+[Dongle Zigbee] --USB--> [Zigbee2MQTT] --MQTT--> [Mosquitto] --> [Home Assistant]
+```
+
+A documentação oficial do Zigbee2MQTT é direta quanto a isso: são necessários três componentes — o adaptador Zigbee, o sistema hospedeiro e **um broker MQTT instalado**, com o Mosquitto como recomendado.
+
+Essa diferença de arquitetura é a origem de todas as outras. Mais peças significa mais coisas para configurar e mais coisas que podem quebrar. Em compensação, um programa independente evolui no próprio ritmo, sem depender do ciclo de releases do Home Assistant.
+
+## Comparação direta
+
+| | ZHA | Zigbee2MQTT |
+|---|---|---|
+| Instalação | Integração nativa, 2 cliques | Add-on + broker MQTT |
+| Peças em jogo | 1 | 3 |
+| Suporte a dispositivo | Amplo, por clusters padrão | **Muito mais amplo**, por conversor específico de modelo |
+| Dispositivo fora do padrão | Costuma expor entidade genérica ou faltar função | Conversor externo resolve |
+| Interface de diagnóstico | Dentro do HA, mais simples | **Web própria, com mapa de rede** |
+| Atualização de firmware (OTA) | Limitada | **Mais completa** |
+| Consumo de recurso | Menor | Maior (processo + broker) |
+| Sobrevive ao HA cair? | Não | Sim, continua publicando |
+
+O ponto que mais decide na prática é o **suporte a dispositivo**.
+
+ZHA trabalha com os clusters padrão da especificação Zigbee. Isso cobre muito bem o que é padronizado: lâmpada, tomada, sensor de porta, sensor de movimento. Onde ele tropeça é no fabricante que implementou algo fora do padrão — muito comum em dispositivo Tuya, que é justamente o que mais se acha barato no Brasil. O resultado típico é o dispositivo aparecer, mas com metade das funções faltando ou como entidade genérica sem sentido.
+
+Zigbee2MQTT resolve isso com conversores escritos por modelo específico. Quando um dispositivo novo aparece, alguém escreve o conversor e ele passa a funcionar por completo. E se o seu não está na lista, dá para escrever um conversor externo sem esperar release.
+
+## Quando o ZHA é a escolha certa
+
+Não caia na ideia de que Zigbee2MQTT é sempre superior. ZHA é a melhor opção em vários cenários:
+
+- **Você está começando.** Menos peça, menos coisa para dar errado, menos conceito novo ao mesmo tempo.
+- **Seus dispositivos são de marca conhecida e padronizada.** Ikea, Philips Hue, Aqara e Sonoff funcionam bem no ZHA.
+- **Você quer o mínimo de manutenção.** ZHA atualiza junto com o Home Assistant e pronto.
+- **O hardware é apertado.** Um Raspberry Pi 3 rodando HA com dezenas de integrações agradece por não carregar broker e mais um processo.
+
+## Quando vale o Zigbee2MQTT
+
+- **Você tem ou vai ter dispositivo Tuya, Moes, Lonsonho** e afins. É aqui que a diferença de suporte aparece de verdade.
+- **Sua rede é grande.** O mapa de rede do Zigbee2MQTT mostra quem está roteando por quem, e isso é ouro para diagnosticar sensor que cai.
+- **Você quer atualizar firmware dos dispositivos.** O suporte a OTA é bem melhor.
+- **Você reinicia o Home Assistant com frequência.** Zigbee2MQTT continua rodando e publicando; a rede Zigbee não pisca a cada restart do HA.
+
+## Como fica a configuração de cada um
+
+**ZHA** não tem arquivo de configuração para editar no caso comum. Você vai em Configurações, Dispositivos e Serviços, Adicionar Integração, escolhe ZHA, seleciona a porta serial do dongle e escolhe o tipo de rádio. Acabou.
+
+**Zigbee2MQTT** no Home Assistant OS é add-on. A configuração mínima aponta o dongle e o broker:
+
+```yaml
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://core-mosquitto:1883
+  user: seu_usuario_mqtt
+  password: sua_senha_mqtt
+
+serial:
+  port: /dev/serial/by-id/usb-Silicon_Labs_...-if00-port0
+  adapter: ember
+
+homeassistant:
+  enabled: true
+
+frontend:
+  port: 8099
+
+advanced:
+  network_key: GENERATE
+  pan_id: GENERATE
+  channel: 25
+```
+
+Três detalhes desse arquivo que evitam dor de cabeça:
+
+**Use sempre o caminho `/dev/serial/by-id/`,** nunca `/dev/ttyUSB0`. O número muda quando você desconecta e reconecta, ou quando adiciona outro dispositivo USB, e aí o Zigbee2MQTT não sobe mais. O caminho `by-id` é estável porque deriva do número de série do adaptador.
+
+**O `adapter` precisa bater com o chip.** Para EFR32MG21 e EFR32MG24, que são Silicon Labs, o valor é `ember`. Para os CC2652 da Texas Instruments é `zstack`. Errar aqui é a causa mais comum de "não conecta" na primeira instalação.
+
+**O `channel`.** O padrão é 11, que sobrepõe o canal 1 do Wi-Fi. Os canais Zigbee 15, 20 e 25 são os que menos colidem com Wi-Fi doméstico. Escolha antes de parear tudo: mudar depois derruba a rede.
+
+## O hardware que os dois precisam
+
+<ComparisonTable
+  source="zigbee2mqtt-ou-zha-home-assistant"
+  rows={[
+    { name: 'Dongle Zigbee 3.0 EFR32MG24', brand: 'Genérica', rating: 4.5, highlight: 'EmberZNet, antena externa, serve nos dois', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0GGY9KS3P?tag=nerdcaseiro-20' }] },
+    { name: 'Gateway USB Zigbee CP2102N + EFR32MG21', brand: 'Genérica', rating: 4.0, highlight: 'Alternativa com serial bem suportada no Linux', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0G24L33V5?tag=nerdcaseiro-20' }] },
+    { name: 'Raspberry Pi 5 4 GB Anatel', brand: 'Raspberry Pi', rating: 4.7, highlight: 'Roda HA, Mosquitto e Z2M juntos com folga', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20' }] },
+  ]}
+/>
+
+## 1. Dongle Zigbee 3.0 EFR32MG24
+
+![Zigbee 3.0 Dongle USB EFR32MG24](/images/produtos/dongle-efr32mg24.webp)
+
+Marca: Genérica · Nota 4,5
+
+O EFR32MG24 é a geração mais recente dos rádios Silicon Labs e roda firmware EmberZNet, que é um dos dois padrões que tanto o ZHA quanto o Zigbee2MQTT suportam bem. Comprando esse chip você não fica preso a uma escolha: dá para começar no ZHA e migrar depois se quiser.
+
+A antena externa é o que eu olharia primeiro em qualquer coordenador. Em casa de alvenaria, a diferença entre antena integrada na plaquinha e antena externa é da ordem de cômodos inteiros de alcance.
+
+O ponto de atenção é comum a todo dongle Zigbee, e vale repetir porque quase todo mundo erra: **não plugue direto no Raspberry Pi ou no gabinete.** Porta USB 3.0 emite ruído em 2,4 GHz, exatamente onde o Zigbee trabalha. Um cabo extensor de um metro afastando o dongle resolve uma queda de alcance que muita gente passa meses tentando entender.
+
+<ProsCons
+  pros={['Chip EFR32MG24 com EmberZNet: serve em ZHA e Zigbee2MQTT', 'Antena externa, ganho real de alcance em alvenaria', 'Nota 4,5, a melhor entre os dongles da faixa']}
+  cons={['Precisa de cabo extensor USB para render o alcance prometido', 'Marca genérica: suporte depende do vendedor', 'Sem case robusto, fica exposto']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0GGY9KS3P?tag=nerdcaseiro-20" store="amazon" source="zigbee2mqtt-ou-zha-home-assistant" />
+
+---
+
+## 2. Gateway USB Zigbee com CP2102N e EFR32MG21
+
+![Gateway USB Zigbee 3.0 com CP2102N e EFR32MG21](/images/produtos/gateway-zigbee-cp2102n.webp)
+
+Marca: Genérica · Nota 4,0
+
+Alternativa com o EFR32MG21, que é a geração anterior e ainda o chip mais comum em coordenador doméstico. Também roda EmberZNet, então vale o mesmo `adapter: ember` na configuração.
+
+O detalhe que me faz manter esse modelo na lista é o conversor serial CP2102N. Ele é muito bem reconhecido no Linux, sem drama de driver, e aparece direitinho em `/dev/serial/by-id/`. Alguns conversores mais baratos dão trabalho justamente nesse ponto.
+
+A nota 4,0 é o que segura ele em segundo lugar. E atenção na hora de comprar: nem toda versão desse modelo vem com antena externa, e a foto do anúncio nem sempre corresponde à variante enviada.
+
+<ProsCons
+  pros={['CP2102N é bem reconhecido no Linux, sem drama de driver', 'EFR32MG21 com EmberZNet, suportado nos dois caminhos', 'Costuma custar menos que o MG24']}
+  cons={['Nota 4,0, abaixo do EFR32MG24', 'Nem toda versão vem com antena externa', 'Geração anterior de rádio']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0G24L33V5?tag=nerdcaseiro-20" store="amazon" source="zigbee2mqtt-ou-zha-home-assistant" />
+
+---
+
+## 3. Raspberry Pi 5 4 GB — o hospedeiro que aguenta os três
+
+![Raspberry Pi 5 Model B Anatel 4 GB](/images/produtos/raspberry-pi-5-4gb.webp)
+
+Marca: Raspberry Pi · Nota 4,7
+
+Se você vai pelo caminho do Zigbee2MQTT, o hospedeiro passa a rodar três coisas: Home Assistant, o broker Mosquitto e o próprio Zigbee2MQTT. O Pi 5 de 4 GB dá conta disso com folga confortável.
+
+A versão Anatel importa por um motivo prático: é a homologada para venda no Brasil, com garantia e suporte locais. Placa importada por conta própria funciona igual, mas você fica sozinho se der problema.
+
+Dois avisos de quem já apanhou. O Pi 5 exige **fonte USB-C de 27 W** — carregador de celular comum não entrega a corrente e a placa reinicia sob carga, que é exatamente o tipo de falha intermitente difícil de diagnosticar. E ele esquenta o suficiente para pedir dissipador ou cooler; sem isso a placa reduz o clock e tudo fica lento sem motivo aparente.
+
+<ProsCons
+  pros={['Roda HA, Mosquitto e Zigbee2MQTT juntos com folga', 'Versão Anatel: homologada, com garantia no Brasil', 'Nota 4,7']}
+  cons={['Exige fonte USB-C de 27 W, carregador comum não serve', 'Esquenta: pede dissipador ou cooler', 'Cartão SD comum é gargalo, prefira A2 ou SSD']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="zigbee2mqtt-ou-zha-home-assistant" />
+
+---
+
+## Perguntas frequentes
+
+**Qual a diferença prática entre ZHA e Zigbee2MQTT?**
+ZHA é uma integração nativa do Home Assistant: você pluga o dongle, adiciona a integração e acabou. Zigbee2MQTT é um programa separado que conversa com o HA por um broker MQTT, normalmente o Mosquitto. São duas peças a mais para manter, em troca de suporte a muito mais modelo e de ferramentas melhores de diagnóstico.
+
+**Zigbee2MQTT precisa mesmo de um broker MQTT?**
+Precisa. A documentação oficial é explícita: o sistema deve ter um broker MQTT instalado, e o Mosquitto é o recomendado. No Home Assistant OS é um add-on que instala em dois cliques, mas é um componente a mais que pode quebrar.
+
+**Dá para trocar de ZHA para Zigbee2MQTT sem reparear tudo?**
+Na maioria dos casos não. A troca de stack normalmente exige parear os dispositivos de novo, um por um. Em casa com trinta sensores isso é uma tarde inteira — por isso vale decidir antes de montar a rede.
+
+**Qual coordenador comprar?**
+Os dois firmwares dominantes são o zStack, dos chips Texas Instruments CC2652, e o EmberZNet, dos Silicon Labs EFR32MG21 e EFR32MG24. Ambos são suportados pelos dois caminhos. Prefira modelo com antena externa e sempre use cabo extensor USB.
+
+**Por que preciso de cabo extensor no dongle Zigbee?**
+Porque porta USB 3.0 emite ruído justamente na faixa de 2,4 GHz, onde o Zigbee opera. Dongle plugado direto sofre queda de alcance mensurável. Um extensor de um metro resolve, e é o ajuste mais barato que existe em rede Zigbee.
+
+## Veredicto
+
+**Se você está começando agora e seus dispositivos são de marca conhecida, vá de ZHA.** Menos peça, menos conceito novo, e ele resolve muito bem. Não existe vergonha nenhuma em usar a opção simples que funciona.
+
+**Se você já tem ou pretende comprar dispositivo Tuya e similares, vá direto de Zigbee2MQTT.** É onde a diferença de suporte aparece de verdade, e como a migração custa reparear tudo, começar no lugar certo economiza uma tarde inteira lá na frente.
+
+Independente do caminho, duas decisões valem mais que a escolha do software: **compre um coordenador com antena externa** e **use cabo extensor USB**. Rede Zigbee com problema de alcance dá sintoma parecido com problema de software, e muita gente troca de ZHA para Zigbee2MQTT achando que resolve, quando o que faltava era um metro de cabo.
