@@ -2,7 +2,7 @@
 
 ## Projeto
 
-Site estático em **Astro 4** com MDX, hospedado na Hostinger (FTP). Nicho: **tecnologia para a casa** — automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets. Conteúdo escrito por um **programador maker** (E-E-A-T real), com o código que funciona de verdade.
+Site estático em **Astro 4** com MDX, hospedado na Hostinger (FTP). Nicho: **tecnologia para a casa** — automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets. Conteúdo escrito na voz de um **programador maker**, com **código ancorado em documentação oficial** — fonte e versão sempre citadas. O autor **não valida em bancada**: a autoridade vem da fonte primária, não de teste próprio (ver *Tutorial técnico* nas regras editoriais).
 
 Domínio: `nerdcaseiro.com.br`
 
@@ -12,7 +12,7 @@ Faz parte de uma **rede de sites sobre a casa**, do mesmo autor (Márcio Costa):
 
 ### Posicionamento (decisão-chave)
 Não ser "blog de gadget genérico" (compete com portais gigantes). Ter:
-- **Núcleo de autoridade** — *"o programador que automatiza a própria casa"*: tutoriais com **código que funciona** (Home Assistant, ESPHome, ESP32, Klipper). É o moat — diferencia de fazenda de conteúdo de IA.
+- **Núcleo de autoridade** — tutoriais técnicos (Home Assistant, ESPHome, ESP32, Klipper) com **código conferido na documentação oficial**, versão declarada e link para a fonte. É o moat — diferencia de fazenda de conteúdo de IA, que publica config inventada por analogia.
 - **Camada larga** — reviews/comparativos de gadgets de casa inteligente (topo de funil que se beneficia do halo do núcleo).
 
 ### Monetização — 3 motores
@@ -84,7 +84,13 @@ products:
 - Links de afiliado usam `rel="sponsored nofollow noopener noreferrer"`. UTM source é sempre `nerdcaseiro` (o `AffiliateButton` cuida).
 - **Preço:** Mercado Livre pode exibir (`price` + `priceCheckedAt: 'DD/MM/AAAA'`). **Amazon não** (regra Amazon — só com PA-API).
 - **Recorrência (a joia):** filamento 3D é consumível → priorizar no calendário.
-- **Tutorial técnico (moat):** quando o post for tutorial de automação, incluir **código real e testado** (blocos ```yaml / ```cpp). O autor (programador) valida o código.
+- **Tutorial técnico (moat) — protocolo obrigatório.** O autor **não testa em bancada**. Por isso todo tutorial segue:
+  - **Código só de fonte primária** — doc oficial (ESPHome, Home Assistant, Klipper), repo oficial ou exemplo do fabricante. **Nunca** montar YAML/config por analogia: é assim que se inventa opção que não existe.
+  - **Versão declarada** no post (ex.: "conforme a documentação do ESPHome 2026.7"). HA e ESPHome quebram config entre releases; tutorial sem versão vira armadilha em 6 meses.
+  - **Link para a doc oficial** no corpo do post, para o leitor conferir.
+  - **Varredura de comunidade** (fórum HA, r/homeassistant, issues do GitHub) atrás do gotcha conhecido — o "funciona na doc mas quebra na prática".
+  - **Sem primeira pessoa fingida.** Proibido "testei aqui em casa", "na minha impressora", "montei e funcionou". O texto descreve o procedimento e cita a fonte.
+  - **Evitar tutorial de falha cara**: flash que pode brickar, bateria de lítio, rede elétrica. Preferir o reversível.
 - Títulos entre 40-70 caracteres; descrições meta entre 120-160 caracteres. (Não só o máximo — o Bing Webmaster Tools sinaliza título/descrição **curtos demais** como erro de SEO moderado; evitar títulos telegráficos e descrições genéricas de uma linha.)
 - Posts saem com `draft: true` por padrão.
 - **Imagem de capa / og:image:** a foto do **1º produto** vira a capa nos cards e o cartão social (`scripts/make-og-images.mjs` → `public/images/og/<slug>.jpg`, JPG 1200×630). Coloque o produto principal em primeiro. **Nunca WebP na og:image** (WhatsApp não renderiza).
@@ -107,6 +113,27 @@ A skill `/lote-semanal` segue **checkpoints de aprovação do usuário** (ver `.
 
 - `.github/workflows/publish-scheduled.yml` muda `draft:true → false` em posts com `pubDate <= hoje`, faz deploy e notifica o IndexNow.
 - ⚠️ **O cron do GitHub Actions tem falhado** — quem dispara de forma confiável é o **n8n** (pasta `n8n/`), via `workflow_dispatch`. Não depender do cron do GitHub.
+
+
+### Cadência: 10 posts/semana em duas trilhas (desde 04/09/2026)
+
+| Trilha | Horário | Tema | `pubDate` |
+|---|---|---|---|
+| **Manhã** — 7/semana (todo dia) | 07:00 BRT | review / comparativo / gadget | só a data: `pubDate: 2026-09-16` |
+| **Tarde** — 3/semana (**ter, qui, sáb**) | 18:00 BRT | **tutorial técnico** (ver protocolo nas regras editoriais) | **com hora**: `pubDate: 2026-09-16T18:00:00-03:00` |
+
+⚠️ **A hora no `pubDate` do post da tarde é obrigatória.** Sem ela o post vale como
+meia-noite e a rodada das 07:00 publica os dois juntos, no mesmo horário. Verificado:
+`publish-scheduled.mjs` compara timestamp completo (`pubDate > now`), o YAML converte
+`2026-09-16T18:00:00-03:00` em `Date` e o `z.date()` do schema aceita — não precisa
+mudar script nem schema.
+
+**Nunca pôr dois posts do mesmo pilar no mesmo dia** — é o que faz os dois competirem
+pela mesma busca e dividirem a força entre si. A separação de tema entre as trilhas
+existe exatamente para isso.
+
+O disparo das 18h vem do **n8n** (regra cron `0 5 18 * * *`, fuso America/Sao_Paulo,
+18:05 para dar folga contra atraso de relógio). Ver [[cadencia-10-por-semana-rede]].
 
 ## Estrutura de pastas
 
