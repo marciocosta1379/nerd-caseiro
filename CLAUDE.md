@@ -140,7 +140,6 @@ A skill `/lote-semanal` segue **checkpoints de aprovação do usuário** (ver `.
 - `.github/workflows/publish-scheduled.yml` muda `draft:true → false` em posts com `pubDate <= hoje`, faz deploy e notifica o IndexNow.
 - ⚠️ **O cron do GitHub Actions tem falhado** — quem dispara de forma confiável é o **n8n** (pasta `n8n/`), via `workflow_dispatch`. Não depender do cron do GitHub.
 
-
 ### Cadência: 10 posts/semana em duas trilhas (desde 04/09/2026)
 
 | Trilha | Horário | Tema | `pubDate` |
@@ -182,4 +181,4 @@ Em `.env` (não comitar). Ver `.env.example`. Necessário: FTP da Hostinger, `AM
 - Criar repo GitHub + secrets FTP + configurar trigger n8n.
 - Criar propriedade GA4 e trocar `G-XXXXXXXXXX` em `BaseLayout.astro`. Verificar Search Console.
 - Newsletter/MailerLite: **desabilitada** (componente removido). Reavaliar no futuro se quiser captar e-mails.
-- Adicionar `public/images/ml-perfil.png` (print do perfil "Rede Caseira" no ML) para o `MLAvisoModal`.
+
