@@ -1,0 +1,283 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 1058" width="772" height="1058" role="img" aria-label="As seis montagens de cabo RJ-45 com o pino de entrada e de saida de cada fio">
+<title>As seis montagens de cabo RJ-45</title>
+<style>
+ .bg{fill:#fff}
+ .h{font:700 24px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;fill:#111827}
+ .hs{font:400 13px system-ui,sans-serif;fill:#4b5563}
+ .pt{font:700 13.5px system-ui,sans-serif;fill:#111827}
+ .ps{font:400 11.5px system-ui,sans-serif;fill:#6b7280}
+ .th{font:700 9px system-ui,sans-serif;fill:#9ca3af;text-anchor:middle;letter-spacing:.7px}
+ .thl{font:700 9px system-ui,sans-serif;fill:#9ca3af;letter-spacing:.7px}
+ .pino{font:700 14px system-ui,sans-serif;fill:#374151;text-anchor:middle}
+ .pinox{font:700 14px system-ui,sans-serif;fill:#b3243b;text-anchor:middle}
+ .pinoff{font:700 14px system-ui,sans-serif;fill:#c3c9d1;text-anchor:middle}
+ .fl{font:500 12px system-ui,sans-serif;fill:#1f2937}
+ .fno{font:400 11px system-ui,sans-serif;fill:#c3c9d1}
+ .sep{stroke:#e5e7eb;stroke-width:1}
+ .hl{fill:#fdeaee}.off{fill:#f7f8f9}
+ .vazio{fill:none;stroke:#e5e7eb;stroke-dasharray:4 3}
+ .rod{font:400 11.5px system-ui,sans-serif;fill:#6b7280}
+ @media (prefers-color-scheme:dark){
+  .bg{fill:#0f1115}.h,.pt{fill:#f3f4f6}.hs{fill:#cbd5e1}.ps,.th,.thl,.rod{fill:#9ca3af}
+  .pino{fill:#e5e7eb}.pinox{fill:#f4796b}.pinoff{fill:#4b5563}.fl{fill:#e5e7eb}
+  .hl{fill:#2a1418}.off{fill:#15181d}.sep{stroke:#374151}.vazio{stroke:#374151}.fno{fill:#4b5563}
+ }
+</style>
+<rect class="bg" width="100%" height="100%"/>
+<text x="24" y="34" class="h">As seis montagens de cabo RJ-45</text>
+<text x="24" y="56" class="hs">Cada linha é um fio: em que pino ele entra na ponta 1 e em que pino ele sai na ponta 2.</text>
+<text x="24" y="70" class="hs">O fio não muda de cor no meio do cabo — por isso a cor é a mesma dos dois lados. Vermelho = pino que muda.</text>
+<text x="24" y="92" class="pt">1. Direto — T568B nas duas pontas</text>
+<text x="24" y="109" class="ps">o de sempre: PC, TV e console no roteador</text>
+<text x="53" y="132" class="th">PINO</text>
+<text x="72" y="132" class="thl">FIO</text>
+<text x="321" y="132" class="th">VAI NO</text>
+<line x1="36" y1="138" x2="362" y2="138" class="sep"/>
+<text x="53" y="159" class="pino">1</text>
+<rect x="72" y="145" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="148.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="153.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="158.5" width="34" height="4" fill="#E8722C"/>
+<text x="122" y="159" class="fl">Branco/Laranja</text>
+<text x="321" y="159" class="pino">1</text>
+<text x="53" y="185" class="pino">2</text>
+<rect x="72" y="171" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="122" y="185" class="fl">Laranja</text>
+<text x="321" y="185" class="pino">2</text>
+<text x="53" y="211" class="pino">3</text>
+<rect x="72" y="197" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="200.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="205.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="210.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="122" y="211" class="fl">Branco/Verde</text>
+<text x="321" y="211" class="pino">3</text>
+<text x="53" y="237" class="pino">4</text>
+<rect x="72" y="223" width="40" height="18" rx="3" fill="#2B6CB0" stroke="#6b7280"/>
+<text x="122" y="237" class="fl">Azul</text>
+<text x="321" y="237" class="pino">4</text>
+<text x="53" y="263" class="pino">5</text>
+<rect x="72" y="249" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="252.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="257.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="262.5" width="34" height="4" fill="#2B6CB0"/>
+<text x="122" y="263" class="fl">Branco/Azul</text>
+<text x="321" y="263" class="pino">5</text>
+<text x="53" y="289" class="pino">6</text>
+<rect x="72" y="275" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="122" y="289" class="fl">Verde</text>
+<text x="321" y="289" class="pino">6</text>
+<text x="53" y="315" class="pino">7</text>
+<rect x="72" y="301" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="304.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="309.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="314.5" width="34" height="4" fill="#8A5A2B"/>
+<text x="122" y="315" class="fl">Branco/Marrom</text>
+<text x="321" y="315" class="pino">7</text>
+<text x="53" y="341" class="pino">8</text>
+<rect x="72" y="327" width="40" height="18" rx="3" fill="#8A5A2B" stroke="#6b7280"/>
+<text x="122" y="341" class="fl">Marrom</text>
+<text x="321" y="341" class="pino">8</text>
+<text x="396" y="92" class="pt">2. Direto — T568A nas duas pontas</text>
+<text x="396" y="109" class="ps">funciona igual; só não misture as pontas</text>
+<text x="425" y="132" class="th">PINO</text>
+<text x="444" y="132" class="thl">FIO</text>
+<text x="693" y="132" class="th">VAI NO</text>
+<line x1="408" y1="138" x2="734" y2="138" class="sep"/>
+<text x="425" y="159" class="pino">1</text>
+<rect x="444" y="145" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="148.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="153.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="158.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="494" y="159" class="fl">Branco/Verde</text>
+<text x="693" y="159" class="pino">1</text>
+<text x="425" y="185" class="pino">2</text>
+<rect x="444" y="171" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="494" y="185" class="fl">Verde</text>
+<text x="693" y="185" class="pino">2</text>
+<text x="425" y="211" class="pino">3</text>
+<rect x="444" y="197" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="200.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="205.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="210.5" width="34" height="4" fill="#E8722C"/>
+<text x="494" y="211" class="fl">Branco/Laranja</text>
+<text x="693" y="211" class="pino">3</text>
+<text x="425" y="237" class="pino">4</text>
+<rect x="444" y="223" width="40" height="18" rx="3" fill="#2B6CB0" stroke="#6b7280"/>
+<text x="494" y="237" class="fl">Azul</text>
+<text x="693" y="237" class="pino">4</text>
+<text x="425" y="263" class="pino">5</text>
+<rect x="444" y="249" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="252.5" width="34" height="4" fill="#2B6CB0"/><rect x="447" y="257.5" width="34" height="4" fill="#2B6CB0"/><rect x="447" y="262.5" width="34" height="4" fill="#2B6CB0"/>
+<text x="494" y="263" class="fl">Branco/Azul</text>
+<text x="693" y="263" class="pino">5</text>
+<text x="425" y="289" class="pino">6</text>
+<rect x="444" y="275" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="494" y="289" class="fl">Laranja</text>
+<text x="693" y="289" class="pino">6</text>
+<text x="425" y="315" class="pino">7</text>
+<rect x="444" y="301" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="304.5" width="34" height="4" fill="#8A5A2B"/><rect x="447" y="309.5" width="34" height="4" fill="#8A5A2B"/><rect x="447" y="314.5" width="34" height="4" fill="#8A5A2B"/>
+<text x="494" y="315" class="fl">Branco/Marrom</text>
+<text x="693" y="315" class="pino">7</text>
+<text x="425" y="341" class="pino">8</text>
+<rect x="444" y="327" width="40" height="18" rx="3" fill="#8A5A2B" stroke="#6b7280"/>
+<text x="494" y="341" class="fl">Marrom</text>
+<text x="693" y="341" class="pino">8</text>
+<text x="24" y="406" class="pt">3. Crossover 100 Mbps — T568A + T568B</text>
+<text x="24" y="423" class="ps">cruza só os pares verde e laranja</text>
+<text x="53" y="446" class="th">PINO</text>
+<text x="72" y="446" class="thl">FIO</text>
+<text x="321" y="446" class="th">VAI NO</text>
+<line x1="36" y1="452" x2="362" y2="452" class="sep"/>
+<rect x="36" y="456" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="473" class="pino">1</text>
+<rect x="72" y="459" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="462.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="467.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="472.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="122" y="473" class="fl">Branco/Verde</text>
+<text x="321" y="473" class="pinox">3</text>
+<rect x="36" y="482" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="499" class="pino">2</text>
+<rect x="72" y="485" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="122" y="499" class="fl">Verde</text>
+<text x="321" y="499" class="pinox">6</text>
+<rect x="36" y="508" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="525" class="pino">3</text>
+<rect x="72" y="511" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="514.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="519.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="524.5" width="34" height="4" fill="#E8722C"/>
+<text x="122" y="525" class="fl">Branco/Laranja</text>
+<text x="321" y="525" class="pinox">1</text>
+<text x="53" y="551" class="pino">4</text>
+<rect x="72" y="537" width="40" height="18" rx="3" fill="#2B6CB0" stroke="#6b7280"/>
+<text x="122" y="551" class="fl">Azul</text>
+<text x="321" y="551" class="pino">4</text>
+<text x="53" y="577" class="pino">5</text>
+<rect x="72" y="563" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="566.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="571.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="576.5" width="34" height="4" fill="#2B6CB0"/>
+<text x="122" y="577" class="fl">Branco/Azul</text>
+<text x="321" y="577" class="pino">5</text>
+<rect x="36" y="586" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="603" class="pino">6</text>
+<rect x="72" y="589" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="122" y="603" class="fl">Laranja</text>
+<text x="321" y="603" class="pinox">2</text>
+<text x="53" y="629" class="pino">7</text>
+<rect x="72" y="615" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="618.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="623.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="628.5" width="34" height="4" fill="#8A5A2B"/>
+<text x="122" y="629" class="fl">Branco/Marrom</text>
+<text x="321" y="629" class="pino">7</text>
+<text x="53" y="655" class="pino">8</text>
+<rect x="72" y="641" width="40" height="18" rx="3" fill="#8A5A2B" stroke="#6b7280"/>
+<text x="122" y="655" class="fl">Marrom</text>
+<text x="321" y="655" class="pino">8</text>
+<text x="396" y="406" class="pt">4. Crossover Gigabit — 4 pares cruzados</text>
+<text x="396" y="423" class="ps">o único que vale em 1000BASE-T</text>
+<text x="425" y="446" class="th">PINO</text>
+<text x="444" y="446" class="thl">FIO</text>
+<text x="693" y="446" class="th">VAI NO</text>
+<line x1="408" y1="452" x2="734" y2="452" class="sep"/>
+<rect x="408" y="456" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="473" class="pino">1</text>
+<rect x="444" y="459" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="462.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="467.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="472.5" width="34" height="4" fill="#E8722C"/>
+<text x="494" y="473" class="fl">Branco/Laranja</text>
+<text x="693" y="473" class="pinox">3</text>
+<rect x="408" y="482" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="499" class="pino">2</text>
+<rect x="444" y="485" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="494" y="499" class="fl">Laranja</text>
+<text x="693" y="499" class="pinox">6</text>
+<rect x="408" y="508" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="525" class="pino">3</text>
+<rect x="444" y="511" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="514.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="519.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="524.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="494" y="525" class="fl">Branco/Verde</text>
+<text x="693" y="525" class="pinox">1</text>
+<rect x="408" y="534" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="551" class="pino">4</text>
+<rect x="444" y="537" width="40" height="18" rx="3" fill="#2B6CB0" stroke="#6b7280"/>
+<text x="494" y="551" class="fl">Azul</text>
+<text x="693" y="551" class="pinox">7</text>
+<rect x="408" y="560" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="577" class="pino">5</text>
+<rect x="444" y="563" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="566.5" width="34" height="4" fill="#2B6CB0"/><rect x="447" y="571.5" width="34" height="4" fill="#2B6CB0"/><rect x="447" y="576.5" width="34" height="4" fill="#2B6CB0"/>
+<text x="494" y="577" class="fl">Branco/Azul</text>
+<text x="693" y="577" class="pinox">8</text>
+<rect x="408" y="586" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="603" class="pino">6</text>
+<rect x="444" y="589" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="494" y="603" class="fl">Verde</text>
+<text x="693" y="603" class="pinox">2</text>
+<rect x="408" y="612" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="629" class="pino">7</text>
+<rect x="444" y="615" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="618.5" width="34" height="4" fill="#8A5A2B"/><rect x="447" y="623.5" width="34" height="4" fill="#8A5A2B"/><rect x="447" y="628.5" width="34" height="4" fill="#8A5A2B"/>
+<text x="494" y="629" class="fl">Branco/Marrom</text>
+<text x="693" y="629" class="pinox">4</text>
+<rect x="408" y="638" width="330" height="23" rx="4" class="hl"/>
+<text x="425" y="655" class="pino">8</text>
+<rect x="444" y="641" width="40" height="18" rx="3" fill="#8A5A2B" stroke="#6b7280"/>
+<text x="494" y="655" class="fl">Marrom</text>
+<text x="693" y="655" class="pinox">5</text>
+<text x="24" y="720" class="pt">5. Rollover (console) — espelhado</text>
+<text x="24" y="737" class="ps">1 no 8, 2 no 7, 3 no 6, 4 no 5</text>
+<text x="53" y="760" class="th">PINO</text>
+<text x="72" y="760" class="thl">FIO</text>
+<text x="321" y="760" class="th">VAI NO</text>
+<line x1="36" y1="766" x2="362" y2="766" class="sep"/>
+<rect x="36" y="770" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="787" class="pino">1</text>
+<rect x="72" y="773" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="776.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="781.5" width="34" height="4" fill="#E8722C"/><rect x="75" y="786.5" width="34" height="4" fill="#E8722C"/>
+<text x="122" y="787" class="fl">Branco/Laranja</text>
+<text x="321" y="787" class="pinox">8</text>
+<rect x="36" y="796" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="813" class="pino">2</text>
+<rect x="72" y="799" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="122" y="813" class="fl">Laranja</text>
+<text x="321" y="813" class="pinox">7</text>
+<rect x="36" y="822" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="839" class="pino">3</text>
+<rect x="72" y="825" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="828.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="833.5" width="34" height="4" fill="#2E9E4F"/><rect x="75" y="838.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="122" y="839" class="fl">Branco/Verde</text>
+<text x="321" y="839" class="pinox">6</text>
+<rect x="36" y="848" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="865" class="pino">4</text>
+<rect x="72" y="851" width="40" height="18" rx="3" fill="#2B6CB0" stroke="#6b7280"/>
+<text x="122" y="865" class="fl">Azul</text>
+<text x="321" y="865" class="pinox">5</text>
+<rect x="36" y="874" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="891" class="pino">5</text>
+<rect x="72" y="877" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="880.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="885.5" width="34" height="4" fill="#2B6CB0"/><rect x="75" y="890.5" width="34" height="4" fill="#2B6CB0"/>
+<text x="122" y="891" class="fl">Branco/Azul</text>
+<text x="321" y="891" class="pinox">4</text>
+<rect x="36" y="900" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="917" class="pino">6</text>
+<rect x="72" y="903" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="122" y="917" class="fl">Verde</text>
+<text x="321" y="917" class="pinox">3</text>
+<rect x="36" y="926" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="943" class="pino">7</text>
+<rect x="72" y="929" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="75" y="932.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="937.5" width="34" height="4" fill="#8A5A2B"/><rect x="75" y="942.5" width="34" height="4" fill="#8A5A2B"/>
+<text x="122" y="943" class="fl">Branco/Marrom</text>
+<text x="321" y="943" class="pinox">2</text>
+<rect x="36" y="952" width="330" height="23" rx="4" class="hl"/>
+<text x="53" y="969" class="pino">8</text>
+<rect x="72" y="955" width="40" height="18" rx="3" fill="#8A5A2B" stroke="#6b7280"/>
+<text x="122" y="969" class="fl">Marrom</text>
+<text x="321" y="969" class="pinox">1</text>
+<text x="396" y="720" class="pt">6. Só dois pares — pinos 1, 2, 3 e 6</text>
+<text x="396" y="737" class="ps">dá link, mas trava em 100 Mbps</text>
+<text x="425" y="760" class="th">PINO</text>
+<text x="444" y="760" class="thl">FIO</text>
+<text x="693" y="760" class="th">VAI NO</text>
+<line x1="408" y1="766" x2="734" y2="766" class="sep"/>
+<text x="425" y="787" class="pino">1</text>
+<rect x="444" y="773" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="776.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="781.5" width="34" height="4" fill="#E8722C"/><rect x="447" y="786.5" width="34" height="4" fill="#E8722C"/>
+<text x="494" y="787" class="fl">Branco/Laranja</text>
+<text x="693" y="787" class="pino">1</text>
+<text x="425" y="813" class="pino">2</text>
+<rect x="444" y="799" width="40" height="18" rx="3" fill="#E8722C" stroke="#6b7280"/>
+<text x="494" y="813" class="fl">Laranja</text>
+<text x="693" y="813" class="pino">2</text>
+<text x="425" y="839" class="pino">3</text>
+<rect x="444" y="825" width="40" height="18" rx="3" fill="#fff" stroke="#9aa3ad"/><rect x="447" y="828.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="833.5" width="34" height="4" fill="#2E9E4F"/><rect x="447" y="838.5" width="34" height="4" fill="#2E9E4F"/>
+<text x="494" y="839" class="fl">Branco/Verde</text>
+<text x="693" y="839" class="pino">3</text>
+<rect x="408" y="848" width="330" height="23" rx="4" class="off"/>
+<text x="425" y="865" class="pinoff">4</text>
+<rect x="444" y="851" width="40" height="18" rx="3" class="vazio"/>
+<text x="494" y="865" class="fno">não usado</text>
+<text x="693" y="865" class="pinoff">–</text>
+<rect x="408" y="874" width="330" height="23" rx="4" class="off"/>
+<text x="425" y="891" class="pinoff">5</text>
+<rect x="444" y="877" width="40" height="18" rx="3" class="vazio"/>
+<text x="494" y="891" class="fno">não usado</text>
+<text x="693" y="891" class="pinoff">–</text>
+<text x="425" y="917" class="pino">6</text>
+<rect x="444" y="903" width="40" height="18" rx="3" fill="#2E9E4F" stroke="#6b7280"/>
+<text x="494" y="917" class="fl">Verde</text>
+<text x="693" y="917" class="pino">6</text>
+<rect x="408" y="926" width="330" height="23" rx="4" class="off"/>
+<text x="425" y="943" class="pinoff">7</text>
+<rect x="444" y="929" width="40" height="18" rx="3" class="vazio"/>
+<text x="494" y="943" class="fno">não usado</text>
+<text x="693" y="943" class="pinoff">–</text>
+<rect x="408" y="952" width="330" height="23" rx="4" class="off"/>
+<text x="425" y="969" class="pinoff">8</text>
+<rect x="444" y="955" width="40" height="18" rx="3" class="vazio"/>
+<text x="494" y="969" class="fno">não usado</text>
+<text x="693" y="969" class="pinoff">–</text>
+<text x="24" y="1045" class="rod">Vista de frente para o conector, com a trava para baixo — pino 1 à esquerda. Fontes: ANSI/TIA-568; pinagem de console Cisco.</text>
+</svg>

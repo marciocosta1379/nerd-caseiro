@@ -1,0 +1,279 @@
+---
+title: 'Backup do Home Assistant: como não perder sua automação'
+description: 'Backup automático, retenção, armazenamento fora do aparelho e a chave de emergência que quase ninguém guarda — e sem a qual o backup não restaura.'
+pubDate: 2026-09-17T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'backup', 'tutorial', 'automacao-residencial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'SanDisk SSD Portátil 1 TB até 800 MB/s USB-C USB 3.2 Gen 2'
+    brand: 'SanDisk'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-ssd-portatil-1tb.webp'
+    pros:
+      - 'Rápido o bastante para restaurar sem esperar horas'
+      - 'Sem partes móveis: aguenta bem ficar ligado direto'
+    cons:
+      - 'Mais caro por gigabyte que HD mecânico'
+      - 'Espaço muito acima do que backup de HA precisa'
+  - name: 'SSD Externo Portátil SanDisk Extreme 1 TB USB 3.1 Type-C'
+    brand: 'SanDisk'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08GTYFC37?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-extreme-ssd-1tb.webp'
+    pros:
+      - 'Corpo resistente, pensado para transporte'
+      - 'Serve como cofre de backup fora de casa'
+    cons:
+      - 'Preço acima do necessário só para backup de automação'
+      - 'Cabo Type-C proprietário é fácil de perder'
+  - name: 'SanDisk Cartão microSDXC Extreme 64 GB A2 UHS-I'
+    brand: 'SanDisk'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-extreme-64gb.webp'
+    pros:
+      - 'Classificação A2, que é a recomendada na documentação'
+      - 'Cartão reserva permite restaurar sem formatar o atual'
+    cons:
+      - 'Cartão SD tem vida finita e falha sem aviso'
+      - 'Falsificação é comum: compre de vendedor confiável'
+  - name: 'SanDisk Ultra Shift Pen Drive USB 3.0 128 GB'
+    brand: 'SanDisk'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08K7HMWHF?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-ultra-shift-128gb.webp'
+    pros:
+      - 'Barato e suficiente: backup de HA é pequeno'
+      - 'Fácil de guardar longe do aparelho'
+    cons:
+      - 'Mais lento que SSD na restauração'
+      - 'Pen drive é fácil de perder e de esquecer de atualizar'
+  - name: 'HD Externo Portátil UnionSine 1 TB compatível com Mac e PC'
+    brand: 'UnionSine'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B091FV14V9?tag=nerdcaseiro-20'
+    image: '/images/produtos/hd-externo-unionsine-1tb.webp'
+    pros:
+      - 'Muito espaço pelo menor preço da lista'
+      - 'Serve para backup da casa inteira, não só do HA'
+    cons:
+      - 'Disco mecânico: mais frágil a queda e vibração'
+      - 'Mais lento que qualquer SSD'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Existe um momento que todo mundo que usa Home Assistant conhece: o cartão SD corrompe, ou uma atualização quebra alguma coisa, e você se dá conta de que **meses de automação, dashboards e integrações configuradas estavam em um único lugar**.
+
+O Home Assistant tem um sistema de backup completo e integrado, que faz tudo isso sozinho. O problema é que ele **não vem ligado com tudo o que importa** — e há um detalhe que, se você ignorar, transforma todos os seus backups em arquivos inúteis.
+
+Este guia segue a documentação oficial do Home Assistant. Os caminhos de menu citados são os que a documentação usa; se a sua versão trouxer nomes ligeiramente diferentes, vale conferir a doc da versão instalada.
+
+## O que um backup do Home Assistant contém
+
+Um **backup completo** inclui os diretórios:
+
+- `config` — suas automações, cenas, dashboards e configurações
+- `share` — dados compartilhados entre add-ons
+- `addons` — os add-ons instalados
+- `ssl` — seus certificados
+- `media` — arquivos de mídia
+
+Também é possível fazer **backup parcial**, escolhendo só parte disso. Na prática, o `config` é o que dói perder — é onde está todo o trabalho que você fez.
+
+Os arquivos são compactados em um `.tar`, ficam **criptografados** e são guardados localmente em `/backup` por padrão.
+
+## O passo 1 que a maioria pula: a chave de emergência
+
+Aqui está o detalhe mais importante do post inteiro.
+
+**Os backups são criptografados.** Ao configurar o sistema de backup, o Home Assistant gera um **kit de emergência** contendo a chave de criptografia — e pede que você baixe e guarde esse arquivo em local seguro.
+
+Muita gente clica em "depois" nessa tela. E aí acontece o pior cenário possível: o aparelho morre, a pessoa tem o arquivo de backup salvo no computador, tenta restaurar em um Home Assistant novo... **e não consegue, porque não tem a chave.**
+
+> **Faça isso antes de qualquer outra coisa:** baixe o kit de emergência e guarde em um lugar que sobreviva à perda do Home Assistant — gerenciador de senhas, e-mail para você mesmo, papel na gaveta. **Não guarde só dentro do próprio Home Assistant.**
+
+## Configurando o backup automático
+
+O caminho é **Configurações > Sistema > Backups > Configurar backups**.
+
+Ali você define três coisas:
+
+**1. Frequência.** Diariamente ou em dias específicos da semana, num horário que o sistema sugere como ideal ou num horário escolhido por você. Para uso doméstico, diário resolve.
+
+**2. Backup antes de atualizar.** Deixe **ligado**. Esta é a rede de segurança que mais salva na prática — atualização que quebra integração é bem mais comum que hardware que morre, e com essa opção você volta ao estado anterior em minutos.
+
+**3. Retenção.** Quantos backups manter antes de o sistema apagar os mais antigos automaticamente. Sem retenção, o disco enche; com retenção curta demais, você perde a chance de voltar a um estado de duas semanas atrás. Manter algo entre uma e duas semanas de backups diários é um ponto de equilíbrio razoável.
+
+## O passo 2 que a maioria também pula: tirar o backup de dentro do aparelho
+
+Backup salvo **no mesmo cartão SD** que você está tentando proteger não é backup. Se o cartão corrompe, ele leva os backups junto.
+
+O Home Assistant permite escolher onde guardar, em **Configurações > Sistema > Backups > Configurar backups automáticos > Locais**:
+
+- **Localmente**, no próprio aparelho (o padrão — e o insuficiente)
+- **Home Assistant Cloud**, para assinantes do Nabu Casa, com limite de espaço e de quantidade
+- **Armazenamento em rede**, como NAS, Google Drive ou OneDrive, através das integrações compatíveis
+
+A configuração que faz sentido é **manter o local E adicionar pelo menos um destino externo**. O local serve para restaurar rápido de um erro de configuração; o externo serve para quando o hardware morre.
+
+![SanDisk Ultra Shift pen drive USB 3.0 de 128 GB](/images/produtos/sandisk-ultra-shift-128gb.webp)
+
+E aqui vale a expectativa correta: **backup de Home Assistant é pequeno**. Um pen drive de 128 GB guarda muitos backups com folga e resolve o destino externo por pouquíssimo dinheiro. Não é preciso comprar armazenamento grande para isso.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08K7HMWHF?tag=nerdcaseiro-20" store="amazon" source="backup-home-assistant" />
+
+## Restaurando
+
+A restauração acontece em **Configurações > Sistema > Backups**, num sistema que já está rodando, ou **durante a instalação inicial**, num aparelho novo.
+
+Esse segundo caso é o que salva de verdade: instalação nova, na tela de boas-vindas você escolhe restaurar de um backup, aponta o arquivo, informa a chave — e a casa volta como estava.
+
+A restauração pode ser **completa ou seletiva**. A seletiva é útil quando você só quer recuperar as automações sem mexer no resto.
+
+**Atenção:** restaurar **sobrescreve** o que está lá. Não é mesclagem.
+
+## O teste que ninguém faz e todo mundo devia fazer
+
+Backup que nunca foi restaurado é só um arquivo grande em que você deposita fé.
+
+O teste vale o esforço: pegue um cartão SD ou pen drive reserva, instale um Home Assistant limpo nele e **restaure o seu backup**. Você descobre em uma tarde tranquila se a chave está certa e se o processo funciona — em vez de descobrir num sábado à noite, com a casa toda offline.
+
+![Cartão microSDXC SanDisk Extreme de 64 GB classificação A2](/images/produtos/sandisk-extreme-64gb.webp)
+
+É também o motivo prático de ter uma **mídia reserva**: ela permite testar sem destruir a instalação que está funcionando. Um cartão com classificação **A2**, que é a recomendada na documentação, custa pouco e serve para os dois papéis — teste de restauração hoje, substituição de emergência no dia em que o atual falhar.
+
+<ProsCons
+  pros={[
+    'Backup antes de atualizar resolve o problema mais comum de todos',
+    'Retenção automática evita encher o disco sem você perceber',
+    'Destino externo protege contra morte do cartão ou do aparelho',
+    'Restauração na instalação inicial devolve a casa configurada em minutos'
+  ]}
+  cons={[
+    'Sem a chave de emergência, o backup criptografado é inútil',
+    'Backup guardado só no próprio aparelho não protege contra nada',
+    'Restaurar sobrescreve o estado atual, não mescla',
+    'Backup nunca testado costuma falhar justamente na hora ruim'
+  ]}
+/>
+
+## Onde guardar: comparativo
+
+<ComparisonTable
+  rows={[
+    { name: 'SanDisk SSD Portátil 1 TB', brand: 'SanDisk', rating: 4.8, highlight: 'O mais rápido para restaurar', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0C5JQ68FY?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk Extreme SSD 1 TB', brand: 'SanDisk', rating: 4.6, highlight: 'Resistente, bom para guardar fora de casa', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08GTYFC37?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk Extreme microSD 64 GB A2', brand: 'SanDisk', rating: 4.8, highlight: 'Cartão reserva para testar restauração', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20' }] },
+    { name: 'SanDisk Ultra Shift 128 GB', brand: 'SanDisk', rating: 4.7, highlight: 'Barato e suficiente para o volume do HA', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B08K7HMWHF?tag=nerdcaseiro-20' }] },
+    { name: 'HD Externo UnionSine 1 TB', brand: 'UnionSine', rating: 4.5, highlight: 'Mais espaço pelo menor preço', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B091FV14V9?tag=nerdcaseiro-20' }] }
+  ]}
+  source="backup-home-assistant"
+/>
+
+Vale dizer com honestidade: **backup de Home Assistant é pequeno**. Você não precisa de 1 TB. Um pen drive de 128 GB guarda muitos backups com folga, e é a opção mais sensata se o objetivo é só esse.
+
+![SanDisk SSD portátil de 1 TB com USB-C e velocidade de até 800 MB/s](/images/produtos/sandisk-ssd-portatil-1tb.webp)
+
+Os SSDs entram em cena quando você quer **um destino de backup para a casa inteira** — fotos, documentos e o Home Assistant no mesmo lugar — ou quando pretende migrar do cartão SD para SSD como disco principal, que é a melhor coisa que se pode fazer pela vida útil de um Home Assistant em Raspberry Pi. Nesse segundo caso a velocidade importa de verdade, e é onde o modelo de 800 MB/s se justifica.
+
+Para quem só quer volume pelo menor preço, o **HD externo de 1 TB** cumpre — com a ressalva de ser disco mecânico, mais sensível a queda e vibração.
+
+## O contexto maior: por que o cartão SD é o vilão
+
+A razão de esse assunto ser tão urgente em Home Assistant é o **cartão SD**. O banco de dados do HA escreve o tempo todo, e cartão SD tem número finito de ciclos de escrita. Ele não avisa que vai morrer: um dia simplesmente não inicializa.
+
+Duas medidas mudam esse cenário:
+
+1. **Backup externo automático**, que é o assunto deste guia.
+2. **Sair do cartão SD**, migrando o sistema para SSD.
+
+Se você está montando agora, vale ler [Home Assistant no Raspberry Pi: a instalação do zero](/posts/home-assistant-raspberry-pi-instalacao/) — a escolha da mídia no começo evita esse problema mais tarde.
+
+## O que o backup não resolve
+
+Vale saber onde a rede de proteção tem buraco, para não descobrir na hora errada.
+
+**Configuração que mora fora do Home Assistant.** Roteador, regras de firewall, redirecionamento de portas, DNS dinâmico — nada disso está no backup. Se você configurou acesso externo, anote esses parâmetros em outro lugar.
+
+**Dispositivos que guardam a configuração neles mesmos.** Um ESP32 com firmware ESPHome, por exemplo, continua funcionando depois de uma restauração, mas o **código-fonte** dele fica no add-on; se você perdeu o add-on e o backup era parcial, perdeu o código também. Vale manter uma cópia dos YAML de ESPHome fora do HA.
+
+**Pareamentos de rádio.** Restaurar traz de volta a configuração das entidades Zigbee, mas se o adaptador USB foi trocado, pode ser necessário reparear. Um backup da chave da rede Zigbee, quando o seu coordenador permite exportar, evita ter que reparear a casa inteira sensor por sensor.
+
+**A conta de serviços externos.** Token expirado é token expirado — o backup guarda a integração, não renova a autenticação do lado de lá.
+
+## A regra 3-2-1 aplicada a uma casa
+
+A regra clássica de backup diz: **três cópias, em dois tipos de mídia diferentes, sendo uma fora do local**. Traduzindo para uma instalação doméstica de Home Assistant sem exagero:
+
+- **Cópia 1:** os backups automáticos locais, em `/backup`. Servem para desfazer erro de configuração em minutos.
+- **Cópia 2:** o mesmo backup enviado automaticamente para um NAS, um pen drive montado ou um serviço em nuvem. Protege contra a morte do cartão ou da fonte.
+- **Cópia 3:** uma cópia manual, de tempos em tempos, guardada **fora de casa** — no seu e-mail, num drive de trabalho, num pen drive na casa de alguém. Essa é a que protege contra o cenário que ninguém gosta de imaginar: incêndio, raio, furto.
+
+Não precisa ser sofisticado. Uma cópia trimestral no e-mail já eleva muito o nível de proteção comparado a não ter nenhuma cópia externa.
+
+E a chave de emergência precisa estar acessível **em todos esses cenários** — se ela só existe no computador de casa, ela não protege contra o que a cópia 3 protege.
+
+## Restauração seletiva: quando você não quer tudo de volta
+
+Restaurar tudo é o certo quando o hardware morreu. Mas há um caso muito mais frequente em que restaurar tudo é ruim: **você quebrou uma coisa só**.
+
+Digamos que você mexeu nas automações e bagunçou. Restaurar o backup completo desfaz a bagunça — e desfaz junto tudo o que foi feito de bom desde então: histórico novo, dispositivo adicionado ontem, ajuste do dashboard.
+
+Nesse caso, a restauração **seletiva** é a ferramenta certa: você escolhe recuperar só a parte relevante e deixa o resto como está.
+
+Um hábito que ajuda muito: **antes de mexer em algo grande, crie um backup manual na hora**. Leva pouco tempo e te dá um ponto de retorno específico daquela mudança, em vez de depender do backup automático da madrugada anterior.
+
+## Sinais de que o cartão SD está morrendo
+
+Como o backup existe principalmente para proteger contra isso, vale saber reconhecer o aviso — quando ele existe:
+
+- **Lentidão que aparece do nada**, especialmente ao abrir históricos.
+- **Entidades que ficam indisponíveis sem motivo** e voltam sozinhas.
+- **Erros de banco de dados nos logs**, mencionando corrupção ou escrita.
+- **Reinicializações espontâneas** do sistema.
+
+Ao ver qualquer um deles: **faça um backup manual imediatamente e baixe para outro aparelho**. Não espere para investigar. Cartão em processo de falha costuma piorar rápido, e a janela para salvar os dados é curta.
+
+## Perguntas frequentes
+
+**Com que frequência devo fazer backup?**
+Diariamente, com backup automático antes de cada atualização. O volume é pequeno e a retenção cuida do espaço.
+
+**O backup guarda o histórico dos sensores?**
+Depende do que você inclui. O banco de dados fica no `config`, então o backup completo leva o histórico junto — e é o que mais engorda o arquivo.
+
+**Posso restaurar backup de um hardware em outro?**
+Em geral sim, dentro do mesmo tipo de instalação. Mudanças grandes de plataforma podem exigir ajustes, especialmente em add-ons.
+
+**Perdi a chave de emergência. Tem jeito?**
+Não. É criptografia de verdade — sem a chave, não há recuperação. Por isso ela é o primeiro passo deste guia e não o último.
+
+**Preciso parar o Home Assistant para fazer backup?**
+Não. O processo roda com o sistema em funcionamento.
+
+## Fechando
+
+Se você fizer só três coisas depois de ler isto:
+
+1. **Baixe e guarde a chave de emergência** fora do Home Assistant. Sem ela, nada mais importa.
+2. **Ligue o backup automático** com backup antes de atualizar.
+3. **Aponte um destino externo** — nem que seja um pen drive barato.
+
+E quando sobrar uma tarde, faça o teste de restauração numa mídia reserva. É o único jeito de saber que o plano funciona antes de precisar dele.

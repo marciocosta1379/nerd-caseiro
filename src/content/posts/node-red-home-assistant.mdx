@@ -1,0 +1,283 @@
+---
+title: 'Node-RED no Home Assistant: a primeira automação sem YAML'
+description: 'Instale o add-on, entenda os nós de gatilho, condição e ação e monte sua primeira automação arrastando blocos. Inclui a chave que você não pode perder.'
+pubDate: 2026-09-19T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'node-red', 'automacao', 'tutorial', 'automacao-residencial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 Model B Anatel 4 GB'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    image: '/images/produtos/raspberry-pi-5-4gb-anatel.webp'
+    pros:
+      - '4 GB dão folga para Home Assistant com Node-RED junto'
+      - 'Versão Anatel: homologada, com garantia no Brasil'
+    cons:
+      - 'Node-RED consome memória: 2 GB ficaria apertado'
+      - 'Exige fonte USB-C de 27 W específica'
+  - name: 'EKAZA Tomada Inteligente 16A Wi-Fi com Medidor de Consumo'
+    brand: 'EKAZA'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20'
+    image: '/images/produtos/ekaza-tomada-16a.webp'
+    pros:
+      - 'Medidor de consumo vira gatilho ótimo para automação'
+      - '16 A aguenta carga pesada, como máquina de lavar'
+    cons:
+      - 'Depende de Wi-Fi 2,4 GHz para parear'
+      - 'Integração pode exigir passo extra fora do app do fabricante'
+  - name: 'Smart Plug Max Wi-Fi Positivo Casa Inteligente 16A NBR 14136'
+    brand: 'Positivo'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0BNSVWWDR?tag=nerdcaseiro-20'
+    image: '/images/produtos/positivo-smart-plug-max.webp'
+    pros:
+      - 'Padrão NBR 14136: encaixa em tomada brasileira sem adaptador'
+      - 'A nota mais alta entre as tomadas da lista'
+    cons:
+      - 'Sem medição em todos os lotes: confira a versão'
+      - 'Wi-Fi apenas, sem Zigbee'
+  - name: 'Placa ESP32 Dual Core Wi-Fi e Bluetooth 4.2 Dev Kit V1 com Cabo'
+    brand: 'Genérica'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20'
+    image: '/images/produtos/esp32-devkit-v1-cabo-nr.webp'
+    pros:
+      - 'Já vem com cabo: dá para começar no mesmo dia'
+      - 'Barata o suficiente para deixar uma em cada projeto'
+    cons:
+      - 'Sem marca definida: qualidade varia por lote'
+      - 'Exige fonte estável, senão reinicia sozinha'
+  - name: 'Freenove Placa ESP32-WROOM 2 unidades compatível com Arduino IDE'
+    brand: 'Freenove'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C9THDPXP?tag=nerdcaseiro-20'
+    image: '/images/produtos/freenove-esp32-wroom-2un.webp'
+    pros:
+      - 'Duas placas no mesmo pacote: uma para testar, outra para usar'
+      - 'Freenove documenta bem os próprios kits'
+    cons:
+      - 'Mais cara que a genérica avulsa'
+      - 'Documentação em inglês'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+O editor de automações do Home Assistant dá conta de muita coisa. Mas chega um momento — normalmente quando você quer três condições, um atraso e dois caminhos diferentes — em que a interface começa a ficar confusa e o YAML parece o único jeito.
+
+O **Node-RED** é a terceira via: você monta a automação **arrastando blocos e ligando com fios**, e vê o fluxo inteiro desenhado na tela. Para lógica com várias ramificações, ele é bem mais fácil de entender do que ler uma automação em texto.
+
+Este guia segue a documentação oficial do add-on Node-RED da comunidade Home Assistant.
+
+## Por que Node-RED e não o editor nativo
+
+Vale ser honesto: **para automação simples, o editor nativo é melhor.** "Se o sensor detectar movimento, acenda a luz" não precisa de Node-RED.
+
+O Node-RED brilha quando aparece:
+
+- **Lógica ramificada.** Se for dia de semana faz uma coisa, se for fim de semana faz outra, e se alguém estiver em casa faz uma terceira.
+- **Sequência com tempo.** Espera cinco minutos, confere de novo, se ainda estiver assim manda notificação.
+- **Depuração visual.** Você vê a mensagem passando por cada bloco e descobre exatamente onde a lógica travou. Isso é muito mais rápido que caçar erro em YAML.
+
+## Instalação
+
+A documentação oficial descreve o processo assim:
+
+1. Abra o add-on na sua instância pelo botão **My Home Assistant** da documentação do add-on
+2. Clique em **Install**
+3. Inicie o add-on em **Start**
+4. **Confira os logs** para confirmar que subiu sem erro
+5. Clique em **Open Web UI**
+
+E há um detalhe que economiza muita confusão: o add-on **já vem pré-configurado para conversar com o Home Assistant**. Você não precisa configurar servidor, endereço nem token — a conexão sai pronta.
+
+## A configuração obrigatória: `credential_secret`
+
+Antes de sair montando fluxo, vá nas opções do add-on e defina o **`credential_secret`**.
+
+O Node-RED **criptografa as credenciais** que você guarda dentro dele (senhas de serviços, tokens de API) usando uma chave secreta. Essa opção é onde você define essa chave.
+
+Três avisos que vêm da própria documentação e que valem repetir:
+
+- **Trate como senha.** Pode ser qualquer valor, mas escolha um valor forte.
+- **Guarde em lugar seguro.** Você vai precisar dela para restaurar um backup.
+- **Nunca mude depois de definida.** Mudar impede o Node-RED de descriptografar as credenciais que já existem — ou seja, quebra o que já estava funcionando.
+
+Esse é o mesmo tipo de armadilha da chave de criptografia dos backups do Home Assistant, que tratamos em [backup do Home Assistant](/posts/backup-home-assistant/). Guarde as duas juntas, no mesmo lugar seguro.
+
+![Raspberry Pi 5 Model B versão Anatel com 4 GB de RAM](/images/produtos/raspberry-pi-5-4gb-anatel.webp)
+
+Sobre o hardware que sustenta isso: o **Raspberry Pi 5 de 4 GB** dá folga confortável para rodar Home Assistant e Node-RED lado a lado. Em 2 GB o conjunto fica apertado, especialmente com outros add-ons ligados — e a versão **Anatel** é a homologada, com garantia no Brasil.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="node-red-home-assistant" />
+
+## Os três tipos de nó que resolvem quase tudo
+
+A interface do Node-RED tem dezenas de blocos, mas para automação de casa você usa basicamente três famílias.
+
+**Nós de gatilho (o que dispara).** O principal é o *events: state*, que reage à mudança de estado de uma entidade — sensor que detectou movimento, porta que abriu, tomada que passou a consumir energia. Também há gatilhos por horário e por evento do sistema.
+
+**Nós de condição (o que filtra).** O *current state* consulta o estado de outra entidade e deixa passar ou não. O *switch* separa o fluxo em caminhos diferentes conforme o valor. É aqui que mora a vantagem sobre o editor nativo: um *switch* com quatro saídas é trivial de ler no desenho e chato de escrever em YAML.
+
+**Nós de ação (o que faz).** O *call service* chama qualquer serviço do Home Assistant — acender luz, tocar som, mandar notificação. É o mesmo conjunto de ações que você tem no editor nativo.
+
+E um quarto que não é de automação, mas é o mais útil de todos enquanto você aprende: o **`debug`**. Ligue um nó de debug na saída de qualquer bloco e veja exatamente que mensagem está passando ali. É assim que se descobre por que um fluxo não funciona.
+
+## Sua primeira automação, passo a passo
+
+Vamos montar algo simples e útil: **avisar no celular se a máquina de lavar terminou**, usando uma tomada inteligente com medição de consumo.
+
+![EKAZA tomada inteligente 16A Wi-Fi com medidor de consumo](/images/produtos/ekaza-tomada-16a.webp)
+
+O componente que torna isso possível é o **medidor de consumo** — sem ele a tomada liga e desliga, mas não sabe dizer o que está acontecendo do outro lado. Os 16 A também importam aqui: máquina de lavar puxa corrente alta, e tomada de 10 A não atende.
+
+A lógica é: quando o consumo cair abaixo de um limite e ficar assim por alguns minutos, o ciclo acabou.
+
+1. **Arraste um nó *events: state*** para a tela. Configure a entidade como o sensor de potência da sua tomada inteligente. Esse é o gatilho.
+
+2. **Arraste um nó *switch*** e ligue a saída do primeiro nele. Configure para deixar passar quando o valor for **menor que** um limite baixo — algo como 5 W, dependendo da sua máquina.
+
+3. **Arraste um nó *trigger*** (de atraso) e ligue no switch. Configure para esperar alguns minutos antes de seguir. Isso evita alarme falso durante as pausas do ciclo, que é o erro clássico dessa automação.
+
+4. **Arraste um nó *call service*** e ligue no trigger. Escolha o serviço de notificação e escreva a mensagem.
+
+5. **Ligue um nó *debug*** na saída do primeiro nó, para acompanhar os valores enquanto testa.
+
+6. **Clique em Deploy.** O fluxo entra em operação na hora.
+
+Depois de funcionar, remova o nó de debug — ele enche o log sem necessidade.
+
+> **A dica que economiza uma tarde:** monte o fluxo com o debug ligado e **rode uma lavagem inteira olhando os valores**. Você vai ver o consumo real da sua máquina e ajustar o limite e o tempo de espera com números de verdade, em vez de chutar.
+
+## Dois problemas conhecidos, e as soluções
+
+### "Unauthorized WebSocket access"
+
+Este erro aparece com alguma frequência **depois de atualizações**. A documentação do add-on indica a verificação: dê um duplo clique em qualquer nó do Home Assistant e confirme que a caixa **"I use the Home Assistant App"** continua marcada.
+
+É um daqueles casos em que o erro parece grave e a solução é uma caixa desmarcada.
+
+### Nós HTTP e Dashboard não abrem
+
+Se você quiser usar nós HTTP ou o Node-RED Dashboard, é preciso **liberar o acesso direto**: atribua um número de porta na configuração de rede do add-on. E há uma exigência específica — a URL precisa começar com **`/endpoint/`** para contornar a autenticação do Home Assistant.
+
+Sem isso, o dashboard simplesmente não carrega, e a causa não é óbvia.
+
+<ProsCons
+  pros={[
+    'Add-on já vem pré-configurado: não precisa criar token nem apontar servidor',
+    'Nó de debug mostra a mensagem passando e acelera muito o diagnóstico',
+    'Lógica com várias ramificações fica legível, ao contrário do YAML',
+    'O fluxo desenhado documenta a si mesmo meses depois'
+  ]}
+  cons={[
+    'Exagero para automação simples, que o editor nativo resolve melhor',
+    'Consome memória: em Raspberry Pi de 2 GB o conjunto fica apertado',
+    'Mudar o credential_secret quebra as credenciais já salvas',
+    'Erro de WebSocket após atualização assusta e a causa não é óbvia'
+  ]}
+/>
+
+## O hardware que sustenta isso
+
+<ComparisonTable
+  rows={[
+    { name: 'Raspberry Pi 5 4 GB Anatel', brand: 'Raspberry Pi', rating: 4.7, highlight: 'Folga para HA e Node-RED juntos', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20' }] },
+    { name: 'EKAZA Tomada 16A com medição', brand: 'EKAZA', rating: 4.7, highlight: 'Medidor de consumo para o exemplo do post', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20' }] },
+    { name: 'Positivo Smart Plug Max 16A', brand: 'Positivo', rating: 4.8, highlight: 'Padrão NBR 14136, sem adaptador', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0BNSVWWDR?tag=nerdcaseiro-20' }] },
+    { name: 'ESP32 DevKit V1 com cabo', brand: 'Genérica', rating: 4.6, highlight: 'Sensor próprio para alimentar os fluxos', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20' }] },
+    { name: 'Freenove ESP32-WROOM (2 un.)', brand: 'Freenove', rating: 4.6, highlight: 'Duas placas: uma testa, outra fica', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0C9THDPXP?tag=nerdcaseiro-20' }] }
+  ]}
+  source="node-red-home-assistant"
+/>
+
+![Placa ESP32 Dual Core com Wi-Fi e Bluetooth Dev Kit V1 acompanhada de cabo](/images/produtos/esp32-devkit-v1-cabo-nr.webp)
+
+E se a ideia for alimentar os fluxos com sensores próprios, o **ESP32** é o caminho mais barato — a versão que já vem com cabo permite começar no mesmo dia. Quem quiser uma reserva para testar sem desmontar o projeto em uso costuma preferir o **pacote Freenove com duas placas**.
+
+Uma observação sobre memória: o Node-RED roda ao lado do Home Assistant e **consome sua parte**. Em Raspberry Pi de 2 GB o conjunto fica apertado, especialmente com outros add-ons. Com 4 GB, sobra folga confortável.
+
+## Organize antes que vire spaghetti
+
+O apelido carinhoso para um Node-RED malcuidado é "prato de espaguete" — dezenas de fluxos cruzando a mesma tela, impossível de entender três meses depois. Quatro hábitos evitam isso desde o começo:
+
+**Use abas por cômodo ou por assunto.** O Node-RED permite várias abas de fluxo. Uma para a sala, outra para a lavanderia, outra para notificações. Muito melhor que uma tela infinita.
+
+**Nomeie os nós.** Todo nó aceita um nome próprio. "Sensor de movimento do corredor" é infinitamente mais útil que o rótulo padrão daqui a seis meses.
+
+**Use os nós de comentário.** Existe um bloco só para escrever texto na tela. Explicar em duas linhas por que aquele atraso é de cinco minutos e não de dois é um presente para o seu eu futuro.
+
+**Agrupe fluxos relacionados.** Selecionar vários nós e agrupar cria uma caixa visual com título, o que separa claramente uma automação da outra dentro da mesma aba.
+
+## Exportar e importar fluxos
+
+Este é um recurso que diferencia o Node-RED e que muita gente não descobre: **todo fluxo é um JSON**, e dá para exportar e importar pelo menu.
+
+Isso abre três possibilidades práticas:
+
+- **Backup independente.** Além do backup do Home Assistant, dá para exportar um fluxo importante e guardar o arquivo. É texto, ocupa nada.
+- **Reaproveitar entre casas.** Fez um fluxo bom? Exporta e importa em outra instalação, só ajustando as entidades.
+- **Usar fluxo pronto da comunidade.** Existe muito fluxo compartilhado em fóruns e no repositório da comunidade. Você cola o JSON na importação e ele aparece montado na tela.
+
+Um cuidado importante ao importar fluxo de terceiros: **as entidades vão vir com os nomes da casa de outra pessoa**. Depois de importar, é preciso abrir cada nó do Home Assistant e apontar para as suas entidades. E vale ler o que o fluxo faz antes de dar Deploy — fluxo importado sem revisar pode acionar coisas que você não esperava.
+
+## Erros comuns de quem está começando
+
+**O fluxo dispara várias vezes seguidas.** Quase sempre o gatilho está reagindo a mudanças de atributo, não só de estado. No nó *events: state* existe a opção de ignorar mudanças que não sejam do estado principal — ligá-la resolve.
+
+**A automação funciona no teste manual mas não sozinha.** O botão de injeção manual pula o gatilho. Se funciona no manual e não sozinho, o problema está no gatilho, não no resto do fluxo.
+
+**Tudo para de funcionar depois de reiniciar o Home Assistant.** O Node-RED reconecta sozinho, mas fluxos que dependem de estado inicial podem se perder. Vale usar o nó de evento de inicialização para reconstruir o que precisa.
+
+**Esqueceu o Deploy.** Parece bobo, mas é o mais frequente: você monta tudo, testa e não entende por que nada acontece. Alteração no Node-RED só entra em operação depois do Deploy.
+
+## Quando não usar Node-RED
+
+Por honestidade, vale delimitar. Não vale a pena trazer para cá:
+
+- **Automação de um gatilho e uma ação.** O editor nativo faz isso melhor e mais rápido.
+- **Coisas que o Home Assistant já resolve nativamente**, como agendamento simples e cenas.
+- **Quando você é a única pessoa que entende a casa e não documenta nada.** Uma casa inteira dependendo de fluxos que só você compreende é um problema de manutenção, não uma vantagem técnica.
+
+E há uma consideração de recurso: cada camada adicional é mais uma coisa que pode falhar e mais uma coisa para atualizar. Se o editor nativo resolve o seu caso, resolver com ele é a escolha mais robusta.
+
+## Perguntas frequentes
+
+**Node-RED substitui as automações nativas?**
+Não precisa substituir. Os dois convivem: deixe as simples no editor nativo e leve para o Node-RED as que têm lógica ramificada.
+
+**Preciso saber programar?**
+Não para o básico. Arrastar e ligar blocos cobre bastante coisa. Para casos avançados existe o nó *function*, que aceita JavaScript — mas ele é opcional.
+
+**Meus fluxos entram no backup do Home Assistant?**
+Sim, o add-on e seus dados fazem parte do backup completo. Por isso o `credential_secret` importa tanto na hora de restaurar.
+
+**Posso quebrar minha casa mexendo nisso?**
+O risco é baixo: enquanto você não clicar em **Deploy**, nada entra em operação. E um fluxo pode ser desabilitado sem apagar.
+
+**Por que meu fluxo não dispara?**
+Ligue um nó de debug no gatilho. Na maioria das vezes é a entidade errada, ou a condição filtrando tudo. O debug mostra isso em segundos.
+
+## Fechando
+
+O Node-RED tem fama de complicado e não é — o que ele tem é **uma tela grande que assusta na primeira vez**. Depois que você entende que quase tudo se resolve com gatilho, condição e ação, o resto é arrastar e ligar.
+
+Comece por uma automação que já existe na sua casa e refaça no Node-RED. Você vai ver o fluxo inteiro desenhado e, provavelmente, entender melhor a própria automação do que quando a escreveu.
+
+E não pule o `credential_secret`. É a única coisa neste guia que, se você errar, dá trabalho de verdade para desfazer.
