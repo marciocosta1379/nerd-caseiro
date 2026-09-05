@@ -40,6 +40,11 @@ npm run ml-scrape -- "<url1>" "<url2>"  # Coleta nome/preço/nota/imagem de prod
 ### ⚠️ Pesquisa de produtos no Mercado Livre
 Desde 09/07/2026 o ML bloqueia acesso automatizado por qualquer via direta — WebFetch e `curl` caem num redirect de verificação anti-bot (`gz/account-verification`), e a própria API oficial (`update-prices.mjs`) passou a responder 404/403 mesmo com token válido. O que funciona: um Chrome **de verdade** controlado via CDP (`scripts/ml-cdp.mjs`), no mesmo molde do `petz-cdp.mjs` da rede. Abra o Chrome com `--remote-debugging-port=9222 --user-data-dir=<pasta temp>` antes de rodar `npm run ml-scrape`. Para página de catálogo com variação (cor/voltagem) sem opção selecionada, o preço vem `null` — nesse caso use `ml-cdp-nav.mjs` para abrir a página, escolha a variante na janela do Chrome, e `ml-cdp-read.mjs` lê a página atual sem navegar de novo. **Todo preço extraído é provisório** — confirme com o usuário antes de publicar (histórico de correções: ver memória da rede).
 
+⚠️ **Chrome já aberto sem a porta de debug não serve** — suba uma instância separada com a flag.
+⚠️ **O link curto `meli.la/CODE` resolve para a página do perfil "Rede Caseira", não para o
+produto.** É o comportamento do programa de afiliados e o usuário optou por usar assim mesmo; para
+**baixar a imagem**, use sempre a **URL longa** do produto, nunca o `meli.la`.
+
 ## Categorias válidas
 
 Ancoradas nos 4 pilares do logo (Automação · Impressão 3D · Maker · Tecnologia):
@@ -94,6 +99,27 @@ products:
 - Títulos entre 40-70 caracteres; descrições meta entre 120-160 caracteres. (Não só o máximo — o Bing Webmaster Tools sinaliza título/descrição **curtos demais** como erro de SEO moderado; evitar títulos telegráficos e descrições genéricas de uma linha.)
 - Posts saem com `draft: true` por padrão.
 - **Imagem de capa / og:image:** a foto do **1º produto** vira a capa nos cards e o cartão social (`scripts/make-og-images.mjs` → `public/images/og/<slug>.jpg`, JPG 1200×630). Coloque o produto principal em primeiro. **Nunca WebP na og:image** (WhatsApp não renderiza).
+- **Imagem no corpo — onde o produto é citado.** A foto entra junto do argumento que justifica o
+  produto, não num bloco fixo. **Não** use o padrão rígido `## N. Produto` + imagem em todo produto:
+  fica monótono e previsível. Nem todo produto precisa de seção numerada — só quando o texto
+  comporta. Mas **todo produto citado no corpo leva a imagem ali**, não só no card do rodapé.
+- **Produto ↔ texto: as duas metades da mesma regra.**
+  - **Citou como necessário, tem que vender.** Se o texto afirma que algo é preciso ter, o item
+    entra na lista de produtos com botão de compra.
+  - **O que a tese rejeita, sai da lista.** Se o post argumenta contra um item, ele não pode
+    aparecer no frontmatter, na tabela comparativa nem no corpo — varra os **três** lugares.
+  - **Dimensionamento tem de fechar com o resto do post** (potência, litragem, medida citada).
+- **Verificação de estoque é obrigatória antes de apresentar o lote.** Produto esgotado queima o
+  clique. Cheque cada um: `curl -s -A "Mozilla/5.0" "https://www.amazon.com.br/dp/SEU_ASIN" | grep -o 'id="availability".\{0,120\}'`
+  — compra possível = disponibilidade positiva **e** `id="add-to-cart-button"` presente. Caso
+  ambíguo, confirme no Browser pane. Sem estoque → trocar o produto e apagar a imagem órfã.
+- **Imagem de referência não-produto** (espécie, planta, diagrama, esquema): use o **Wikimedia
+  Commons** (a API exige header `User-Agent`), **confira a licença**, **confirme que é o objeto
+  certo** e **credite no post**. Diagrama próprio: SVG inline com `@media (prefers-color-scheme: dark)`.
+- **Endosso pessoal só com autorização explícita do usuário.** "Indicação do Nerd Caseiro", "o que usamos
+  aqui" e afins descrevem a experiência dele, não a do agente — nunca escreva por conta própria.
+- **Revisão:** ao terminar cada post, entregue o link `http://localhost:4321/posts/<slug>/`. O
+  usuário revisa no navegador, artigo por artigo.
 - **Regra de ouro:** nunca invente specs. Confirme em ≥2 fontes confiáveis.
 
 ### Fontes confiáveis para pesquisa

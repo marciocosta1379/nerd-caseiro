@@ -1,6 +1,6 @@
 ---
 name: lote-semanal
-description: Gera os posts da semana (7 dias, seg–dom) para o Nerd Caseiro com APROVAÇÃO DO USUÁRIO EM ETAPAS. Use quando o usuário digitar /lote-semanal, pedir "gerar a semana" ou "criar os posts da semana". Nicho: automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets.
+description: Gera os 10 posts da semana para o Nerd Caseiro (7 na trilha da manhã + 3 na trilha da tarde) com APROVAÇÃO DO USUÁRIO EM ETAPAS. Use quando o usuário digitar /lote-semanal, pedir "gerar a semana" ou "criar os posts da semana". Nicho: automação residencial, casa inteligente, impressão 3D, eletrônica maker e gadgets.
 ---
 
 # Skill: Lote Semanal de Posts — Nerd Caseiro
@@ -19,122 +19,183 @@ sem a liberação final do usuário.
 ## Fluxo
 
 ### 0. Gatilho
-O usuário dispara (`/lote-semanal [data da segunda]` ou "vamos gerar a semana"). Calcule as
-**7 datas seg–dom** a partir da data fornecida (ou pergunte a semana). ⚠️ Desde 21/07/2026 a
-cadência é **diária (post todo dia, incluindo sábado e domingo)** — antes era só seg-sex.
+
+O usuário dispara (`/lote-semanal [data da segunda]` ou "vamos gerar a semana"). Calcule as datas.
+
+⚠️ **Cadência desde 05/09/2026: 10 posts por semana.**
+
+| Trilha | Dias | Hora | `pubDate` |
+|---|---|---|---|
+| Manhã | seg a dom (7) | 07h | `2026-09-14` |
+| Tarde | ter, qui, sáb (3) | 18h | `2026-09-15T18:00:00-03:00` |
+
+A trilha da tarde do Nerd Caseiro é **sempre tutorial**. O `publish-scheduled.mjs` compara o
+timestamp completo, então basta a hora no `pubDate` — não precisa mexer em script nenhum.
+O `.github/workflows/publish-scheduled.yml` já tem os dois crons, mas quem dispara de verdade
+é o **n8n** (dois triggers: 07h e 18h, timezone America/Sao_Paulo).
 
 ### Gate 1 — TEMAS (aprovação)
-Sugira **7 temas** com data e tipo, e **espere aprovação**. Mix editorial do nicho:
 
-| Dia | Tipo | Peso |
+Sugira **10 temas** com data, trilha e tipo. Apresente em tabela. **Pare e espere aprovação.**
+
+| Trilha | Tipo | Peso |
 |-----|------|------|
-| Seg | Listicle "Top N" | tráfego |
-| Ter | Comparativo "X vs Y" | conversão |
-| Qua | Listicle "Top N" | tráfego |
-| Qui | **Tutorial técnico (o moat)** | autoridade |
-| Sex | Review individual | nicho |
-| Sáb | Review individual | nicho |
-| Dom | Review individual | nicho |
+| Manhã (7) | Listicle "Top N", Comparativo "X vs Y", Review individual | tráfego + conversão |
+| Tarde (3) | **Tutorial (o moat)** | autoridade |
 
-O mix de fim de semana (Sáb/Dom = Review) é o padrão default — ajuste se o usuário pedir outro
-tipo ou tema específico para essas datas (ex.: pediu Amazon como loja e foco em review numa
-semana pontual).
+**De onde saem os temas** (⚠️ produto em voga, não data em voga):
 
-- **Tutorial técnico = o diferencial.** Pelo menos **1 por semana**, com **código real e
-  testado** (Home Assistant YAML, ESPHome, sketch ESP32, config Klipper). O usuário, que é
-  programador, valida o código. Ex.: *"Automatize a luz da sala com Home Assistant + Sonoff"*.
-- Apresente em tabela. **Pare e espere o usuário aprovar/ajustar os temas.**
+- **Mais vendidos** — Amazon (`/gp/bestsellers/...` via `curl`, funciona), Mercado Livre, Shopee.
+- **Trends** — Google Shopping/Trends, YouTube maker BR, X.
+- ⚠️ **Antes de propor, varra `src/content/posts/` para não repetir tema já publicado.**
 
 ### Gate 2 — TÍTULOS (aprovação)
-Para os temas aprovados, proponha os **5 títulos finais** (≤ 70 caracteres, com número/benefício
-quando for listicle). **Pare e espere o usuário aprovar/ajustar os títulos.**
+
+Títulos finais dos 10 posts. **Pare e espere aprovação.**
+
+⚠️ **Comprimentos (o Bing Webmaster acusa curto demais como erro de SEO):**
+
+- **Título: 40 a 70 caracteres.** Nada de título telegráfico.
+- **Descrição meta: 120 a 160 caracteres.** O schema zod corta acima de 160 — valide antes.
+- **Direto ao produto**, sem framing abstrato: *"Cartucho HP 664 ou 667: qual serve na sua impressora"*,
+  não *"o universo da impressão doméstica"*.
 
 ### Passo 3 — Pesquisa + esqueleto (sem aprovação, é trabalho)
 
-#### 3.1 — Coletar link de afiliado ML (MÉTODO CANÔNICO — testado)
+#### 3.1 — Links de afiliado
 
-⚠️ **NUNCA gere link de afiliado a partir de uma URL de BUSCA** (`lista.mercadolivre.com.br/...`).
-Isso produz um link que aponta pro resultado de busca, não pro produto — errado. **Sempre use a
-PÁGINA DO PRODUTO específico.**
+**Amazon (hoje é a loja principal do lote):** link do **SiteStripe** logado na amazon.com.br,
+ou monte `https://www.amazon.com.br/dp/<ASIN>?tag=nerdcaseiro-20`. **Preço OCULTO**
+(regra Amazon — só com PA-API).
 
-Para cada produto (via Claude in Chrome — use **`javascript_tool`**, NÃO screenshots: as páginas
-do ML penduram no "document_idle" e screenshots/`read_page` estouram):
+**Mercado Livre:** o ML bloqueia acesso automatizado por WebFetch, `curl` e pela própria API
+oficial (redirect `gz/account-verification`). O que funciona é **Chrome de verdade via CDP**:
 
-1. **Achar o produto:** navegue para uma busca (`lista.mercadolivre.com.br/<query>`) e pegue o
-   **1º resultado ORGÂNICO** (pule patrocinados: href com `click1`/`mclics` não tem produto). Pegue
-   a URL limpa do produto: padrão `/p/MLB\d+`, `produto.mercadolivre.com.br/MLB-\d+` ou `/up/MLBU\d+`.
-2. **Navegue para a página do produto** e rode UM `javascript_tool` que:
-   - **Preço:** `document.querySelector('[itemprop="price"]')?.getAttribute('content')` → preço
-     estruturado e confiável (NÃO leia o carrossel/“12x”/parcela — dá valor errado).
-   - **Imagem:** `[...document.querySelectorAll('figure img,[class*="gallery"] img')].find(i=>/mlstatic/.test(i.src))`.
-     Para baixar em alta, troque para a variante `D_Q_NP_2X_..._-E.webp`.
-   - **Link de afiliado:** clique no botão `document.querySelector('.generate_link_button')` (o
-     "Compartilhar/Gerar link" da própria página do produto) e leia o `meli.la/CODE` que aparece no DOM.
-     ```js
-     // dentro de um Promise/await: clica e espera o código novo aparecer
-     const before = new Set([...document.body.innerText.matchAll(/meli\.la\/([A-Za-z0-9]+)/g)].map(m=>m[1]));
-     document.querySelector('.generate_link_button').click();
-     // poll a cada 500ms o body por um meli.la/CODE que não estava em `before`
-     ```
+```bash
+npm run ml-scrape -- "<url do produto>"
+```
 
-**Pegadinhas (todas observadas na prática):**
-- O **filtro de privacidade** bloqueia retornar strings com cookie/query-string. Retorne **só o
-  código curto** (`meli.la/CODE` ou só o CODE), nunca URLs longas com `?...`.
-- O **clipboard fica bloqueado** — leia o `meli.la` do DOM, não do `navigator.clipboard`.
-- O código é **determinístico por produto+conta**: regenerar o mesmo produto dá o mesmo código
-  (serve pra confirmar que um link já está certo).
-- Algumas páginas de produto **não carregam** (título vira "(1)"/vazio) — pegue outro produto.
-- **UTM no `meli.la` é OK** (o `AffiliateButton` anexa `?utm_source=nerdcaseiro...`; funciona, igual no Reforma).
-- **Amazon (secundária):** SiteStripe na amazon.com.br (tag `nerdcaseiro-20`, **sem preço**). **Hotmart:** link do curso.
+Antes, abra o Chrome com `--remote-debugging-port=9222 --user-data-dir=<pasta temp>`. Chrome já
+aberto sem a porta de debug não serve — suba uma instância separada.
+
+- Página de catálogo com variação (cor/voltagem) sem opção escolhida → preço vem `null`.
+  Use `ml-cdp-nav.mjs` para abrir, escolha a variante na janela do Chrome, e `ml-cdp-read.mjs`
+  lê a página atual sem navegar de novo.
+- **Todo preço extraído é provisório — confirme com o usuário antes de publicar.**
+- ⚠️ O link curto `meli.la/CODE` resolve para a **página do perfil "Rede Caseira"**, não para o
+  produto. É o comportamento do programa e o usuário optou por usar assim mesmo. Para **baixar a
+  imagem**, use a URL longa do produto, não o `meli.la`.
+
+**Hotmart:** reaproveite os links de curso já cadastrados (ver memória `hotmart-cursos-afiliados-rede`).
+
+⚠️ **NUNCA invente link.** Se não conseguir o link real, escreva `[TODO: link real]` e avise o usuário.
 
 #### 3.2 — Pesquisa externa (≥2 fontes)
-Specs/compatibilidade reais em docs oficiais (Home Assistant, ESPHome, Klipper, fabricantes),
-Reddit (r/homeassistant, r/3Dprinting), YouTube maker BR, Reclame Aqui. **Regra de ouro: nunca invente specs.**
+
+Specs em docs oficiais, Reddit (r/homeassistant, r/3Dprinting), YouTube maker BR, Reclame Aqui.
+**Regra de ouro: nunca invente specs.**
+
+⚠️ **Protocolo de tutorial** (ver `CLAUDE.md`): o autor **não valida em bancada**. Toda config vem
+de **documentação primária, com versão declarada e link**. Sem primeira pessoa falsa ("testei
+aqui", "rodei por 3 meses"). Evite tutorial cujo erro sai caro (flash de firmware que brica placa).
 
 #### 3.3 — Baixar imagens (WebP local)
-Monte um JSON `[{id,name,brand,rating,image:"<url mlstatic>",stores:[{store:'mercadolivre',url:'https://meli.la/CODE'}]}]`
-e rode `node scripts/search-products.mjs --file scripts/products-<slug>.json` (baixa em
-`public/images/produtos/<id>.webp`). **Confira tamanhos < 2KB = imagem quebrada → remova.**
+
+JSON `[{id,name,brand,rating,image,stores:[{store,url}]}]` → `node scripts/search-products.mjs --file scripts/products-<slug>.json`.
+
+- ⚠️ **A URL da imagem só pode vir do MESMO item da MESMA busca** — nunca de contexto anterior.
+- O script **não sobrescreve arquivo existente**: se o `id` repetir, apague o `.webp` antes.
+- Confira tamanhos: **< 2KB = imagem quebrada → remova**.
+- **Imagem de referência não-produto** (diagrama, foto de espécie): use **Wikimedia Commons**
+  (a API exige header `User-Agent`), **cheque a licença**, confirme que é o objeto certo, e
+  **credite no post**. Diagrama próprio: SVG inline com `@media (prefers-color-scheme: dark)`.
 
 #### 3.4 — Scaffold + frontmatter
+
 `node scripts/scaffold-post.mjs --data ... --slug "<slug>" --category <cat> --title "<título>"`.
 Categorias: `automacao-residencial | casa-inteligente | impressao-3d | eletronica-maker | ferramentas-maker | gadgets | audio-video | redes-wifi | energia-backup | home-office | guias`.
-No frontmatter, cada produto leva `price` (do `itemprop`) e `image` (WebP local); o post leva `priceCheckedAt: 'DD/MM/AAAA'`.
+
+Frontmatter: `pubDate` (com hora nos posts de 18h), `author: 'Márcio Costa'`, `faq` espelhando a
+seção FAQ em texto plano, `featured: true` nos 2-3 de maior apelo. ML pode levar `price` +
+`priceCheckedAt`; **Amazon não**.
+
+#### 3.5 — ⚠️ VERIFICAR ESTOQUE (obrigatório, antes do Gate 3)
+
+Produto fora de estoque queima o clique. **Cheque todos** antes de apresentar:
+
+```bash
+curl -s -A "Mozilla/5.0" "https://www.amazon.com.br/dp/SEU_ASIN" | grep -o 'id="availability".\{0,120\}'
+```
+
+Sinal de compra possível: texto de disponibilidade positivo **e** presença de
+`id="add-to-cart-button"`. Caso ambíguo → confirme no Browser pane. Sem estoque → **troque o produto**
+(e apague a imagem órfã).
 
 ### Gate 3 — TEXTO (aprovação)
-Preencha os `[TODO]`s com conteúdo de qualidade (estrutura por tipo abaixo), gere os cartões OG
-(`npm run og`), e **apresente os posts prontos ao usuário** (caminhos + resumo). Mantenha
-`draft: true`. **Pare e espere o usuário aprovar/corrigir o texto.**
 
-⚠️ **Imagem no CORPO de cada produto:** logo após cada `## N. Produto`, insira
-`![Nome](/images/produtos/<id>.webp)`. Não basta a imagem no card do rodapé — o leitor quer ver o
-produto na seção que está lendo. A tabela comparativa e os cards usam `price` (ML pode exibir).
+Preencha os `[TODO]`s, gere os cartões OG (`npm run og`), rode `npm run build` para validar o
+schema, e **apresente ao usuário**. Mantenha `draft: true`. **Pare e espere aprovação.**
 
-Estrutura por tipo:
-- **Listicle (Top N):** intro (200-300 pal.) -> "Como avaliamos" -> `<ComparisonTable>` (com `price`) -> por produto
-  (`![img]` + 150-300 pal.: análise real, prós/contras de fontes, veredicto, `<AffiliateButton>`) -> "Como
-  escolher" -> FAQ. Total 2000-3000 pal.
-- **Comparativo (X vs Y):** intro -> tabela lado a lado -> análise de cada -> "Em que cenário cada um
-  ganha" -> veredicto por perfil. 1500-2500 pal.
-- **Review individual:** intro -> specs -> uso real (fontes) -> prós/contras -> 2-3 alternativas ->
-  veredicto. 1500-2500 pal.
-- **Tutorial técnico:** o que vai montar + lista de materiais (com `<AffiliateButton>`) -> passo a
-  passo com **blocos de código testados** -> dicas/troubleshooting -> FAQ. O código é o ponto alto.
+⚠️ **Entregue o link do localhost de CADA artigo** (`http://localhost:4321/posts/<slug>/`) — o
+usuário revisa no navegador, artigo por artigo, não no terminal. Suba o dev server antes.
 
-Adicionar no frontmatter: `pubDate` (data agendada), `author: 'Márcio Costa'`, array `faq`
-espelhando a seção "Perguntas frequentes" (texto plano), e `featured: true` nos 2-3 de maior apelo.
+#### Imagem no corpo — regra atual
+
+**Coloque a imagem onde o produto é citado no texto**, junto do argumento que o justifica.
+
+- ❌ **Não** use bloco rígido `## N. Produto` + imagem em todo produto: fica monótono e previsível.
+- ✅ Nem todo produto precisa de seção numerada — só quando o texto comporta.
+- ✅ Mas **todo produto citado no corpo leva a imagem ali**, não só no card do rodapé.
+
+#### Coerência produto ↔ texto (as duas metades da mesma regra)
+
+- **Citou como necessário, tem que vender.** Se o texto diz que algo é preciso ter (timer, mídia
+  filtrante, kit de teste, testador de cabo), esse item **entra na lista de produtos com botão**.
+- **O que a tese rejeita, sai da lista.** Se o post argumenta contra um item, ele **não pode**
+  aparecer no frontmatter, na tabela comparativa nem no corpo. Ao remover, varra os **três**
+  lugares — é o erro que já aconteceu.
+
+#### Estrutura por tipo
+
+- **Listicle (Top N):** intro (200-300 pal.) → "Como avaliamos" → `<ComparisonTable>` → produtos
+  (imagem + 150-300 pal. de análise real, prós/contras de fontes, veredicto, `<AffiliateButton>`)
+  → "Como escolher" → FAQ. **2000-3000 pal.**
+- **Comparativo (X vs Y):** intro → tabela lado a lado → análise de cada → "em que cenário cada um
+  ganha" → veredicto por perfil. **1500-2500 pal.**
+- **Review individual:** intro → specs → uso real (fontes) → prós/contras → 2-3 alternativas →
+  veredicto. **1500-2500 pal.**
+- **Tutorial:** o que vai montar + materiais (com `<AffiliateButton>`) → passo a passo com blocos
+  de código **da documentação oficial, versão citada** → troubleshooting → FAQ.
+
+⚠️ **Aprofunde o tema antes do produto.** Explique o problema e **por que** aquele produto resolve.
+Post que vai direto para a vitrine parece caça-níquel.
 
 ### Gate final — LIBERAÇÃO (usuário)
-Só **após o "ok" final** do usuário: confirme as `pubDate` futuras (mantendo `draft: true`),
-commite os arquivos. O `publish-scheduled` (disparado pelo n8n) vira `draft:false` na data.
+
+Só **após o "ok" final**: confirme as `pubDate` futuras (mantendo `draft: true`), apague imagens
+órfãs de produtos descartados durante as correções, `git add -A`, commite e **dê push**. O push é
+o que efetivamente agenda — o `publish-scheduled` (n8n) vira `draft:false` na data e hora.
+
+```bash
+git -C E:/Site_afiliado_3 pull --rebase --autostash
+```
+
+O repo local costuma estar atrás dos commits automáticos de publicação — rebase antes de commitar.
 
 ## Diretrizes de tom
+
 - Honesto (aponta o defeito real), técnico mas acessível, direto, brasileiro (R$).
 - Sem hipérbole ("incrível", "melhor de todos"). Disclaimer de afiliado já é automático.
-- Nos links ML, lembrar que o recomendante aparece como "Rede Caseira" (o `MLAvisoModal` cuida).
+- Nos links ML, o recomendante aparece como "Rede Caseira" (o `MLAvisoModal` cuida).
+- **Não sugerir nem vincular redes sociais** — o usuário não quer perfis sociais nos sites.
+- **Endosso pessoal ("indicação do Nerd Caseiro", "o que usamos aqui") só entra quando o usuário
+  autorizar explicitamente** — é a experiência dele, não do agente.
 
 ## Erros a evitar
-- Pular um gate / agendar sem aprovação.
-- Inventar specs ou trechos de código não testados.
-- Esquecer `pubDate`, `faq` ou de rodar `npm run og`.
+
+- Pular um gate / commitar ou agendar sem aprovação.
+- Inventar specs, links ou código; alegar teste que não houve.
+- Não checar estoque; deixar produto sem imagem no corpo.
+- Recomendar item que o próprio texto desaconselha.
+- Título/descrição curtos demais; esquecer `pubDate`, `faq` ou `npm run og`.
 - Usar UTM diferente de `nerdcaseiro` (o `AffiliateButton` já cuida).
