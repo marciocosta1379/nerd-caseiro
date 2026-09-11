@@ -1,0 +1,233 @@
+---
+title: 'Acesso remoto ao Home Assistant sem abrir porta no roteador'
+description: 'Como acessar o Home Assistant de fora de casa sem expor porta no roteador, com as opções da documentação oficial e o risco de cada caminho.'
+pubDate: 2026-09-24T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'acesso-remoto', 'tailscale', 'seguranca', 'tutorial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 Model B Anatel 4 GB'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    image: '/images/produtos/raspberry-pi-5-4gb-anatel.webp'
+    pros:
+      - 'Roda Home Assistant OS com folga para add-ons como o Tailscale'
+      - 'Versão Anatel: homologada, com garantia no Brasil'
+      - 'Consumo baixo o suficiente para ficar ligado 24 horas'
+    cons:
+      - 'Exige fonte USB-C de 27 W específica'
+      - 'Cartão microSD é ponto fraco: SSD por USB dura muito mais'
+faq:
+  - question: 'Por que não simplesmente abrir a porta no roteador?'
+    answer: 'Porque a própria documentação do Home Assistant desaconselha fazer isso sem proteção. O texto oficial é direto ao afirmar que apenas subir uma porta não é seguro e que você deve considerar criptografar o tráfego caso esteja acessando sua instalação remotamente. Uma porta aberta na internet é varrida por robôs em questão de horas, e o que está do outro lado dela é o painel que controla as fechaduras, as câmeras e as luzes da sua casa. Existe ainda um problema prático que atinge muita gente no Brasil antes mesmo do problema de segurança: boa parte dos provedores usa CG-NAT, uma técnica em que vários clientes compartilham o mesmo endereço público. Nesse cenário, não existe porta sua para abrir, e o encaminhamento simplesmente não funciona.'
+  - question: 'O que é CG-NAT e como sei se meu provedor usa?'
+    answer: 'CG-NAT é uma forma de o provedor economizar endereços IP colocando vários clientes atrás de um mesmo endereço público. A consequência é que você não tem um endereço só seu para receber conexões de fora, e portanto encaminhar portas no seu roteador não resolve nada. O teste é rápido: veja qual IP o seu roteador mostra na interface WAN e compare com o endereço que aparece ao pesquisar por qual é meu IP no navegador. Se forem diferentes, você está atrás de CG-NAT. Também é sinal disso um IP de WAN começando com 100.64 até 100.127. Nesse caso, as soluções baseadas em VPN ou em nuvem deixam de ser preferência e passam a ser o único caminho.'
+  - question: 'Tailscale é gratuito mesmo para uso doméstico?'
+    answer: 'O plano pessoal cobre com folga o cenário de uma casa, com limite de dispositivos e usuários bem acima do que um uso doméstico típico consome. Vale entender o que você está aceitando em troca: a conexão em si é ponto a ponto e criptografada entre os seus aparelhos, mas a coordenação de quem pode falar com quem passa pela infraestrutura da empresa. Você troca a dependência de uma assinatura pela dependência de um serviço gratuito de terceiro, que pode mudar de política. Para quem quer independência total, o caminho é montar a própria VPN, com o trabalho de manutenção que isso implica.'
+  - question: 'Qual a diferença entre Nabu Casa e Tailscale?'
+    answer: 'A diferença principal é quem consegue acessar e com que facilidade. O Home Assistant Cloud, da Nabu Casa, gera um endereço público acessível de qualquer navegador, sem instalar nada no aparelho que vai acessar — o que também significa que basta a senha para entrar, então a segurança fica concentrada na força dessa senha e na autenticação em duas etapas. O Tailscale cria uma rede privada: só aparelhos que você autorizou e que estão com o aplicativo instalado enxergam o Home Assistant, e para o resto da internet ele simplesmente não existe. O Nabu Casa é mais conveniente e sustenta o desenvolvimento do projeto; o Tailscale é mais fechado e gratuito. Ambos evitam abrir porta.'
+  - question: 'Preciso mexer no configuration.yaml para isso funcionar?'
+    answer: 'Desde a versão 2026.8 do Home Assistant, não. As configurações de proxy do servidor HTTP, que antes exigiam um bloco no arquivo configuration.yaml, passaram a ser gerenciadas pela interface, em Configurações, Sistema, Rede, na seção de servidor HTTP. Esse detalhe importa porque a maioria dos tutoriais disponíveis na internet foi escrita antes dessa mudança e ainda manda editar o arquivo à mão. Se você seguir um guia antigo e colar um bloco de proxy no configuration.yaml de uma instalação atual, pode acabar com configuração duplicada e um comportamento difícil de diagnosticar. Confira a versão da sua instalação antes de seguir qualquer tutorial dessa área.'
+  - question: 'Dá para usar o Home Assistant pelo celular fora de casa com essas soluções?'
+    answer: 'Dá, e o aplicativo oficial funciona normalmente nas duas abordagens. Com o Home Assistant Cloud, você configura o endereço remoto no aplicativo e ele alterna sozinho entre a rede local e a externa. Com o Tailscale, o celular precisa ter o aplicativo da VPN instalado e conectado — a partir daí o endereço interno do Home Assistant passa a funcionar de qualquer lugar, como se você estivesse em casa. A diferença prática no dia a dia é que a VPN adiciona um passo: se ela estiver desconectada no celular, o acesso não funciona até você reconectar.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Você montou o Home Assistant, automatizou a casa, e aí bateu a vontade óbvia: ver as câmeras e apagar a luz da sala estando no trabalho. A primeira resposta que a internet dá é "encaminhe a porta 8123 no roteador".
+
+É a pior resposta possível, e a documentação oficial do Home Assistant diz isso com todas as letras.
+
+Este guia segue a documentação oficial do Home Assistant **2026.9** e mostra os caminhos que não exigem expor nada.
+
+## Por que não abrir a porta
+
+A documentação oficial é direta:
+
+> *"Just putting a port up is not secure. You should definitely consider encrypting your traffic if you are accessing your Home Assistant installation remotely."*
+
+Traduzindo o risco concreto: uma porta aberta na internet é encontrada por varredura automatizada em poucas horas. E o que está atrás dela não é um blog — é o painel que controla fechadura, câmera e alarme da sua casa.
+
+Mas antes mesmo da segurança, existe um problema prático que derruba essa solução para boa parte do Brasil.
+
+### O CG-NAT provavelmente já decidiu por você
+
+A documentação menciona que alguns provedores oferecem apenas endereços dinâmicos ou usam **CG-NAT**, o que pode impedir o acesso remoto por completo.
+
+CG-NAT é a técnica em que o provedor coloca vários clientes atrás de um mesmo endereço IP público, para economizar endereços. A consequência é definitiva: **não existe uma porta sua para abrir.** Você pode configurar o encaminhamento no roteador a tarde inteira — não vai funcionar, porque o endereço que o mundo enxerga não é seu.
+
+**Como descobrir em dois minutos:**
+
+1. Veja qual IP aparece na interface **WAN** do seu roteador
+2. Pesquise "qual é meu IP" no navegador e veja o resultado
+3. **São diferentes?** Você está atrás de CG-NAT
+
+Outro sinal claro é o IP da WAN estar na faixa de **100.64 a 100.127**, reservada exatamente para esse uso.
+
+Se for o seu caso, pare de procurar tutorial de encaminhamento de porta. As opções abaixo não são preferência — são o único caminho.
+
+## As duas boas opções
+
+A documentação apresenta três alternativas ao encaminhamento de porta: **Home Assistant Cloud**, **VPN** (citando Tailscale e ZeroTier One) e **proxy reverso**. O proxy reverso exige servidor próprio e configuração cuidadosa, então fica de fora de um guia de primeira solução.
+
+### Opção 1 — Home Assistant Cloud (Nabu Casa)
+
+A documentação chama de *"the easiest and safest option for most people"* e resume a configuração em **um único botão na interface**.
+
+O serviço gera um endereço remoto único, com tráfego criptografado, sem expor sua rede. É pago por assinatura, e essa assinatura financia o desenvolvimento do Home Assistant — que é um projeto aberto e vive disso.
+
+**Escolha esse caminho se:** você quer resolver hoje, sem aprender ferramenta nova, e quer acessar de qualquer navegador sem instalar nada no aparelho.
+
+**A contrapartida honesta:** como o endereço é público, a segurança fica concentrada na sua senha. Ative autenticação em duas etapas antes de ligar o acesso remoto. Isso não é opcional.
+
+### Opção 2 — Tailscale
+
+O Tailscale cria uma **rede privada** entre os seus aparelhos. Para o resto da internet, o seu Home Assistant continua não existindo — não há endereço público, não há porta, não há o que varrer.
+
+A instalação atual é pela loja de aplicativos do próprio Home Assistant:
+
+1. **Configurações → Aplicativos → Instalar aplicativo**
+2. Procure por **Tailscale** e instale
+3. Ative **Iniciar no boot** e **Watchdog**, se os controles estiverem disponíveis
+4. No app do Tailscale, use **Share Home Assistant with Serve**
+5. Confirme que **MagicDNS** e **HTTPS Certificates** estão habilitados
+
+O MagicDNS com certificado é o que transforma um endereço IP feio num nome memorável com HTTPS válido — sem ele funciona, mas o navegador reclama de certificado.
+
+**Escolha esse caminho se:** você não quer nada seu exposto publicamente, ou está atrás de CG-NAT e quer solução gratuita.
+
+**A contrapartida honesta:** todo aparelho que for acessar precisa do aplicativo instalado e conectado. Se a VPN estiver desconectada no celular, não há acesso até reconectar.
+
+### E o proxy reverso, que ficou de fora?
+
+Vale explicar por que ele não entra aqui, já que a documentação o cita.
+
+Um **proxy reverso** é um servidor que fica na frente do Home Assistant e intermedia as conexões: ele recebe o pedido de fora, cuida da criptografia e repassa para o Home Assistant internamente. É a arquitetura usada por praticamente todo site profissional.
+
+O que ele resolve bem: criptografia com certificado válido, um ponto único para publicar vários serviços, e camadas extras de filtragem antes de a requisição chegar ao destino.
+
+Por que não é a primeira solução de quem está começando: **ele ainda exige que algo seu esteja exposto à internet.** O proxy reverso melhora muito a qualidade dessa exposição, mas não a elimina — e a documentação alerta que ele precisa ser configurado corretamente para não bloquear requisições legítimas. Some a isso o fato de que, atrás de CG-NAT, ele tem o mesmo problema do encaminhamento de porta: não há endereço público para apontar.
+
+É um caminho legítimo para quem já administra servidor. Não é onde começar.
+
+### Um lembrete sobre DNS dinâmico
+
+A documentação menciona serviços de DNS dinâmico, como o DuckDNS, para lidar com endereços IP que mudam.
+
+Vale entender o que eles resolvem e o que não resolvem. DNS dinâmico resolve **o endereço mudar**: ele mantém um nome fixo apontando para o seu IP atual, atualizando automaticamente quando o provedor troca. É útil.
+
+O que ele **não** resolve é a falta de endereço público. Atrás de CG-NAT, o DNS dinâmico vai apontar corretamente para um endereço que não é seu — e continuar não funcionando. É uma ferramenta complementar ao encaminhamento de porta, não uma alternativa a ele.
+
+## O detalhe de versão que quebra tutorial antigo
+
+Aqui está a armadilha que faz guias da internet darem errado hoje.
+
+**Até a versão 2026.7**, configurar proxy do servidor HTTP exigia um bloco no `configuration.yaml`, mais ou menos assim:
+
+```yaml
+# Formato ANTIGO — não use em instalação 2026.8 ou mais nova
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+```
+
+**A partir da versão 2026.8**, o Home Assistant passou a gerenciar essas configurações pela interface:
+
+```text
+Configurações → Sistema → Rede → seção "Servidor HTTP"
+```
+
+A maioria dos tutoriais publicados sobre esse assunto é anterior à mudança e ainda manda editar o arquivo à mão. Colar aquele bloco numa instalação atual pode gerar configuração duplicada e um comportamento difícil de diagnosticar.
+
+**Confira a versão da sua instalação antes de seguir qualquer guia desta área.** Ela aparece em Configurações → Sobre.
+
+## O que muda no aplicativo do celular
+
+Configurado o acesso remoto, o aplicativo oficial passa a funcionar fora de casa — mas o comportamento é diferente em cada caminho, e isso gera confusão.
+
+**Com o Home Assistant Cloud**, o aplicativo guarda dois endereços: o interno, usado quando você está na rede de casa, e o externo. Ele alterna sozinho conforme detecta em qual rede está. Na prática, você não pensa no assunto.
+
+**Com o Tailscale**, existe um endereço só — o da rede privada —, e ele funciona em qualquer lugar **desde que a VPN esteja conectada**. É um passo a mais: se o aplicativo do Tailscale estiver desconectado no celular, o Home Assistant fica inacessível até você reconectar.
+
+O ajuste que resolve boa parte do atrito: deixar o Tailscale configurado para **conectar automaticamente** no celular. A maioria dos sistemas permite marcar a VPN como sempre ativa.
+
+### Notificações continuam funcionando?
+
+Sim, e vale entender por quê, porque a lógica é o contrário do que se imagina.
+
+Notificação push não depende de você conseguir acessar o Home Assistant — depende de o **Home Assistant conseguir alcançar o serviço de notificação** do sistema do celular. Esse caminho é de saída, parte de dentro da sua casa para a internet, e não exige porta aberta nem VPN conectada.
+
+É por isso que alertas de automação chegam normalmente mesmo quando você está com a VPN desligada. O que exige a conexão é **abrir o painel** e comandar alguma coisa, não receber o aviso.
+
+## O que fica ligado 24 horas
+
+![Raspberry Pi 5 Model B versão Anatel com 4 GB de RAM](/images/produtos/raspberry-pi-5-4gb-anatel.webp)
+
+Qualquer uma dessas soluções pressupõe um Home Assistant ligado o tempo todo — o acesso remoto só serve se houver algo do outro lado para atender.
+
+O **Raspberry Pi 5 com 4 GB** dá conta do Home Assistant OS com folga para add-ons como o Tailscale, e consome pouco o suficiente para ficar ligado permanentemente sem pesar na conta. A versão Anatel é a homologada, com garantia no Brasil.
+
+Dois avisos sobre ele: exige fonte USB-C de 27 W específica, e o cartão microSD é o ponto fraco da montagem — um SSD ligado por USB dura muito mais em uso contínuo.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="acesso-remoto-home-assistant-sem-abrir-porta" />
+
+## A lista de verificação antes de liberar qualquer acesso
+
+A documentação orienta revisar a lista de segurança antes de implementar qualquer método. Vale destacar os itens que mais importam quando o assunto é acesso de fora.
+
+**Autenticação em duas etapas.** É o item mais importante de todos, especialmente no caminho do Home Assistant Cloud, em que existe um endereço público. Com duas etapas ativadas, a senha vazada sozinha não abre a porta. O Home Assistant suporta aplicativos de autenticação padrão, do tipo que gera código de seis dígitos.
+
+**Senha que não se repete.** A senha do Home Assistant não pode ser a mesma de nenhum outro serviço. Se ela for, o próximo vazamento de qualquer site aleatório vira credencial válida para a sua casa.
+
+**Contas separadas por pessoa.** Em vez de todo mundo usar o mesmo login, criar uma conta por morador permite revogar o acesso de um aparelho perdido sem trocar a senha de todos. Também deixa o registro de quem fez o quê legível.
+
+**Atualizações em dia.** Vale especialmente para quem expõe qualquer coisa. Correções de segurança chegam nas versões novas, e uma instalação parada há um ano acumula problemas conhecidos e publicados.
+
+**Revisar o que está exposto.** Se você usa o Home Assistant Cloud, lembre que o endereço remoto dá acesso ao painel inteiro, não apenas ao que você pretende usar de fora. Vale revisar o que está visível e pensar se todas as entidades precisam estar ali.
+
+### O detalhe do Tailscale que merece atenção
+
+O Tailscale tem um recurso chamado **Funnel**, que publica um serviço da sua rede privada para a internet aberta.
+
+É útil em casos específicos, e é exatamente o oposto do motivo pelo qual você escolheu o Tailscale. Se o objetivo é que o seu Home Assistant não exista para a internet, **o Funnel desfaz isso.** O recurso indicado para o uso deste guia é o **Serve**, que compartilha o serviço apenas dentro da sua rede privada.
+
+Os nomes são parecidos e a confusão é fácil. Serve mantém dentro; Funnel joga para fora.
+
+## Comparando os dois caminhos
+
+| | Home Assistant Cloud | Tailscale |
+|---|---|---|
+| Custo | Assinatura | Plano pessoal gratuito |
+| Exposição pública | Endereço público | **Nenhuma** |
+| Funciona com CG-NAT | Sim | Sim |
+| Instalar app no celular | Não | **Sim, obrigatório** |
+| Acessa de qualquer navegador | Sim | Só de aparelho autorizado |
+| Sustenta o projeto | Sim | Não |
+
+<ProsCons
+  pros={[
+    'Os dois caminhos dispensam abrir porta e funcionam atrás de CG-NAT',
+    'A instalação do Tailscale virou aplicativo, sem editar arquivo',
+    'O Nabu Casa resolve em um botão e financia o projeto',
+  ]}
+  cons={[
+    'Endereço público do Nabu Casa concentra a segurança na senha',
+    'O Tailscale exige aplicativo conectado em cada aparelho que acessa',
+    'Tutoriais anteriores a 2026.8 ensinam um caminho que mudou',
+  ]}
+/>
+
+## Fechando
+
+O resumo cabe em uma decisão: se você quer conveniência e não se incomoda com assinatura, **Home Assistant Cloud**. Se quer que o seu Home Assistant seja invisível para a internet, **Tailscale**.
+
+O que não é opção é o encaminhamento de porta — e, se o seu provedor usa CG-NAT, essa decisão já foi tomada sem você.
+
+A documentação oficial de acesso remoto está em [home-assistant.io/docs/configuration/remote](https://www.home-assistant.io/docs/configuration/remote/), e vale conferir a lista de verificação de segurança antes de liberar qualquer acesso externo.

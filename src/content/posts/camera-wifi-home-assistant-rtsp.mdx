@@ -1,0 +1,253 @@
+---
+title: 'Como adicionar uma câmera Wi-Fi ao Home Assistant por RTSP'
+description: 'O passo a passo para integrar câmeras Wi-Fi ao Home Assistant usando RTSP, com a configuração da documentação oficial e os erros mais comuns.'
+pubDate: 2026-09-22T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'rtsp', 'camera', 'tutorial', 'automacao-residencial']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link Tapo C200 Camera Wi-Fi 360 1080p Full HD'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20'
+    image: '/images/produtos/tapo-c200-camera.webp'
+    pros:
+      - 'Suporta RTSP nativo, sem depender de nuvem nem de integração extra'
+      - '151 mil avaliações: das câmeras mais testadas do mercado brasileiro'
+      - 'Alimentação por tomada, que é o que garante o RTSP funcionando'
+    cons:
+      - 'Exige criar uma conta de câmera separada no app Tapo'
+      - '1080p apenas, sem opção de resolução maior'
+faq:
+  - question: 'Qualquer câmera Tapo funciona com RTSP?'
+    answer: 'Não, e essa é a armadilha mais cara desse assunto. A TP-Link documenta que as câmeras alimentadas por bateria e as movidas a energia solar geralmente não suportam RTSP, por uma questão de eficiência energética — manter um fluxo contínuo aberto acabaria com a bateria. Também há restrição em parte das campainhas com vídeo, como os modelos D235, D225 e TD25, que só oferecem RTSP quando instaladas com fiação e no modo sempre ligado. A regra prática antes de comprar é simples: se a câmera se vende como "sem fio, sem tomada, bateria de meses", provavelmente ela não vai entrar no Home Assistant por RTSP. Confirme o suporte no modelo exato antes de fechar a compra.'
+  - question: 'A senha da conta de câmera é a mesma do meu login Tapo?'
+    answer: 'Não, e confundir as duas é a causa número um de falha de conexão. A conta de câmera é uma credencial separada, criada dentro do aplicativo, exclusivamente para acesso local por RTSP e ONVIF. O seu login da Tapo é a conta de nuvem, usada para o aplicativo e para os serviços online. Se você tentar usar o e-mail e a senha do login Tapo na URL RTSP, o fluxo simplesmente não abre, sem mensagem de erro muito clara. A conta de câmera é criada em Configurações avançadas, na opção Conta da câmera, e aceita de 6 a 32 caracteres em cada campo.'
+  - question: 'Qual a diferença entre stream1 e stream2?'
+    answer: 'São os dois fluxos que a câmera publica ao mesmo tempo, em qualidades diferentes. O stream1 é o de alta qualidade e o stream2 é o padrão, de resolução mais baixa. A recomendação prática que aparece com frequência na comunidade é usar o stream2 no painel do Home Assistant, porque um mosaico de câmeras em alta resolução consome banda e processamento à toa, e reservar o stream1 para gravação, quando a definição realmente importa. Em alguns modelos a qualidade do stream1 acompanha o ajuste de qualidade de vídeo feito no próprio aplicativo, então vale conferir ali se a imagem não vier como esperado.'
+  - question: 'Preciso instalar algum add-on para o RTSP funcionar?'
+    answer: 'Para o caso básico, não. A integração Generic Camera já vem no Home Assistant e é configurada pela interface. A documentação oficial faz uma ressalva importante: uma fonte de stream sem uma URL de imagem estática só pode ser usada se a integração stream estiver configurada. Em instalações padrão do Home Assistant isso já está resolvido, porque a integração stream faz parte da configuração default. Você só precisa se preocupar com isso em instalações muito enxutas, montadas manualmente com um conjunto reduzido de componentes.'
+  - question: 'É seguro deixar RTSP ligado na câmera?'
+    answer: 'Dentro da sua rede local, sim, desde que você trate o fluxo como algo que não deve sair de casa. A própria TP-Link declara que RTSP e ONVIF não são adequados para redes públicas e devem ficar restritos a redes locais confiáveis. O motivo é que o protocolo carrega as credenciais na própria URL e não foi desenhado para exposição direta à internet. Isso significa duas coisas na prática: nunca abra a porta 554 no seu roteador para acessar a câmera de fora, e prefira acessar o Home Assistant remotamente por um caminho próprio, sem expor a câmera. Se precisar ver a imagem fora de casa, o acesso deve passar pelo Home Assistant, não pela câmera.'
+  - question: 'A câmera para de gravar no cartão se eu usar RTSP?'
+    answer: 'Pode parar, dependendo do que mais estiver ativo. A TP-Link documenta que o armazenamento em nuvem do Tapo Care, a gravação em NVR e a gravação no cartão microSD não operam simultaneamente. Na prática, se você montar uma gravação no lado do Home Assistant e também esperar que o cartão continue gravando o mesmo período, pode acabar sem uma das duas. Decida onde o vídeo deve morar antes de configurar: se o Home Assistant vai gravar, o cartão vira redundância opcional; se o cartão é a sua gravação principal, use o RTSP apenas para visualização ao vivo e automações.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Colocar uma câmera dentro do Home Assistant tem duas versões. A versão difícil envolve integração de terceiros, token de nuvem e um componente que quebra a cada atualização do fabricante. A versão fácil usa **RTSP**, que é um protocolo aberto, roda inteiramente dentro da sua rede e não depende de servidor nenhum na internet.
+
+Este guia cobre a versão fácil, usando a integração **Generic Camera**, que já vem no Home Assistant. Os passos seguem a documentação oficial do Home Assistant **2026.9** e a documentação de suporte da TP-Link para câmeras Tapo.
+
+## O que é RTSP, em termos práticos
+
+RTSP é a sigla de *Real Time Streaming Protocol*. Ele não transporta o vídeo — ele **negocia a sessão**: diz ao cliente onde está o fluxo, em que formato, e comanda começar, pausar e parar. O vídeo em si costuma viajar em outro protocolo logo abaixo.
+
+Três consequências disso importam para quem vai usar:
+
+- **É um padrão aberto e antigo.** Praticamente toda câmera IP de tomada fala RTSP, independentemente de marca. Isso significa que o procedimento deste guia vale muito além da Tapo — muda a URL, não o método.
+- **Não depende de nuvem.** A câmera publica o fluxo na rede local e quem quiser que venha buscar. Se a internet cair, o Home Assistant continua vendo a câmera.
+- **Não foi desenhado para a internet.** Credencial viaja na própria URL, e é por isso que o protocolo precisa ficar dentro de casa — falo disso no fim.
+
+### Quanto de rede isso consome
+
+Uma dúvida legítima antes de instalar três câmeras: o fluxo contínuo pesa na rede?
+
+Uma câmera 1080p típica gera algo na ordem de **2 a 4 Mbps** no fluxo de alta qualidade, e bem menos no fluxo secundário. Quatro câmeras em alta simultânea podem passar de 10 Mbps trafegando o tempo todo dentro da sua rede.
+
+Dois pontos práticos daí:
+
+- **Isso não consome a sua internet**, porque o tráfego é local — não sai para o provedor, a menos que você esteja assistindo de fora de casa.
+- **Isso consome o seu Wi-Fi.** Câmeras em 2,4 GHz transmitindo continuamente disputam espaço com o resto da casa. É o argumento mais forte para usar o **fluxo secundário** no painel: a imagem do mosaico não precisa de alta resolução, e a diferença de banda é grande.
+
+## Antes de comprar: nem toda câmera serve
+
+Esse é o ponto que precisa vir antes de qualquer passo a passo, porque ele decide dinheiro.
+
+A TP-Link documenta que **câmeras alimentadas por bateria e por energia solar geralmente não suportam RTSP**. O motivo é físico: manter um fluxo de vídeo aberto o tempo todo consumiria a bateria em dias, e o produto inteiro é vendido pela promessa contrária.
+
+Há também restrição em parte das campainhas com vídeo — modelos como D235, D225 e TD25 só oferecem RTSP quando instalados com fiação e com o modo sempre ligado habilitado.
+
+A regra prática: **se a câmera é vendida como "sem fio, sem tomada, bateria de meses", ela provavelmente não entra no Home Assistant por RTSP.** Câmera de tomada é o caminho seguro.
+
+![Câmera TP-Link Tapo C200 Wi-Fi com rotação de 360 graus](/images/produtos/tapo-c200-camera.webp)
+
+A **Tapo C200** é a escolha óbvia para começar por três motivos: suporta RTSP nativo, é alimentada por tomada — o que garante o fluxo contínuo — e acumula mais de 151 mil avaliações, o que a torna uma das câmeras mais testadas do mercado brasileiro. É 1080p, sem opção de resolução maior, o que para uso em automação e monitoramento doméstico é suficiente.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20" store="amazon" source="camera-wifi-home-assistant-rtsp" />
+
+## Passo 1 — Criar a conta de câmera
+
+Aqui está o erro que mais trava gente, e vale ler com atenção: **a credencial do RTSP não é o seu login da Tapo.**
+
+O login Tapo é a conta de nuvem, que serve para o aplicativo. O RTSP exige uma segunda credencial, local, chamada **conta de câmera**, que você cria manualmente.
+
+Segundo a documentação de suporte da TP-Link, o caminho é:
+
+1. Abra a página de **visualização ao vivo** da câmera no app Tapo
+2. Toque no ícone de **configurações**, no canto superior direito
+3. Entre em **Configurações avançadas** → **Conta da câmera**
+4. Aceite os termos e crie usuário e senha, cada um com **6 a 32 caracteres**
+
+Anote as duas coisas. Elas vão na URL do próximo passo.
+
+## Passo 2 — Descobrir o IP e montar a URL
+
+A câmera precisa de um endereço fixo na sua rede. Se o IP mudar, o Home Assistant perde o fluxo. A forma mais confiável de resolver isso é **reservar o IP no roteador** pelo endereço MAC da câmera, em vez de configurar IP estático no aparelho.
+
+Com o IP em mãos, a URL segue o formato documentado pela TP-Link:
+
+```text
+rtsp://usuario:senha@ENDERECO_IP:554/stream1
+```
+
+Trocando para o fluxo de qualidade padrão:
+
+```text
+rtsp://usuario:senha@ENDERECO_IP:554/stream2
+```
+
+Um exemplo preenchido, com a conta de câmera `hass` e a senha `senhalocal123`:
+
+```text
+rtsp://hass:senhalocal123@192.168.1.42:554/stream1
+```
+
+A porta padrão do RTSP é a **554**. A documentação da TP-Link mostra o formato tanto com a porta explícita quanto sem ela — incluir a porta não atrapalha e evita ambiguidade.
+
+### stream1 ou stream2?
+
+Os dois fluxos são publicados ao mesmo tempo, em qualidades diferentes:
+
+| Fluxo | Qualidade | Uso recomendado |
+|---|---|---|
+| `stream1` | Alta | Gravação, quando a definição importa |
+| `stream2` | Padrão | Painel com várias câmeras, ao vivo |
+
+A recomendação que circula na comunidade é usar o **stream2 no painel** — um mosaico de câmeras em alta resolução gasta banda e processamento sem motivo — e reservar o **stream1 para gravação**.
+
+## Passo 3 — Testar no VLC antes de tocar no Home Assistant
+
+Este passo parece supérfluo e é o que mais economiza tempo.
+
+Abra o VLC, vá em **Mídia → Abrir Fluxo de Rede**, cole a URL RTSP e mande reproduzir.
+
+O teste separa dois mundos:
+
+- **Abriu no VLC:** a câmera, a conta e a rede estão certas. Qualquer problema daqui em diante é configuração do Home Assistant.
+- **Não abriu no VLC:** não adianta mexer no Home Assistant. O problema está na conta de câmera, no IP ou no fato de o modelo não suportar RTSP.
+
+Sem esse teste, você fica mexendo em campos do Home Assistant tentando consertar um problema que não está nele.
+
+## Passo 4 — Adicionar no Home Assistant
+
+A integração **Generic Camera** é configurada pela interface, não por YAML. O caminho é **Configurações → Dispositivos e serviços → Adicionar integração → Generic Camera**.
+
+A documentação oficial descreve os campos assim:
+
+- **Still Image URL** — a URL em que a câmera serve a imagem estática
+- **Stream Source URL** — a URL em que a câmera serve o fluxo ao vivo, por exemplo `rtsp://192.168.1.21:554/`
+- **Username** e **Password** — aplicados às duas URLs acima
+
+> A documentação é explícita: *"You must enter a URL in at least one of the fields Still Image URL or Stream Source URL, the others are optional."*
+
+Na prática, para uma câmera RTSP você preenche o **Stream Source URL** com a URL montada no passo 2.
+
+Há uma ressalva documentada que vale conhecer: *"A stream_source without a still_image_url can only be used if the stream integration is configured."* Em instalação padrão do Home Assistant isso já está resolvido, porque a integração `stream` faz parte da configuração default. O aviso só importa em instalações enxutas, montadas à mão com um conjunto reduzido de componentes.
+
+### As opções avançadas que resolvem problema
+
+Ainda no formulário, a Generic Camera expõe opções que são exatamente as que você vai querer quando algo der errado:
+
+| Campo | Para que serve |
+|---|---|
+| **RTSP transport protocol** | Alterna entre `tcp`, `udp`, `udp_multicast` e `http` |
+| **Frame Rate** | Quadros por segundo do fluxo |
+| **Authentication** | Escolhe entre `basic` e `digest` |
+| **Use wallclock as timestamps** | Reescreve os carimbos de tempo do fluxo |
+| **Verify SSL certificate** | Verificação de certificado |
+
+Guarde especialmente o **RTSP transport protocol** e o **Use wallclock as timestamps** — são os dois que resolvem a maior parte dos casos de imagem travando ou dessincronizando.
+
+## Passo 5 — Colocar a câmera no painel
+
+Com a integração criada, a câmera vira uma entidade e pode ser colocada em qualquer painel. Os dois cartões que resolvem quase tudo:
+
+- **Picture Entity** — mostra uma imagem estática que se atualiza periodicamente e abre o fluxo ao vivo quando você toca. É o mais leve e o mais adequado para um mosaico com várias câmeras.
+- **Picture Glance** — mesma ideia, com botões de outras entidades sobrepostos. Útil para juntar a câmera da entrada com a fechadura e a luz externa no mesmo cartão.
+
+A recomendação prática para quem tem mais de duas câmeras: **use Picture Entity com o fluxo secundário no painel principal**, e deixe o fluxo de alta para quando você abrir a câmera individualmente. Um painel que abre quatro fluxos de alta qualidade ao mesmo tempo castiga tanto a rede quanto o aparelho que está exibindo.
+
+## Passo 6 — Usar a câmera em automação
+
+Ver a imagem é metade do ganho. A outra metade é a câmera participar das automações — e aqui vale entender uma limitação.
+
+A integração Generic Camera entrega **vídeo**, não eventos. Ela não sabe dizer "detectei movimento", porque RTSP transporta imagem e nada mais. A detecção de movimento acontece dentro da câmera e fica no aplicativo do fabricante.
+
+Isso deixa dois caminhos:
+
+- **Gatilho por outro sensor.** O movimento vem de um sensor de presença que você já tem no Home Assistant, e a câmera entra na automação como **ação**: mandar um instantâneo no celular quando o sensor da área externa disparar. Funciona bem e é simples.
+- **Processamento do próprio fluxo.** Existem soluções que analisam o vídeo e geram eventos de detecção, inclusive distinguindo pessoa de carro e de animal. É o caminho mais poderoso e também o mais pesado: exige processamento dedicado e vai muito além do escopo deste guia.
+
+Para a maioria das casas, o primeiro caminho resolve: o sensor dispara, o Home Assistant tira um instantâneo e manda a foto na notificação. Você recebe a imagem sem precisar abrir nada.
+
+## Sobre gravação
+
+Vale decidir isso conscientemente, porque as opções se excluem.
+
+**Gravação no cartão da câmera.** Mais simples, funciona sem o Home Assistant ligado. Limitada pelo tamanho do cartão e perdida se a câmera for levada.
+
+**Gravação pelo Home Assistant.** Fica no seu armazenamento, sobrevive à perda da câmera e pode ser acionada por automação — gravar só quando o sensor dispara, por exemplo. Consome espaço rápido e depende do servidor estar ligado.
+
+**Nuvem do fabricante.** Sobrevive a tudo, custa assinatura e coloca a imagem da sua casa em servidor de terceiro.
+
+A limitação documentada pela TP-Link, que decide a escolha: **o armazenamento em nuvem do Tapo Care, a gravação em NVR e a gravação no cartão microSD não operam simultaneamente.** Escolha uma antes de montar, para não descobrir depois que ficou sem nenhuma.
+
+## Troubleshooting: os quatro problemas conhecidos
+
+**A imagem não abre e não há mensagem clara.** Quase sempre é a credencial errada — você usou o login da Tapo em vez da conta de câmera. Volte ao passo 1.
+
+**Abre no VLC mas não no Home Assistant.** Troque o **RTSP transport protocol** de `udp` para `tcp`. O UDP perde pacotes com mais facilidade e algumas redes domésticas lidam mal com ele.
+
+**A imagem trava depois de alguns minutos ou o horário fica estranho.** Ative **Use wallclock as timestamps**. Câmeras que geram carimbos de tempo inconsistentes fazem o decodificador se perder, e essa opção reescreve os carimbos pelo relógio do sistema.
+
+**Funcionou e parou dias depois.** Provavelmente o IP da câmera mudou. Reserve o endereço no roteador, como descrito no passo 2.
+
+## Um ponto de segurança que não é opcional
+
+A própria TP-Link declara que **RTSP e ONVIF não são adequados para redes públicas** e devem ficar restritos a redes locais confiáveis.
+
+O motivo é estrutural: a URL RTSP carrega usuário e senha em texto, e o protocolo não foi desenhado para ficar exposto à internet.
+
+Duas consequências práticas:
+
+- **Nunca abra a porta 554 no roteador** para ver a câmera de fora de casa.
+- Se precisar do acesso remoto, ele deve passar pelo **Home Assistant**, não pela câmera diretamente.
+
+E uma limitação que costuma surpreender: a TP-Link documenta que o armazenamento em nuvem do Tapo Care, a gravação em NVR e a gravação no cartão microSD **não operam simultaneamente**. Decida onde o vídeo vai morar antes de montar a gravação, para não descobrir depois que ficou sem nenhuma das duas.
+
+<ProsCons
+  pros={[
+    'RTSP é padrão aberto: não depende de nuvem nem de integração de terceiros',
+    'A Generic Camera já vem no Home Assistant, sem add-on',
+    'Todo o fluxo fica dentro da rede local',
+  ]}
+  cons={[
+    'Câmera a bateria normalmente não suporta RTSP',
+    'Exige criar e guardar uma segunda credencial',
+    'Não pode ser exposto à internet diretamente',
+  ]}
+/>
+
+## Fechando
+
+O caminho inteiro cabe em quatro movimentos: criar a conta de câmera, reservar o IP, testar no VLC e preencher o Stream Source URL na Generic Camera.
+
+Se for guardar uma coisa só deste guia, guarde o teste no VLC. Ele separa problema de câmera de problema de Home Assistant em trinta segundos, e é a diferença entre resolver rápido e passar a noite mexendo no campo errado.
+
+A documentação da integração usada aqui está em [home-assistant.io/integrations/generic](https://www.home-assistant.io/integrations/generic/), e o procedimento da conta de câmera está na base de suporte da TP-Link.
