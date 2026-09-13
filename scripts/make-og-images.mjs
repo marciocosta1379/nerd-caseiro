@@ -51,7 +51,9 @@ function parseFrontmatter(raw) {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   const fm = m ? m[1] : '';
   const titleM = fm.match(/^title:\s*['"]?(.+?)['"]?\s*$/m);
-  const imgM = fm.match(/image:\s*['"](\/images\/produtos\/[^'"]+)['"]/);
+  // `cover:` explícito vence; sem ele, a foto do 1º produto.
+  const coverM = fm.match(/^cover:\s*['"](\/images\/[^'"]+)['"]/m);
+  const imgM = coverM || fm.match(/image:\s*['"](\/images\/produtos\/[^'"]+)['"]/);
   return {
     title: titleM ? titleM[1].replace(/''/g, "'") : null,
     image: imgM ? imgM[1] : null,

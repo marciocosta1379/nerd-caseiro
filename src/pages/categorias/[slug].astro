@@ -110,7 +110,7 @@ function formatDate(date: Date) {
     ) : (
       <div class="post-grid">
         {posts.map((post) => {
-          const thumb = post.data.products?.[0]?.image;
+          const thumb = post.data.cover ?? post.data.products?.[0]?.image;
           return (
             <article class="post-card">
               <div class="post-card__thumb">

@@ -31,6 +31,10 @@ const posts = defineCollection({
       priceCheckedAt: z.string().optional(),
       image: image().optional(),
       imageAlt: z.string().optional(),
+      // Capa explícita (caminho em public/). Sem ela, a capa é a foto do 1º produto.
+      // Usada quando o assunto do post não é um produto de afiliado — ex.: um
+      // lançamento que ainda não se vende, comparado com alternativas que se vendem.
+      cover: z.string().optional(),
       category: z.enum([
         'automacao-residencial',
         'casa-inteligente',
