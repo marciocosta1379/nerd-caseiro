@@ -67,9 +67,15 @@ têm bloco `faq`).
 1. **Verificar estoque** de cada produto (`curl` na página `/dp/<ASIN>` + `id="availability"` e
    `id="add-to-cart-button"`; caso ambíguo, Browser pane). Sem estoque → trocar.
 2. **Imagem no corpo** onde o produto é citado — sem bloco numerado rígido.
-3. **Coerência produto ↔ texto**: o que o texto diz ser necessário tem botão de compra; o que o
+3. **Abanou: imagem do Wikimedia Commons** sempre que ilustrar melhor o artigo e/ou quando as
+   fotos de produto não bastarem (decisão do usuário, 11/09/2026). Vale para o post que discute
+   **espécie, raça, planta ou anatomia** — o que nenhuma foto de anúncio mostra. Confira a
+   licença (DP/CC0/CC BY-SA; **não** CC BY-NC), **confirme visualmente** que é a espécie certa e
+   **credite** abaixo da imagem com `<p class="credito-imagem">`. Guarde em `images/plantas/` ou
+   `images/referencia/`, nunca em `produtos/`. Detalhe na `/lote-semanal` do Abanou.
+4. **Coerência produto ↔ texto**: o que o texto diz ser necessário tem botão de compra; o que o
    texto rejeita sai do frontmatter, da tabela e do corpo.
-4. `npm run build` em cada repo para validar o schema.
+5. `npm run build` em cada repo para validar o schema.
 
 ### Passo 4 — Inserir os cross-links das pontes
 
