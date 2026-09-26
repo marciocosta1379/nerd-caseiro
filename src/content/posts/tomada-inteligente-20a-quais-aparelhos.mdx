@@ -1,0 +1,211 @@
+---
+title: 'Tomada inteligente de 20A: quais aparelhos da casa pedem ela'
+description: 'Air fryer, micro-ondas e aquecedor puxam mais corrente do que uma tomada smart de 10A aguenta. Veja como fazer a conta e quando a de 20A é obrigatória.'
+pubDate: 2026-10-02
+category: 'casa-inteligente'
+tags: ['tomada-inteligente', 'smart-plug', '20a', 'casa-inteligente', 'eletrica', 'guia']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'NovaDigital Tomada Inteligente 20A Wi-Fi com medidor, WK-BR PRO MAX'
+    brand: 'NovaDigital'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CCLGLZB6?tag=nerdcaseiro-20'
+    image: '/images/produtos/novadigital-wkbr-20a.webp'
+    pros:
+      - 'Potência máxima declarada de 4.400 W, bivolt de 100 a 240 V'
+      - 'Medidor de consumo e compatibilidade com Tuya e Smart Life'
+      - 'Botão físico de liga e desliga na própria tomada'
+    cons:
+      - 'Só Wi-Fi 2,4 GHz, como quase todas'
+      - 'Base de 283 avaliações, menor que a da EKAZA'
+  - name: 'EKAZA Tomada inteligente 20A Wi-Fi T105'
+    brand: 'EKAZA'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09M56VH6F?tag=nerdcaseiro-20'
+    image: '/images/produtos/ekaza-t105-20a.webp'
+    pros:
+      - '2,7 mil avaliações: a 20A mais validada na Amazon'
+      - '20 A declarados para carga resistiva'
+      - 'Homologada pela Anatel'
+    cons:
+      - 'Sem medidor de consumo'
+      - 'Potência máxima aparece diferente entre lojas: use o menor valor'
+  - name: 'Positivo Smart Plug Max Wi-Fi 16A, 1600 W'
+    brand: 'Positivo Casa Inteligente'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0BNSVWWDR?tag=nerdcaseiro-20'
+    image: '/images/produtos/positivo-smart-plug-max-16a.webp'
+    pros:
+      - 'Deixa claro o limite real: 1.600 W, bivolt'
+      - 'Monitora o consumo de energia pelo app'
+      - 'Nota 4,8 com 923 avaliações'
+    cons:
+      - 'Não serve para aparelho acima de 1.600 W, apesar dos 16 A no nome'
+      - 'Pino de 16 A não é o de 20 A da NBR 14136'
+faq:
+  - question: 'Posso ligar uma air fryer numa tomada inteligente de 10A?'
+    answer: 'Depende da potência da air fryer e da tensão da sua casa. A conta é potência dividida pela tensão. Uma air fryer de 1.400 W em 127 V puxa cerca de 11 A, acima dos 10 A da tomada. Em 220 V, a mesma air fryer puxa cerca de 6,4 A e cabe numa de 10 A. Antes de ligar, olhe a potência na etiqueta do aparelho e o limite em watts declarado pela tomada inteligente, e use sempre o menor dos dois limites.'
+  - question: 'A tomada inteligente de 20A precisa de tomada de parede de 20A?'
+    answer: 'Sim. Pela NBR 14136, o plugue de 20 A tem pinos de 4,8 mm, mais grossos que os de 4,0 mm do padrão de 10 A. O plugue da tomada inteligente de 20 A só encaixa numa tomada de parede de 20 A. E a tomada de parede de 20 A precisa estar ligada a um circuito dimensionado para essa corrente, com fio e disjuntor adequados. Trocar só o espelho da tomada, sem conferir o circuito, é um risco de aquecimento.'
+  - question: 'O que significa 20A para carga resistiva?'
+    answer: 'Que o limite de 20 A vale para aparelhos que só aquecem, como chaleira, aquecedor e ferro de passar. Aparelhos com motor ou compressor, como geladeira, bomba e ar-condicionado, puxam uma corrente bem maior no instante em que ligam, por frações de segundo. Esse pico desgasta o relé da tomada inteligente mais rápido. Para esse tipo de aparelho, o limite prático fica abaixo do nominal.'
+  - question: 'Vale usar tomada inteligente no ar-condicionado?'
+    answer: 'Em geral, não. Ar-condicionado split costuma ser ligado num circuito dedicado, às vezes sem tomada, e tem compressor, que é carga com pico de partida. Cortar a energia dele pela tomada também desliga o aparelho de forma brusca. Para automatizar o ar-condicionado, o caminho mais seguro é comandar o próprio aparelho por infravermelho ou pelo Wi-Fi dele, sem interromper a energia.'
+  - question: 'A tomada inteligente gasta energia?'
+    answer: 'Gasta pouco, porque o módulo Wi-Fi e o relé ficam ligados o tempo todo para responder aos comandos. O consumo em espera varia por modelo e nem sempre é declarado pelo fabricante. Para quem usa a tomada para cortar o consumo em espera de TV e som, o saldo costuma ser positivo. Para quem liga uma tomada inteligente num aparelho que já fica desligado, é um consumo pequeno a mais.'
+  - question: 'Posso usar benjamim ou extensão com a tomada inteligente de 20A?'
+    answer: 'Não é recomendado. A tomada inteligente já soma uma conexão ao circuito, e cada conexão a mais é um ponto de mau contato e aquecimento. Com aparelho de alta potência, como air fryer e aquecedor, benjamim e extensão finas são a origem clássica de tomada derretida. Ligue o aparelho de alta potência direto na tomada inteligente, e ela direto na parede.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+A tomada inteligente mais vendida do Brasil é a de 10 A. Ela serve bem para luminária, ventilador, cafeteira e TV. O problema começa quando alguém tenta automatizar a air fryer, o aquecedor ou a chaleira, e a tomada esquenta, desarma ou simplesmente derrete.
+
+A causa não é defeito: é conta. Aparelho que aquece puxa muita corrente, e a tomada inteligente tem um limite que o nome do produto nem sempre deixa claro. Este guia mostra como fazer essa conta em dois minutos, quais aparelhos da casa pedem uma tomada de 20 A, e o detalhe da ficha técnica que diz mais do que o número de ampères no nome.
+
+## A conta que resolve tudo
+
+Não é preciso saber eletricidade. Basta uma fórmula e dois números que estão na etiqueta do aparelho:
+
+**corrente (A) = potência (W) ÷ tensão (V)**
+
+A potência está na etiqueta do aparelho ou no manual. A tensão é a da sua casa: 127 V ou 220 V, dependendo da região e da tomada.
+
+Invertendo a conta, dá para saber quanto cada tomada aguenta:
+
+| Tomada | Em 127 V | Em 220 V |
+|---|---|---|
+| **10 A** | até **1.270 W** | até **2.200 W** |
+| **16 A** | até 2.032 W | até 3.520 W |
+| **20 A** | até **2.540 W** | até **4.400 W** |
+
+Repare na coluna de 127 V. É nela que mora o problema: em casa de 127 V, uma tomada de 10 A aguenta pouco mais de 1.200 W, e muito aparelho de cozinha passa disso.
+
+## Quais aparelhos pedem 20 A
+
+A regra é simples: **todo aparelho que esquenta alguma coisa** costuma ter potência alta. Alguns exemplos de potência declarada em aparelhos que aparecem entre os mais vendidos:
+
+- A **air fryer Elgin Quad Fry de 4,2 L**, uma das mais vendidas do Mercado Livre, declara **1.400 W**. Em 127 V, isso dá cerca de **11 A**: passa do limite de uma tomada de 10 A.
+- O **aspirador de pó e água WAP GTW 10** declara **1.400 W**. Mesmo caso.
+- O **aspirador Electrolux AWD01** também declara **1.400 W**.
+
+A lista de suspeitos em qualquer casa: air fryer, forno elétrico, micro-ondas, chaleira elétrica, sanduicheira grande, aquecedor, secador de cabelo, ferro de passar, aspirador de pó potente. Para todos esses, **confira a etiqueta antes de comprar a tomada inteligente**. Em 127 V, qualquer aparelho acima de 1.270 W já pede uma tomada de 20 A.
+
+Na outra ponta, aparelhos que cabem com folga numa de 10 A: luminária, ventilador, TV, roteador, cafeteira de filtro, carregadores, som, umidificador.
+
+## O que o número no nome não conta
+
+Aqui está o detalhe que motivou este guia. Três tomadas inteligentes vendidas como "20A" ou "16A" mostram três formas diferentes de declarar o limite, e a leitura errada é fácil.
+
+### 1. O limite em watts vale mais que os ampères
+
+![Positivo Smart Plug Max 16A, com limite de 1.600 W](/images/produtos/positivo-smart-plug-max-16a.webp)
+
+O **Smart Plug Max da Positivo** leva "16A" no nome. Pela tabela acima, 16 A em 127 V seriam 2.032 W. Mas o próprio fabricante declara no anúncio: **potência de 1.600 W, bivolt**, e aparelhos "com potência de até 1.600 W".
+
+O limite real é o **menor** dos dois: 1.600 W. É o componente mais fraco da tomada, que pode ser o relé, a trilha da placa ou o próprio plugue, que manda. A Positivo merece crédito por deixar esse número claro, e o produto é bom para o que se propõe: tem medição de consumo e nota 4,8 com 923 avaliações. Só não é tomada para air fryer de 1.800 W.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0BNSVWWDR?tag=nerdcaseiro-20" store="amazon" source="tomada-inteligente-20a-quais-aparelhos" />
+
+### 2. "Carga resistiva" é uma ressalva importante
+
+![EKAZA Tomada inteligente 20A T105](/images/produtos/ekaza-t105-20a.webp)
+
+A **EKAZA T105** é a tomada inteligente de 20 A mais avaliada da Amazon, com 2,7 mil avaliações. A especificação técnica publicada pelas lojas diz: **"corrente máxima: 20A, carga resistiva"**.
+
+Carga resistiva é o aparelho que só aquece: chaleira, aquecedor, ferro. Aparelho com **motor ou compressor**, como geladeira, freezer, bomba d'água e ar-condicionado, puxa uma corrente muito maior no instante em que liga, por frações de segundo. Esse pico de partida desgasta o relé da tomada inteligente mais rápido que o uso contínuo. Para esse tipo de aparelho, o limite prático fica abaixo do nominal.
+
+Um aviso de transparência: **a potência máxima da T105 aparece diferente entre as lojas.** A KaBuM informa 1.800 W; outra loja informa 2.200 W em 110 V e 4.500 W em 220 V. Quando as fontes divergem, a regra segura é **usar o menor valor** até confirmar com o fabricante. A T105 também não tem medidor de consumo.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09M56VH6F?tag=nerdcaseiro-20" store="amazon" source="tomada-inteligente-20a-quais-aparelhos" />
+
+### 3. A ficha completa: potência, tensão e medição
+
+![NovaDigital WK-BR PRO MAX, tomada inteligente 20A com medidor](/images/produtos/novadigital-wkbr-20a.webp)
+
+A **NovaDigital WK-BR PRO MAX** é a que traz a ficha mais completa no anúncio: **bivolt de 100 a 240 V**, **corrente máxima de 20 A**, **potência máxima de 4.400 W**, pinos no padrão NBR 14136, homologação Anatel e **medidor de consumo**. Ela também tem **botão físico** de liga e desliga, útil quando o Wi-Fi cai.
+
+Os 4.400 W batem com a conta de 20 A em 220 V. Em 127 V, a tabela lá de cima vale: o teto prático fica perto de 2.540 W. É a escolha mais completa das três para aparelho de alta potência, e a medição de consumo tem uma utilidade a mais: mostra quanto a air fryer ou o aquecedor realmente gastam, o que ajuda a decidir onde economizar.
+
+A NovaDigital também declara compatibilidade com **Tuya e Smart Life**, o que facilita integrar a tomada a outros sistemas de automação.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CCLGLZB6?tag=nerdcaseiro-20" store="amazon" source="tomada-inteligente-20a-quais-aparelhos" />
+
+<ComparisonTable
+  rows={[
+    { name: 'NovaDigital WK-BR PRO MAX 20A', brand: 'NovaDigital', rating: 4.7, highlight: '4.400 W, bivolt, medidor de consumo', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0CCLGLZB6?tag=nerdcaseiro-20' }] },
+    { name: 'EKAZA T105 20A', brand: 'EKAZA', rating: 4.6, highlight: '20 A carga resistiva, 2,7 mil avaliações', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B09M56VH6F?tag=nerdcaseiro-20' }] },
+    { name: 'Positivo Smart Plug Max 16A', brand: 'Positivo', rating: 4.8, highlight: 'Até 1.600 W, com medição de consumo', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0BNSVWWDR?tag=nerdcaseiro-20' }] },
+  ]}
+  source="tomada-inteligente-20a-quais-aparelhos"
+/>
+
+## O plugue de 20 A não encaixa em qualquer tomada
+
+Pelo padrão brasileiro **NBR 14136**, o plugue de 20 A tem **pinos de 4,8 mm**, mais grossos que os de **4,0 mm** do plugue de 10 A. É de propósito: impede que um aparelho de 20 A seja ligado numa tomada que não aguenta.
+
+Isso tem duas consequências para quem compra uma tomada inteligente de 20 A:
+
+1. **O plugue dela só entra numa tomada de parede de 20 A.** Se a sua tomada é de 10 A, ela não encaixa.
+2. **Trocar a tomada da parede por uma de 20 A não basta.** O circuito por trás dela precisa ter fio e disjuntor dimensionados para 20 A. Trocar só o espelho, deixando fio fino, é o cenário clássico de aquecimento dentro da parede.
+
+A diferença entre tomada de 10 A e de 20 A, e como saber se o circuito da sua casa aguenta, está explicada em detalhe no guia da Reforma Caseira sobre [tomada 10A ou 20A: qual usar em cada ponto da casa](https://reformacaseira.com.br/posts/tomada-10a-ou-20a-qual-usar/). Mexer no circuito é serviço de eletricista.
+
+## O medidor de consumo: quanto o aparelho custa por mês
+
+Das três tomadas deste guia, duas medem o consumo: a NovaDigital WK-BR PRO MAX e a Positivo Smart Plug Max. Esse recurso é mais útil do que parece, porque transforma a etiqueta do aparelho, que mostra a potência máxima, no consumo **real** do seu uso.
+
+A conta de custo é direta:
+
+**custo mensal = energia do mês (kWh) × tarifa (R$/kWh)**
+
+A energia em kWh o próprio app da tomada mostra, acumulada por dia ou por mês. A tarifa está na sua conta de luz, já com impostos.
+
+Um exemplo de raciocínio, sem inventar números da sua conta: um aquecedor de 1.500 W ligado três horas por noite consome 1,5 kW × 3 h = 4,5 kWh por noite, ou cerca de 135 kWh num mês de 30 noites. Multiplicando pela tarifa, você tem o custo real do conforto. É esse tipo de conta que ajuda a decidir se vale trocar o aparelho, reduzir o tempo de uso ou programar um desligamento automático.
+
+O medidor também revela o **consumo em espera**: aparelhos que parecem desligados, mas continuam puxando energia, como TV, som, micro-ondas com relógio e carregadores. A tomada inteligente mostra esse valor, e cortar a energia deles por horário vira economia medida, não estimada.
+
+## Automações que fazem sentido com 20 A
+
+A tomada de 20 A não serve só para ligar e desligar pelo celular. Os usos mais práticos com aparelhos de alta potência:
+
+- **Aquecedor com horário de desligamento.** Programar o aquecedor do quarto para desligar sozinho depois que todos dormem é economia e segurança ao mesmo tempo.
+- **Desligamento de segurança.** Ferro de passar, chapinha e aquecedor esquecidos ligados são clássicos. Um horário limite na tomada resolve.
+- **Aviso de fim de ciclo.** Com medição de consumo, dá para saber quando a air fryer ou o aspirador terminaram de funcionar. Se você usa Home Assistant, montamos esse tipo de aviso em [notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/).
+
+O que **não** faz sentido automatizar pela energia: aparelho que precisa de um toque no próprio painel para começar a funcionar depois de receber energia. Muitas air fryers e micro-ondas modernos voltam em espera quando a energia é religada, e não ligam sozinhos. Nesse caso, a tomada inteligente só serve para cortar a energia, não para iniciar o preparo.
+
+## Na hora de configurar: o Wi-Fi de 2,4 GHz
+
+As três tomadas deste guia funcionam **apenas em Wi-Fi de 2,4 GHz**, o que é o padrão das tomadas inteligentes. É a causa mais comum de "a tomada não conecta" na configuração.
+
+Roteadores modernos costumam juntar as faixas de 2,4 e 5 GHz sob o **mesmo nome de rede**, e o celular, conectado em 5 GHz, passa essa rede para a tomada, que não consegue entrar. Duas soluções:
+
+1. **Separar as faixas temporariamente** no painel do roteador, dando nomes diferentes para 2,4 e 5 GHz, configurar a tomada na de 2,4 GHz e depois, se quiser, juntar de novo.
+2. **Aproximar o celular da tomada e afastar do roteador** durante a configuração, o que às vezes faz o celular cair para 2,4 GHz.
+
+A tomada também precisa de **sinal razoável** no ponto de instalação. Tomada de cozinha e de área de serviço costumam ficar longe do roteador, atrás de paredes. Se o sinal for fraco, a tomada desconecta com frequência e as automações falham. Nesse caso, um [repetidor de sinal](/posts/melhores-repetidores-sinal-wifi-casa/) no caminho resolve.
+
+## O que não fazer
+
+- **Não use adaptador para forçar o encaixe.** O adaptador que permite ligar um plugue de 20 A numa tomada de 10 A anula a proteção que a norma criou. A tomada de parede continua sendo de 10 A.
+- **Não empilhe benjamim ou extensão.** Cada conexão a mais é um ponto de mau contato. Com aparelho de alta potência, é a origem clássica de tomada derretida.
+- **Não use tomada inteligente no ar-condicionado split.** Ele costuma ter circuito dedicado, tem compressor com pico de partida, e cortar a energia dele é um desligamento brusco. Para automatizar o ar, o caminho é comandar o próprio aparelho, como mostramos em [automatizar o ar-condicionado com ESP32 e Home Assistant](/posts/automatizar-ar-condicionado-esp32-ir-home-assistant/).
+- **Não deixe a tomada inteligente coberta ou atrás de móvel encostado.** Relé em carga alta esquenta, e precisa dissipar calor.
+
+## Como escolher em três perguntas
+
+1. **Qual a potência do aparelho?** Está na etiqueta. Divida pela tensão da sua casa e veja se passa de 10 A.
+2. **Qual o limite em watts da tomada inteligente?** Não o de ampères do nome: o de watts, na ficha. Se houver divergência entre fontes, use o menor.
+3. **A tomada da parede é de 20 A e o circuito aguenta?** Se o aparelho pede 20 A, a tomada de parede e o circuito também precisam ser de 20 A.
+
+Se as três respostas fecham, a tomada inteligente de 20 A resolve com segurança. Para aparelhos de até 1.270 W em 127 V, uma tomada de 10 A comum basta, e comparamos as opções em [os melhores plugues e tomadas inteligentes](/posts/melhores-plugues-tomadas-inteligentes/).

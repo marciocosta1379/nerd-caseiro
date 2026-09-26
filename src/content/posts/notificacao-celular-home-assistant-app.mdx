@@ -1,0 +1,349 @@
+---
+title: 'Notificação no celular com o app do Home Assistant: passo a passo'
+description: 'Configure o app Companion, envie notificação para o celular com a ação notify e adicione botões e imagem, conforme a documentação oficial do Home Assistant.'
+pubDate: 2026-10-01T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'notificacao', 'companion-app', 'automacao', 'tutorial', 'yaml']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'EKAZA Tomada Inteligente 16A Wi-Fi com medidor de consumo'
+    brand: 'EKAZA'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20'
+    image: '/images/produtos/ekaza-16a-medidor.webp'
+    pros:
+      - 'Mede o consumo em tempo real, a base do aviso de fim de ciclo'
+      - '16 A: aguenta máquina de lavar e secadora de uso doméstico'
+      - '6,6 mil avaliações na Amazon'
+    cons:
+      - 'Depende de a integração expor o sensor de potência ao Home Assistant'
+      - 'Wi-Fi e nuvem do fabricante, sem controle local por padrão'
+faq:
+  - question: 'Preciso do Home Assistant Cloud para receber notificação no celular?'
+    answer: 'Não para a notificação de texto. O app Companion registra o celular no Home Assistant, e as notificações são entregues pelo serviço de push do sistema operacional mesmo com o celular fora de casa. O que exige acesso externo é o anexo: a documentação avisa que imagem, vídeo e áudio precisam ser acessíveis pela internet, porque o celular baixa o arquivo quando a notificação chega. Sem acesso remoto configurado, a notificação chega, mas sem a imagem.'
+  - question: 'Como descubro o nome do meu celular para a ação notify?'
+    answer: 'A ação tem o formato notify.mobile_app_ seguido do ID do aparelho, que por padrão é o nome do celular com espaços e caracteres especiais trocados por sublinhado. O jeito mais rápido de conferir é abrir Ferramentas de desenvolvedor, aba Ações, e digitar notify.mobile_app na busca: a lista mostra todos os aparelhos registrados. O nome também aparece na seção do app Companion dentro das configurações do Home Assistant.'
+  - question: 'Por que a notificação chega atrasada no Android?'
+    answer: 'Quase sempre por economia de bateria. Vários fabricantes de Android restringem aplicativos em segundo plano de forma agressiva, e o app Companion passa a receber as notificações só quando é aberto. A solução é liberar o app da otimização de bateria nas configurações do Android e, em alguns aparelhos, permitir a execução em segundo plano. O nome da opção muda de fabricante para fabricante.'
+  - question: 'Quantos botões posso colocar numa notificação?'
+    answer: 'Segundo a documentação do app Companion, o Android permite três ações por notificação. O iOS aceita cerca de dez, e acima disso a interface começa a ter problema de rolagem. Na prática, notificação com mais de dois ou três botões costuma confundir mais do que ajudar, então vale projetar a automação pensando no limite do Android, mesmo que você use iPhone.'
+  - question: 'Como fazer a notificação substituir a anterior em vez de acumular?'
+    answer: 'Use a chave tag dentro de data. Toda notificação enviada com a mesma tag toma o lugar da anterior, em vez de empilhar. É útil para avisos que se atualizam, como a temperatura de um cômodo ou o status da máquina de lavar. Para apagar a notificação de vez, envie a mensagem clear_notification com a mesma tag, como descrito na documentação.'
+  - question: 'A sintaxe platform: event da documentação ainda funciona?'
+    answer: 'Sim. Desde a versão 2024.10, o Home Assistant passou a usar triggers e trigger no lugar de trigger e platform nas automações, mas a sintaxe antiga continua aceita. Os exemplos do app Companion ainda usam a forma antiga em alguns trechos. Neste tutorial usamos a forma nova, que é a que o editor visual gera quando você salva uma automação na versão atual.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Automação que ninguém vê não serve para muita coisa. O Home Assistant pode desligar a luz, fechar a cortina e ligar o ar-condicionado sozinho, mas é a **notificação no celular** que transforma a casa inteligente em algo que conversa com você: a porta que ficou aberta, a máquina que terminou de lavar, o sensor de vazamento que disparou enquanto você estava na rua.
+
+Este tutorial monta isso do zero pelo **app Companion**, o aplicativo oficial do Home Assistant para Android e iOS. Os exemplos seguem a [documentação de notificações do Companion](https://companion.home-assistant.io/docs/notifications/notifications-basic/) e a [documentação de automações](https://www.home-assistant.io/docs/automation/yaml/), conferidas com o **Home Assistant 2026.9.3**, publicado em 18 de setembro de 2026.
+
+## O que você vai montar
+
+Ao fim do tutorial, você terá:
+
+1. o celular registrado no Home Assistant, com a ação de notificação disponível;
+2. uma notificação de teste disparada à mão;
+3. uma automação real: **aviso de que a máquina de lavar terminou**, a partir do consumo de energia;
+4. notificação com **título, tag e atalho** para abrir o painel;
+5. notificação com **botões** que executam ações na casa;
+6. notificação com **imagem anexada**.
+
+## O que você precisa
+
+- **Home Assistant funcionando.** Se ainda não tem, comece por [Home Assistant no Raspberry Pi: a instalação do zero](/posts/home-assistant-raspberry-pi-instalacao/).
+- **O app Companion** instalado no celular, pela loja do Android ou do iPhone.
+- **Um sensor que dispare a automação.** No exemplo da máquina de lavar, é uma tomada com medição de consumo integrada ao Home Assistant.
+- **Acesso remoto**, só se for mandar imagem. Explicamos adiante por quê, e como configurar em [acesso remoto ao Home Assistant sem abrir porta](/posts/acesso-remoto-home-assistant-sem-abrir-porta/).
+
+![Tomada inteligente EKAZA 16A com medidor de consumo](/images/produtos/ekaza-16a-medidor.webp)
+
+A tomada do exemplo é a **EKAZA de 16 A com medidor de consumo**. A medição é o que importa aqui: a máquina de lavar puxa potência enquanto trabalha e cai para quase zero quando termina, e é essa queda que a automação detecta. Uma ressalva honesta: o sensor de potência só aparece no Home Assistant se a integração usada expuser essa medição. Antes de montar a automação, confira se a entidade de potência existe no seu Home Assistant.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20" store="amazon" source="notificacao-celular-home-assistant-app" />
+
+## Passo 1 — Registrar o celular com o app Companion
+
+Instale o app Companion, abra, e ele procura o Home Assistant na rede local. Entre com o seu usuário. Durante a configuração, o app pede algumas permissões. **Aceite a de notificações**: segundo a documentação, é ela que faz o celular aparecer como destino da ação de notificação.
+
+Com isso, o Home Assistant cria uma ação com o formato:
+
+```
+notify.mobile_app_<id_do_aparelho>
+```
+
+O ID é, por padrão, o nome do celular, com espaços e caracteres especiais trocados por sublinhado. Um aparelho chamado "Galaxy de Ana" vira algo como `notify.mobile_app_galaxy_de_ana`.
+
+Para conferir o nome exato, abra **Ferramentas de desenvolvedor**, aba **Ações**, e digite `notify.mobile_app` na busca. Aparecem todos os aparelhos registrados. Anote o seu: ele vai em todos os exemplos a seguir.
+
+## Passo 2 — A primeira notificação, à mão
+
+Ainda em **Ferramentas de desenvolvedor > Ações**, escolha a sua ação `notify.mobile_app_...`, mude para o modo YAML e cole:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  message: "Teste do Home Assistant"
+```
+
+Clique em executar. A notificação deve chegar em segundos.
+
+A documentação é clara sobre o mínimo: **a chave `message` é obrigatória**. Todo o resto é opcional.
+
+Se não chegou, pule para a seção de problemas no fim do texto antes de seguir. Não adianta montar automação em cima de uma notificação que não funciona no teste manual.
+
+## Passo 3 — Aviso de que a máquina de lavar terminou
+
+É o exemplo clássico, e ensina a lógica que serve para quase tudo. A máquina de lavar consome bastante energia enquanto lava e centrifuga, e quase nada quando termina. Mas há pausas no meio do ciclo, como o molho, em que o consumo também cai. Por isso a automação não dispara na primeira queda: ela espera o consumo ficar baixo **por alguns minutos seguidos**.
+
+Crie uma automação nova, mude para YAML (menu de três pontos > Editar em YAML) e use esta estrutura, trocando a entidade da tomada e o nome do celular:
+
+```yaml
+alias: "Máquina de lavar terminou"
+description: "Avisa quando o consumo fica baixo por 3 minutos"
+triggers:
+  - trigger: numeric_state
+    entity_id: sensor.tomada_lavadora_potencia
+    below: 5
+    for: "00:03:00"
+conditions: []
+actions:
+  - action: notify.mobile_app_galaxy_de_ana
+    data:
+      title: "Lavanderia"
+      message: "A máquina de lavar terminou o ciclo."
+mode: single
+```
+
+Três pontos para ajustar à sua máquina:
+
+- **`below: 5`** é o limite em watts abaixo do qual a máquina é considerada parada. Olhe o histórico do sensor durante uma lavagem inteira: o valor de repouso depois do fim do ciclo é a referência. Máquinas com painel digital costumam ficar alguns watts acima de zero mesmo paradas.
+- **`for: "00:03:00"`** é o tempo que o consumo precisa ficar baixo. Se a notificação chegar no meio do ciclo, aumente esse tempo.
+- **`sensor.tomada_lavadora_potencia`** é um nome de exemplo. Use o nome real da entidade de potência da sua tomada.
+
+Um detalhe sobre a sintaxe: desde a versão 2024.10, as automações usam `triggers:` com `- trigger:`, e `actions:` com `- action:`. Alguns exemplos da documentação do Companion ainda aparecem com a forma antiga (`trigger:` e `platform:`), que continua funcionando. Aqui usamos a forma nova, que é a que o editor visual gera hoje.
+
+## Passo 4 — Título, tag e atalho para o painel
+
+Três opções da documentação mudam muito o uso no dia a dia.
+
+**Substituir em vez de acumular (`tag`).** Toda notificação enviada com a mesma `tag` toma o lugar da anterior. Útil para aviso que se repete, como a porta aberta:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  title: "Porta da frente"
+  message: "A porta está aberta há 10 minutos."
+  data:
+    tag: "porta-frente-aberta"
+```
+
+E para apagar a notificação quando a porta fechar, a documentação indica enviar `clear_notification` com a mesma tag:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  message: "clear_notification"
+  data:
+    tag: "porta-frente-aberta"
+```
+
+**Agrupar (`group`).** Junta visualmente notificações do mesmo assunto na tela do celular, como todos os avisos de segurança.
+
+**Abrir o painel certo ao tocar.** A documentação usa duas chaves diferentes, uma para cada sistema: `url` no iOS e `clickAction` no Android. Se a casa tem os dois, envie as duas:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  title: "Movimento no quintal"
+  message: "Toque para ver as câmeras."
+  data:
+    url: "/lovelace/cameras"
+    clickAction: "/lovelace/cameras"
+```
+
+O caminho `/lovelace/cameras` abre a visão `cameras` do painel padrão. Troque pelo caminho da sua visão.
+
+## Passo 5 — Notificação com botões
+
+É o recurso que mais surpreende: a notificação chega com botões, e tocar num deles executa uma ação na casa. A documentação chama de *actionable notifications*.
+
+O funcionamento tem duas partes. A notificação carrega uma lista de `actions`, cada uma com um identificador e um título. Quando você toca num botão, o app dispara no Home Assistant um evento chamado **`mobile_app_notification_action`**, com o identificador do botão. Uma automação escuta esse evento e faz o resto.
+
+**Limite importante:** segundo a documentação, o **Android aceita três botões** por notificação. O iOS aceita cerca de dez.
+
+O exemplo abaixo segue a estrutura recomendada pela documentação: gera identificadores únicos para cada execução, envia a notificação e espera a resposta. Aqui, a pergunta é se a luz da garagem deve ser desligada:
+
+```yaml
+alias: "Luz da garagem esquecida"
+triggers:
+  - trigger: state
+    entity_id: light.garagem
+    to: "on"
+    for: "00:30:00"
+actions:
+  - variables:
+      acao_desligar: "{{ 'DESLIGAR_' ~ context.id }}"
+      acao_manter: "{{ 'MANTER_' ~ context.id }}"
+  - action: notify.mobile_app_galaxy_de_ana
+    data:
+      message: "A luz da garagem está acesa há 30 minutos."
+      data:
+        actions:
+          - action: "{{ acao_desligar }}"
+            title: "Desligar"
+          - action: "{{ acao_manter }}"
+            title: "Manter acesa"
+  - wait_for_trigger:
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ acao_desligar }}"
+      - trigger: event
+        event_type: mobile_app_notification_action
+        event_data:
+          action: "{{ acao_manter }}"
+    timeout: "01:00:00"
+    continue_on_timeout: false
+  - if:
+      - condition: template
+        value_template: "{{ wait.trigger.event.data.action == acao_desligar }}"
+    then:
+      - action: light.turn_off
+        target:
+          entity_id: light.garagem
+mode: single
+```
+
+Por que o `context.id` no identificador: a documentação alerta que as ações de notificação são compartilhadas entre todas as notificações. Se duas automações usarem o mesmo identificador fixo, como `DESLIGAR`, o toque num botão pode disparar a automação errada. Amarrar o identificador à execução evita isso.
+
+O `timeout` de uma hora é um acréscimo nosso ao exemplo da documentação. Sem ele, a automação fica esperando indefinidamente, e, no modo `single`, uma nova notificação não é enviada enquanto a anterior não for respondida. A própria documentação chama atenção para esse comportamento de bloqueio.
+
+## Passo 6 — Notificação com imagem
+
+A notificação pode levar uma **imagem, um vídeo ou um áudio**, baixado pelo celular quando ela chega. É o que permite receber a foto da câmera junto do aviso de movimento.
+
+A documentação traz um aviso que responde à dúvida mais comum sobre esse recurso: **o anexo precisa ser acessível pela internet**. O celular baixa o arquivo no momento em que a notificação chega. Se você está fora de casa e o Home Assistant não tem acesso remoto, a notificação chega sem a imagem. Por isso o acesso remoto é pré-requisito deste passo.
+
+O caminho recomendado pela documentação é a **integração `media_source`**, porque o acesso exige autenticação e o arquivo não fica público. Um arquivo salvo em `/media/foto.jpg` no disco é referenciado como `/media/local/foto.jpg` na notificação:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  message: "Movimento na porta da frente."
+  data:
+    image: "/media/local/porta_frente.jpg"
+```
+
+Para gerar essa imagem a partir de uma câmera, a documentação indica a ação `camera.snapshot`, que salva um quadro da câmera num arquivo. Um exemplo de sequência dentro de uma automação:
+
+```yaml
+actions:
+  - action: camera.snapshot
+    target:
+      entity_id: camera.porta_frente
+    data:
+      filename: "/media/porta_frente.jpg"
+  - action: notify.mobile_app_galaxy_de_ana
+    data:
+      message: "Movimento na porta da frente."
+      data:
+        image: "/media/local/porta_frente.jpg"
+```
+
+Pela [página da ação `camera.snapshot`](https://www.home-assistant.io/actions/camera.snapshot/), o arquivo precisa ser gravado numa pasta que o Home Assistant tem permissão de escrever. A pasta `www` da configuração e as pastas de mídia configuradas já vêm liberadas, por isso `/media/...` funciona sem ajuste. Para gravar em outro lugar, a pasta precisa entrar em `allowlist_external_dirs`.
+
+No Android, a documentação cita ainda um atalho: usar `/api/camera_proxy/camera.nome_da_camera` direto no campo `image`, sem salvar arquivo. Se ainda não tem câmera integrada, veja [como adicionar uma câmera Wi-Fi ao Home Assistant por RTSP](/posts/camera-wifi-home-assistant-rtsp/).
+
+Limites de tamanho pela documentação: **imagem até 10 MB** (JPEG, GIF ou PNG), **vídeo até 50 MB** e **áudio até 5 MB**.
+
+## Passo 7 — Notificação crítica: a que toca no silencioso
+
+Existe uma categoria de aviso que não pode esperar você olhar o celular: vazamento de água, fumaça, alarme. A documentação do Companion chama isso de [notificação crítica](https://companion.home-assistant.io/docs/notifications/critical-notifications/), e o comportamento muda entre iOS e Android.
+
+**No iPhone**, a notificação crítica aparece no topo da tela de bloqueio e **toca mesmo com o Não Perturbe ativo ou o celular no silencioso**, segundo a documentação. A configuração vai dentro de `push`:
+
+```yaml
+action: notify.mobile_app_iphone_do_joao
+data:
+  title: "Vazamento na lavanderia"
+  message: "O sensor detectou água no chão."
+  data:
+    push:
+      sound:
+        name: "default"
+        critical: 1
+        volume: 1.0
+```
+
+A documentação também aceita a forma curta `interruption-level: critical`, dentro de `push`.
+
+**No Android**, a documentação explica que, com o celular parado ou com a tela apagada há muito tempo, a notificação comum pode só tocar quando a tela acende. Para forçar a entrega imediata, use `ttl: 0` e `priority: high`. E para tocar mesmo no modo vibrar ou silencioso, direcione o som para o canal de alarme:
+
+```yaml
+action: notify.mobile_app_galaxy_de_ana
+data:
+  title: "Vazamento na lavanderia"
+  message: "O sensor detectou água no chão."
+  data:
+    ttl: 0
+    priority: high
+    channel: alarm_stream
+```
+
+Há ainda uma variante que **fala a mensagem em voz alta** pelo canal de alarme, com `message: TTS`, `media_stream: alarm_stream` e o texto em `tts_text`. A documentação traz também a opção `alarm_stream_max`, que toca no volume máximo e depois volta o volume ao nível anterior.
+
+Use com parcimônia. Notificação crítica que dispara por qualquer coisa vira ruído, e o próximo alarme de verdade corre o risco de ser ignorado. Reserve para o que realmente exige ação imediata. Se ainda não tem um sensor de vazamento, mostramos como montar um em [sensor de vazamento de água com ESP32 e Home Assistant](/posts/sensor-vazamento-agua-esp32-home-assistant/).
+
+## Cinco notificações que valem a pena montar
+
+Depois de dominar a estrutura, estas são as automações de notificação que mais costumam fazer diferença no dia a dia. Todas usam o mesmo esqueleto dos passos anteriores; muda só o gatilho.
+
+| Aviso | Gatilho | Tipo sugerido |
+|---|---|---|
+| Porta ou portão aberto há muito tempo | estado `on` do sensor de abertura por 10 minutos | comum, com `tag` para apagar ao fechar |
+| Vazamento de água | sensor de vazamento em `on` | **crítica** |
+| Máquina de lavar terminou | potência abaixo do limite por alguns minutos (passo 3) | comum |
+| Bateria fraca em sensor | nível de bateria abaixo de 20% | comum, uma vez por dia |
+| Freezer esquentando | temperatura acima do limite por 15 minutos | comum ou crítica, conforme o que está guardado |
+
+Para a porta, a lógica de `tag` do passo 4 resolve bem: a notificação avisa que a porta está aberta, e uma segunda automação envia `clear_notification` quando ela fecha, para o aviso sumir sozinho. Para bateria fraca, vale uma condição de horário, para o aviso chegar num momento em que dá para trocar a pilha, e não às três da manhã.
+
+## Enviar para vários celulares
+
+Para avisar a casa toda, a documentação indica criar um **grupo de notificação** no `configuration.yaml`, listando os aparelhos:
+
+```yaml
+notify:
+  - name: casa_toda
+    platform: group
+    services:
+      - action: mobile_app_galaxy_de_ana
+      - action: mobile_app_iphone_do_joao
+```
+
+Depois de reiniciar o Home Assistant, a ação `notify.casa_toda` envia para todos de uma vez. Repare que aqui os nomes aparecem **sem** o prefixo `notify.`, como no exemplo oficial.
+
+## Quando a notificação não chega
+
+| Sintoma | O que verificar |
+|---|---|
+| Nenhuma notificação, nem no teste manual | Permissão de notificação do app no celular; se o nome da ação está certo em Ferramentas de desenvolvedor |
+| Chega só quando abre o app (Android) | Otimização de bateria: libere o app Companion para rodar em segundo plano |
+| Chega no iPhone, mas sem som | Modo Foco ou Não Perturbe ativo |
+| Chega sem imagem fora de casa | Acesso remoto: o anexo precisa ser acessível pela internet |
+| Botão aparece, mas nada acontece | Se a automação que escuta o evento está ativa; o identificador do botão bate com o do `wait_for_trigger` |
+| Máquina de lavar avisa no meio do ciclo | Aumente o tempo em `for` ou ajuste o limite em `below` |
+
+A ferramenta mais útil para depurar é o **rastreamento da automação** (menu de três pontos > Rastreamentos). Ele mostra se o gatilho disparou, se a condição passou e o que cada ação devolveu. Na maioria dos casos, o erro aparece ali em segundos.
+
+## Quer ir além?
+
+Se você está montando a casa inteligente do zero e quer um caminho estruturado, com instalação, integrações, painel e automações, o curso <a href="https://go.hotmart.com/B107181927J?dp=1" target="_blank" rel="sponsored nofollow noopener noreferrer">Casa Inteligente com Home Assistant, Alexa e Mapa 3D</a> cobre esse percurso.
+
+<AffiliateButton href="https://go.hotmart.com/B107181927J?dp=1" store="hotmart" source="notificacao-celular-home-assistant-app" />

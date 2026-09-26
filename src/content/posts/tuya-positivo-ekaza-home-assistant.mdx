@@ -1,0 +1,259 @@
+---
+title: 'Dispositivos Tuya (Positivo, EKAZA) no Home Assistant: passo a passo'
+description: 'Adicione tomada, lâmpada e sensor Tuya, Positivo ou EKAZA ao Home Assistant pela integração oficial, com o login do app e os limites da conexão via nuvem.'
+pubDate: 2026-10-03T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'tuya', 'smart-life', 'positivo', 'ekaza', 'tutorial', 'integracao']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'EKAZA Tomada Inteligente 16A Wi-Fi com medidor de consumo'
+    brand: 'EKAZA'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20'
+    image: '/images/produtos/ekaza-16a-medidor.webp'
+    pros:
+      - 'Funciona com os apps Smart Life e Tuya, segundo lojas e usuários'
+      - 'Medidor de consumo, com 6,6 mil avaliações na Amazon'
+    cons:
+      - 'Sensores de potência podem exigir ajuste para aparecer no Home Assistant'
+  - name: 'NovaDigital Tomada Inteligente 20A Wi-Fi com medidor, WK-BR PRO MAX'
+    brand: 'NovaDigital'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CCLGLZB6?tag=nerdcaseiro-20'
+    image: '/images/produtos/novadigital-wkbr-20a.webp'
+    pros:
+      - 'Compatibilidade com Tuya e Smart Life declarada no anúncio'
+      - '20 A e 4.400 W, bivolt, com medidor'
+    cons:
+      - 'Controle depende da nuvem, como todo aparelho Tuya pela integração oficial'
+  - name: 'Positivo Smart Plug Wi-Fi 10A'
+    brand: 'Positivo Casa Inteligente'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07S14JHF2?tag=nerdcaseiro-20'
+    image: '/images/produtos/positivo-smart-plug-10a.webp'
+    pros:
+      - '13,8 mil avaliações: uma das tomadas inteligentes mais vendidas do país'
+      - 'Usa a nuvem Tuya por baixo, segundo desenvolvedores da comunidade'
+    cons:
+      - 'A Positivo não documenta o uso com o app Smart Life'
+      - 'Para entrar no Home Assistant, precisa ser pareada fora do app Positivo'
+  - name: 'Positivo Smart Lâmpada Wi-Fi RGB'
+    brand: 'Positivo Casa Inteligente'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B082FTRR76?tag=nerdcaseiro-20'
+    image: '/images/produtos/positivo-smart-lampada-rgb.webp'
+    pros:
+      - '100 mil avaliações: a lâmpada inteligente mais avaliada da Amazon'
+      - 'Branco quente, frio e colorido'
+    cons:
+      - 'Mesma ressalva de pareamento da tomada Positivo'
+faq:
+  - question: 'A integração Tuya do Home Assistant funciona sem internet?'
+    answer: 'Não. A integração oficial conversa com a nuvem da Tuya, e não diretamente com o aparelho na sua rede. Se a internet cair ou a nuvem da Tuya ficar fora do ar, o Home Assistant perde o controle dos dispositivos Tuya até a conexão voltar. Quem precisa de controle local recorre a integrações da comunidade, que exigem obter uma chave local de cada aparelho, ou troca o firmware por um aberto, o que é um caminho bem mais trabalhoso e com risco.'
+  - question: 'Por que um aparelho aparece no Smart Life mas não no Home Assistant?'
+    answer: 'Dois motivos comuns. O primeiro: aparelhos adicionados ao app depois de configurar a integração só aparecem após recarregá-la, em Configurações, Dispositivos e serviços, Tuya, menu de três pontos, Recarregar. O segundo: a integração usa o SDK oficial da Tuya, que não expõe todas as funções do app. A documentação indica baixar o arquivo de diagnóstico do dispositivo e conferir as chaves status, status_range e function; se estiverem vazias, o aparelho não é suportado pela integração.'
+  - question: 'Posso usar dispositivos Positivo na integração Tuya?'
+    answer: 'Na prática, sim, mas por um caminho que a Positivo não documenta. Segundo o autor de uma integração não oficial para a marca, os aparelhos Positivo usam a nuvem da Tuya, mas a integração oficial só os enxerga se forem pareados diretamente num app Tuya, como o Smart Life. Isso significa tirar o aparelho do app Positivo e perder as funções exclusivas dele. O processo é reversível: basta resetar o aparelho e parear de volta no app Positivo.'
+  - question: 'O que é o código de usuário pedido na configuração?'
+    answer: 'É um identificador da sua conta no Smart Life ou Tuya Smart, que o Home Assistant usa para iniciar o login. Pela documentação, ele fica no app, na aba Eu, no ícone de engrenagem, em Conta e segurança, no fim da tela. Depois de informar o código, o Home Assistant mostra um QR code que precisa ser lido pelo próprio app Smart Life para autorizar o acesso.'
+  - question: 'A integração pede login de novo toda hora. O que fazer?'
+    answer: 'A documentação cita esse caso: quando a Tuya atualiza os termos e condições do portal iot.tuya.com, a integração passa a exigir autenticação a cada recarga. A solução indicada é entrar no iot.tuya.com, aceitar os novos termos, reiniciar o Home Assistant e reconfigurar a integração.'
+  - question: 'Vale a pena comprar dispositivo Tuya para usar com Home Assistant?'
+    answer: 'Vale para quem quer preço baixo e instalação simples, aceitando a dependência da nuvem. Os aparelhos Tuya são dos mais baratos e mais vendidos do Brasil, e a integração oficial funciona bem para a maioria dos usos. Para automação crítica, como sensor de vazamento ou alarme, que precisa funcionar mesmo sem internet, vale considerar dispositivos Zigbee ou com controle local, que não dependem de servidor externo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Boa parte das tomadas, lâmpadas e sensores inteligentes vendidos no Brasil roda, por baixo, na plataforma **Tuya**. Muitas marcas nacionais vendem aparelhos Tuya com o próprio nome e o próprio aplicativo. Para quem tem Home Assistant, isso é uma boa notícia: existe uma **integração oficial** que traz esses aparelhos para dentro do Home Assistant, sem gambiarra.
+
+Este tutorial segue a [documentação oficial da integração Tuya](https://www.home-assistant.io/integrations/tuya/), conferida com o **Home Assistant 2026.9.3**. Ele mostra o caminho oficial, explica o limite que ninguém gosta de ouvir (a dependência da nuvem) e trata com cuidado o caso das marcas que usam Tuya mas vendem com app próprio, como a Positivo.
+
+## Como a integração funciona
+
+A integração oficial **não fala com a tomada na sua rede**. Ela fala com a **nuvem da Tuya**, a mesma que o aplicativo do celular usa. Quando você manda ligar a tomada pelo Home Assistant, o comando sai da sua casa, vai até o servidor da Tuya e volta para a tomada.
+
+Isso tem duas consequências, e é melhor saber antes de começar:
+
+- **Sem internet, sem controle.** Se a internet cair ou a nuvem da Tuya ficar fora do ar, o Home Assistant perde o controle dos aparelhos Tuya até a conexão voltar.
+- **Nem tudo o que o app faz aparece no Home Assistant.** A documentação avisa que a integração usa o SDK oficial da Tuya, que **não expõe todas as funções** do aplicativo Smart Life.
+
+Para tomada, lâmpada e a maioria dos sensores comuns, funciona bem. Para automação crítica, como sensor de vazamento que precisa agir mesmo sem internet, vale considerar outra tecnologia, como Zigbee (comparamos em [Zigbee ou Wi-Fi na automação residencial](/posts/zigbee-vs-wifi-automacao-residencial/)).
+
+## Qual app o seu aparelho usa
+
+A integração oficial enxerga os aparelhos cadastrados em **dois aplicativos**: **Smart Life** e **Tuya Smart**. Isso define três situações:
+
+| Situação | O que fazer |
+|---|---|
+| O aparelho já está no **Smart Life** ou **Tuya Smart** | Siga direto o passo a passo abaixo |
+| O fabricante declara compatibilidade com **Smart Life/Tuya**, mas você usa o app da marca | Cadastre o aparelho no Smart Life e siga o passo a passo |
+| O aparelho usa a nuvem Tuya, mas **o fabricante só documenta o app próprio** | Caso da Positivo: veja a seção específica mais abaixo |
+
+### EKAZA e NovaDigital: compatibilidade declarada
+
+![Tomada inteligente EKAZA 16A com medidor de consumo](/images/produtos/ekaza-16a-medidor.webp)
+
+As tomadas **EKAZA** aparecem nas lojas como compatíveis com os apps **Tuya e Smart Life**, além do app da própria marca, e há usuários relatando o uso com a integração Tuya no [fórum Home Assistant Brasil](https://homeassistantbrasil.com.br/t/ajuda-com-plug-tomada-inteligente-ekaza/7127). O mesmo fórum registra um ponto de atenção: **os sensores de corrente, potência e tensão** da tomada com medidor podem exigir ajuste para aparecer no Home Assistant.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B085W72XZK?tag=nerdcaseiro-20" store="amazon" source="tuya-positivo-ekaza-home-assistant" />
+
+![Tomada inteligente NovaDigital 20A com medidor](/images/produtos/novadigital-wkbr-20a.webp)
+
+A **NovaDigital WK-BR PRO MAX** declara no próprio anúncio a compatibilidade com **Tuya e Smart Life**. É a opção mais direta para quem quer uma tomada de 20 A com medição já pensando no Home Assistant. Se a dúvida é entre 10 A e 20 A, explicamos a conta em [tomada inteligente de 20A: quais aparelhos pedem ela](/posts/tomada-inteligente-20a-quais-aparelhos/).
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CCLGLZB6?tag=nerdcaseiro-20" store="amazon" source="tuya-positivo-ekaza-home-assistant" />
+
+## Passo 1 — Preparar o app Smart Life
+
+A documentação lista os pré-requisitos: o app **Smart Life** ou **Tuya Smart** instalado, com uma conta criada e **pelo menos um aparelho adicionado**. E, durante a configuração, uma **segunda tela** para exibir o QR code: o celular vai ler um código que aparece na tela do Home Assistant, então você precisa abrir o Home Assistant no computador ou em outro aparelho.
+
+Se o seu aparelho ainda está no app da marca, este é o momento de cadastrá-lo no Smart Life. Em geral, isso exige **resetar o aparelho** (o procedimento está no manual de cada um, costuma ser segurar o botão por alguns segundos até o LED piscar rápido) e adicioná-lo pelo **+** do Smart Life.
+
+Lembre que o aparelho só pode estar numa conta por vez: ao cadastrá-lo no Smart Life, ele sai do app da marca.
+
+## Passo 2 — Pegar o código de usuário
+
+A integração pede um **código de usuário** da sua conta. Pela documentação, ele fica no app:
+
+1. Na barra inferior, toque em **Eu**.
+2. Toque na **engrenagem** no canto superior direito.
+3. Toque em **Conta e segurança**.
+4. No fim da tela, aparece o **Código de usuário**.
+
+Anote esse código.
+
+## Passo 3 — Adicionar a integração no Home Assistant
+
+No Home Assistant, vá em **Configurações > Dispositivos e serviços > Adicionar integração** e procure **Tuya**. A documentação observa que ela pode aparecer como **descoberta automaticamente**; nesse caso, basta clicar em configurar.
+
+1. Informe o **código de usuário** do passo 2.
+2. O Home Assistant exibe um **QR code** na tela.
+3. No celular, abra o **Smart Life**, toque no **+** ou em **Adicionar dispositivo**, e escolha a opção de **escanear**.
+4. Leia o QR code da tela do Home Assistant e confirme o acesso no app.
+
+Em alguns segundos, os aparelhos da conta aparecem no Home Assistant, cada um com as entidades que a Tuya expõe: interruptor para a tomada, luz com brilho e cor para a lâmpada, e assim por diante.
+
+## Passo 4 — Conferir o que veio, e o que não veio
+
+Abra cada dispositivo em **Configurações > Dispositivos e serviços > Tuya** e confira as entidades. Numa tomada com medidor, por exemplo, espere o interruptor e, se a Tuya expuser, os sensores de potência, corrente e tensão.
+
+Se algo que o app mostra não aparecer no Home Assistant, a documentação indica um diagnóstico:
+
+1. Abra o dispositivo em **Configurações > Dispositivos e serviços > Tuya**.
+2. No bloco de informações do dispositivo, clique no **menu de três pontos**.
+3. Escolha **Baixar diagnósticos**.
+4. Abra o arquivo e confira as chaves **`status`**, **`status_range`** e **`function`**.
+
+Se as três estiverem vazias, o aparelho **não é suportado** pela integração, e só cenas criadas no app Tuya ficarão disponíveis. Não é algo que se resolve com ajuste no Home Assistant.
+
+## Passo 5 — Aparelho novo? Recarregue a integração
+
+Um detalhe que confunde muita gente: aparelhos adicionados ao Smart Life **depois** da configuração não aparecem sozinhos. A documentação indica recarregar:
+
+1. **Configurações > Dispositivos e serviços**.
+2. Encontre a integração **Tuya**.
+3. **Menu de três pontos > Recarregar**.
+
+Os aparelhos novos aparecem em seguida.
+
+## O caso da Positivo
+
+![Positivo Smart Plug Wi-Fi 10A](/images/produtos/positivo-smart-plug-10a.webp)
+
+A **Positivo Casa Inteligente** vende alguns dos aparelhos inteligentes mais populares do Brasil. A tomada de 10 A tem 13,8 mil avaliações na Amazon, e a lâmpada colorida passa de 100 mil. Por isso a pergunta de como levar esses aparelhos para o Home Assistant é tão comum.
+
+A resposta honesta tem uma ressalva importante. Segundo o autor de uma [integração não oficial para a Positivo](https://github.com/rgsilva/homeassistant-positivo), hoje arquivada, os aparelhos da marca **usam a nuvem da Tuya por baixo**, mas a integração oficial da Tuya **não os enxerga pelo app Positivo**: só funcionam se forem **conectados diretamente à Tuya**, ou seja, pareados num app Tuya como o Smart Life.
+
+O que isso significa na prática:
+
+- **É um caminho que a Positivo não documenta.** Não há garantia do fabricante de que funcione para todos os modelos, nem de que continue funcionando.
+- **Você deixa de usar o app Positivo** para aquele aparelho, e perde as funções exclusivas do app da marca.
+- **É reversível.** Se não funcionar ou não gostar, basta resetar o aparelho e pareá-lo de volta no app Positivo.
+
+O procedimento, para quem quiser tentar, é o mesmo do passo 1: resetar o aparelho e adicioná-lo pelo **+** do Smart Life. Se o Smart Life reconhecer o aparelho, ele aparece no Home Assistant depois de recarregar a integração. Se não reconhecer, volte ao app Positivo.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07S14JHF2?tag=nerdcaseiro-20" store="amazon" source="tuya-positivo-ekaza-home-assistant" />
+
+![Positivo Smart Lâmpada Wi-Fi RGB](/images/produtos/positivo-smart-lampada-rgb.webp)
+
+A mesma ressalva vale para a **lâmpada Positivo**. Para quem vai comprar agora pensando no Home Assistant, a recomendação prática é preferir aparelhos cujo fabricante **declara** a compatibilidade com Smart Life ou Tuya, como EKAZA e NovaDigital: o caminho é o mesmo, mas documentado.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B082FTRR76?tag=nerdcaseiro-20" store="amazon" source="tuya-positivo-ekaza-home-assistant" />
+
+## Depois de integrar: organizar antes de automatizar
+
+Com os aparelhos dentro do Home Assistant, vale gastar dez minutos organizando antes de criar qualquer automação. Isso evita confusão quando a casa tiver dezenas de entidades.
+
+1. **Renomeie as entidades.** A integração traz os nomes que estão no app, como "Tomada 1" ou "Smart Plug". Abra cada entidade e dê um nome que diga onde ela está e o que controla: "Tomada da cafeteira", "Luz da varanda". O ID da entidade também pode ser ajustado, e é por ele que as automações em YAML se referem ao aparelho.
+2. **Atribua áreas.** Em cada dispositivo, escolha a área da casa (cozinha, sala, quarto). O Home Assistant usa as áreas para organizar o painel e para comandos como "desligar tudo da sala".
+3. **Esconda o que não usa.** Algumas tomadas trazem entidades extras, como indicadores de LED ou modos de inicialização. Desativar as que você não vai usar deixa o painel mais limpo.
+
+## A primeira automação com um aparelho Tuya
+
+Uma automação simples e útil para testar a integração: desligar a tomada da cafeteira todo dia às 10h, caso alguém esqueça. Em **Configurações > Automações e cenas**, crie uma automação, mude para YAML e use a estrutura abaixo, trocando o nome da entidade:
+
+```yaml
+alias: "Desligar cafeteira às 10h"
+triggers:
+  - trigger: time
+    at: "10:00:00"
+conditions:
+  - condition: state
+    entity_id: switch.tomada_cafeteira
+    state: "on"
+actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.tomada_cafeteira
+mode: single
+```
+
+A condição evita mandar o comando se a tomada já estiver desligada. Como a integração passa pela nuvem, é normal um pequeno atraso entre o horário e o desligamento. Se a automação não agir, o **rastreamento** dela (menu de três pontos > Rastreamentos) mostra se o gatilho disparou e o que a ação devolveu.
+
+Para ser avisado no celular quando algo acontecer com esses aparelhos, veja o tutorial de [notificação com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/).
+
+## E a Alexa e o Google Assistente?
+
+Integrar ao Home Assistant **não desliga** a Alexa ou o Google Assistente. Os aparelhos continuam na conta do Smart Life, e a ligação entre o Smart Life e o assistente de voz segue funcionando como antes. Na prática, você passa a ter dois caminhos de controle: a voz, pelo assistente, e as automações, pelo Home Assistant.
+
+A exceção são os aparelhos que você **mudou de aplicativo** para entrar no Home Assistant, como os da Positivo. Se antes eles estavam ligados à Alexa pelo app Positivo, depois de ir para o Smart Life é preciso vincular a skill do Smart Life à Alexa e redescobrir os aparelhos.
+
+## Como desfazer, se não gostar
+
+Tudo o que este tutorial faz é reversível:
+
+- **Remover a integração** no Home Assistant, em Configurações > Dispositivos e serviços > Tuya > menu de três pontos > Excluir, apaga os aparelhos do Home Assistant sem mexer nada no Smart Life.
+- **Voltar um aparelho ao app da marca** exige resetá-lo e pareá-lo de novo no app original, seguindo o manual.
+
+Nenhum passo altera o firmware do aparelho, e é por isso que o caminho oficial é o recomendado para começar.
+
+## Problemas conhecidos
+
+| Sintoma | O que fazer |
+|---|---|
+| Aparelho novo não aparece | Recarregar a integração (passo 5) |
+| Função do app não aparece no Home Assistant | Baixar diagnóstico e conferir `status`, `status_range` e `function` (passo 4) |
+| Integração pede login a cada recarga | Entrar em iot.tuya.com, aceitar os termos novos, reiniciar e reconfigurar, conforme a documentação |
+| Tudo parou ao mesmo tempo | Internet ou nuvem da Tuya fora do ar: a integração depende delas |
+| Sensor de potência da tomada não aparece | Conferir no diagnóstico se a Tuya expõe o dado; relatos no fórum Home Assistant Brasil indicam que alguns modelos pedem ajuste |
+
+## E se eu quiser controle local?
+
+A dependência da nuvem é o preço da simplicidade. Existem dois caminhos para fugir dela, ambos fora do escopo deste tutorial porque dão bem mais trabalho:
+
+- **Integrações da comunidade para controle local**, que conversam com o aparelho na rede. Elas exigem obter uma chave local de cada dispositivo, e não são mantidas pelo Home Assistant.
+- **Trocar o firmware** do aparelho por um aberto, como ESPHome. É o caminho que o próprio autor da integração Positivo diz ter seguido. Mas é um procedimento com risco de inutilizar o aparelho, e nem todo modelo aceita.
+
+Para a maioria das casas, a integração oficial resolve bem. A dica é reservar os aparelhos Tuya para o que pode esperar a internet voltar, e usar Zigbee ou controle local no que não pode.
+
+Se ainda não tem o Home Assistant rodando, comece por [Home Assistant no Raspberry Pi: a instalação do zero](/posts/home-assistant-raspberry-pi-instalacao/). E para receber no celular os avisos das tomadas e sensores que acabou de integrar, veja [notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/).

@@ -1,0 +1,287 @@
+---
+title: 'Pi-hole no Raspberry Pi: bloquear anúncio na rede de casa inteira'
+description: 'Instale o Pi-hole no Raspberry Pi seguindo a documentação oficial, aponte o DNS do roteador e bloqueie anúncio e rastreador em todos os aparelhos da casa.'
+pubDate: 2026-09-29T18:00:00-03:00
+category: 'redes-wifi'
+tags: ['pi-hole', 'raspberry-pi', 'dns', 'bloqueador-de-anuncios', 'tutorial', 'redes-wifi']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Raspberry Pi 5 Model B 4GB (homologado Anatel)'
+    brand: 'Raspberry Pi'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20'
+    image: '/images/produtos/raspberry-pi-5-4gb.webp'
+    pros:
+      - 'Folga enorme para o Pi-hole, que pede só 512 MB de RAM'
+      - 'Sobra capacidade para outros serviços na mesma placa'
+      - 'Porta Gigabit Ethernet para ligar direto no roteador'
+    cons:
+      - 'É mais placa do que o Pi-hole sozinho precisa'
+      - 'Exige fonte USB-C de 27 W, vendida separadamente'
+  - name: 'SanDisk Extreme microSDXC 64GB A2'
+    brand: 'SanDisk'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20'
+    image: '/images/produtos/sandisk-extreme-microsd-64.webp'
+    pros:
+      - '84,7 mil avaliações: a referência de cartão para Raspberry Pi'
+      - 'Classe A2 de desempenho em aplicativo'
+    cons:
+      - 'Estoque baixo no momento da consulta'
+  - name: 'Fonte RasTech 27W USB-C PD para Raspberry Pi 5'
+    brand: 'RasTech'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CLV6WB4L?tag=nerdcaseiro-20'
+    image: '/images/produtos/fonte-rastech-pi5-27w.webp'
+    pros:
+      - '5 V e 5 A, o perfil que o Raspberry Pi 5 pede'
+      - 'Evita o aviso de subtensão que trava a placa'
+    cons:
+      - 'Não é a fonte oficial da Raspberry Pi'
+faq:
+  - question: 'O Pi-hole bloqueia anúncio do YouTube?'
+    answer: 'Não, e ninguém deveria prometer isso. O Pi-hole bloqueia por nome de domínio, na etapa do DNS. O YouTube entrega o vídeo e o anúncio a partir dos mesmos domínios, então bloquear o anúncio significaria bloquear o vídeo junto. É a resposta que os próprios moderadores dão no fórum oficial do Pi-hole. Para anúncio de YouTube, o caminho é bloqueador no navegador, que atua dentro da página, e não no DNS.'
+  - question: 'Preciso de um Raspberry Pi 5 para rodar o Pi-hole?'
+    answer: 'Não. A documentação oficial pede no mínimo 512 MB de RAM e 2 GB livres de armazenamento, com 4 GB recomendados. Qualquer Raspberry Pi que rode uma versão atual do Raspberry Pi OS dá conta, inclusive modelos antigos. O Pi 5 faz sentido se você quer usar a mesma placa para outros serviços. Se já tem um Pi 3 ou Pi 4 parado na gaveta, use ele.'
+  - question: 'Posso instalar o Pi-hole no mesmo Raspberry Pi do Home Assistant?'
+    answer: 'Não com o script oficial, se o Pi roda o Home Assistant OS. O script do Pi-hole só é suportado em Alpine, Armbian, Debian, CentOS Stream, Fedora, Raspberry Pi OS e Ubuntu, e o Home Assistant OS não está na lista. Quem quer as duas coisas numa placa costuma usar um add-on de bloqueio de DNS dentro do próprio Home Assistant, ou roda o Pi-hole em Docker num sistema que suporte contêineres. A opção mais simples continua sendo uma placa separada para cada um.'
+  - question: 'E se o Raspberry Pi desligar, a internet para?'
+    answer: 'Os nomes deixam de resolver, o que na prática parece internet fora do ar, porque os aparelhos perguntam o endereço dos sites ao Pi-hole e ninguém responde. É o principal argumento para alimentar o Pi com uma fonte adequada e deixá-lo no cabo. Se precisar desligar o Pi para manutenção, volte temporariamente o DNS do roteador para o automático do provedor. Resista à tentação de colocar um DNS público como secundário: alguns aparelhos passam a usar o secundário mesmo com o Pi-hole funcionando, e o bloqueio fica intermitente.'
+  - question: 'Um site parou de funcionar depois do Pi-hole. O que fazer?'
+    answer: 'Abra o painel do Pi-hole, vá ao log de consultas e procure os domínios bloqueados no horário em que o site falhou. Se identificar o domínio responsável, libere com o comando pihole allow seguido do domínio, ou pela interface web. Para testar rapidamente se o Pi-hole é o culpado, pause o bloqueio por alguns minutos com pihole disable 5m e tente de novo; se o site voltar a funcionar, o problema está numa das listas.'
+  - question: 'O Pi-hole deixa a internet mais rápida?'
+    answer: 'Em geral, as páginas carregam mais leves porque deixam de baixar anúncio e script de rastreamento, e o Pi-hole guarda em cache as respostas de DNS para consultas repetidas. Isso não aumenta a velocidade do seu plano: o teste de velocidade continua o mesmo. O ganho aparece na sensação de navegação, principalmente em site de notícia carregado de anúncio, e na redução de rastreamento por aplicativos e aparelhos da casa.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+O Pi-hole é um servidor de DNS que bloqueia anúncio e rastreamento antes de eles chegarem ao aparelho. Instalado num Raspberry Pi e apontado como DNS da rede, ele filtra **todos os aparelhos da casa de uma vez**: celular, notebook, smart TV, console, lâmpada inteligente. Nenhum deles precisa de aplicativo instalado.
+
+Este tutorial segue a [documentação oficial do Pi-hole](https://docs.pi-hole.net/), com a **versão 6 (Core v6.4.3, publicada em 6 de julho de 2026)**. Todo comando abaixo está na documentação; os links estão em cada etapa para você conferir. Antes de começar, vale entender o que ele faz e o que ele não faz, porque é aí que mora a maior parte das frustrações.
+
+## Como o Pi-hole funciona
+
+Toda vez que um aparelho abre um site, ele primeiro pergunta ao servidor de DNS qual é o endereço daquele nome. É como consultar a lista telefônica antes de ligar. Normalmente, quem responde é o DNS do seu provedor.
+
+Com o Pi-hole, quem responde é o Raspberry Pi. Ele consulta uma lista de domínios conhecidos por servir anúncio e rastreamento. Se o nome pedido estiver na lista, ele responde com um endereço nulo, e o aparelho simplesmente não consegue carregar aquele pedaço. Se não estiver, ele repassa a pergunta para um DNS público e devolve a resposta normal.
+
+Dois efeitos saem daí:
+
+- **Funciona em aparelho onde não dá para instalar bloqueador:** smart TV, console, assistente de voz, aplicativo de celular.
+- **Só bloqueia por nome de domínio.** Se o anúncio vem do mesmo domínio que o conteúdo, o Pi-hole não consegue separar os dois.
+
+### O que ele não bloqueia (e ninguém deveria prometer)
+
+**Anúncio do YouTube.** O YouTube entrega o vídeo e o anúncio pelos mesmos domínios. Bloquear um seria bloquear o outro. É a resposta que os moderadores repetem no [fórum oficial do Pi-hole](https://discourse.pi-hole.net/t/youtube-adverts-and-same-domain-issue/48179): não existe método eficaz de bloquear anúncio do YouTube só com o Pi-hole. Para isso, o caminho é bloqueador no navegador.
+
+O mesmo vale para anúncio "nativo" de rede social, que chega junto do conteúdo do feed. O Pi-hole brilha em site de notícia, aplicativo gratuito cheio de banner, rastreamento de smart TV e telemetria de aparelho.
+
+## O que você vai precisar
+
+A [página de pré-requisitos](https://docs.pi-hole.net/main/prerequisites/) é modesta: **512 MB de RAM** e **2 GB livres** de armazenamento, com 4 GB recomendados. Qualquer Raspberry Pi com sistema atual dá conta. Se você tem um Pi 3 ou Pi 4 parado, use ele.
+
+Para quem vai comprar, o conjunto abaixo é o que roda sem susto e ainda sobra fôlego para outros serviços na mesma placa.
+
+![Raspberry Pi 5 Model B 4GB, placa homologada pela Anatel](/images/produtos/raspberry-pi-5-4gb.webp)
+
+**Raspberry Pi 5 de 4 GB.** Mais do que o Pi-hole sozinho precisa, mas com porta Gigabit Ethernet e capacidade para, depois, rodar outros serviços junto. A versão vendida aqui é a homologada pela Anatel.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CK3L9WD3?tag=nerdcaseiro-20" store="amazon" source="pi-hole-raspberry-pi-bloquear-anuncios" />
+
+![Cartão microSD SanDisk Extreme 64GB](/images/produtos/sandisk-extreme-microsd-64.webp)
+
+**Cartão microSD de qualidade.** O sistema roda do cartão, e cartão genérico é a causa mais comum de Raspberry Pi que corrompe e para de ligar. O SanDisk Extreme de 64 GB tem 84,7 mil avaliações e é a referência para a placa.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07FCMBLV6?tag=nerdcaseiro-20" store="amazon" source="pi-hole-raspberry-pi-bloquear-anuncios" />
+
+![Fonte USB-C 27W para Raspberry Pi 5](/images/produtos/fonte-rastech-pi5-27w.webp)
+
+**Fonte de 27 W.** O Pi 5 pede 5 V a 5 A pela USB-C. Carregador de celular comum costuma não entregar isso e causa subtensão, que trava a placa. Como o Pi-hole vira o DNS da casa, placa travada é internet "fora do ar" para todo mundo, então a fonte não é o lugar de economizar.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CLV6WB4L?tag=nerdcaseiro-20" store="amazon" source="pi-hole-raspberry-pi-bloquear-anuncios" />
+
+De preferência, ligue o Pi **no cabo de rede**, direto no roteador. DNS é pergunta curta e frequente; no Wi-Fi funciona, mas no cabo é mais estável. Se precisar de cabo, explicamos a diferença em [cabo de rede Cat5e ou Cat6](/posts/cabo-rede-cat5e-ou-cat6/).
+
+## Passo 1 — Gravar o sistema no cartão
+
+O Pi-hole é oficialmente suportado no **Raspberry Pi OS**, entre outros sistemas listados na documentação. Use o **Raspberry Pi Imager**, o gravador oficial disponível em [raspberrypi.com/software](https://www.raspberrypi.com/software/):
+
+1. Escolha o modelo da placa, depois **Raspberry Pi OS Lite (64-bit)**. A versão Lite não tem área de trabalho, e o Pi-hole não precisa de uma.
+2. Nas opções de personalização do Imager, defina **nome do host**, **usuário e senha** e **ative o SSH**. É isso que permite configurar o Pi pelo computador, sem monitor e teclado.
+3. Grave, coloque o cartão no Pi, ligue o cabo de rede e a fonte.
+
+Depois de um ou dois minutos, acesse pelo terminal do computador, trocando pelo usuário e nome que você definiu:
+
+```bash
+ssh usuario@nome-do-pi.local
+```
+
+Se o `.local` não resolver, descubra o IP do Pi na lista de dispositivos conectados do roteador e use `ssh usuario@IP`.
+
+Com o acesso feito, atualize o sistema antes de instalar qualquer coisa:
+
+```bash
+sudo apt update && sudo apt full-upgrade -y
+```
+
+## Passo 2 — Dar ao Pi um IP fixo
+
+A documentação é direta: **o Pi-hole precisa de um endereço IP estático** para funcionar, e uma **reserva de DHCP no roteador serve**. Faz sentido: todos os aparelhos vão perguntar ao Pi pelo endereço dos sites; se o IP dele mudar, ninguém mais acha o DNS.
+
+A reserva de DHCP é o jeito mais simples e reversível. No painel do roteador, procure a seção de DHCP e algo como "reserva de endereço", "IP fixo" ou "vincular IP ao MAC", escolha o Raspberry Pi na lista e fixe o endereço que ele já está usando. O nome da opção muda de fabricante para fabricante.
+
+Anote esse IP. Ele vai aparecer duas vezes daqui para frente.
+
+## Passo 3 — Instalar o Pi-hole
+
+A [página de instalação](https://docs.pi-hole.net/main/basic-install/) oferece três caminhos. O mais rápido é o instalador automático:
+
+```bash
+curl -sSL https://install.pi-hole.net | bash
+```
+
+A própria documentação observa que "canalizar para o bash" é controverso, porque executa o script sem que você leia antes. Se preferir inspecionar primeiro, a documentação oferece o método de baixar o script, ler e só então executar:
+
+```bash
+wget -O basic-install.sh https://install.pi-hole.net
+sudo bash basic-install.sh
+```
+
+O instalador abre uma sequência de telas no terminal. Na prática, você vai:
+
+- confirmar que o IP é fixo (você fez isso no passo 2);
+- escolher um **DNS de upstream**, que é para quem o Pi-hole repassa as perguntas que não bloqueia. Qualquer um da lista funciona; dá para trocar depois;
+- manter a lista de bloqueio padrão sugerida;
+- manter a interface web e o registro de consultas ativados.
+
+No fim, o instalador mostra o endereço do painel e uma senha gerada. Para trocar a senha, a documentação indica o comando abaixo, que pede a nova senha sem exibir na tela:
+
+```bash
+pihole setpassword
+```
+
+O painel fica em `http://IP-DO-PI/admin`.
+
+### Opcional: usar o CLI sem digitar senha
+
+No Pi-hole v6, os comandos de terminal passam pela API com autenticação. A [página de pós-instalação](https://docs.pi-hole.net/main/post-install/) indica adicionar o seu usuário ao grupo `pihole` para não ter de digitar a senha a cada comando:
+
+```bash
+sudo usermod -aG pihole $USER
+```
+
+Saia e entre de novo no SSH para o grupo valer.
+
+## Passo 4 — Fazer a rede usar o Pi-hole
+
+Instalar não basta. Até aqui, nenhum aparelho sabe que o Pi-hole existe. A documentação lista três formas, em ordem de preferência:
+
+1. **Configurar o roteador** para entregar o IP do Pi-hole como servidor DNS a todos os aparelhos (é o ideal).
+2. Se o roteador não permitir, **usar o servidor DHCP do próprio Pi-hole**, desligando antes o DHCP do roteador.
+3. Em último caso, **configurar o DNS aparelho por aparelho**.
+
+Para a opção 1, procure no painel do roteador, na seção de DHCP ou de LAN, os campos de **DNS primário e secundário** que o roteador distribui. Coloque o IP do Pi-hole no primário.
+
+⚠️ **Não coloque um DNS público no secundário.** Parece prudente, como um backup, mas vários aparelhos usam os dois servidores alternadamente ou preferem o que responde mais rápido. O resultado é bloqueio que funciona às vezes. Se o roteador exigir dois campos, repita o IP do Pi-hole.
+
+Depois de salvar, os aparelhos só passam a usar o Pi-hole quando renovam a conexão. O jeito mais rápido é desligar e ligar o Wi-Fi em cada um, ou reiniciar o roteador.
+
+### Quando o roteador da operadora não deixa
+
+Muitos roteadores fornecidos por operadora escondem ou travam o campo de DNS. Nesse caso, a opção 2 da documentação resolve: desative o DHCP no roteador e ative o servidor DHCP no painel do Pi-hole, em **Settings > DHCP**. O Pi-hole passa a distribuir os endereços da rede e, junto, se anuncia como DNS.
+
+É uma mudança maior: se o Pi desligar, os aparelhos novos não conseguem nem pegar IP. Faça com calma e anote como estava a configuração original do roteador para conseguir voltar.
+
+## Passo 5 — Conferir se está funcionando
+
+Abra o painel em `http://IP-DO-PI/admin`. Em poucos minutos, o contador de consultas deve começar a subir e a lista de clientes deve mostrar os aparelhos da casa.
+
+Dois testes rápidos pelo terminal do Pi:
+
+```bash
+pihole status
+```
+
+Mostra se o bloqueio está ativo e se o serviço de DNS está respondendo.
+
+```bash
+pihole query doubleclick.net
+```
+
+Procura o domínio nas listas e diz em qual delas ele aparece. Se o domínio de anúncio estiver na lista padrão, a resposta confirma o bloqueio.
+
+## A pegadinha do IPv6
+
+Esse é o problema mais relatado no [fórum oficial](https://discourse.pi-hole.net/t/ipv6-dns-bypassing-pi-hole/50957), e o mais confuso, porque o painel parece funcionar e mesmo assim os anúncios aparecem.
+
+O que acontece: muitas operadoras entregam IPv6, e o roteador anuncia **o próprio endereço IPv6 como DNS**, além do IPv4 que você configurou. Os aparelhos passam a ter dois caminhos, e vários preferem o IPv6. Resultado: parte das consultas nunca passa pelo Pi-hole.
+
+Como identificar: no painel, a lista de clientes mostra poucos aparelhos, ou os aparelhos aparecem com poucas consultas perto do que deveriam.
+
+As saídas, da mais limpa para a mais drástica:
+
+1. Configurar o roteador para **anunciar o IPv6 do Pi-hole** como DNS, em vez do próprio. Nem todo roteador permite.
+2. Desativar o anúncio de DNS por IPv6 no roteador, mantendo o IPv6 ligado para o resto.
+3. Desativar o IPv6 na rede local, quando o roteador da operadora não oferece nenhuma das anteriores.
+
+## Os aparelhos que ignoram o DNS da rede
+
+Mesmo com tudo certo, alguns aparelhos escapam, e é bom saber de antemão para não achar que o Pi-hole quebrou:
+
+- **Navegadores com DNS seguro (DNS over HTTPS)** ativado usam o próprio servidor de DNS criptografado, por fora do Pi-hole. Nos navegadores, a opção costuma se chamar "DNS seguro" nas configurações de privacidade.
+- **Aparelhos com DNS fixo de fábrica**, que ignoram o que o roteador distribui. Aparecem no painel com zero consultas.
+- **VPN** ativa no aparelho manda o DNS pelo túnel, também por fora.
+
+Nenhum desses é defeito do Pi-hole. É o aparelho escolhendo não perguntar a ele.
+
+## Manutenção do dia a dia
+
+Os comandos abaixo estão na [referência do comando pihole](https://docs.pi-hole.net/main/pihole-command/):
+
+| Tarefa | Comando |
+|---|---|
+| Pausar o bloqueio por 5 minutos | `pihole disable 5m` |
+| Reativar o bloqueio | `pihole enable` |
+| Liberar um domínio que quebrou um site | `pihole allow exemplo.com.br` |
+| Bloquear um domínio manualmente | `pihole deny exemplo.com` |
+| Atualizar as listas de bloqueio | `pihole updateGravity` |
+| Atualizar o Pi-hole | `pihole updatePihole` |
+| Ver a versão instalada | `pihole version` |
+
+O `pihole disable 5m` é o teste mais útil do dia a dia: se um site ou aplicativo parou de funcionar, pause por cinco minutos e tente de novo. Se voltar a funcionar, o culpado está numa lista, e o log de consultas do painel mostra qual domínio foi bloqueado naquele horário. Aí é só liberar com `pihole allow`.
+
+Aplicativo de banco, de loja e de entrega às vezes dependem de um domínio de rastreamento para funcionar. Isso não é falha de segurança: é o bloqueio fazendo exatamente o que foi pedido, num domínio que o aplicativo não deveria depender.
+
+## Listas extras: mais bloqueio, mais quebra
+
+A lista padrão que o instalador sugere já bloqueia boa parte de anúncio e rastreamento. Na comunidade, é comum acrescentar listas de terceiros, focadas em telemetria, golpes ou rastreamento de smart TV, pelo painel, em **Lists**, colando o endereço da lista e rodando `pihole updateGravity` para carregar.
+
+A regra é ir devagar: **cada lista a mais aumenta a chance de quebrar algo**. Lista agressiva costuma bloquear domínios de que aplicativos legítimos dependem, como os de login, pagamento e atualização. Acrescente uma lista por vez, use a casa por alguns dias e observe o que para de funcionar. Se algo quebrar, o log de consultas mostra o domínio, e o `pihole allow` resolve.
+
+Prefira listas mantidas há bastante tempo e atualizadas com frequência. Uma lista abandonada acumula domínios que não existem mais e, pior, domínios que mudaram de dono.
+
+## Pi-hole dentro do Home Assistant
+
+Se você já tem Home Assistant, dá para acompanhar e controlar o Pi-hole por ele. Existe uma [integração oficial do Pi-hole](https://www.home-assistant.io/integrations/pi_hole/) que, segundo a documentação, cria sensores com as estatísticas de bloqueio, um interruptor para ligar e desligar o bloqueio e a ação `pi_hole.disable`, que pausa o bloqueio por um tempo definido.
+
+Para o Pi-hole v6, a documentação indica usar uma **senha de aplicativo**, gerada no painel do Pi-hole em **Settings > Web Interface/API**, mudando de modo **Basic** para **Expert** e escolhendo **Configure app password**. Usar a senha do painel também funciona, mas a documentação não recomenda.
+
+O uso mais prático é um botão no painel do Home Assistant para pausar o bloqueio por alguns minutos, quando um site ou aplicativo teimar em não abrir, sem precisar abrir o terminal. Se ainda não tem Home Assistant, o caminho começa em [Home Assistant no Raspberry Pi: a instalação do zero](/posts/home-assistant-raspberry-pi-instalacao/).
+
+## Resumo do caminho
+
+1. Raspberry Pi OS Lite gravado com o Imager, com SSH ativo.
+2. IP fixo por reserva de DHCP no roteador.
+3. Instalação pelo script oficial e troca da senha com `pihole setpassword`.
+4. IP do Pi-hole como único DNS distribuído pelo roteador.
+5. Conferência no painel e ajuste do IPv6, se os anúncios continuarem.
+
+Com isso, a casa inteira passa a navegar com menos anúncio e menos rastreamento, sem instalar nada em nenhum aparelho. E se um dia quiser desfazer, basta voltar o DNS do roteador para o automático: a rede volta a ser exatamente como era antes.

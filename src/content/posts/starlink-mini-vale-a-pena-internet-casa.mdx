@@ -1,0 +1,227 @@
+---
+title: 'Starlink Mini vale a pena para ter internet em casa em 2026?'
+description: 'Velocidade, latência, consumo de energia e planos: quando a Starlink Mini resolve a internet de casa e quando a fibra ou o 5G ainda são a escolha certa.'
+pubDate: 2026-10-01
+category: 'redes-wifi'
+tags: ['starlink', 'starlink-mini', 'internet-via-satelite', 'internet-rural', 'redes-wifi', 'review']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Kit Starlink Mini, Wi-Fi integrado'
+    brand: 'Starlink'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DH3PLZ6N?tag=nerdcaseiro-20'
+    image: '/images/produtos/starlink-mini.webp'
+    pros:
+      - 'Consumo médio de 25 a 40 W, segundo a Starlink'
+      - 'Roteador Wi-Fi embutido: é uma peça só, de 1,10 kg'
+      - 'Aceita alimentação por USB-C PD de 100 W, o que abre caminho para bateria'
+    cons:
+      - 'Wi-Fi 5 com cobertura declarada de até 112 m²'
+      - 'Uma única porta Ethernet, no plugue da Starlink'
+  - name: 'Kit Starlink Standard V4'
+    brand: 'Starlink'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0F7TXZ732?tag=nerdcaseiro-20'
+    image: '/images/produtos/starlink-standard-v4.webp'
+    pros:
+      - 'Roteador Wi-Fi 6 com cobertura declarada de até 297 m²'
+      - 'Duas portas Ethernet LAN no roteador'
+      - 'Derrete até 40 mm de neve por hora contra 25 mm do Mini'
+    cons:
+      - 'Consumo médio de 75 a 100 W, cerca do triplo do Mini'
+      - 'Antena de 2,9 kg, feita para instalação fixa'
+faq:
+  - question: 'A Starlink Mini pode ser usada no plano Residencial?'
+    answer: 'Sim, para uso em endereço fixo. A própria Starlink oferece no Brasil o plano Residencial Família, que inclui uma segunda Starlink Mini para uso em outra propriedade. Para usar a antena em movimento ou viajando pelo país, o plano indicado é o de Viagem, que é mais caro. A regra geral dos planos residenciais é o endereço fixo cadastrado; se for usar em outro lugar com frequência, confira as condições atualizadas na página da Starlink antes de contratar.'
+  - question: 'Starlink é mais lenta que fibra?'
+    answer: 'Na maioria dos casos, sim, e com menos estabilidade. A fibra entrega a mesma velocidade a qualquer hora, sem depender de céu aberto ou de clima. A Starlink informa que as velocidades anunciadas são as máximas disponíveis, não garantidas, e que podem cair em horário de congestionamento. Onde existe fibra de boa operadora, ela quase sempre ganha em preço, velocidade e estabilidade. A Starlink faz sentido onde a fibra não chega ou chega mal.'
+  - question: 'Quanto de energia a Starlink Mini gasta por mês?'
+    answer: 'A Starlink declara consumo médio de 25 a 40 W para a Mini. Ligada 24 horas por dia a uma média de 30 W, ela consome cerca de 0,72 kWh por dia, ou perto de 22 kWh por mês. Para saber o custo, multiplique esse valor pela tarifa da sua conta de luz. A Standard, com média de 75 a 100 W, gasta cerca de três vezes isso. Em casa com energia solar ou em uso com bateria, essa diferença pesa muito.'
+  - question: 'Chuva forte derruba a Starlink?'
+    answer: 'Chuva muito forte pode reduzir a velocidade ou causar quedas curtas, porque a água atenua o sinal de rádio entre a antena e o satélite. É uma limitação física de qualquer internet por satélite. A antena é resistente: a Mini tem classificação IP67 com o cabo instalado e suporta vento acima de 96 km/h em operação, segundo a ficha técnica. O que costuma causar mais problema no dia a dia do que a chuva é obstrução: árvore, parede ou telhado no caminho do céu.'
+  - question: 'Dá para ligar a Starlink Mini numa bateria portátil?'
+    answer: 'Em princípio, sim. A ficha técnica informa que a Mini aceita alimentação por USB PD com mínimo de 100 W, 20 V e 5 A, usando o cabo Starlink USB-C para plugue cilíndrico, que não vem na caixa. Uma bateria ou estação de energia que entregue esse perfil pela USB-C pode alimentar a antena. Com consumo médio de 25 a 40 W, uma estação de 500 Wh, por exemplo, sustentaria a antena por várias horas numa queda de luz, descontadas as perdas de conversão.'
+  - question: 'Vale comprar na Amazon ou no site da Starlink?'
+    answer: 'Compare os dois antes. A Starlink costuma oferecer o equipamento com desconto em regiões selecionadas, e a própria página do plano Residencial anuncia o equipamento a partir de R$ 99 nessas regiões, na data da consulta. Se o seu endereço está numa dessas regiões, o site oficial pode sair mais barato. A Amazon é interessante quando a promoção não vale para a sua região ou quando o prazo de entrega é melhor. O plano mensal é contratado com a Starlink de qualquer forma.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+A Starlink Mini aparece entre os itens mais vendidos de informática tanto na Amazon quanto no Mercado Livre. Faz sentido: é a primeira antena de internet por satélite que cabe numa mochila, gasta pouca energia e é vendida por um preço de equipamento de roteador. A pergunta que o anúncio não responde é outra: **ela serve para a internet de casa, ou é coisa de viagem?**
+
+A resposta depende de onde fica a sua casa. Em cidade com fibra, ela quase nunca compensa. Em sítio, chácara, casa de praia e bairro onde a fibra não chega, ela muda a vida. Este review usa a [ficha técnica oficial da Starlink](https://www.starlink.com/br/specifications?spec=5) e os planos publicados na página brasileira da empresa, consultados em 25 de setembro de 2026.
+
+## Como a Starlink funciona, e por que ela não é a internet por satélite de antigamente
+
+Internet por satélite existe há décadas, e ficou com fama de lenta e cara. O motivo era a distância. Os satélites tradicionais ficam em **órbita geoestacionária**, a cerca de 36 mil km da Terra. O sinal vai e volta essa distância, e a demora de cada ida e volta passa de meio segundo. Para página de texto, tudo bem. Para chamada de vídeo e jogo, é inutilizável.
+
+A Starlink usa milhares de satélites em **órbita baixa**, muito mais perto da Terra. O caminho encurta, e a latência cai para a faixa em que videochamada, streaming e até jogo casual funcionam. Como os satélites estão em movimento, a antena não aponta para um satélite fixo: é uma **antena de matriz faseada**, que muda a direção do feixe eletronicamente para acompanhar os satélites que passam.
+
+Isso tem uma consequência prática que vale para qualquer antena Starlink: **ela precisa ver o céu**. A ficha técnica fala em **110° de campo de visão**. Árvore, telhado, caixa d'água ou prédio no caminho causam quedas curtas e frequentes. O aplicativo da Starlink tem uma ferramenta de verificação de obstrução que usa a câmera do celular para mostrar se o ponto escolhido tem céu livre suficiente. **Use antes de comprar.** É o teste mais importante deste texto.
+
+## Starlink Mini: o que a ficha técnica diz
+
+![Kit Starlink Mini com o apoio de mesa](/images/produtos/starlink-mini.webp)
+
+A **Mini** é uma peça só: antena e roteador Wi-Fi no mesmo corpo. Pela ficha oficial:
+
+| Item | Starlink Mini |
+|---|---|
+| Consumo médio | **25 a 40 W** |
+| Alimentação | 12 a 48 V, 60 W; ou USB PD de no mínimo 100 W (20 V / 5 A) |
+| Wi-Fi | Wi-Fi 5 (802.11a/b/g/n/ac), dual band 3x3 MU-MIMO |
+| Cobertura Wi-Fi | até 112 m² |
+| Dispositivos | até 128 |
+| Porta Ethernet | uma, com travamento, no plugue Starlink |
+| Peso | 1,10 kg (1,16 kg com apoio) |
+| Proteção | IP67 com o cabo e o plugue instalados |
+| Temperatura de operação | -30 °C a 50 °C |
+| Vento | operacional acima de 96 km/h |
+| Mesh | só com sistemas mesh da própria Starlink |
+
+Três linhas dessa tabela explicam por que a Mini se tornou o modelo mais procurado:
+
+- **O consumo.** De 25 a 40 W em média. É o consumo de um notebook. A 30 W, ligada o dia inteiro, são cerca de 0,72 kWh por dia, perto de 22 kWh por mês. Multiplique pela tarifa da sua conta de luz e você tem o custo mensal de energia.
+- **A alimentação por USB-C.** A ficha informa que a Mini aceita **USB PD de no mínimo 100 W** (20 V a 5 A), com o cabo Starlink USB-C para plugue cilíndrico, vendido à parte. Na prática, isso permite ligá-la numa estação de energia portátil ou num power bank de 100 W, o que a transforma em internet de reserva para queda de luz.
+- **O Wi-Fi embutido.** Não há roteador separado. Para uma casa pequena ou um cômodo, é o suficiente. Para casa grande, os 112 m² de cobertura declarada do Wi-Fi 5 ficam curtos, e aí a Standard ou um sistema mesh da Starlink entram na conta.
+
+A Mini tem 1,4 mil avaliações na Amazon com nota 4,7, o que já é uma base considerável para um equipamento desse tipo.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DH3PLZ6N?tag=nerdcaseiro-20" store="amazon" source="starlink-mini-vale-a-pena-internet-casa" />
+
+## Mini ou Standard: qual serve para casa
+
+![Kit Starlink Standard V4 com roteador Wi-Fi 6](/images/produtos/starlink-standard-v4.webp)
+
+A **Standard** é a antena feita para instalação fixa. A comparação pela ficha técnica oficial das duas:
+
+| | Starlink Mini | Starlink Standard |
+|---|---|---|
+| Consumo médio | **25 a 40 W** | 75 a 100 W |
+| Roteador | embutido na antena | separado |
+| Wi-Fi | Wi-Fi 5, dual band | **Wi-Fi 6, banda tripla 4x4** |
+| Cobertura Wi-Fi | até 112 m² | **até 297 m²** |
+| Portas Ethernet | uma, no plugue | **duas, no roteador** |
+| Peso da antena | **1,10 kg** | 2,9 kg |
+| Derretimento de neve | até 25 mm/h | até 40 mm/h |
+| Campo de visão | 110° | 110° |
+
+A Mini ganha em **consumo** e **portabilidade**. A Standard ganha em **Wi-Fi** e **conexões**: mais que o dobro de cobertura declarada, Wi-Fi 6 e duas portas de rede no roteador. O dado de derretimento de neve pouco importa no Brasil, mas indica que a Standard tem mais margem térmica.
+
+A decisão para casa costuma ser simples:
+
+- **Casa pequena, chácara, casa de praia, uso em mais de um lugar:** Mini.
+- **Casa grande, vários cômodos, muitos aparelhos no cabo:** Standard.
+- **Casa com energia solar ou gerador, onde cada watt conta:** Mini, com folga.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0F7TXZ732?tag=nerdcaseiro-20" store="amazon" source="starlink-mini-vale-a-pena-internet-casa" />
+
+<ComparisonTable
+  rows={[
+    { name: 'Starlink Mini', brand: 'Starlink', rating: 4.7, highlight: '25 a 40 W, Wi-Fi embutido, alimentação USB-C', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0DH3PLZ6N?tag=nerdcaseiro-20' }] },
+    { name: 'Starlink Standard V4', brand: 'Starlink', rating: 4.7, highlight: 'Wi-Fi 6, 297 m², duas portas Ethernet', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0F7TXZ732?tag=nerdcaseiro-20' }] },
+  ]}
+  source="starlink-mini-vale-a-pena-internet-casa"
+/>
+
+## Os planos: o custo que não está na caixa
+
+O equipamento é pago uma vez. O plano é pago todo mês, e é ele que decide se a Starlink compensa. Na página brasileira da Starlink, em 25 de setembro de 2026:
+
+| Plano | Velocidade anunciada | Preço mensal |
+|---|---|---|
+| Residencial | até 100 Mbps, dados ilimitados | R$ 189 |
+| Residencial Máx | até mais de 400 Mbps, dados ilimitados | R$ 249 |
+| Residencial Família | dois planos Residenciais, inclui uma segunda Mini | R$ 423 |
+| Viagem 100 GB | até 300+ Mbps, 100 GB de alta velocidade | R$ 339 |
+| Viagem Ilimitado | até 300+ Mbps, inclui mais de 160 países | R$ 619 |
+
+Duas observações que a própria Starlink faz na página e que valem sublinhar:
+
+- **As velocidades são as máximas disponíveis, não garantidas**, e podem cair em períodos de congestionamento.
+- O plano **Residencial é para endereço fixo**. Para usar a antena em movimento ou viajando, o plano é o de Viagem, bem mais caro.
+
+Para uso em casa, o plano Residencial é o que interessa, e ele aceita a Mini: o plano Família da própria Starlink inclui uma segunda Mini para outra propriedade.
+
+### Amazon ou site da Starlink?
+
+Aqui vai uma recomendação que pode tirar a venda deste link, mas é a honesta: **compare antes**. A página do plano Residencial anuncia o equipamento **a partir de R$ 99 em regiões selecionadas**. Se o seu endereço estiver numa dessas regiões, comprar pelo site oficial pode sair bem mais barato. A Amazon vale quando a promoção não se aplica ao seu endereço ou quando a entrega é mais rápida. O plano mensal é contratado com a Starlink de qualquer jeito.
+
+## Quando a Starlink Mini vale a pena para casa
+
+- **Onde não há fibra.** Sítio, chácara, área rural, bairro afastado. É o cenário para o qual a Starlink foi feita, e onde ela costuma ser a melhor opção disponível.
+- **Onde a fibra existe, mas é ruim.** Operadora pequena com quedas frequentes, sem suporte. A Starlink vira a conexão principal.
+- **Como internet de reserva.** Para quem trabalha de casa e não pode ficar sem conexão. Pelo consumo baixo e pela alimentação USB-C, a Mini é a mais adequada para esse papel, principalmente se combinada com uma [estação de energia portátil](/posts/melhores-estacoes-portateis-energia/) para aguentar queda de luz.
+- **Casa de temporada.** Uma antena que se leva de um lugar para outro, respeitando as regras do plano.
+
+## Quando não vale
+
+- **Cidade com fibra de boa operadora.** A fibra costuma ser mais barata, mais rápida, mais estável e não depende de céu livre. A Starlink não compete com ela nesse cenário.
+- **Apartamento sem varanda com céu aberto.** Se a antena não vê o céu, não funciona. Janela não resolve: o vidro e a parede em volta bloqueiam boa parte do campo de visão.
+- **Jogo online competitivo.** A latência da Starlink é baixa para satélite, mas a fibra continua melhor e mais estável para quem precisa de resposta rápida e constante.
+- **Quem precisa de velocidade garantida.** A própria Starlink avisa que as velocidades não são garantidas.
+
+## Instalação: o que dá para fazer sozinho
+
+A Mini vem com **apoio para superfícies planas e adaptador de tubo**, **cabo de alimentação CC de 15 m**, fonte e plugue. A instalação básica é colocar a antena num ponto com céu livre, ligar a fonte e configurar pelo aplicativo. O aplicativo orienta a posição: a Mini usa orientação manual assistida por software, ou seja, o app indica para onde apontar.
+
+O que exige cuidado é a **instalação permanente em altura**, no telhado ou no alto de um mastro. Trabalho em telhado é risco de queda, e fixação mal feita vira problema na primeira ventania. Nesse caso, vale contratar quem faz esse serviço. Para uso sobre uma laje acessível ou num quintal com céu aberto, o apoio que vem na caixa resolve.
+
+Um último detalhe: a ficha técnica avisa que a Mini **perde a classificação IP67 quando se usa um cabo de rede RJ45 comum** no lugar do plugue Starlink. Se for usar a porta Ethernet com a antena exposta ao tempo, use o cabo próprio da Starlink.
+
+## Internet na queda de luz: quanto tempo a Mini aguenta na bateria
+
+Um dos usos que mais crescem é a Mini como **internet de reserva**, que continua funcionando quando falta energia. A conta de autonomia é simples e vale fazer antes de comprar a bateria.
+
+Pela ficha técnica, o consumo médio da Mini é de **25 a 40 W**. Estações de energia e power banks perdem parte da carga na conversão, e uma premissa conservadora é considerar que só **85% da capacidade** vira energia útil. Com isso:
+
+**autonomia (horas) = capacidade (Wh) × 0,85 ÷ consumo (W)**
+
+| Bateria | A 25 W (uso leve) | A 40 W (uso intenso) |
+|---|---|---|
+| Power bank de 100 Wh | cerca de 3,4 h | cerca de 2,1 h |
+| Estação de 256 Wh | cerca de 8,7 h | cerca de 5,4 h |
+| Estação de 512 Wh | cerca de 17 h | cerca de 11 h |
+| Estação de 1.024 Wh | cerca de 35 h | cerca de 22 h |
+
+São estimativas: o consumo real varia com o clima, a quantidade de aparelhos conectados e a eficiência de cada bateria. Mas a ordem de grandeza mostra por que a Mini é a escolha para esse papel: com a Standard, que consome de 75 a 100 W em média, as mesmas baterias durariam cerca de um terço.
+
+Dois detalhes práticos:
+
+- A alimentação por USB-C exige uma fonte **USB PD de no mínimo 100 W, a 20 V e 5 A**, pela ficha técnica, e o **cabo Starlink USB-C para plugue cilíndrico**, que não vem na caixa. Power bank comum de celular, de 20 ou 30 W, não serve.
+- O **roteador de casa** também precisa de energia para distribuir a internet por Wi-Fi, mas a Mini tem Wi-Fi próprio. Na queda de luz, dá para conectar os aparelhos direto nela e deixar o roteador desligado, economizando bateria.
+
+Comparamos as opções de bateria em [as melhores estações portáteis de energia](/posts/melhores-estacoes-portateis-energia/), e as diferenças entre nobreak e power bank para esse uso em [nobreak ou power bank para o roteador](/posts/nobreak-ou-power-bank-para-roteador/).
+
+## O primeiro uso, passo a passo
+
+1. **Antes de comprar**, instale o aplicativo da Starlink e use a verificação de obstrução no ponto onde a antena vai ficar. Se o app apontar obstrução relevante, procure outro ponto antes de gastar.
+2. **Monte a antena** no apoio que vem na caixa, num lugar com céu livre, e ligue o cabo de 15 m na fonte.
+3. **Ligue na tomada** e espere. A antena procura os satélites e se ajusta; o aplicativo mostra o status da conexão.
+4. **Conecte o celular** à rede Wi-Fi da Starlink e siga a configuração pelo app: nome da rede, senha e ativação do plano.
+5. **Oriente a antena** conforme o app indicar. A Mini usa orientação manual assistida por software: o app mostra para que lado apontar.
+6. **Teste em horários diferentes.** A velocidade varia com o congestionamento, e a própria Starlink avisa que os números anunciados são máximos, não garantidos.
+
+## Checklist antes de comprar
+
+- [ ] O ponto de instalação passou na verificação de obstrução do app.
+- [ ] O endereço está numa região com promoção de equipamento no site da Starlink? Compare antes de fechar.
+- [ ] O plano Residencial atende? Para uso em movimento, o plano é o de Viagem, mais caro.
+- [ ] A casa cabe nos 112 m² de cobertura declarada do Wi-Fi da Mini? Se não, considere a Standard ou um mesh da Starlink.
+- [ ] Vai usar como reserva na queda de luz? Separe a bateria com USB PD de 100 W e o cabo USB-C da Starlink.
+- [ ] Existe fibra de boa operadora no endereço? Se sim, compare preço e estabilidade antes de decidir.
+
+## Veredicto
+
+A Starlink Mini **vale a pena para internet de casa quando a fibra não é uma opção boa**: área rural, bairro sem cobertura, operadora instável. Nesse cenário, o consumo de 25 a 40 W, a peça única e a alimentação por USB-C fazem dela a escolha mais racional entre as antenas da Starlink.
+
+Para casa grande, com muitos cômodos e aparelhos no cabo, a **Standard** entrega um Wi-Fi bem melhor e duas portas de rede, pagando o preço de três vezes mais energia.
+
+E em cidade com fibra de qualidade, a resposta honesta é que **nenhuma das duas compensa**. Nesse caso, vale mais investir num bom roteador ou num [sistema mesh](/posts/melhores-roteadores-mesh-wifi-casa-2026/) para a fibra que você já tem.
