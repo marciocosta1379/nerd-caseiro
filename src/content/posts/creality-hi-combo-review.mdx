@@ -1,0 +1,299 @@
+---
+title: 'Creality Hi Combo vale a pena? Review da impressora 3D multicor'
+description: 'Especificações oficiais, como funciona o CFS de 4 cores, o desperdício na troca de cor e para quem a Creality Hi Combo vale a pena de verdade.'
+pubDate: 2026-09-28T18:00:00-03:00
+category: 'impressao-3d'
+tags: ['impressao-3d', 'creality', 'review', 'fdm', 'multicolor', 'impressora-3d']
+featured: true
+draft: true
+products:
+  - name: 'Creality Hi Combo (impressora Hi + CFS de 4 cores)'
+    brand: 'Creality'
+    rating: 4.3
+    image: '/images/produtos/creality-hi-combo.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FHBSLX63?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1P5WEgk'
+    pros:
+      - 'Impressão em até 4 cores com o CFS incluso, expansível até 16'
+      - 'Área de 260 × 260 × 300 mm, maior que a das impressoras de entrada'
+      - 'Corpo metálico, nivelamento automático e câmera integrada'
+      - 'Bico de aço endurecido de troca rápida, que aceita PLA com fibra de carbono'
+    cons:
+      - 'Troca de cor gera descarte de filamento, às vezes quase tanto quanto a peça'
+      - 'TPU só por fora do CFS, e só dos mais rígidos (95A ou mais), com cuidados'
+      - 'Mesa que se move para frente e para trás pede espaço na bancada'
+  - name: 'Creality Hyper PLA RFID 1 kg'
+    brand: 'Creality'
+    rating: 4.8
+    image: '/images/produtos/filamento-creality-hyper-pla-rfid.webp'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DHXDRZ74?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1VXCMqE'
+    pros:
+      - 'Etiqueta RFID lida pelo CFS: tipo e cor entram sozinhos no fatiador'
+      - 'Feito para alta velocidade, que é onde a Hi rende mais'
+    cons:
+      - 'Mais caro que PLA comum de outras marcas'
+      - 'Algumas cores são bem translúcidas'
+faq:
+  - question: 'A Creality Hi Combo imprime em quantas cores?'
+    answer: 'Com o CFS que vem no Combo, até 4 cores ou materiais na mesma peça. A Creality informa que a Hi aceita até 4 unidades de CFS, o que leva a 16 cores, mas as outras 3 unidades são compradas à parte, e a partir da segunda o CFS precisa de fonte de energia separada.'
+  - question: 'Qual a diferença entre a Creality Hi e a Hi Combo?'
+    answer: 'A impressora é a mesma. O Combo inclui o CFS, a caixa que guarda 4 carretéis e troca o filamento sozinha durante a impressão. Sem o CFS, a Hi imprime em uma cor por vez, com o carretel no suporte lateral.'
+  - question: 'A Creality Hi Combo imprime TPU?'
+    answer: 'Imprime, mas não pelo CFS. Segundo o guia oficial da Creality, o TPU deve ser alimentado direto na impressora, de uma caixa seca ao lado esquerdo, sem passar pelo tubo de PTFE. Só funcionam TPUs de 95A ou mais rígidos: os de 90A para baixo são macios demais e podem entupir o bico. O filamento precisa estar seco, e a velocidade volumétrica fica em 2 a 3 mm³/s.'
+  - question: 'Preciso usar filamento da Creality com RFID?'
+    answer: 'Não. O RFID só automatiza o cadastro: com filamento da Creality com etiqueta, o CFS reconhece tipo e cor sozinho. Com filamento de outra marca, você informa o tipo e a cor na tela da impressora. O que precisa ser respeitado é o tamanho do carretel: 1 kg, com 197 a 202 mm de diâmetro e 42 a 68 mm de largura, segundo a Creality.'
+  - question: 'A troca de cor desperdiça muito filamento?'
+    answer: 'Pode desperdiçar bastante. Como todas as cores passam pelo mesmo bico, a impressora precisa expulsar o filamento antigo a cada troca. No teste do Tom''s Hardware, uma peça em 4 cores usou 32 g de filamento e descartou 23 g. Dá para reduzir imprimindo várias peças de uma vez, diminuindo o número de trocas e usando o descarte dentro do preenchimento, quando o fatiador permite.'
+  - question: 'O CFS seca o filamento?'
+    answer: 'Não. Segundo a Creality, o CFS usa dessecante e mostra temperatura e umidade no visor, ou seja, mantém o filamento protegido, mas não aquece. Filamento que já absorveu umidade precisa passar por uma secadora antes.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+A **Creality Hi Combo** é a aposta da Creality para levar a impressão 3D colorida para a bancada de casa sem o preço das impressoras fechadas de topo. O "Combo" do nome é a impressora **Hi** junto com o **CFS**, uma caixa que guarda quatro carretéis e troca o filamento sozinha durante a impressão.
+
+Um aviso de transparência antes de começar: o autor deste site tem uma Hi Combo. Mesmo assim, este review se apoia nas **especificações oficiais da Creality** e num **teste independente publicado pelo Tom's Hardware**, com os números de cada um citados ao longo do texto. É isso que permite mostrar também o que a impressora não faz bem, e não só o que ela faz.
+
+**Resumo rápido:** para quem quer imprimir em cores com uma área de impressão generosa e um conjunto bem acabado, a Hi Combo entrega. Os pontos de atenção são o **desperdício de filamento na troca de cor**, o **TPU limitado** (só por fora do CFS e só os mais rígidos) e o **espaço** que uma impressora de mesa móvel pede.
+
+![Creality Hi Combo, com a impressora Hi e o CFS de quatro carretéis ao lado](/images/produtos/creality-hi-combo.webp)
+
+## O que é a Hi Combo, em uma frase
+
+É uma impressora **FDM de mesa móvel** (a mesa anda para frente e para trás, e o bico anda para os lados e para cima), com **260 × 260 × 300 mm** de área de impressão, **nivelamento automático**, **câmera**, e um sistema de **troca automática de filamento** para até **4 cores** na versão Combo.
+
+Na família Creality, ela ocupa o lugar que era da linha **Ender 3**: a impressora de entrada da marca, agora com acabamento mais caprichado e com multicor de fábrica.
+
+## As especificações oficiais
+
+| Item | Creality Hi |
+|---|---|
+| Área de impressão | **260 × 260 × 300 mm** |
+| Velocidade | **300 mm/s típica**, 500 mm/s máxima |
+| Aceleração | até 12.000 mm/s² |
+| Extrusora | direta (direct drive) |
+| Bico | **tri-metal com ponta de aço endurecido**, 0,4 mm (aceita 0,6 e 0,8 mm) |
+| Temperatura do bico | até 300 °C |
+| Temperatura da mesa | até 100 °C |
+| Mesa | chapa flexível de epóxi, dupla face |
+| Nivelamento | totalmente automático |
+| Filamentos suportados | Hyper PLA, PLA, PETG, ABS, PLA-CF |
+| Cores | 1 sem CFS; **4 com um CFS**; até 16 com quatro CFS |
+| Câmera | sim, com tampa de privacidade |
+| Tela | 3,2", sensível ao toque, dobrável |
+| Conexão | Wi-Fi e pendrive |
+| Dimensões da impressora | 409 × 392 × 477 mm |
+| Peso do Combo | 13,6 kg |
+| Potência nominal | 1.150 W em 220 V |
+| Ruído no modo silencioso | até 48 dB |
+
+Fonte: página oficial da Creality Hi Combo.
+
+Um detalhe importante na tabela: a Creality informa que os **500 mm/s** são a velocidade **máxima**, medida no laboratório da marca, e que a velocidade **típica para boa qualidade** é de **300 mm/s**. Em anúncio, costuma aparecer só o 500. Na prática, a qualidade manda, e os 300 mm/s já são rápidos para uma impressora de mesa móvel.
+
+## O CFS: como funciona a troca de cor
+
+O **CFS** (Creality Filament System) é a caixa que fica ao lado da impressora com quatro carretéis. Quando o modelo muda de cor numa camada, a impressora:
+
+1. **corta o filamento** atual, com uma lâmina na própria cabeça de impressão;
+2. o CFS **recolhe** esse filamento de volta para o carretel;
+3. o CFS **empurra** o filamento da nova cor até o bico;
+4. a impressora **expulsa** o que sobrou da cor anterior dentro do bico, até sair a cor nova limpa;
+5. e **volta a imprimir**.
+
+Além da troca de cor, o CFS faz duas coisas úteis no dia a dia:
+
+- **Continuação automática:** se um carretel acabar no meio da impressão e houver outro do mesmo material e cor no CFS, a impressora troca sozinha e segue, segundo a Creality. Impressão longa deixa de depender de você calcular se o carretel vai dar.
+- **Proteção contra umidade:** o CFS é fechado, usa **dessecante** e mostra **temperatura e umidade** num visor na frente.
+
+### O CFS não seca o filamento
+
+Esse ponto confunde muita gente. Pela ficha técnica, o método do CFS é **dessecante**: ele mantém o filamento seco, mas **não aquece**. Um carretel de PETG que ficou meses aberto na prateleira e absorveu umidade continua úmido dentro do CFS. Para recuperar filamento úmido, o caminho é a secadora, e explicamos quando ela compensa em [secadora de filamento: vale a pena?](/posts/secadora-de-filamento-vale-a-pena/).
+
+### Os carretéis que o CFS aceita
+
+A Creality é específica sobre o que cabe no CFS:
+
+- carretel de **1 kg**, com **197 a 202 mm de diâmetro** e **42 a 68 mm de largura**;
+- materiais **PLA, PETG, ABS, ASA, PET e PLA-CF**;
+- **não** aceita **TPU flexível**, **PVA ou BVOH úmidos**, nem **carretel de papelão empenado**. O TPU é impresso por fora do CFS, como explicamos mais abaixo.
+
+O último item merece atenção. Várias marcas vendem filamento em **carretel de papelão**, que é mais sustentável, mas pode deformar e soltar fiapos. Se o carretel estiver empenado, a Creality recomenda não usar no CFS. Antes de comprar em quantidade de uma marca nova, confira as medidas e o material do carretel.
+
+### RFID: o cadastro automático
+
+Os filamentos da própria Creality com **etiqueta RFID** são reconhecidos sozinhos pelo CFS: tipo e cor aparecem no fatiador sem você digitar nada. Com filamento de outra marca, o funcionamento é o mesmo; a diferença é que você informa o tipo e a cor na tela da impressora ao carregar o carretel.
+
+Sem o CFS, a Hi também tem um **leitor RFID na lateral**: basta encostar a etiqueta do carretel para a impressora carregar as configurações daquele filamento.
+
+## O ponto fraco: o descarte na troca de cor
+
+Toda impressora multicor de **bico único**, como a Hi Combo, tem o mesmo problema físico: o filamento que já derreteu dentro do bico não pode voltar para o carretel. A cada troca de cor, ele precisa ser **expulso**, e isso vira aquele descarte em forma de "cocô" de filamento que a impressora joga fora.
+
+O Tom's Hardware mediu isso no review:
+
+| Impressão de teste | Filamento na peça | Filamento descartado |
+|---|---|---|
+| Peça em 2 cores, com **uma única troca** | 78,99 g | **0,64 g** |
+| Porta decorativa em 4 cores de PETG, com **muitas trocas** | 32,32 g | **23,25 g** |
+
+A diferença mostra o que manda no desperdício: **o número de trocas de cor**, e não o número de cores. Uma peça com a base de uma cor e o topo de outra troca uma vez só. Uma peça com detalhes coloridos em todas as camadas troca várias vezes por camada.
+
+O próprio Tom's Hardware aponta que, sem cuidado, é comum **descartar tanto filamento quanto o que foi impresso**.
+
+### Como reduzir o desperdício
+
+1. **Imprima várias peças de uma vez.** Cada troca de cor atende todas as peças da mesa. Dez chaveiros juntos gastam o mesmo descarte por camada que um chaveiro sozinho.
+2. **Desenhe pensando nas trocas.** Cores separadas por altura (base de uma cor, topo de outra) trocam poucas vezes. Detalhes de cor espalhados por toda a altura da peça trocam muitas.
+3. **Use o descarte no preenchimento ou em objeto de descarte.** O fatiador da Creality permite ajustar o volume de purga e, como o Tom's Hardware sugere, usar **objetos de purga**: o filamento que seria descartado vai para o miolo da peça ou para uma peça que você aproveita.
+4. **Ajuste o volume de purga por par de cores.** Trocar de branco para preto pede pouca purga; de preto para branco, muita. O fatiador tem uma tabela para isso.
+5. **Coloque na conta.** Para saber quanto a peça custa de verdade, some o descarte ao peso impresso. Explicamos a conta completa em [quanto custa imprimir uma peça 3D em casa](/posts/quanto-custa-imprimir-peca-3d/).
+
+E um aviso de convivência: o Tom's Hardware relata que o **limpador de metal** que raspa o bico durante as purgas é **barulhento**, a ponto de ser ouvido no cômodo ao lado. Em impressões com muitas trocas de cor, é um barulho repetido. A Creality informa até **48 dB no modo silencioso**, mas a ficha não deixa claro se esse número inclui o limpador.
+
+## Onde ela vai bem
+
+### Construção e acabamento
+
+O Tom's Hardware descreve a Hi como "bonita" e **muito bem construída**: base metálica fundida numa peça só, pórtico que esconde os fusos do eixo Z, poucos fios e parafusos expostos. A Creality informa que as peças da estrutura são de **liga de alumínio fundida**.
+
+A montagem é rápida: a Creality diz que a impressora vem **95% montada** e fica pronta em cerca de **8 minutos**, apertando sete parafusos. O Tom's Hardware confirma a montagem simples, com uma ressalva: o manual impresso é fraco, e os **vídeos de montagem no site da Creality** explicam melhor.
+
+### Motores com retorno de posição
+
+Um detalhe técnico pouco comentado: os eixos X e Y usam **motores step-servo**, que informam a posição real ao sistema. Em motores de passo comuns, se algo trava o movimento, a impressora "perde a conta" e aparece o **deslocamento de camada**. Com retorno de posição, esse risco diminui. É uma das razões da boa confiabilidade em alta velocidade.
+
+### Nivelamento e primeira camada
+
+O nivelamento é **totalmente automático**, sem botões de ajuste. O Tom's Hardware não teve problema de nivelamento e destaca a mesa **muito aderente**. Se a primeira camada ainda der trabalho com algum filamento, os ajustes estão em [primeira camada e warping na impressão 3D](/posts/impressao-3d-primeira-camada-warping/).
+
+### Bico de troca rápida e aço endurecido
+
+O bico é **tri-metal**: corpo de liga de cobre para aquecer rápido, **garganta de titânio** para evitar que o calor suba e entupa, e **ponta de aço endurecido**, que resiste a filamentos abrasivos como o **PLA com fibra de carbono**, suportado oficialmente. O bico **rosqueia direto no bloco aquecedor** e sai sem desmontar a extrusora.
+
+Quando precisar trocar ou desentupir, o procedimento está em [como trocar e desentupir o bico da impressora 3D](/posts/trocar-desentupir-bico-impressora-3d/).
+
+### Qualidade de impressão
+
+No teste do Tom's Hardware, o clássico **Benchy** saiu em **32 minutos e 33 segundos**, com camadas lisas no casco, sem ondulação nem deslocamento de camada, e só um pequeno defeito no topo das partes em balanço. As peças em PLA e PETG, com várias cores, saíram **limpas e sem mistura de cor** entre as regiões.
+
+## Onde ela fica devendo
+
+### TPU: só por fora do CFS, e com cuidados
+
+O CFS **não aceita TPU**: o filamento flexível dobra dentro do tubo e falha na carga e no recolhimento, o que é comum em sistemas multicor. Mas a impressora **imprime TPU por fora do CFS**, e a Creality publicou no seu wiki um guia específico para isso na Hi. As condições:
+
+- **Só TPU de 95A ou mais rígido.** Segundo a Creality, TPUs de **90A, 80A, 75A, 70A** ou mais macios **não podem ser impressos** na Hi: o filamento é amassado pela engrenagem da extrusora e entope o bico.
+- **Filamento seco.** O TPU absorve muita umidade, e a Creality considera a secagem **necessária** antes e durante o uso: cerca de **70 °C por 8 a 12 horas** numa secadora, e depois uma **caixa seca com dessecante** durante a impressão.
+- **Sem tubo de PTFE.** A Creality recomenda **não passar o TPU pelo tubo**, que aumenta a resistência, e colocar a caixa seca **elevada, do lado esquerdo** da impressora.
+- **Devagar.** Para TPU de outras marcas, a Creality recomenda velocidade volumétrica máxima de **2 mm³/s** (3 mm³/s para o HP-TPU da marca), bico a **220 °C** e mesa a pelo menos **40 °C** na chapa lisa.
+- **Bico limpo.** Antes de trocar para TPU, limpe resíduos de filamentos de alta temperatura (acima de 240 °C) do bico, para reduzir o risco de entupimento.
+
+O Creality Print 6.0 traz três perfis de TPU: **CR-TPU**, **HP-TPU** e **TPU genérico**.
+
+Vale registrar a história: o review do Tom's Hardware, de setembro de 2025, relatou entupimento com várias marcas de TPU e ausência de perfil no fatiador. O guia oficial e os perfis de TPU no fatiador vieram depois desse review. Na prática, a Hi imprime TPU para peças como pés antiderrapantes, capas e protetores, desde que o filamento seja rígido o suficiente e esteja seco. Para quem vai imprimir muita peça flexível, principalmente TPU macio, ela não é a escolha ideal.
+
+### O espaço que ela pede
+
+Por ser de **mesa móvel**, a Hi precisa de espaço livre na frente e atrás, porque a mesa inteira se desloca no eixo Y. Some a isso o **CFS ao lado**, com **379 × 314 × 276 mm**, e o conjunto ocupa bem mais que as medidas da impressora parada sugerem. O Tom's Hardware lembra que as impressoras fechadas do tipo CoreXY permitem empilhar o sistema de cores em cima; na Hi, ele fica ao lado.
+
+Antes de comprar, meça a bancada: a impressora com **409 mm de largura**, mais o CFS, mais uma folga para a mesa andar e para o tubo de filamento fazer a curva sem dobrar.
+
+### Não é fechada
+
+Como toda impressora de mesa aberta, ela imprime **PLA e PETG** com tranquilidade, mas materiais como **ABS e ASA**, que empenam com correntes de ar e soltam cheiro, rendem melhor em impressora **fechada** e com ventilação. A Creality lista o ABS como suportado; na prática, peça grande de ABS numa impressora aberta tende a empenar. A comparação entre os materiais está em [PLA, PETG ou ABS: qual filamento usar](/posts/pla-petg-abs-qual-filamento/).
+
+## O software
+
+A Hi usa o **Creality Print 5.1** ou mais recente, um fatiador que, segundo o Tom's Hardware, foi construído sobre a base do OrcaSlicer e do Cura. Ele traz:
+
+- mais de **40 perfis de filamento** prontos;
+- fatiamento de **modelos 3MF multicoloridos**, o formato usado nos repositórios de modelos coloridos;
+- controle de **várias impressoras pela rede local**.
+
+O envio de arquivos pode ser feito pela **nuvem da Creality**, pela **rede local** ou por **pendrive**. Quem não quer depender da nuvem não precisa usá-la. Para quem gosta de mexer, a Creality informa que o sistema da impressora tem **modo avançado**, **acesso root** e suporte à interface **Fluidd**, da família Klipper.
+
+## Energia e tomada
+
+A potência nominal informada pela Creality é de **1.150 W em 220 V**. Esse pico acontece no aquecimento da mesa e do bico; durante a impressão, o consumo médio é bem menor. Mesmo assim, vale ligar a impressora numa **tomada própria**, sem dividir o benjamim com aquecedor ou outro aparelho de resistência. A conta de luz de uma impressão entra no cálculo de [quanto custa imprimir uma peça 3D](/posts/quanto-custa-imprimir-peca-3d/).
+
+## O filamento: vale pagar pelo RFID?
+
+![Carretel de filamento Creality Hyper PLA RFID](/images/produtos/filamento-creality-hyper-pla-rfid.webp)
+
+A Hi funciona com PLA de qualquer marca, desde que o carretel caiba no CFS. O **Hyper PLA RFID** da Creality tem duas vantagens: é formulado para **alta velocidade**, que é onde a Hi rende mais, e tem a **etiqueta RFID** que o CFS lê sozinho. O da busca tem **380 avaliações com nota 4,8** na Amazon.
+
+Um cuidado apontado pelo Tom's Hardware: algumas cores do Hyper PLA são **bem translúcidas**. Numa peça em que o branco fica sobre o vermelho, por exemplo, o branco pode sair rosado. Para peças multicoloridas com cores claras sobre escuras, vale reforçar as camadas da cor clara no fatiador.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DHXDRZ74?tag=nerdcaseiro-20" store="amazon" source="creality-hi-combo-review" />
+
+<AffiliateButton href="https://meli.la/1VXCMqE" store="mercadolivre" source="creality-hi-combo-review" />
+
+Para comparar com outras marcas de PLA, veja [os melhores filamentos PLA de 2026](/posts/melhores-filamentos-pla-2026/). E como filamento é o custo que se repete a cada impressão, especialmente com o descarte da troca de cor, a escolha da marca pesa no bolso ao longo do ano.
+
+## Para quem a Hi Combo vale a pena
+
+<ProsCons
+  pros={[
+    'Quer imprimir em cores sem trocar filamento na mão',
+    'Precisa de área de impressão maior que a das impressoras compactas',
+    'Imprime principalmente PLA e PETG',
+    'Valoriza acabamento, câmera e nivelamento automático',
+    'Já usa outras máquinas Creality e quer continuar no mesmo ecossistema',
+  ]}
+  cons={[
+    'Precisa imprimir TPU macio (90A ou menos) ou muita peça flexível',
+    'Tem pouco espaço na bancada',
+    'Vai imprimir muito ABS ou ASA',
+    'Quer só uma cor e o menor preço possível: a Hi sem o CFS custa menos',
+  ]}
+/>
+
+O Tom's Hardware fecha o review dizendo que a Hi Combo é um **bom começo na impressão colorida** e uma escolha especialmente coerente para quem já está no ecossistema da Creality. A ressalva do site é que, nos Estados Unidos, o preço de lista ficou acima da concorrente direta, a **Bambu Lab A1 Combo**, sem uma vantagem clara, e que vale a pena **comprar em promoção**. No Brasil, os preços oscilam bastante entre lojas e ao longo do mês, então a comparação precisa ser feita na hora da compra.
+
+Se você está entre a Hi Combo e a linha da Bambu Lab, o nosso review da [Bambu A1 Mini](/posts/bambu-a1-mini-review-2026/) mostra como funciona o sistema de cores da concorrente. E se ainda está decidindo o primeiro modelo, a comparação geral está em [as melhores impressoras 3D para iniciantes](/posts/melhores-impressoras-3d-iniciantes-2026/).
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FHBSLX63?tag=nerdcaseiro-20" store="amazon" source="creality-hi-combo-review" />
+
+<AffiliateButton href="https://meli.la/1P5WEgk" store="mercadolivre" source="creality-hi-combo-review" />
+
+<ComparisonTable
+  source="creality-hi-combo-review"
+  rows={[
+    { name: 'Creality Hi Combo', brand: 'Creality', rating: 4.3, highlight: '4 cores com CFS, 260 × 260 × 300 mm', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0FHBSLX63?tag=nerdcaseiro-20' }, { store: 'mercadolivre', url: 'https://meli.la/1P5WEgk' }] },
+    { name: 'Hyper PLA RFID 1 kg', brand: 'Creality', rating: 4.8, highlight: 'Reconhecido sozinho pelo CFS', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B0DHXDRZ74?tag=nerdcaseiro-20' }, { store: 'mercadolivre', url: 'https://meli.la/1VXCMqE' }] },
+  ]}
+/>
+
+## Primeiros passos depois de montar
+
+1. **Assista ao vídeo oficial de montagem** no site da Creality antes de abrir as caixas. O Tom's Hardware considera o manual impresso insuficiente.
+2. **Deixe a calibração inicial terminar.** Na primeira vez que liga, a impressora nivela e calibra sozinha.
+3. **Atualize o firmware** e instale a versão mais recente do Creality Print.
+4. **Confira os carretéis** antes de colocar no CFS: 1 kg, diâmetro e largura dentro da faixa, e sem papelão empenado.
+5. **Comece com uma peça de uma cor** e depois uma de duas cores com poucas trocas, para conhecer o comportamento da purga antes de partir para os modelos cheios de detalhes.
+6. **Ajuste a calibração de fluxo e temperatura** para cada marca nova de filamento. O passo a passo está em [como calibrar a impressora 3D: temperatura e fluxo](/posts/calibrar-impressora-3d-temperatura-fluxo/).
+
+## Resumo
+
+- A **Hi Combo** é a Creality Hi, de mesa móvel e **260 × 260 × 300 mm**, com o **CFS** para **4 cores**.
+- A velocidade **típica** é **300 mm/s**; os 500 mm/s são o máximo de laboratório.
+- O ponto fraco é o **descarte na troca de cor**, que depende do número de trocas. Imprimir várias peças juntas e usar objetos de purga reduz muito.
+- **TPU só por fora do CFS**, dos mais rígidos (95A ou mais), seco e devagar, conforme o guia oficial da Creality.
+- O **CFS protege**, mas **não seca** o filamento.
+- Vale a pena para quem quer **cor, área grande e bom acabamento** imprimindo **PLA e PETG**, de preferência comprando em promoção.
+
+## Fontes
+
+- Creality — página oficial da Creality Hi Combo (especificações da impressora e do CFS).
+- Creality Wiki — *How to use Creality Hi to print TPU filament*.
+- Bertacchi, D. *Creality Hi Combo review: Catching up with color*. Tom's Hardware, 7 de setembro de 2025.
