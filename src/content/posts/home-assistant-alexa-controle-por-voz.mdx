@@ -1,0 +1,287 @@
+---
+title: 'Home Assistant com a Alexa: controle a casa por voz'
+description: 'Passo a passo para expor luzes, tomadas e cenas do Home Assistant à Alexa, com as opções oficiais, o que cada uma exige e os erros comuns.'
+pubDate: 2026-10-06T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'alexa', 'echo-dot', 'nabu-casa', 'tutorial', 'controle-por-voz']
+featured: false
+draft: true
+products:
+  - name: 'Echo Dot (geração mais recente), smart speaker com Alexa'
+    brand: 'Amazon'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09B8VGCR8?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2q7tvy4'
+    image: '/images/produtos/echo-dot-5-preto.webp'
+    pros:
+      - 'O jeito mais barato de ter a Alexa em um cômodo'
+      - 'Funciona com a skill oficial do Home Assistant Cloud'
+      - 'Mais de 94 mil avaliações na Amazon, nota 4,8'
+    cons:
+      - 'Som limitado para música em ambiente grande'
+      - 'Depende de internet: sem conexão, não há comando de voz'
+  - name: 'Curso Casa Inteligente com Home Assistant, Alexa e Mapa 3D 2.0'
+    brand: 'Hotmart'
+    stores:
+      - store: 'hotmart'
+        url: 'https://go.hotmart.com/B107181927J?dp=1'
+    pros:
+      - 'Curso em vídeo que cobre Home Assistant e Alexa juntos'
+      - 'Bom para quem prefere aprender vendo a tela'
+    cons:
+      - 'Pago; a documentação oficial é gratuita'
+faq:
+  - question: 'Preciso pagar para ligar o Home Assistant à Alexa?'
+    answer: 'Não obrigatoriamente. O caminho mais simples, pelo Home Assistant Cloud da Nabu Casa, é uma assinatura paga com 30 dias de teste grátis. O caminho gratuito é criar a própria skill na conta de desenvolvedor da Amazon com uma função no AWS Lambda, que tem cota gratuita, mas exige o Home Assistant acessível pela internet em HTTPS na porta 443 e bem mais configuração.'
+  - question: 'A Alexa funciona com o Home Assistant sem internet?'
+    answer: 'Não. Todo comando de voz da Alexa é processado na nuvem da Amazon, que então manda a ordem ao Home Assistant pelo Home Assistant Cloud ou pela sua skill. Sem internet, a Alexa não entende o comando. As automações do Home Assistant continuam rodando localmente.'
+  - question: 'Posso abrir a fechadura ou o portão por voz?'
+    answer: 'Pode, com proteção. Segundo a documentação do Home Assistant, para destrancar uma fechadura a Alexa exige um PIN de voz de 4 dígitos, configurado no aplicativo Alexa. Portas de garagem (cover com device_class garage) também aceitam o recurso de PIN para abrir por voz.'
+  - question: 'Dá para usar cenas e scripts do Home Assistant na Alexa?'
+    answer: 'Sim. Cenas e scripts aparecem para a Alexa e podem ser ativados por voz ou colocados em rotinas. Uma limitação documentada: o Home Assistant não suporta desativar uma cena, então "Alexa, desligar cena" não tem efeito.'
+  - question: 'E o Emulated Hue? Ele é gratuito.'
+    answer: 'O Emulated Hue simula uma ponte Philips Hue para a Alexa enxergar luzes e interruptores na rede local. É gratuito, mas exige configuração em YAML, porta 80 livre no Home Assistant e IP fixo, e a documentação avisa que mais de 49 dispositivos expostos podem fazer a Alexa não ver nenhum. Para a maioria das casas, o Home Assistant Cloud é mais estável.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+O Home Assistant controla quase tudo da casa, mas pelo celular ou pelo painel. A **Alexa** acrescenta o que falta para o uso do dia a dia: **voz**. "Alexa, apagar a luz da sala" funciona para qualquer pessoa da casa, sem abrir aplicativo, e as rotinas da Alexa passam a enxergar os dispositivos que só o Home Assistant conhece, como um relé ESPHome ou um sensor Zigbee.
+
+Este tutorial segue a **documentação oficial do Home Assistant** (versão 2026.9, a mais recente quando o texto foi escrito) e mostra os três caminhos para ligar os dois sistemas, o que cada um exige e o passo a passo do mais simples.
+
+## Por que juntar Alexa e Home Assistant
+
+Quem chega ao Home Assistant geralmente já tem uma Alexa em casa, e a pergunta é: para que ligar os dois, se cada um controla seus aparelhos?
+
+A resposta está no que cada um faz melhor:
+
+- **O Home Assistant é o cérebro.** Ele conversa com aparelhos de dezenas de marcas e protocolos (Zigbee, Wi-Fi, ESPHome, Matter, equipamentos de marcas diferentes), roda automações complexas e funciona **localmente**, sem depender da nuvem de cada fabricante.
+- **A Alexa é a interface de voz.** Ela está espalhada pela casa nos Echo, entende português, e qualquer pessoa da família usa sem aprender nada.
+
+Ligar os dois resolve três problemas comuns:
+
+1. **Aparelhos que a Alexa não conhece.** Um relé ESPHome, um sensor Zigbee ou um dispositivo de marca sem skill para a Alexa passam a ser controlados por voz.
+2. **Uma lista só de dispositivos.** Em vez de ativar uma skill por fabricante, com nomes e contas diferentes, tudo passa a vir do Home Assistant, com os nomes que você definiu.
+3. **Rotinas mais ricas.** As rotinas da Alexa podem usar os dispositivos do Home Assistant, e o Home Assistant continua cuidando das automações que a Alexa não faz.
+
+## Como a Alexa conversa com o Home Assistant
+
+Entender o caminho do comando ajuda a resolver problemas depois:
+
+1. Você fala "Alexa, acender a luz da sala".
+2. O Echo grava a frase e envia para a **nuvem da Amazon**, que entende o pedido.
+3. A Amazon encaminha o comando para a **skill** do Home Assistant (a do Home Assistant Cloud ou a sua própria).
+4. A skill entrega o comando ao **seu Home Assistant**, pela conexão segura da nuvem.
+5. O Home Assistant aciona a luz pela integração local.
+
+Duas consequências práticas:
+
+- **Sem internet, não há comando de voz.** Mesmo que a luz e o Home Assistant estejam na mesma casa, o reconhecimento da fala acontece na nuvem da Amazon.
+- **Se o comando falha, o problema pode estar em qualquer elo**: no Echo, na nuvem da Amazon, na conexão do Home Assistant com a nuvem ou no aparelho. A seção de erros comuns mais abaixo mostra como isolar cada um.
+
+## Os três caminhos oficiais
+
+O Home Assistant documenta três formas de conversar com a Alexa. Elas não são equivalentes:
+
+| Caminho | Custo | O que exige | Para quem |
+|---|---|---|---|
+| **Home Assistant Cloud (Nabu Casa)** | assinatura, com 30 dias grátis | só login no Home Assistant e no app Alexa | quase todo mundo |
+| **Skill própria (Smart Home Skill + AWS Lambda)** | grátis dentro da cota do AWS | conta de desenvolvedor Amazon, conta AWS, Home Assistant público em HTTPS na porta 443 | quem já expõe o HA na internet e quer fazer tudo à mão |
+| **Emulated Hue** | grátis | YAML, porta 80, IP fixo; só luzes, interruptores e afins | casos simples, sem nuvem extra |
+
+A documentação resume o atrativo do primeiro caminho assim: ele conecta a Alexa **sem precisar lidar com DNS, certificado SSL ou abertura de porta**. A skill própria exige exatamente essas três coisas. Por isso o passo a passo abaixo é o do Home Assistant Cloud; os outros dois aparecem no fim, com os pontos de atenção.
+
+## O que você precisa antes
+
+- **Home Assistant instalado e funcionando.** Se ainda não tem, o tutorial [Home Assistant no Raspberry Pi: a instalação do zero](/posts/home-assistant-raspberry-pi-instalacao/) cobre a instalação.
+- **Um dispositivo com Alexa** — um Echo, ou o próprio aplicativo Alexa no celular, que também aceita comando de voz.
+- **O aplicativo Alexa** no celular, logado na mesma conta Amazon do Echo.
+- **Dispositivos já funcionando no Home Assistant**: a Alexa só controla o que o Home Assistant já controla.
+
+![Smart speaker Echo Dot preto com a Alexa](/images/produtos/echo-dot-5-preto.webp)
+
+Para quem ainda não tem um Echo, o **Echo Dot** é a porta de entrada mais barata da Alexa e um dos aparelhos mais avaliados da Amazon Brasil.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09B8VGCR8?tag=nerdcaseiro-20" store="amazon" source="home-assistant-alexa-controle-por-voz" />
+
+<AffiliateButton href="https://meli.la/2q7tvy4" store="mercadolivre" source="home-assistant-alexa-controle-por-voz" />
+
+## Passo 1 — Entrar no Home Assistant Cloud
+
+1. No Home Assistant, abra **Configurações → Home Assistant Cloud**.
+2. Crie a conta da Nabu Casa ou faça login. A assinatura começa com **30 dias de teste grátis**.
+3. Na tela do Home Assistant Cloud, confirme que a **Alexa** está **ativada**.
+
+O mesmo login também libera o **acesso remoto** ao Home Assistant. Se você ainda está decidindo como acessar a casa de fora, o post [Acesso remoto ao Home Assistant sem abrir porta no roteador](/posts/acesso-remoto-home-assistant-sem-abrir-porta/) compara o Nabu Casa com a alternativa gratuita.
+
+## Passo 2 — Escolher o que a Alexa pode ver
+
+Este é o passo mais importante, e o que mais gente pula.
+
+1. Abra **Configurações → Assistentes de voz**.
+2. Vá à aba **Expor**.
+3. Selecione cada entidade e marque a **Alexa** entre os assistentes. O botão **Expor entidades** faz isso em lote.
+
+Exponha **só o que faz sentido comandar por voz**: luzes, tomadas, ar-condicionado, cenas e scripts. A documentação do Home Assistant explica o motivo de a exposição ser manual: evitar que **dispositivos sensíveis, como fechaduras e portões, sejam acionados por voz sem querer**.
+
+**Dê nomes falados às entidades.** A Alexa usa o nome da entidade. "Luz Sala" funciona; "sonoff_basic_r2_relay_1" não. Ajuste o nome no Home Assistant antes de expor, porque renomear depois obriga a Alexa a redescobrir o dispositivo.
+
+### O que a Alexa consegue controlar
+
+A integração oficial aceita uma lista longa de tipos de entidade, entre eles: **luz**, **interruptor**, **ventilador**, **ar-condicionado e termostato** (climate), **cortina e portão** (cover), **fechadura**, **media player**, **aspirador**, **cena**, **script**, **automação**, **sensores** e **input_boolean**.
+
+Três regras da documentação que valem saber antes:
+
+- **Fechadura**: para **destrancar**, a Alexa exige um **PIN de voz de 4 dígitos**, configurado no aplicativo Alexa.
+- **Portão de garagem**: uma entidade `cover` com `device_class: garage` aceita o recurso de **PIN para abrir por voz**, também configurado no app.
+- **Cena**: o Home Assistant **não suporta desativar** cena. Ative cenas; não peça para "desligar".
+
+## Passo 3 — Ativar a skill no aplicativo Alexa
+
+1. No aplicativo Alexa, abra **Mais → Skills e jogos**.
+2. Busque **Home Assistant** e abra a skill oficial do Home Assistant Cloud.
+3. Toque em **Ativar para uso**.
+4. O aplicativo abre o login da **Nabu Casa**: entre com a mesma conta do passo 1 e autorize.
+
+## Passo 4 — Descobrir os dispositivos
+
+Diga **"Alexa, descobrir dispositivos"** ou, no aplicativo, vá a **Dispositivos → + → Adicionar dispositivo** e peça a descoberta. As entidades expostas no passo 2 aparecem como dispositivos da Alexa, prontos para:
+
+- **comando de voz direto**: "Alexa, ligar a luz da sala";
+- **grupos por cômodo** no aplicativo, para dizer só "Alexa, apagar a luz" no Echo daquele cômodo;
+- **rotinas da Alexa**, misturando dispositivos do Home Assistant com os nativos da Amazon.
+
+## Nomes e cômodos: o que faz a voz funcionar de verdade
+
+A integração funcionando é metade do trabalho. A outra metade é a **organização**, e é ela que decide se a família vai usar o comando de voz ou desistir dele.
+
+**Nomes curtos e falados.** A Alexa usa o nome da entidade. Pense em como as pessoas da casa falam: "luz da sala", "abajur", "ventilador do quarto". Evite números, siglas e nomes em inglês, que confundem o reconhecimento em português.
+
+**Um nome único por aparelho.** Se existem "luz da sala" e "luz da sala de jantar", a Alexa pode confundir. Prefira nomes que não comecem igual: "luz da sala" e "lustre da copa".
+
+**Grupos por cômodo no aplicativo Alexa.** Coloque o Echo de cada cômodo no mesmo grupo das luzes daquele cômodo. Assim, no quarto, basta dizer "Alexa, apagar a luz", sem dizer qual: a Alexa entende que é a luz do cômodo onde está o Echo.
+
+**Cenas para o que é feito junto.** Em vez de pedir três comandos ("apagar a luz da sala", "desligar a TV", "acender a luz do corredor"), crie uma **cena** ou um **script** no Home Assistant, como "boa noite", e exponha para a Alexa. Um comando faz tudo.
+
+## Rotinas da Alexa com sensores do Home Assistant
+
+Um recurso pouco conhecido: a documentação do Home Assistant informa que **sensores binários** com classe de **porta, portão de garagem, abertura, janela, movimento ou presença** são suportados, e que **rotinas da Alexa podem ser disparadas por sensores binários** expostos como sensor de contato ou de movimento.
+
+Na prática, isso permite rotinas como:
+
+- **porta da frente abriu** → a Alexa anuncia "porta da frente aberta" no Echo da cozinha;
+- **movimento na garagem à noite** → a Alexa avisa no Echo do quarto.
+
+A documentação faz uma ressalva: esse recurso **depende dos eventos proativos** ("enviar eventos para a Alexa"), que no Home Assistant Cloud costumam estar disponíveis nas configurações da integração com a Alexa, e que numa skill própria exigem configuração extra.
+
+Para automações mais complexas, com condições de horário e de presença, o melhor lugar continua sendo o **próprio Home Assistant**: ele faz a lógica e, se quiser, manda a Alexa falar.
+
+## Alexa ou Assist, o assistente do próprio Home Assistant?
+
+O Home Assistant tem o seu próprio assistente de voz, o **Assist**. Segundo a documentação oficial, ele **pode funcionar inteiramente no seu próprio hardware**, de modo que os comandos de voz ficam privados, e há um aparelho oficial para isso, o **Voice Preview Edition**.
+
+A comparação honesta:
+
+| | Alexa + Home Assistant | Assist |
+|---|---|---|
+| **Privacidade** | a voz vai para a nuvem da Amazon | pode rodar 100% local |
+| **Funciona sem internet** | não | sim, no modo local |
+| **Facilidade** | alta: Echo pronto, qualquer pessoa usa | exige configuração e hardware próprio |
+| **Música, lembretes, perguntas gerais** | sim, é o forte da Alexa | limitado, a não ser com serviços extras |
+| **Custo de entrada** | Echo barato + assinatura do Cloud | hardware de voz + tempo de configuração |
+
+Não é preciso escolher um só: muita gente usa a **Alexa** para o dia a dia da família e o **Assist** no celular ou em cômodos específicos.
+
+## Privacidade: o que vai para a nuvem
+
+Ao ligar a Alexa ao Home Assistant, vale saber o que passa a circular:
+
+- **a sua voz** vai para a Amazon, como em qualquer uso da Alexa;
+- a Amazon passa a conhecer **os dispositivos que você expôs** e o **estado** deles, quando os eventos proativos estão ligados;
+- o restante do Home Assistant (automações, câmeras, histórico) **não** é enviado, a não ser o que você expuser.
+
+É mais um motivo para expor **só o necessário** no passo 2, e para não expor câmeras, fechaduras e alarmes sem pensar no que isso significa.
+
+## Os erros mais comuns
+
+**A Alexa não acha nada.** Quase sempre a entidade não foi exposta (passo 2) ou a skill foi ativada com outra conta da Nabu Casa. Confira a aba **Expor** e refaça a descoberta. Esse é o problema mais relatado no fórum oficial do Home Assistant.
+
+**O dispositivo aparece duplicado.** Acontece quando o mesmo aparelho está ligado à Alexa duas vezes: pela skill do fabricante (Tuya, Sonoff, Positivo) e pelo Home Assistant. Escolha um caminho: ou o aparelho fica na skill do fabricante, ou só no Home Assistant, e remova o outro no aplicativo Alexa.
+
+**O nome não é reconhecido.** Nome com número, sigla ou palavra em inglês confunde o reconhecimento em português. Prefira nomes curtos e comuns: "abajur", "luz do quarto", "ventilador".
+
+**A Alexa responde que o dispositivo não está respondendo.** O Home Assistant caiu ou perdeu a conexão com a nuvem. Abra **Configurações → Home Assistant Cloud** e confira se a conexão está ativa.
+
+## Diagnóstico: o comando falhou, onde está o problema?
+
+Quando a Alexa não obedece, siga a ordem do caminho do comando:
+
+| Teste | Se funcionar | Se não funcionar |
+|---|---|---|
+| Ligue o aparelho pelo **painel do Home Assistant** | o aparelho e o Home Assistant estão bem | o problema é no aparelho ou na integração dele |
+| Ligue pelo **aplicativo Alexa** (tocando no dispositivo) | a ligação Alexa ↔ Home Assistant está ok; o problema é o **reconhecimento da voz** ou o **nome** | o problema está na conexão com a nuvem ou na exposição |
+| Abra **Configurações → Home Assistant Cloud** | se mostra conectado, a nuvem está ok | reconecte, confira a internet do servidor |
+| Confira a aba **Expor** | a entidade está marcada para a Alexa | marque e rode "descobrir dispositivos" |
+| Fale o **nome exatamente como aparece** no aplicativo Alexa | se funcionar, renomeie para algo mais natural | confira idioma do Echo e sotaques do nome |
+
+Esse roteiro resolve a maioria dos casos em poucos minutos, sem precisar refazer a integração.
+
+## Ideias práticas depois que tudo funciona
+
+Com a integração pronta, alguns usos costumam virar hábito na casa:
+
+- **"Alexa, boa noite"**: uma rotina que chama um script do Home Assistant para apagar as luzes, desligar tomadas da TV e conferir se as portas estão fechadas, com a Alexa avisando se alguma ficou aberta.
+- **"Alexa, estou saindo"**: desliga o ar-condicionado e as luzes de uma vez.
+- **Luz de cozinha por voz com a mão suja**: o uso que mais convence quem tinha dúvidas.
+- **Ventilador e ar-condicionado** por voz, sem procurar controle remoto, quando o aparelho é controlado pelo Home Assistant.
+- **Avisos falados**: sensor de porta, de vazamento ou de movimento fazendo a Alexa anunciar no Echo do cômodo onde a família está.
+- **Acessibilidade**: para pessoas idosas ou com mobilidade reduzida, acender a luz e ligar o ventilador por voz faz diferença real no dia a dia.
+
+Comece pelo que a família mais usa, normalmente as luzes, e vá acrescentando aos poucos. Expor dezenas de dispositivos de uma vez deixa a lista da Alexa confusa e aumenta a chance de nomes parecidos.
+
+## Os caminhos alternativos
+
+### Skill própria com AWS Lambda
+
+É o caminho gratuito e totalmente seu, mas a documentação lista as exigências: **conta de desenvolvedor da Amazon**, **conta AWS** e o Home Assistant **acessível pela internet em HTTPS, na porta 443, com certificado SSL/TLS**. A função Lambda de uma skill em **português do Brasil** deve ficar na região **US East (N. Virginia)**. O AWS Lambda é gratuito até 1 milhão de requisições por mês, cota que uma casa não chega perto de usar.
+
+É um projeto de fim de semana, com DNS, certificado e porta aberta no roteador para manter. Só compensa para quem já mantém tudo isso por outro motivo.
+
+### Emulated Hue
+
+O Emulated Hue faz o Home Assistant fingir que é uma **ponte Philips Hue**. A Alexa descobre as entidades na rede local, sem nuvem extra. A configuração mínima da documentação é:
+
+```yaml
+emulated_hue:
+  listen_port: 80
+```
+
+As limitações estão documentadas: **todos os Echo novos exigem a porta 80**; é recomendado **IP fixo** no computador do Home Assistant; os domínios expostos por padrão são **luz, interruptor, grupo, input_boolean, media player, ventilador e umidificador**; e expor **mais de 49 dispositivos** pode fazer a Alexa **não ver nenhum**. Sem fechadura, sem portão, sem termostato completo. Funciona para uma casa pequena que só quer luz e tomada por voz.
+
+## Quer aprender em vídeo
+
+O curso **Casa Inteligente com Home Assistant, Alexa e Mapa 3D 2.0** cobre a montagem do Home Assistant e a integração com a Alexa em aulas gravadas. Não é necessário para seguir este tutorial, mas ajuda quem prefere ver a configuração sendo feita na tela.
+
+<AffiliateButton href="https://go.hotmart.com/B107181927J?dp=1" store="hotmart" source="home-assistant-alexa-controle-por-voz" />
+
+## Resumo
+
+1. **Configurações → Home Assistant Cloud**: login na Nabu Casa e Alexa ativada.
+2. **Configurações → Assistentes de voz → Expor**: marque a Alexa só nas entidades que fazem sentido por voz, com nomes fáceis de falar.
+3. **App Alexa → Skills e jogos**: ative a skill **Home Assistant** e faça login com a conta da Nabu Casa.
+4. **"Alexa, descobrir dispositivos"** e monte grupos e rotinas no aplicativo.
+
+Fechadura e portão funcionam por voz, mas com **PIN de 4 dígitos** configurado no aplicativo Alexa.
+
+## Fontes
+
+- Home Assistant — [controle por voz e o Assist](https://www.home-assistant.io/voice_control/)
+- Home Assistant — [integração Amazon Alexa](https://www.home-assistant.io/integrations/alexa/)
+- Home Assistant — [Amazon Alexa Smart Home Skill](https://www.home-assistant.io/integrations/alexa.smart_home/) (domínios suportados, PIN, regiões do AWS Lambda)
+- Home Assistant — [expor entidades aos assistentes de voz](https://www.home-assistant.io/voice_control/voice_remote_expose_devices/)
+- Home Assistant — [Emulated Hue](https://www.home-assistant.io/integrations/emulated_hue/)
+- Home Assistant — [Home Assistant Cloud](https://www.home-assistant.io/cloud/)
+- Fórum do Home Assistant — [Alexa doesn't find any devices](https://community.home-assistant.io/t/alexa-doesnt-find-any-devices-solved/44194)

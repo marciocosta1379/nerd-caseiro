@@ -1,0 +1,364 @@
+---
+title: 'Luz que acende sozinha: automação por movimento no Home Assistant'
+description: 'Como usar o blueprint oficial de luz por movimento no Home Assistant: sensor, tempo de espera, horários e os ajustes que evitam a luz piscando.'
+pubDate: 2026-10-08T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'blueprint', 'sensor-de-movimento', 'zigbee', 'automacao', 'tutorial']
+featured: false
+draft: true
+products:
+  - name: 'Sonoff SNZB-03P, sensor de movimento Zigbee'
+    brand: 'Sonoff'
+    rating: 4.2
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C1GB4DVR?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1TcbgVK'
+    image: '/images/produtos/sonoff-snzb-03p.webp'
+    pros:
+      - 'Alcance de 6 m e ângulo de 110°'
+      - 'Bateria CR2477 com duração declarada de mais de 3 anos'
+      - 'Sensor de luz embutido (claro ou escuro)'
+    cons:
+      - 'Precisa de coordenador Zigbee'
+      - 'PIR: não detecta quem está parado'
+  - name: 'Phoscon ConBee II, coordenador USB Zigbee 3.0'
+    brand: 'Phoscon'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07PZ7ZHG5?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1B9G6eu'
+    image: '/images/produtos/conbee-ii.webp'
+    pros:
+      - 'Coordenador Zigbee suportado pelo ZHA e pelo Zigbee2MQTT'
+      - 'Mais de 6 mil avaliações, nota 4,6'
+    cons:
+      - 'Vendido pela Amazon Global (importação)'
+      - 'Use com cabo extensor USB, longe do computador'
+faq:
+  - question: 'Onde fica o blueprint de luz por movimento no Home Assistant?'
+    answer: 'Ele vem instalado. Em Configurações → Automações e cenas → Blueprints, procure "Motion-activated Light" e escolha Criar automação. Ele faz parte do código do Home Assistant, na pasta de blueprints da integração de automação.'
+  - question: 'Por que a luz apaga com gente no cômodo?'
+    answer: 'Porque o sensor PIR detecta movimento, não presença. Quem está parado lendo ou vendo TV deixa de ser detectado, o sensor volta para "sem movimento" e, depois do tempo de espera, a luz apaga. Aumente o tempo de espera ou troque por um sensor de presença mmWave nos cômodos de permanência.'
+  - question: 'Como fazer a luz acender só à noite?'
+    answer: 'O blueprint oficial não tem campo de horário. É preciso converter a automação com a opção Assumir o controle e acrescentar uma condição de sol (depois do pôr do sol, antes do nascer) ou de horário. A conversão é definitiva: a automação deixa de receber atualizações do blueprint.'
+  - question: 'Funciona com interruptor inteligente em vez de lâmpada?'
+    answer: 'O blueprint oficial só aceita entidades do domínio light. Interruptores aparecem como switch. A integração Switch as x do Home Assistant transforma um switch em light, e aí ele passa a aparecer no blueprint.'
+  - question: 'Qual tempo de espera usar?'
+    answer: 'O padrão do blueprint é 120 segundos. Para corredor e lavanderia, 30 a 60 segundos costumam bastar. Para banheiro e cozinha, onde a pessoa fica parada, vale subir para 5 minutos ou mais.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A automação mais pedida em qualquer casa inteligente é também a mais simples: **a luz acende quando alguém entra e apaga sozinha quando a pessoa sai**. No corredor, na lavanderia, no banheiro de madrugada e na garagem, ela elimina o tatear no escuro atrás do interruptor.
+
+O Home Assistant traz essa automação **pronta**, como um **blueprint oficial** chamado *Motion-activated Light*. Este tutorial mostra como usá-lo, explica linha por linha o que ele faz (o código abaixo é o do **Home Assistant 2026.9.4**, a versão mais recente quando o texto foi escrito), e cobre os dois ajustes que o blueprint não faz sozinho: **horário** e a **luz que apaga com gente no cômodo**.
+
+## Onde essa automação faz mais sentido
+
+Luz por movimento não é para todo cômodo. Ela brilha onde as pessoas **passam** e onde **as mãos estão ocupadas**, e incomoda onde as pessoas **ficam paradas**:
+
+| Cômodo | Faz sentido? | Por quê |
+|---|---|---|
+| **Corredor** | muito | só passagem; ninguém fica parado |
+| **Lavanderia e área de serviço** | muito | mãos cheias de roupa |
+| **Garagem** | muito | chegada de carro à noite, mãos ocupadas |
+| **Closet e despensa** | muito | entra, pega, sai |
+| **Banheiro** | sim, com cuidado | a pessoa fica parada no banho; pede sensor bem posicionado ou mmWave |
+| **Escada** | muito | segurança à noite |
+| **Cozinha** | depende | quem cozinha fica parado na bancada |
+| **Sala e quarto** | pouco | pessoas sentadas ou deitadas; a luz apaga com gente |
+
+Começar pelos cômodos de passagem dá resultado imediato e convence a família. Os cômodos de permanência pedem os ajustes explicados mais abaixo, ou um sensor de presença.
+
+## PIR, mmWave ou sensor de porta?
+
+O tipo de sensor decide boa parte do comportamento da automação:
+
+- **PIR (infravermelho passivo)**, como o Sonoff SNZB-03P: detecta **movimento de calor**, como uma pessoa atravessando o campo de visão. Funciona com pilha por muito tempo e é barato. Não percebe quem está parado.
+- **mmWave (radar de ondas milimétricas)**: detecta **presença**, inclusive micromovimentos como a respiração. Mantém a luz acesa com a pessoa parada, mas costuma precisar de alimentação na tomada e de ajuste fino de sensibilidade, para não detectar movimento de cortina ou de ventilador.
+- **Sensor de porta (contato)**: detecta a **abertura** da porta. Ótimo para closet e despensa, onde abrir a porta já significa "quero luz".
+
+A automação deste tutorial funciona com qualquer sensor que apareça como `binary_sensor` de **movimento** ou **ocupação**, segundo o próprio blueprint. O post [Os 6 melhores sensores de presença para Home Assistant](/posts/melhores-sensores-presenca-home-assistant/) compara os modelos de PIR e mmWave.
+
+## Onde instalar o sensor PIR
+
+A posição do sensor define se ele vai funcionar bem:
+
+- **Altura**: em parede, entre **2 e 2,5 metros** costuma cobrir bem um cômodo, apontado levemente para baixo. Siga a orientação do fabricante do seu sensor.
+- **Atravessando o caminho**: o PIR detecta melhor o movimento que **cruza** o campo de visão do que o que vem **na direção** dele. Num corredor, posicione o sensor de forma que a pessoa passe de lado diante dele.
+- **Longe de fontes de calor**: aquecedor, saída de ar-condicionado, janela com sol direto e lâmpadas muito quentes podem gerar disparos falsos.
+- **Fora do alcance de pets**, se você não quer que o gato acenda a luz da sala de madrugada: sensor mais alto e inclinado para cobrir a altura de uma pessoa.
+- **Ao alcance do Zigbee**: o sensor a pilha precisa de um roteador Zigbee por perto, como explicado na seção de rede.
+
+## O que você precisa
+
+- **Home Assistant** funcionando.
+- **Uma luz controlada pelo Home Assistant**: lâmpada inteligente, relé ou interruptor (veja a nota sobre interruptores mais abaixo).
+- **Um sensor de movimento** integrado ao Home Assistant, que apareça como `binary_sensor` com classe `motion` ou `occupancy`.
+
+### O sensor
+
+![Sensor de movimento Sonoff SNZB-03P branco, Zigbee](/images/produtos/sonoff-snzb-03p.webp)
+
+O **Sonoff SNZB-03P** é um sensor de movimento **Zigbee 3.0** de infravermelho passivo (PIR). Segundo a Sonoff, ele detecta a até **6 metros** com ângulo de **110°**, usa uma bateria **CR2477** com duração de **mais de 3 anos** e tem **sensor de luz embutido**, que informa se o ambiente está claro ou escuro. No Home Assistant, ele aparece como sensor de movimento e entra direto no blueprint.
+
+O anúncio da Amazon indicado aqui estava com **estoque baixo** quando o texto foi escrito; o do Mercado Livre é alternativa.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C1GB4DVR?tag=nerdcaseiro-20" store="amazon" source="luz-sensor-movimento-home-assistant-blueprint" />
+
+<AffiliateButton href="https://meli.la/1TcbgVK" store="mercadolivre" source="luz-sensor-movimento-home-assistant-blueprint" />
+
+### O coordenador Zigbee
+
+Sensor Zigbee precisa de um **coordenador**, o rádio que conversa com os aparelhos Zigbee, ligado ao computador do Home Assistant. Se você ainda não tem rede Zigbee, o post [Zigbee2MQTT ou ZHA: qual usar no Home Assistant](/posts/zigbee2mqtt-ou-zha-home-assistant/) explica as duas formas de montar.
+
+![Coordenador USB Zigbee Phoscon ConBee II](/images/produtos/conbee-ii.webp)
+
+O **ConBee II**, da Phoscon, é um coordenador USB Zigbee 3.0 suportado pela integração ZHA e pelo Zigbee2MQTT, com mais de 6 mil avaliações na Amazon. Ligue-o com um **cabo extensor USB**, longe do computador e de portas USB 3.0: a interferência dessas portas na faixa de 2,4 GHz é a causa mais citada de rede Zigbee instável nos fóruns do Home Assistant.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07PZ7ZHG5?tag=nerdcaseiro-20" store="amazon" source="luz-sensor-movimento-home-assistant-blueprint" />
+
+<AffiliateButton href="https://meli.la/1B9G6eu" store="mercadolivre" source="luz-sensor-movimento-home-assistant-blueprint" />
+
+## Passo 1 — Criar a automação a partir do blueprint
+
+1. Abra **Configurações → Automações e cenas → Blueprints**.
+2. Encontre **Motion-activated Light** e escolha **Criar automação**.
+3. Preencha os três campos:
+   - **Motion Sensor**: o sensor de movimento;
+   - **Light**: a luz (ou as luzes, ou a área inteira);
+   - **Wait time**: quanto tempo a luz fica acesa depois do último movimento. O padrão é **120 segundos**, e o campo aceita de 0 a 3.600.
+4. Dê um nome e clique em **Salvar**.
+
+Pronto: a automação já funciona. O resto do tutorial é entender o que ela faz e ajustar.
+
+## O que o blueprint faz, linha por linha
+
+Este é o trecho de automação do blueprint oficial, como está no repositório do Home Assistant na versão 2026.9.4:
+
+```yaml
+# If motion is detected within the delay,
+# we restart the script.
+mode: restart
+max_exceeded: silent
+
+triggers:
+  trigger: state
+  entity_id: !input motion_entity
+  from: "off"
+  to: "on"
+
+actions:
+  - alias: "Turn on the light"
+    action: light.turn_on
+    target: !input light_target
+  - alias: "Wait until there is no motion from device"
+    wait_for_trigger:
+      trigger: state
+      entity_id: !input motion_entity
+      from: "on"
+      to: "off"
+  - alias: "Wait the number of seconds that has been set"
+    delay: !input no_motion_wait
+  - alias: "Turn off the light"
+    action: light.turn_off
+    target: !input light_target
+```
+
+Lendo em português:
+
+1. **Gatilho**: o sensor muda de `off` para `on`, ou seja, **detectou movimento**.
+2. **Acende a luz**.
+3. **Espera o sensor voltar** de `on` para `off`, ou seja, parar de detectar.
+4. **Espera mais o tempo configurado** (o *Wait time*).
+5. **Apaga a luz**.
+
+O detalhe que faz tudo funcionar é o **`mode: restart`**. Se alguém se mexer de novo enquanto a automação está esperando, o sensor dispara outra vez, e a automação **recomeça do zero**: a luz continua acesa e a contagem é zerada. É por isso que a luz não apaga enquanto houver movimento no cômodo.
+
+## Por que a luz apaga com gente no cômodo
+
+É a reclamação número um, e a causa é o tipo de sensor.
+
+Um sensor **PIR** detecta **movimento de calor**, não **presença**. Quem está sentado lendo, digitando ou vendo TV quase não se mexe. O sensor volta para "sem movimento", o blueprint espera o *Wait time* e apaga a luz. A pessoa acena, a luz volta. É o efeito de luz "piscando" que dá fama ruim à automação.
+
+Há três correções, da mais simples à mais cara:
+
+1. **Aumente o *Wait time*** nos cômodos de permanência. Corredor pode ter 30 segundos; banheiro e cozinha, 5 minutos ou mais.
+2. **Posicione o sensor de frente para onde as pessoas ficam**, não para a porta. O PIR é mais sensível a movimento que **atravessa** o campo de visão do que a movimento que vem em direção a ele.
+3. **Troque o sensor** nos cômodos onde a pessoa fica parada por um **sensor de presença mmWave**, que detecta até a respiração. O post [Os 6 melhores sensores de presença para Home Assistant](/posts/melhores-sensores-presenca-home-assistant/) compara os modelos.
+
+## Como fazer a luz acender só à noite
+
+O blueprint oficial **não tem campo de horário** nem de luminosidade: ele acende a luz a qualquer hora. Para restringir, é preciso **assumir o controle** da automação.
+
+1. Abra a automação criada pelo blueprint.
+2. No menu de três pontos, escolha **Assumir o controle** (*Take control*).
+3. A documentação avisa que a conversão é definitiva: **a automação deixa de ser um blueprint** e não volta a ser. Ela também deixa de receber atualizações do blueprint.
+4. Agora a automação pode receber **condições**.
+
+Duas condições úteis, tiradas da documentação oficial de condições do Home Assistant:
+
+**Só quando está escuro lá fora** (depois do pôr do sol e antes do nascer):
+
+```yaml
+conditions:
+  - condition: sun
+    after: sunset
+    before: sunrise
+```
+
+**Só num intervalo de horário** (aqui, das 18h às 7h, atravessando a meia-noite):
+
+```yaml
+conditions:
+  - condition: time
+    after: "18:00:00"
+    before: "07:00:00"
+```
+
+A documentação explica o comportamento da meia-noite: com `after` e `before` juntos, a janela vai do primeiro horário ao segundo, passando pela meia-noite.
+
+Uma alternativa sem assumir o controle é o caminho inverso: **criar uma segunda automação** que desliga a primeira de manhã e liga de novo à noite, com a ação `automation.turn_off` e `automation.turn_on`. Assim o blueprint continua recebendo atualizações.
+
+## Variação: luz fraca de madrugada
+
+Uma das melhorias mais apreciadas depois de assumir o controle da automação: **acender a luz com pouco brilho de madrugada**, para ninguém ser ofuscado ao ir ao banheiro ou à cozinha. A ação `light.turn_on` do Home Assistant aceita o parâmetro **`brightness_pct`**, que vai de 0% a 100%, e **`transition`**, a duração, em segundos, de uma transição suave, segundo a documentação oficial.
+
+O exemplo da própria documentação acende a luz do quarto em 100% com transição de 10 segundos:
+
+```yaml
+action: light.turn_on
+target:
+  entity_id: light.bedroom
+data:
+  brightness_pct: 100
+  transition: 10
+```
+
+Para a madrugada, a ideia é a mesma, com brilho baixo: por exemplo, `brightness_pct: 15` e `transition: 2`. Uma forma simples de organizar isso, sem lógica complexa, é ter **duas automações**: uma com condição de horário diurno, que acende com brilho alto, e outra com condição de madrugada, que acende com brilho baixo.
+
+O ajuste de brilho só funciona com lâmpadas e relés que aceitam **dimerização**. Interruptor liga-desliga simples só acende e apaga.
+
+## A rede Zigbee: por que o sensor às vezes "some"
+
+Sensores a pilha, como o SNZB-03P, são **dispositivos finais** da rede Zigbee: eles não repassam sinal para outros aparelhos e dormem a maior parte do tempo para economizar pilha. Já os aparelhos ligados na tomada, como tomadas inteligentes, lâmpadas e relés Zigbee, normalmente funcionam como **roteadores**, repassando o sinal e ampliando a rede.
+
+Na prática:
+
+- se o sensor fica longe do coordenador e não há **roteadores** no caminho, ele pode perder a conexão e "sumir" do Home Assistant;
+- ter **algumas tomadas ou lâmpadas Zigbee** espalhadas pela casa deixa a rede mais robusta;
+- depois de mudar o coordenador de lugar ou acrescentar roteadores, a rede leva um tempo para se reorganizar.
+
+Se o sensor responde com atraso ou some com frequência, a rede é a primeira suspeita, antes do próprio sensor.
+
+## Testando e depurando: o rastreamento
+
+A documentação do Home Assistant recomenda, diante de qualquer problema em automação, **abrir primeiro o rastreamento** (*trace*) da automação. O rastreamento mostra:
+
+- **qual gatilho** iniciou a execução;
+- **cada passo** executado, com o resultado;
+- **onde a automação parou** e por quê, por exemplo quando uma condição não foi atendida;
+- os **valores** usados em cada etapa.
+
+Para abrir, vá à automação e escolha a opção de rastreamento no menu. Um roteiro de teste útil depois de configurar:
+
+1. **Passe em frente ao sensor** e confira, no painel, se o estado muda para "detectado".
+2. **Abra o rastreamento** da última execução e veja se a luz recebeu o comando.
+3. **Fique fora do alcance** do sensor e cronometre: a luz deve apagar depois do tempo de espera do sensor somado ao tempo do blueprint.
+4. **Teste à noite e de dia**, se houver condição de horário ou de sol.
+
+## Cômodo grande: dois sensores, uma automação
+
+Um único PIR raramente cobre uma cozinha em L, uma garagem comprida ou uma sala com sofá atrás de um móvel. A saída é usar **dois sensores** e fazer o Home Assistant tratá-los como um só.
+
+O caminho oficial é o **auxiliar de grupo** (*Group helper*): em **Configurações → Dispositivos e serviços → Auxiliares → Criar auxiliar → Grupo**, escolha o tipo **Sensor binário** e adicione os dois sensores. Segundo a documentação da integração Group, o grupo de sensores binários fica **ligado quando qualquer membro está ligado**, a menos que se marque a opção de exigir todos. Esse grupo aparece como um sensor binário comum e pode ser escolhido no campo *Motion Sensor* do blueprint.
+
+O efeito é exatamente o desejado: basta um dos sensores perceber movimento para a luz acender, e ela só apaga quando os dois ficam sem detectar.
+
+## O interruptor de parede: a armadilha da lâmpada inteligente
+
+Este é o problema que mais frustra quem começa com **lâmpadas inteligentes**: alguém da casa **desliga o interruptor de parede** por hábito. A lâmpada perde a energia, sai da rede e a automação **não consegue acendê-la** de novo. Com lâmpada Zigbee, há um efeito extra: lâmpadas Zigbee funcionam como roteadores, e cada uma desligada na parede **enfraquece a rede**.
+
+Há três formas de resolver, da mais simples à mais trabalhosa:
+
+1. **Combinar com a família** e deixar o interruptor sempre ligado, com uma tampa ou trava de interruptor, vendidas para isso.
+2. **Trocar a lâmpada inteligente por um relé ou interruptor inteligente**, com lâmpada comum. O interruptor continua funcionando como sempre e o Home Assistant controla o mesmo circuito. Nesse caso, lembre da integração **Switch as x**, explicada abaixo.
+3. **Usar um botão sem fio** colado ao lado do interruptor original, para quem quer acender e apagar manualmente sem cortar a energia.
+
+A opção 2 mexe na instalação elétrica e, como toda intervenção na rede de 127 V ou 220 V, deve ser feita por um **eletricista**.
+
+## A bateria do sensor
+
+O SNZB-03P usa uma bateria **CR2477**, e a Sonoff declara duração de **mais de 3 anos**. Essa duração depende do uso: um sensor num corredor movimentado dispara muito mais que um na despensa.
+
+Três cuidados práticos:
+
+- **Monitore o nível.** Sensores Zigbee costumam expor uma entidade de **bateria** no Home Assistant; dá para criar uma automação ou um alerta quando ela cair abaixo de 20%.
+- **Tenha uma bateria reserva.** A CR2477 é menos comum que a CR2032 e nem sempre se acha no mercado do bairro.
+- **Bateria fraca gera sintomas estranhos**: atrasos, eventos perdidos e o sensor "sumindo" da rede. Antes de culpar a automação, confira a bateria.
+
+## E se a luz for um interruptor?
+
+O blueprint aceita **apenas entidades do domínio `light`**. Um relé ou interruptor inteligente costuma aparecer como **`switch`** e não aparece na lista.
+
+A solução oficial é a integração **Switch as x**, do próprio Home Assistant: ela cria uma entidade `light` que espelha o `switch`. Em **Configurações → Dispositivos e serviços → Adicionar integração → Switch as x**, escolha o interruptor e o tipo **Luz**. A nova entidade passa a aparecer no blueprint.
+
+## Problemas comuns
+
+**A luz demora a acender.** O sensor Zigbee envia o evento direto ao Home Assistant, pela rede local, mas a lâmpada Wi-Fi pode demorar a responder porque passa pela nuvem do fabricante. Lâmpadas e relés Zigbee ou com controle local respondem mais rápido.
+
+**A automação não dispara.** Confira em **Configurações → Automações e cenas** se ela está **ativada** e abra o **rastreamento** (*traces*) da automação: ele mostra cada passo da última execução e onde parou.
+
+**O sensor fica "detectado" por muito tempo.** Sensores PIR têm um tempo próprio antes de voltar a "sem movimento". Esse tempo **soma** com o *Wait time* do blueprint. A Sonoff informa que o atraso de detecção do SNZB-03P é ajustável de 5 a 60 segundos quando pareado com a ponte da própria Sonoff; no ZHA e no Zigbee2MQTT, confira as opções do dispositivo.
+
+**A luz acende de dia, com o cômodo claro.** É o comportamento padrão do blueprint, que não olha a luminosidade. A solução é a condição de **sol** ou de **horário** explicada acima. Sensores com medição de luz, como o SNZB-03P, também podem servir de condição depois de assumir o controle, usando o estado da entidade de luminosidade que o sensor expõe; confira o nome dela na página do dispositivo.
+
+**A luz apaga e acende logo em seguida.** O tempo de espera está curto para o uso do cômodo, ou o sensor está mal posicionado. Aumente o *Wait time* e reveja a posição.
+
+**A automação aparece duplicada ou dispara duas vezes.** Confira se não há **duas automações** usando o mesmo sensor e a mesma luz, por exemplo uma criada pelo blueprint e outra antiga, feita à mão.
+
+## Erros mais comuns de quem começa
+
+- **Começar pela sala.** É o cômodo onde a automação mais falha com PIR. Comece por corredor, lavanderia ou garagem.
+- **Tempo de espera igual em todos os cômodos.** Cada cômodo pede um tempo; corredor e banheiro não se comportam igual.
+- **Lâmpada inteligente com interruptor de parede desligado.** A automação não tem como acender o que está sem energia.
+- **Assumir o controle sem necessidade.** Se a única mudança desejada é o horário, a automação que liga e desliga a outra preserva as atualizações do blueprint.
+- **Coordenador Zigbee colado no computador**, sem extensor USB.
+- **Sensor apontado para a janela** ou para a saída do ar-condicionado.
+- **Não abrir o rastreamento** antes de mexer na configuração: ele mostra onde está o problema.
+
+## Checklist antes de dar a automação por pronta
+
+- [ ] O sensor aparece no Home Assistant como **movimento** ou **ocupação**.
+- [ ] A luz aparece como entidade **`light`** (ou foi convertida com **Switch as x**).
+- [ ] O **tempo de espera** combina com o uso do cômodo.
+- [ ] O sensor está **na altura certa**, cobrindo o caminho, longe de calor.
+- [ ] A luz acende **em menos de um segundo** depois do movimento.
+- [ ] A luz apaga no tempo esperado (sensor + *Wait time*).
+- [ ] A condição de **horário ou sol** funciona, se houver.
+- [ ] A família sabe que o **interruptor de parede** fica ligado.
+- [ ] Existe um alerta ou rotina para conferir a **bateria** do sensor.
+
+## Resumo
+
+1. **Configurações → Automações e cenas → Blueprints → Motion-activated Light → Criar automação.**
+2. Escolha o **sensor**, a **luz** e o **tempo de espera** (padrão de 120 s).
+3. O `mode: restart` mantém a luz acesa enquanto houver movimento.
+4. **Luz apagando com gente parada** é limitação do PIR: aumente o tempo, reposicione o sensor ou use mmWave.
+5. Para **horário**, assuma o controle e acrescente uma condição de **sol** ou de **horário**.
+6. **Interruptor** precisa da integração **Switch as x** para aparecer no blueprint.
+
+## Fontes
+
+- Home Assistant — [ação light.turn_on](https://www.home-assistant.io/actions/light.turn_on/) (brightness_pct e transition)
+- Home Assistant — [solução de problemas em automações](https://www.home-assistant.io/docs/automation/troubleshooting/) (rastreamento)
+- Home Assistant — [blueprint Motion-activated Light, versão 2026.9.4](https://github.com/home-assistant/core/blob/2026.9.4/homeassistant/components/automation/blueprints/motion_light.yaml)
+- Home Assistant — [usando blueprints em automações](https://www.home-assistant.io/docs/automation/using_blueprints/) (criar automação e assumir o controle)
+- Home Assistant — [condições](https://www.home-assistant.io/docs/scripts/conditions/) (sol e horário)
+- Home Assistant — [Group](https://www.home-assistant.io/integrations/group/) (grupo de sensores binários)
+- Home Assistant — [Switch as x](https://www.home-assistant.io/integrations/switch_as_x/)
+- Sonoff — [SNZB-03P](https://sonoff.tech/en-us/products/sonoff-zigbee-motion-sensor-snzb-03p) e [central de ajuda do SNZB-03P](https://help.sonoff.tech/docs/snzb-03p)

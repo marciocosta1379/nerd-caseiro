@@ -1,0 +1,274 @@
+---
+title: 'Flashforge AD5X vale a pena? Review da impressora 3D multicor'
+description: 'Quatro cores com o sistema IFS, estrutura CoreXY e preço intermediário: o que a Flashforge AD5X entrega e como ela se compara às rivais.'
+pubDate: 2026-10-07T18:00:00-03:00
+category: 'impressao-3d'
+tags: ['impressora-3d', 'flashforge', 'ad5x', 'multicor', 'corexy', 'review']
+featured: false
+draft: true
+products:
+  - name: 'Flashforge AD5X, impressora 3D multicor CoreXY com IFS, 127/220 V'
+    brand: 'Flashforge'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FC63K6ZQ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2Vq4BCz'
+    image: '/images/produtos/flashforge-ad5x.webp'
+    pros:
+      - 'Quatro cores com o IFS, sem caixa externa grande'
+      - 'CoreXY de até 600 mm/s e 20.000 mm/s² de aceleração'
+      - 'Bico de até 300 °C e TPU no sistema multicor'
+      - 'Wi-Fi, Ethernet e compatível com o Orca Slicer'
+    cons:
+      - 'Estrutura aberta: não imprime bem ABS, ASA e nylon'
+      - 'Descarte de filamento alto na troca de cor'
+      - 'Barulhenta em alta velocidade'
+      - 'Poucas avaliações na Amazon Brasil'
+faq:
+  - question: 'A Flashforge AD5X imprime em quatro cores ao mesmo tempo?'
+    answer: 'Ela imprime peças com até quatro cores, mas uma cor por vez: o bico é único, e o sistema IFS troca o filamento quando a cor muda. Cada troca corta e recolhe o filamento atual, carrega o próximo e descarta uma pequena quantidade para limpar o bico.'
+  - question: 'Quanto filamento a AD5X desperdiça na troca de cor?'
+    answer: 'Depende do modelo e do número de trocas. Análises independentes relatam desperdício alto em peças com muitas trocas por camada, e o Tom''s Hardware criticou que o fatiador não mostra o volume total de purga, só a torre. O ajuste de purga no fatiador e o posicionamento das cores reduzem a perda.'
+  - question: 'Dá para imprimir ABS na AD5X?'
+    answer: 'A Flashforge lista como materiais compatíveis PLA, PETG, TPU, PLA-CF e PETG-CF. A estrutura é aberta, e materiais que retraem com a variação de temperatura, como ABS, ASA e nylon, tendem a empenar sem uma câmara fechada. A Flashforge vende um gabinete separado.'
+  - question: 'A AD5X funciona em 127 V?'
+    answer: 'O anúncio indicado aqui informa fonte comutável entre 127 V e 220 V. Confira a chave de tensão na traseira antes de ligar pela primeira vez.'
+  - question: 'Qual fatiador usar com a AD5X?'
+    answer: 'A Flashforge indica o Orca-Flashforge, versão do Orca Slicer adaptada pela própria empresa, e o Orca Slicer. O envio por Wi-Fi ou Ethernet sai direto do fatiador para a impressora.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Imprimir em **várias cores** deixou de ser coisa de impressora cara. A **Flashforge AD5X** é uma das máquinas que levaram o recurso para a faixa intermediária: **quatro cores** com um sistema de troca automática de filamento, estrutura **CoreXY** rápida e um preço que fica entre as multicor de entrada e as impressoras fechadas de topo.
+
+Este review usa as **especificações oficiais da Flashforge** e análises independentes publicadas (Tom's Hardware e 3DPrint.com) para mostrar o que a AD5X entrega, onde ela tropeça e para quem ela faz sentido. Ela é a impressora **intermediária** da série de reviews desta semana, entre a [Creality Ender 3 V3 KE](/posts/creality-ender-3-v3-ke-review/), de entrada, e a Bambu Lab P2S Combo, de topo.
+
+![Impressora 3D Flashforge AD5X com o sistema IFS e quatro carretéis de filamento](/images/produtos/flashforge-ad5x.webp)
+
+## Antes de tudo: você precisa de multicor?
+
+Impressão em várias cores é o recurso que mais chama atenção nas impressoras atuais, e é também o que mais aumenta o preço, o tempo de impressão e o desperdício de filamento. Vale fazer o diagnóstico antes.
+
+**A multicor faz diferença quando a cor é parte da peça:**
+
+- chaveiros, placas e etiquetas com **texto em contraste**;
+- miniaturas, brinquedos e decoração em que a pintura à mão seria trabalhosa;
+- peças com **logotipo**, mapas em relevo, quebra-cabeças coloridos;
+- objetos que combinam **material rígido e flexível**, como uma base de PLA com pés de TPU.
+
+**A multicor faz pouca diferença quando:**
+
+- a peça é **funcional**: suporte, gancho, organizador, peça de reposição. Quase sempre sai numa cor só;
+- você imprime **peças grandes de uma cor**: a impressora multicor imprime igual a uma comum, só que mais cara;
+- você gosta de **pintar** as peças, e a pintura faz parte do hobby.
+
+Uma forma prática de decidir: olhe as últimas dez peças que você imprimiu ou quer imprimir. Se a maioria seria melhor em mais de uma cor, a multicor compensa. Se não, uma impressora de uma cor, como a [Creality Ender 3 V3 KE](/posts/creality-ender-3-v3-ke-review/), entrega o mesmo por menos.
+
+## Bico único: por que toda troca de cor custa filamento
+
+Existem duas formas de imprimir em várias cores:
+
+- **Vários bicos** (ou várias cabeças), cada um com uma cor. Troca rápida, pouco desperdício, mas máquina mais complexa e cara.
+- **Bico único com troca de filamento**, que é o caso da AD5X e da maioria das multicor de consumo. A máquina corta a cor atual, recolhe, carrega a próxima e **purga**: empurra plástico pelo bico até a cor anterior sair.
+
+A purga é inevitável num bico único. Dentro do bico ficam alguns milímetros de plástico da cor anterior, e eles se misturam com a cor nova nos primeiros instantes. Sem purgar, a cor nova sai manchada. Quanto **mais contrastantes** as cores, mais purga é necessária: passar do **preto para o branco** exige muito mais material que do branco para o preto.
+
+É por isso que uma peça pequena com muitas trocas de cor por camada pode gastar **mais filamento em purga do que na própria peça**. A seção sobre como reduzir o desperdício, mais abaixo, mostra como contornar isso.
+
+## As especificações oficiais
+
+| Item | Flashforge AD5X |
+|---|---|
+| **Volume de impressão** | 220 × 220 × 220 mm |
+| **Estrutura** | CoreXY, aberta |
+| **Velocidade máxima** | 600 mm/s |
+| **Aceleração máxima** | 20.000 mm/s² |
+| **Temperatura do bico** | até 300 °C |
+| **Temperatura da mesa** | até 110 °C |
+| **Multicor** | IFS (Intelligent Filament System), 4 cores |
+| **Materiais** | PLA, PETG, TPU 95A, TPU 64D–75D, PLA-CF, PETG-CF |
+| **Bicos** | 0,4 mm de fábrica; 0,25, 0,6 e 0,8 mm opcionais |
+| **Mesa** | chapa de aço flexível com PEI |
+| **Nivelamento** | automático, com um clique |
+| **Conexão** | USB, Ethernet, Wi-Fi |
+| **Fatiador** | Orca-Flashforge, Orca Slicer |
+| **Retomada após queda de energia** | sim |
+
+*Fonte: página oficial da Flashforge AD5X.*
+
+## Como funciona o IFS
+
+O sistema de cores da AD5X é diferente da caixa fechada da Bambu Lab (o AMS). O **IFS** é uma caixa pequena presa na lateral da impressora, com **quatro suportes de carretel comuns**. Cada filamento passa por um tubo até um **seletor de cor montado em cima do cabeçote**.
+
+Quando a cor muda, a impressora:
+
+1. **corta** o filamento atual;
+2. **recolhe** o pedaço que ficou no tubo;
+3. **carrega** a próxima cor;
+4. **descarta** uma quantidade de filamento para limpar o bico da cor anterior.
+
+O bico é **um só**. A AD5X não imprime quatro cores ao mesmo tempo: ela imprime uma cor por vez e troca quando a camada pede. Isso tem custo em **tempo** e em **filamento**, e é o ponto mais importante para entender antes de comprar.
+
+## Onde ela vai bem
+
+**Multicor sem caixa grande.** O IFS ocupa pouco espaço e usa carretel comum de 1 kg. Para quem quer imprimir chaveiro com nome, placa de porta, miniatura pintada na impressão ou peça com logotipo, as quatro cores resolvem sem pintura.
+
+**TPU no sistema de cores.** A 3DPrint.com destacou a impressão **multicor em TPU**, um material flexível que muitos sistemas de troca automática não aceitam bem. A Flashforge lista o TPU 95A e o TPU 64D–75D entre os compatíveis. É um diferencial para quem faz capa, pulseira, pé de borracha ou peça flexível colorida.
+
+**Velocidade e precisão.** A estrutura CoreXY com aceleração de 20.000 mm/s² coloca a AD5X no grupo das impressoras rápidas. Na análise da 3DPrint.com, a impressora sustentou **300 mm/s** em impressões reais e acertou um cubo de calibração de 100 mm com **100,02 mm**.
+
+**Bicos trocáveis.** Com bico de 0,25 mm para detalhe fino e de 0,8 mm para peça grande e rápida, a mesma máquina cobre de miniatura a vaso.
+
+**Software aberto.** O Orca Slicer, gratuito e de código aberto, é suportado oficialmente. O envio sai pelo Wi-Fi ou pelo cabo de rede.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FC63K6ZQ?tag=nerdcaseiro-20" store="amazon" source="flashforge-ad5x-vale-a-pena-review" />
+
+<AffiliateButton href="https://meli.la/2Vq4BCz" store="mercadolivre" source="flashforge-ad5x-vale-a-pena-review" />
+
+## Onde ela tropeça
+
+**Desperdício na troca de cor.** É a crítica mais repetida. O **Tom's Hardware** reclamou que o fatiador **mostra só o filamento da torre de purga, não o descarte total**, então não dá para saber de antemão quanto filamento a impressão vai consumir. A **3DPrint.com** relatou purgas repetidas numa mesma camada em impressão de TPU, que atribuiu a firmware, e cobrou correção da Flashforge. Toda impressora de bico único com troca de cor desperdiça filamento; o problema da AD5X é a **falta de transparência** sobre quanto.
+
+**Tempo por troca.** Cada troca corta, recolhe, carrega e purga. Em peças com muitas mudanças de cor por camada, a impressão fica bem mais lenta do que a velocidade máxima sugere.
+
+**Estrutura aberta.** Sem gabinete, a AD5X não é indicada para **ABS, ASA, nylon e policarbonato**, materiais que empenam com a variação de temperatura do ambiente. A própria lista de materiais da Flashforge para no PLA, PETG, TPU e as versões com fibra de carbono. Para os técnicos, a Flashforge vende um gabinete à parte.
+
+**Barulho.** A 3DPrint.com mediu **72 dB, com picos de 80 dB**, e considerou a máquina inadequada para dividir o ambiente de trabalho. Em casa, o melhor lugar para ela é longe do quarto e da sala de TV.
+
+**Poucas avaliações no Brasil.** O anúncio indicado aqui, com fonte comutável 127/220 V e vendido por loja parceira, tem **39 avaliações e nota 4,4**. É pouco histórico para uma máquina desse preço. Confira no anúncio o prazo de garantia e quem atende a assistência técnica antes de comprar.
+
+<ProsCons
+  pros={[
+    'Quatro cores com o IFS, usando carretel comum',
+    'TPU no sistema multicor',
+    'CoreXY rápida e precisa',
+    'Bicos de 0,25 a 0,8 mm',
+    'Compatível com o Orca Slicer',
+  ]}
+  cons={[
+    'Descarte alto na troca de cor, sem estimativa clara no fatiador',
+    'Estrutura aberta: sem ABS, ASA e nylon',
+    'Barulhenta',
+    'Pouco histórico de avaliações na Amazon Brasil',
+  ]}
+/>
+
+## Preparando uma peça multicor no fatiador
+
+No Orca-Flashforge e no Orca Slicer, existem três formas de dar cor a uma peça:
+
+1. **Modelo já separado em partes**: muitos modelos multicor dos sites de arquivos vêm em vários arquivos, um por cor. Você importa todos, junta como uma peça só e atribui uma cor a cada parte.
+2. **Pintura no fatiador**: a ferramenta de pintura permite colorir áreas do modelo com o mouse, como num programa de desenho. Bom para detalhes simples, como olhos de um personagem.
+3. **Troca por altura**: em vez de pintar, você define que, a partir de certa camada, a cor muda. É o jeito mais econômico, porque gera **poucas trocas**: uma por mudança de cor, e não uma por camada.
+
+Antes de fatiar, defina no fatiador **qual carretel está em qual posição do IFS**, com a cor e o material certos. Depois do fatiamento, confira a **estimativa de material** e o **número de trocas** na tela de resumo; se o número de trocas for muito alto para uma peça pequena, vale repensar a pintura.
+
+## Filamento para multicor: o que observar
+
+A troca automática funciona melhor quando os filamentos são **parecidos entre si**:
+
+- **mesmo material** em todas as cores da peça (PLA com PLA): temperaturas de impressão muito diferentes complicam a troca;
+- **mesma marca**, de preferência: diâmetro e acabamento consistentes reduzem enroscos no seletor;
+- **carretéis com bom enrolamento**: fio cruzado no carretel trava a alimentação no meio da impressão;
+- **filamento seco**: filamento úmido estala no bico e piora as transições. Para PETG e TPU, a secagem prévia é ainda mais importante.
+
+Para quem está montando a primeira coleção de cores, os guias [Os melhores filamentos PLA de 2026](/posts/melhores-filamentos-pla-2026/) e [Caixa secadora de filamento: vale a pena?](/posts/secadora-de-filamento-vale-a-pena/) ajudam.
+
+## Como reduzir o desperdício de filamento
+
+O descarte na troca de cor é físico: o bico precisa expulsar a cor anterior antes de imprimir a próxima. Dá para reduzir, não para zerar.
+
+- **Agrupe as cores por camada.** Modelos em que cada cor ocupa uma faixa de altura (base de uma cor, letras de outra no topo) trocam poucas vezes. Modelos com cores misturadas em todas as camadas trocam o tempo todo.
+- **Use a cor do miolo como purga.** O Orca Slicer permite **purgar no preenchimento** (*flush into infill*) e em objetos de sacrifício, aproveitando o descarte dentro da própria peça.
+- **Ajuste o volume de purga.** Trocas de cor escura para clara exigem mais purga; de clara para escura, menos. O fatiador permite ajustar por par de cores.
+- **Imprima várias peças de uma vez.** A troca de cor acontece por camada, não por peça. Com vários chaveiros na mesa, o mesmo descarte serve a todos.
+
+## CoreXY: por que a estrutura importa
+
+A AD5X é uma impressora **CoreXY**: a mesa só sobe e desce, e o cabeçote se move nos eixos X e Y por um sistema de correias cruzadas. Nas impressoras de **mesa móvel**, como a Ender 3, a mesa vai e volta carregando a peça.
+
+Na prática, a CoreXY tem três vantagens:
+
+- **a peça não balança**: peças altas e finas imprimem com mais estabilidade em alta velocidade;
+- **mais velocidade com menos vibração**: o cabeçote é leve, e as acelerações altas, como os **20.000 mm/s²** da AD5X, ficam viáveis;
+- **ocupa menos espaço** para o mesmo volume de impressão, porque a mesa não precisa de curso para frente e para trás.
+
+A desvantagem histórica era o preço e a complexidade de ajuste das correias, algo que as CoreXY de consumo, como a AD5X, resolveram com montagem de fábrica e calibração automática.
+
+## Projetos em que a AD5X brilha
+
+- **Chaveiros e placas com nome**: base de uma cor, texto de outra, troca por altura. Gasta pouca purga e fica com cara de produto pronto.
+- **Peças em TPU colorido**: capas, pulseiras, pés antiderrapantes e brinquedos flexíveis em duas cores, um ponto em que a AD5X se destaca segundo a 3DPrint.com.
+- **Miniaturas e personagens**: com pintura no fatiador, olhos, roupas e detalhes saem coloridos, sem pincel.
+- **Mapas e placas em relevo**: cada altura numa cor.
+- **Peças funcionais com etiqueta**: organizadores com o nome do conteúdo em relevo e em outra cor.
+
+## Manutenção do sistema de cores
+
+O IFS acrescenta peças móveis que pedem atenção:
+
+- **Tubos de alimentação**: devem correr sem dobras. Tubo dobrado aumenta o atrito e causa falha de troca.
+- **Carretéis**: confira se giram livres nos suportes; carretel travado faz o sistema puxar com força e falhar.
+- **Resíduos de purga**: limpe a área onde o material purgado é descartado, para não acumular e interferir no movimento.
+- **Filamento quebradiço**: PLA velho e ressecado quebra dentro dos tubos. Se isso acontecer, desmonte o caminho do filamento com a impressora desligada e retire o pedaço.
+- **Firmware**: a 3DPrint.com atribuiu parte dos problemas de purga a firmware; mantenha a impressora **atualizada**, porque correções desse tipo chegam por atualização.
+
+## Primeiros passos
+
+Um roteiro para o primeiro dia com a AD5X, sem pular etapas que costumam dar problema depois:
+
+1. **Confira a chave de tensão da fonte** antes de ligar: o anúncio indicado aqui informa fonte comutável entre 127 V e 220 V.
+2. **Retire todas as travas de transporte** indicadas no guia rápido: peças presas para a viagem impedem o movimento.
+3. **Rode o nivelamento automático** pela tela.
+4. **Carregue os quatro filamentos** no IFS, um por posição, e registre cor e material de cada um no fatiador.
+5. **Imprima primeiro um modelo de uma cor só**, para confirmar que a máquina está bem calibrada.
+6. **Depois, uma peça simples de duas cores**, com troca por altura, para ver a troca funcionando sem gastar muito filamento.
+7. **Atualize o firmware** pelo menu ou pelo fatiador, se houver versão nova.
+
+## O custo real da impressão multicor
+
+Ao preço da impressora, somam-se custos que a impressão em uma cor não tem:
+
+- **Filamento de purga**: cada troca descarta um pouco de material. Em peças com muitas trocas por camada, esse descarte pode superar o peso da peça. Planeje modelos com troca por altura sempre que possível.
+- **Quatro carretéis em uso**: em vez de um, você mantém quatro abertos, e todos precisam ficar secos e protegidos.
+- **Tempo**: cada troca leva algum tempo, e uma peça com centenas de trocas pode levar muitas horas a mais que a mesma peça em uma cor.
+- **Energia**: impressão mais longa é impressão gastando energia por mais tempo, com a mesa aquecida.
+
+Nada disso inviabiliza a multicor; só mostra que ela vale mais para **peças em que a cor é essencial** do que para tudo que você imprime.
+
+## AD5X ou as rivais
+
+O Nerd Caseiro já publicou o review da [Creality Hi Combo](/posts/creality-hi-combo-review/), outra multicor de faixa próxima. A diferença de fundo entre as duas é a estrutura: a Hi Combo é cama-móvel (*bed slinger*), a AD5X é **CoreXY**, mais estável em alta velocidade e mais compacta para o volume de impressão.
+
+Contra as impressoras **fechadas** de topo, como a Bambu Lab P2S Combo, a AD5X perde em material (sem ABS e ASA), em ruído e em ecossistema, e ganha em preço. A escolha depende do que você imprime: se é PLA, PETG e TPU coloridos, a AD5X cobre; se é peça técnica em ABS, ela não é a máquina.
+
+## Para quem a AD5X vale a pena
+
+**Vale para:**
+
+- quem quer **começar no multicor** sem pagar o preço das fechadas de topo;
+- quem imprime **PLA, PETG e TPU** e quer cor sem pintura: chaveiro, placa, brinquedo, decoração;
+- quem quer uma CoreXY rápida e compatível com o **Orca Slicer**.
+
+**Não vale para:**
+
+- quem precisa de **ABS, ASA ou nylon** para peça técnica;
+- quem vai deixar a impressora em **ambiente compartilhado** e silencioso;
+- quem imprime quase tudo em **uma cor só**: nesse caso, uma impressora sem sistema de cores entrega o mesmo por menos.
+
+## Resumo
+
+A **Flashforge AD5X** é uma CoreXY rápida com **quatro cores** pelo sistema IFS, bico de até 300 °C, TPU no multicor e suporte ao **Orca Slicer**. Ela entrega o essencial do multicor por um preço intermediário. Os pontos fracos são conhecidos: **descarte alto de filamento na troca de cor**, sem estimativa clara no fatiador, **estrutura aberta** que limita os materiais e **ruído** alto. Para quem imprime PLA, PETG e TPU coloridos e aceita esses limites, é uma porta de entrada sólida para a impressão multicor.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FC63K6ZQ?tag=nerdcaseiro-20" store="amazon" source="flashforge-ad5x-vale-a-pena-review" />
+
+<AffiliateButton href="https://meli.la/2Vq4BCz" store="mercadolivre" source="flashforge-ad5x-vale-a-pena-review" />
+
+## Fontes
+
+- Flashforge — [página oficial da AD5X](https://www.flashforge.com/products/flashforge-ad5x-3d-printer)
+- Tom's Hardware — [Flashforge AD5X review](https://www.tomshardware.com/3d-printing/flashforge-ad5x-review)
+- 3DPrint.com — [Flashforge AD5X Review: Multicolor TPU 3D Printing Made Simple](https://3dprint.com/316928/flashforge-ad5x-review-multicolor-tpu-3d-printing-made-simple/)

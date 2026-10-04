@@ -1,0 +1,301 @@
+---
+title: 'Tinkercad: seu primeiro modelo 3D para imprimir em casa'
+description: 'Passo a passo no Tinkercad, gratuito e no navegador, do primeiro objeto ao arquivo STL pronto para fatiar e imprimir na impressora 3D.'
+pubDate: 2026-10-10T18:00:00-03:00
+category: 'impressao-3d'
+tags: ['tinkercad', 'modelagem-3d', 'impressao-3d', 'stl', 'tutorial', 'iniciante']
+featured: false
+draft: true
+products:
+  - name: 'Creality Hyper PLA 1 kg, para alta velocidade'
+    brand: 'Creality'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DHXDRZ74?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1VXCMqE'
+    image: '/images/produtos/filamento-creality-hyper-pla-rfid.webp'
+    pros:
+      - 'PLA: o material mais fácil para a primeira impressão'
+      - 'Formulado para impressoras rápidas'
+      - '383 avaliações na Amazon, nota 4,8'
+    cons:
+      - 'A etiqueta RFID só é útil em impressoras Creality que leem RFID'
+faq:
+  - question: 'O Tinkercad é gratuito?'
+    answer: 'Sim. O Tinkercad é da Autodesk, roda no navegador e é gratuito. É preciso criar uma conta, e há contas para estudantes e professores, usadas em escolas.'
+  - question: 'Qual a diferença entre STL, OBJ e GLTF na exportação?'
+    answer: 'Os três descrevem a geometria do modelo. O STL é o formato mais comum para impressão 3D e é aceito por todos os fatiadores. O OBJ também guarda cor em alguns casos. O GLTF é mais usado para visualização 3D em aplicativos e na web.'
+  - question: 'Por que o furo não aparece na peça impressa?'
+    answer: 'Porque a forma de furo (Orifício) não foi agrupada com a peça sólida. No Tinkercad, o furo só corta o sólido depois que os dois são selecionados juntos e agrupados com Agrupar (Ctrl+G).'
+  - question: 'O Tinkercad serve para peças técnicas?'
+    answer: 'Para peças simples, sim: suportes, caixas, organizadores, espaçadores, placas. Para peças com encaixes de precisão, curvas complexas ou que mudam de medida com frequência, um programa paramétrico, como o Fusion ou o FreeCAD, é mais adequado.'
+  - question: 'Que medidas usar no chaveiro?'
+    answer: 'As do tutorial funcionam bem: base de 50 × 20 × 3 mm, letras com 1,5 mm de altura acima da base e furo de 5 mm de diâmetro para a argola, com pelo menos 2 mm de material em volta do furo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Quem compra uma impressora 3D começa imprimindo modelos prontos baixados da internet. Em algum momento aparece a vontade de imprimir **algo que não existe**: um suporte na medida certa, uma placa com o nome do filho, uma peça para consertar algo em casa. Para isso, é preciso **modelar**.
+
+O **Tinkercad**, da Autodesk, é o caminho mais curto. É **gratuito**, roda **no navegador** e funciona juntando e recortando formas simples, como blocos de montar. Este tutorial segue a **central de ajuda oficial do Tinkercad** e leva você do zero a um **chaveiro com nome**, exportado em **STL** e pronto para fatiar.
+
+## Antes de começar
+
+- Um **computador com navegador** e mouse. Dá para usar no tablet, mas o mouse facilita muito.
+- Uma **conta gratuita** no Tinkercad (tinkercad.com).
+- Uma **impressora 3D** e um **fatiador** (Orca Slicer, Creality Print, Bambu Studio ou o que acompanha a sua impressora).
+- **Filamento PLA**, o material mais fácil para começar.
+
+## Como o Tinkercad pensa
+
+Antes de clicar, vale entender a lógica, que é diferente de desenhar:
+
+- **Plano de trabalho** (*workplane*): a grade azul. Toda forma arrastada para a cena "gruda" nele. As medidas estão em **milímetros**.
+- **Formas sólidas**: caixa, cilindro, esfera, texto e outras, na biblioteca à direita.
+- **Formas de furo** (*Orifício*, em inglês *Hole*): qualquer forma pode virar um furo. Ela aparece listrada e transparente.
+- **Agrupar** (*Group*, Ctrl+G): junta as formas selecionadas numa peça só. Quando há um furo no grupo, **ele corta** o sólido.
+
+Todo modelo no Tinkercad é feito com essas quatro ideias: coloque formas, transforme algumas em furo e agrupe.
+
+## Medir antes de modelar
+
+Modelo para casa quase sempre começa com uma **medida**: a largura da gaveta, o diâmetro do cano, a distância entre dois parafusos. Medir bem economiza impressões erradas.
+
+- **Paquímetro** é a ferramenta certa para peças pequenas: mede por fora, por dentro e profundidade, com precisão de décimos de milímetro. Os digitais são baratos e fáceis de ler.
+- **Trena ou régua** servem para medidas grandes, como a gaveta inteira.
+- **Meça duas vezes**, em pontos diferentes: gavetas e nichos raramente são perfeitamente retangulares.
+- **Anote num desenho à mão**, mesmo que tosco, com as medidas no lugar. É ele que você vai seguir no Tinkercad.
+
+Dentro do Tinkercad, a **Régua** (*Ruler*) ajuda a conferir as medidas: segundo a central de ajuda, basta arrastá-la para o plano de trabalho, e ela passa a mostrar a posição exata dos objetos e facilita definir medidas na mão.
+
+## As regras de impressão que o modelo precisa respeitar
+
+O Tinkercad deixa você desenhar qualquer coisa, mas a impressora 3D por extrusão de filamento tem limites. Um modelo que ignora esses limites sai torto, frágil ou nem sai. As regras práticas mais citadas pela comunidade de impressão 3D:
+
+**1. Nada flutuando no ar.** A impressora deposita camada sobre camada, de baixo para cima. Toda parte do modelo precisa estar apoiada na camada de baixo, ou na mesa.
+
+**2. Balanço até cerca de 45°.** Paredes inclinadas imprimem bem até mais ou menos 45 graus em relação à vertical. Mais deitado que isso, a camada fica sem apoio e o fatiador precisa gerar **suporte**, que gasta material e deixa marcas.
+
+**3. Pontes curtas.** Um vão horizontal entre dois apoios, como o topo de uma janela retangular, chama-se **ponte**. Pontes curtas imprimem bem; pontes longas ficam caídas.
+
+**4. Paredes com espessura de verdade.** Com o bico padrão de 0,4 mm, uma parede de **0,8 mm** corresponde a duas linhas de filamento lado a lado. Paredes de **1,2 a 2 mm** são mais robustas para peças de uso. Abaixo de 0,8 mm, a parede pode sair falhada.
+
+**5. Folga para encaixe.** Duas peças que precisam se encaixar não podem ter exatamente a mesma medida: o filamento sai levemente mais largo do que o desenho. Uma folga de **0,2 a 0,4 mm** entre as partes é um ponto de partida comum; o valor ideal depende da impressora e vale testar.
+
+**6. A face plana vai na mesa.** Pense desde o início qual face vai ficar apoiada na mesa: ela deve ser plana e, de preferência, a maior.
+
+O chaveiro deste tutorial respeita todas: base plana, nada em balanço, texto apoiado, paredes com milímetros de espessura.
+
+## Passo 1 — A base do chaveiro
+
+1. Crie um **novo design** em 3D.
+2. Na biblioteca de **formas básicas**, arraste uma **Caixa** para o plano de trabalho.
+3. Clique na caixa. Aparecem alças brancas nos cantos e as medidas. Clique no número da medida e digite:
+   - **comprimento: 50 mm**;
+   - **largura: 20 mm**;
+   - **altura: 3 mm** (alça branca do topo).
+
+Três milímetros de espessura dão rigidez ao chaveiro sem gastar muito filamento.
+
+## Passo 2 — O nome em relevo
+
+1. Arraste a forma **Texto** para a cena e digite o nome no painel de propriedades.
+2. Ajuste o tamanho para o texto caber na base, com folga de uns 3 mm em cada lado.
+3. Defina a **altura do texto em 1,5 mm**.
+4. Coloque o texto **em cima** da base. O jeito mais preciso é usar a seta preta acima da forma para levantá-la: ela deve ficar a **3 mm** do plano, apoiada no topo da base.
+
+O relevo de 1,5 mm é suficiente para o nome aparecer bem e, numa impressora multicor, para trocar de cor na camada do texto.
+
+## Passo 3 — O furo da argola
+
+1. Arraste um **Cilindro** para a ponta esquerda da base.
+2. Defina **5 mm × 5 mm** de diâmetro e altura maior que a base, por exemplo **10 mm**, para atravessar tudo.
+3. Com o cilindro selecionado, clique em **Orifício** no painel de propriedades (ou aperte **H**). Ele fica listrado.
+4. Posicione o furo deixando **pelo menos 2 mm de material** entre ele e a borda. Menos que isso, a argola arranca a ponta do chaveiro.
+
+## Passo 4 — Alinhar e agrupar
+
+1. Selecione **tudo** (Ctrl+A ou arraste uma caixa de seleção em volta).
+2. Use **Alinhar** (tecla **L**) para centralizar o texto na base no sentido da largura, clicando nos pontos de alinhamento que aparecem.
+3. Com tudo selecionado, clique em **Agrupar** (**Ctrl+G**).
+
+O furo agora corta a base e o texto se funde a ela. **Este é o erro mais comum de iniciante**: deixar o furo sem agrupar. Na tela, ele parece estar ali; na peça impressa, o furo não existe.
+
+## Passo 5 — Conferir antes de exportar
+
+- Gire a vista (botão direito do mouse e arraste) e olhe o chaveiro **por baixo**: a base deve estar **apoiada no plano**, sem nada flutuando. A tecla **D** derruba a forma selecionada para o plano de trabalho.
+- Confira se **nenhuma parte é fina demais**. Paredes com menos de 1 mm costumam sair frágeis ou nem sair, dependendo do bico.
+- Confira se o texto não tem letras soltas, como o pingo do "i", com menos de 1 mm de largura.
+
+## Passo 6 — Exportar o STL
+
+Segundo a central de ajuda do Tinkercad:
+
+1. Clique em **Exportar**, na barra de ferramentas do topo.
+2. Em **Incluir**, escolha exportar **tudo** do design ou só as **formas selecionadas**.
+3. Escolha o formato **.STL**, o mais compatível com fatiadores de impressão 3D. O Tinkercad também exporta **.OBJ** e **.GLTF**.
+4. O arquivo é baixado automaticamente.
+
+A ajuda do Tinkercad avisa que, ao exportar, **todas as formas viram uma peça só**, e o arquivo exportado não pode ser desagrupado se for importado de volta. Guarde o design original no Tinkercad para editar depois.
+
+## Passo 7 — Fatiar e imprimir
+
+1. Abra o **STL** no fatiador da sua impressora.
+2. Deite o chaveiro com a **base virada para a mesa**. Ele já sai assim do Tinkercad se a base estava no plano.
+3. Use o perfil padrão de **PLA** da impressora, com camada de 0,2 mm.
+4. Não precisa de suporte: não há nada em balanço.
+
+Se a primeira camada não grudar ou o texto sair borrado, o problema costuma ser de calibração, não do modelo. O post [Como calibrar a impressora 3D: temperatura e fluxo](/posts/calibrar-impressora-3d-temperatura-fluxo/) mostra os testes.
+
+## O filamento para começar
+
+![Carretel de filamento Creality Hyper PLA](/images/produtos/filamento-creality-hyper-pla-rfid.webp)
+
+Para as primeiras impressões, **PLA** é o material certo: imprime em temperatura baixa, não exige mesa muito quente nem gabinete, quase não empena e tem pouco cheiro. O **Hyper PLA** da Creality é formulado para impressoras rápidas e tem **383 avaliações com nota 4,8** na Amazon. Para comparar outras marcas, veja [os melhores filamentos PLA de 2026](/posts/melhores-filamentos-pla-2026/).
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DHXDRZ74?tag=nerdcaseiro-20" store="amazon" source="tinkercad-primeiro-modelo-3d-imprimir" />
+
+<AffiliateButton href="https://meli.la/1VXCMqE" store="mercadolivre" source="tinkercad-primeiro-modelo-3d-imprimir" />
+
+## Segundo projeto: um organizador de gaveta na medida
+
+Depois do chaveiro, um projeto que mostra o poder do furo no Tinkercad: uma **caixa organizadora** para a gaveta. A técnica é a mesma, só que o furo agora é uma caixa.
+
+**Exemplo:** um nicho de **80 × 60 mm**, com **40 mm** de altura.
+
+1. **A caixa externa.** Arraste uma **Caixa** e defina **80 × 60 × 40 mm**. Para caber na gaveta com folga, você pode tirar 1 mm de cada medida da gaveta real.
+2. **A caixa-furo.** Arraste outra **Caixa** e defina **76 × 56 × 40 mm**. Isso deixa **2 mm de parede** de cada lado.
+3. **Levante a caixa-furo** com a seta preta para **2 mm** acima do plano. Esses 2 mm serão o **fundo** do organizador.
+4. Transforme a caixa menor em **Orifício** (tecla **H**).
+5. Selecione as duas e use **Alinhar** (tecla **L**) para centralizar a caixa-furo nos dois sentidos.
+6. **Agrupe** (**Ctrl+G**).
+
+O resultado é uma caixa aberta em cima, com paredes e fundo de 2 mm. A caixa-furo pode ser **mais alta** que a externa sem problema: o que passar do topo simplesmente não corta nada, e isso garante que o topo fique aberto.
+
+**Divisórias:** para dividir a caixa em compartimentos, arraste caixas finas, com **1,6 a 2 mm** de espessura, apoiadas no fundo, antes de agrupar tudo.
+
+**Cantos arredondados:** a forma **Caixa** tem, nas propriedades, o ajuste de **raio** dos cantos. Cantos arredondados no organizador facilitam pegar objetos pequenos e limpar.
+
+## Importar desenhos e modelos
+
+O Tinkercad não serve só para criar do zero. Segundo a central de ajuda:
+
+- **Modelos 3D em STL ou OBJ** podem ser importados pelo botão **Importar**, com tamanho **menor que 25 MB**. Assim, dá para baixar uma peça pronta e modificá-la: abrir um furo, acrescentar um nome, cortar uma parte.
+- **Desenhos 2D em SVG** também podem ser importados e viram formas 3D, com arquivo **menor que 4 MB**. O SVG deve conter **apenas vetores ou linhas**: imagem, recorte e preenchimento não são suportados. É o caminho para transformar um logotipo ou um desenho vetorial em relevo.
+
+Uma limitação importante: modelos importados viram **uma forma única**. Dá para cortar e somar formas a eles, mas não editar o interior como no programa original.
+
+## Atalhos que economizam tempo
+
+| Atalho | O que faz |
+|---|---|
+| **Ctrl+G** | Agrupar as formas selecionadas |
+| **H** | Transformar a forma em furo (Orifício) |
+| **L** | Ferramenta Alinhar |
+| **D** | Derrubar a forma para o plano de trabalho |
+| **W** | Criar um plano de trabalho na superfície de uma forma |
+
+*Fonte: folha de atalhos oficial do Tinkercad.*
+
+O **W** merece destaque: ele cria um plano de trabalho **em cima de qualquer face**. Assim, uma forma arrastada depois gruda direto naquela face, sem precisar acertar altura na mão.
+
+## Terceiro projeto: furo para parafuso de cabeça chata
+
+Muitas peças para casa vão presas na parede ou num móvel com parafuso. Um detalhe deixa o acabamento muito melhor: o **rebaixo** para a cabeça do parafuso ficar no nível da peça, em vez de sobrar para fora.
+
+No Tinkercad, o rebaixo é feito com duas formas de furo:
+
+1. **Furo do corpo do parafuso:** um **Cilindro** com o diâmetro do parafuso mais uma pequena folga (para um parafuso de 4 mm, algo como 4,4 mm), transformado em **Orifício**, atravessando a peça.
+2. **Rebaixo da cabeça:** um **Cone** transformado em **Orifício**, com a base larga do tamanho da cabeça do parafuso, encostado na face onde a cabeça vai ficar, com a ponta para dentro da peça.
+3. **Alinhe** os dois furos no mesmo centro e **agrupe** tudo com a peça.
+
+Meça a cabeça do parafuso com o paquímetro antes. E imprima uma **peça de teste pequena**, só com o furo, antes da peça inteira: é a forma mais barata de acertar a folga da sua impressora.
+
+## Tinkercad e os modeladores paramétricos
+
+O Tinkercad tem um limite natural: ele guarda **formas posicionadas**, não **regras**. Se a gaveta tiver 2 mm a mais, você precisa mexer em várias formas, uma a uma.
+
+Os **modeladores paramétricos** trabalham de outro jeito: você desenha um **esboço** com cotas e restrições (este lado mede X, aquele furo fica a Y da borda) e transforma o esboço em sólido. Mudou a medida, o modelo inteiro se atualiza. Exemplos conhecidos:
+
+- **FreeCAD**, gratuito e de código aberto;
+- **Fusion**, da própria Autodesk, com licença para uso pessoal sujeita a condições;
+- **Onshape**, no navegador, com plano gratuito sujeito a condições.
+
+A hora de mudar costuma chegar quando aparecem **encaixes precisos**, **peças com muitas versões de tamanho** ou **curvas** que o Tinkercad não faz bem. Até lá, o Tinkercad resolve a maioria das peças de casa, e quem domina furo, alinhamento e agrupamento leva essa lógica para qualquer programa.
+
+## Onde achar inspiração
+
+Antes de modelar do zero, vale procurar nos repositórios de modelos se alguém já resolveu o mesmo problema. Mesmo quando o modelo pronto não serve exatamente, ele mostra uma **solução** que você pode reproduzir no Tinkercad com as suas medidas, ou importar e modificar. Confira sempre a **licença** do modelo antes de usá-lo, principalmente se a ideia for vender a peça.
+
+## Quando a peça não sai como o modelo
+
+| O que aconteceu | Causa provável no modelo | Como corrigir no Tinkercad |
+|---|---|---|
+| O furo não existe na peça | furo não foi agrupado | selecione furo e sólido e **agrupe** |
+| Parte da peça saiu como "espaguete" | parte flutuando, sem apoio | apoie tudo no plano ou em outra forma; use a tecla **D** |
+| Letras do texto sumiram | texto fino demais para o bico | aumente o tamanho do texto ou escolha fonte mais grossa |
+| O texto saiu "afundado" ou não aparece | texto dentro da base, abaixo do topo | levante o texto para apoiar no topo da base |
+| A peça não encaixa | sem folga entre as partes | acrescente 0,2 a 0,4 mm de folga e teste |
+| Furo menor que o desenhado | o filamento invade um pouco o furo | aumente o furo alguns décimos de milímetro |
+| Parede quebrou no uso | parede fina demais | engrosse para 1,2 a 2 mm |
+| O fatiador mostra a peça minúscula ou gigante | unidade errada na exportação ou importação | confira se o design está em milímetros |
+
+Para problemas que **não** vêm do modelo, como primeira camada que não gruda ou fio entre as letras, o caminho é a calibração da impressora.
+
+## Erros comuns de quem começa
+
+- **Não agrupar o furo.** O clássico.
+- **Desenhar no olho**, sem digitar as medidas.
+- **Deixar formas flutuando** a frações de milímetro acima do plano.
+- **Texto pequeno demais** para a impressora reproduzir.
+- **Esquecer a folga** em peças de encaixe.
+- **Exportar só uma parte** sem perceber que a opção estava em "formas selecionadas".
+- **Apagar o design** depois de exportar: o STL não pode ser desagrupado de volta.
+- **Projetar a peça grande primeiro.** Comece por peças pequenas, que imprimem rápido e ensinam mais por hora.
+
+## Checklist antes de exportar
+
+- [ ] Todas as medidas foram **digitadas**, em milímetros.
+- [ ] Nenhuma parte **flutua**: tudo apoiado no plano ou em outra forma.
+- [ ] Todos os furos estão **agrupados** com os sólidos.
+- [ ] Paredes com pelo menos **0,8 mm**, de preferência mais.
+- [ ] Texto com letras largas o suficiente.
+- [ ] Peças de encaixe com **folga**.
+- [ ] A **face plana** maior ficará na mesa.
+- [ ] O design original continua **salvo** no Tinkercad.
+
+## Além da modelagem 3D
+
+O Tinkercad tem outras áreas que interessam a quem gosta de eletrônica e programação:
+
+- **Circuits**, um simulador de circuitos eletrônicos no navegador, com componentes como o **Arduino**, para testar ligações e código antes de montar na bancada.
+- **Codeblocks**, que cria modelos 3D a partir de blocos de programação, um bom passo intermediário para quem quer pensar em modelos **paramétricos**.
+
+Para quem chega ao Tinkercad pela impressora 3D, eles são a porta de entrada para projetos que juntam peça impressa e eletrônica: a caixa do sensor, o suporte da placa, o painel com botões.
+
+## Próximos projetos
+
+Com Caixa, Cilindro, Texto, Orifício e Agrupar, já dá para fazer muita coisa útil:
+
+- **placa de porta** com o nome do cômodo;
+- **organizador de gaveta** na medida exata (caixa grande menos caixa-furo menor);
+- **espaçador** e **arruela** para móvel;
+- **suporte de parede** para controle remoto ou fone.
+
+Quando as peças começarem a exigir encaixe preciso, medidas que mudam com frequência ou curvas complexas, é hora de conhecer um modelador paramétrico. Para começar, o Tinkercad é imbatível.
+
+## Resumo
+
+1. **Caixa** de 50 × 20 × 3 mm como base.
+2. **Texto** com 1,5 mm de altura, apoiado no topo da base.
+3. **Cilindro** de 5 mm transformado em **Orifício**, com 2 mm de material em volta.
+4. **Alinhar** (L) e **Agrupar** (Ctrl+G): sem agrupar, o furo não corta.
+5. **Exportar → STL**, fatiar com perfil de **PLA**, sem suporte.
+
+## Fontes
+
+- Tinkercad — [Exporting 3D models for 3D Printing](https://www.tinkercad.com/help-center/exporting-3d-models-for-3d-printing)
+- Tinkercad — [folha de atalhos de teclado](https://images.tinkercad.com/jl5ii4oqrdmc/24W19aTK6wTT0YydFO3xZd/ffda269b296a25b9ce3b8a19e65bf571/Tinkercad_keyboard_shortcuts_1_up.pdf)
+- Tinkercad — [Importing 3D models](https://www.tinkercad.com/help-center/importing-3d-models) e [Importing 2D vector designs](https://www.tinkercad.com/help-center/importing-2d-designs) (formatos e limites de tamanho)

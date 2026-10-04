@@ -1,0 +1,279 @@
+---
+title: 'Controle remoto copiador: clona o controle do portão?'
+description: 'Como o controle copiador funciona, por que ele não clona controle com código rolante e como descobrir se o do seu portão pode ser copiado.'
+pubDate: 2026-10-11
+category: 'casa-inteligente'
+tags: ['controle-remoto', 'portao-eletronico', '433mhz', 'codigo-rolante', 'copiador', 'seguranca']
+featured: false
+draft: true
+products:
+  - name: 'Controle remoto copiador 433,92 MHz, 4 botões'
+    brand: 'Genérica'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09H19LVQM?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2Mh8RFQ'
+    image: '/images/produtos/controle-copiador-433-4-botoes.webp'
+    pros:
+      - 'Quatro botões independentes, cada um pode copiar um controle'
+      - 'Clonagem simples, sem programar a central'
+      - 'Quase 900 avaliações na Amazon, nota 4,4'
+    cons:
+      - 'Só copia código fixo de 433,92 MHz'
+      - 'Não funciona com código rolante (Rossi, Peccinin)'
+  - name: 'Kit 2 controles Rossi NTX 433 MHz, código rolante'
+    brand: 'Rossi'
+    rating: 4.9
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1bBWVah'
+    image: '/images/produtos/controle-rossi-ntx-433.webp'
+    pros:
+      - 'Controle original para centrais Rossi com código rolante'
+      - 'Cadastrado direto na central, como os do kit'
+    cons:
+      - 'Só para portões com central Rossi compatível'
+faq:
+  - question: 'O controle copiador funciona em qualquer portão?'
+    answer: 'Não. Ele só copia controles de código fixo na mesma frequência, normalmente 433,92 MHz. Controles de código rolante, como os das centrais Rossi e Peccinin mais recentes, mudam o código a cada toque e não podem ser copiados. O próprio anúncio do copiador indicado aqui avisa que ele não funciona com Rossi e Peccinin de código rolante, nem com o modelo híbrido da PPA.'
+  - question: 'Como saber se o meu controle é de código rolante?'
+    answer: 'Procure no manual ou na central do portão expressões como "code learning" (aprendizado de código fixo), "rolling code", "código rolante" ou "anticlonagem". Outra pista é o modelo: centrais e controles anunciados como anticlonagem usam código rolante. Se o copiador tentar copiar e o portão não responder, é o sinal mais prático de que o código é rolante.'
+  - question: 'Copiar o controle é seguro?'
+    answer: 'O copiador replica um código fixo que já vaza no ar a cada toque. É exatamente por isso que o código fixo é considerado menos seguro: um equipamento de captura consegue gravar e repetir o sinal. O código rolante foi criado para impedir isso.'
+  - question: 'Para portão de código rolante, o que comprar?'
+    answer: 'Um controle original compatível com a central, cadastrado na própria central pelo procedimento do fabricante. Para centrais Rossi, por exemplo, o controle NTX de 433 MHz com código rolante.'
+  - question: 'O copiador serve para alarme e cerca elétrica?'
+    answer: 'Se o controle do alarme ou da cerca for de código fixo na mesma frequência, sim. O anúncio indicado lista compatibilidade com marcas como PPA, Garen, Unisystem, SEG, RCG e IPEC, em modelos de código fixo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Perdeu o controle do portão, quer um para cada morador ou cansou de carregar três controles no chaveiro? O **controle remoto copiador** promete resolver tudo: você encosta um no outro, aperta os botões, e ele passa a abrir o portão. Custa pouco e está entre os mais vendidos da categoria.
+
+A promessa é verdadeira **para uma parte dos portões**. Para a outra parte, que é a dos portões mais novos e mais seguros, o copiador simplesmente **não funciona**, e não por defeito. Este texto explica a diferença entre **código fixo** e **código rolante**, como descobrir qual é o seu, e o que comprar em cada caso.
+
+## Como o controle do portão funciona
+
+O controle remoto de portão é um transmissor de rádio. Na maioria dos portões residenciais no Brasil, ele opera em **433,92 MHz**. Quando você aperta o botão, ele envia um **código digital**, e a central do portão compara esse código com os que tem cadastrados. Se bater, o motor aciona.
+
+A diferença está em **como esse código é gerado**:
+
+- **Código fixo**: o controle envia **sempre o mesmo código**. Apertou hoje, apertou amanhã, o sinal é idêntico.
+- **Código rolante** (*rolling code*): o controle e a central compartilham um algoritmo e um contador. A cada toque, o controle envia **um código diferente**, e a central só aceita o próximo código esperado da sequência. Um código já usado não funciona de novo.
+
+O código rolante foi criado justamente para impedir a cópia: gravar o sinal no ar e repetir depois não adianta, porque aquele código já foi "gasto".
+
+## Como o copiador funciona
+
+O copiador é um controle que, além de transmitir, **escuta**. No modo de cópia, você encosta o controle original nele e aperta os dois botões ao mesmo tempo. O copiador grava o código que o original transmitiu e passa a transmitir **o mesmo código** naquele botão.
+
+Com código fixo, isso funciona perfeitamente: o código gravado é o mesmo que a central espera sempre.
+
+Com código rolante, não funciona: o copiador grava **um** código da sequência, que a central já recebeu (ou vai descartar), e a cada toque repete esse mesmo código, que a central recusa.
+
+## A frequência precisa bater
+
+Antes mesmo do tipo de código, a **frequência** decide se o copiador consegue "ouvir" o controle original. O copiador deste post trabalha em **433,92 MHz**, a frequência mais comum nos portões e alarmes residenciais no Brasil. Mas não é a única:
+
+- sistemas **antigos** e alguns **importados** usam outras frequências, como **315 MHz**;
+- alguns fabricantes têm linhas próprias em frequências diferentes.
+
+Copiador de 433 MHz **não grava** controle de 315 MHz, e vice-versa. A frequência costuma estar escrita na **etiqueta** do controle original, por dentro da tampa da bateria ou gravada na placa. Se não estiver, o manual da central ou o fabricante do motor informa.
+
+## O que a Anatel tem a ver com isso
+
+Controles remotos de portão são **transmissores de rádio**, e todo transmissor vendido no Brasil precisa de **homologação da Anatel**. Na prática:
+
+- procure no anúncio e na embalagem o **número de homologação** ou o selo da Anatel;
+- produto sem homologação pode transmitir com potência ou frequência fora do permitido, interferir em outros equipamentos e ter qualidade imprevisível;
+- a homologação é também um indício de que o produto tem fabricante ou importador identificável no país.
+
+Um controle barato sem nenhuma identificação pode até funcionar, mas, se algo der errado, não há a quem recorrer.
+
+## Bateria, alcance e o controle que "falha"
+
+Muitos problemas atribuídos ao copiador são, na verdade, de **bateria** ou de **alcance**:
+
+| Sintoma | Causa provável | O que fazer |
+|---|---|---|
+| Precisa chegar cada vez mais perto do portão | bateria fraca | troque a bateria pelo modelo indicado no controle |
+| Funciona às vezes, falha às vezes | bateria no fim, mau contato | troque a bateria; limpe os contatos |
+| Clonou, mas o portão não responde | código rolante ou frequência diferente | confira o tipo de código e a frequência |
+| Funciona só muito perto, mesmo com bateria nova | antena da central mal posicionada ou danificada | peça ao instalador para verificar a antena |
+| Parou de funcionar depois de um tombo | placa ou solda danificada | substitua o controle |
+| O LED acende, mas nada acontece | botão apagado ou gravado com outro código | refaça a clonagem naquele botão |
+
+O tipo de bateria **varia de modelo para modelo**: há controles com bateria de moeda e outros com bateria cilíndrica pequena de 12 V. Confira a do seu antes de comprar a reposição, e tenha uma reserva em casa.
+
+**Alcance** também depende do caminho do sinal: portão de metal, muros grossos e a posição da antena da central influenciam. Às vezes, o mesmo controle funciona de longe por um lado da rua e de perto pelo outro.
+
+## O copiador mais vendido
+
+![Controle remoto copiador de 4 botões, 433 MHz, com chaveiro](/images/produtos/controle-copiador-433-4-botoes.webp)
+
+O copiador de **quatro botões em 433,92 MHz** indicado aqui tem quase **900 avaliações com nota 4,4** na Amazon. O anúncio é claro sobre o que ele faz e o que não faz, o que é raro na categoria:
+
+- funciona com controles de **código fixo de 433,92 MHz** com aprendizado de código (*code learning*);
+- lista compatibilidade com **PPA, Garen, Unisystem, SEG, RCG, Clic, IPEC e MC Garcia**, entre outras, para portão, alarme e cerca elétrica;
+- **não funciona com código rolante das marcas Peccinin e Rossi**;
+- **não funciona com o modelo híbrido da PPA**.
+
+Os **quatro botões são independentes**: cada um pode guardar um controle diferente. Dá para juntar, num só chaveiro, o portão da garagem, o portão social e o alarme, se todos forem de código fixo.
+
+### Como clonar, segundo o anúncio
+
+1. **Reset**: aperte os botões **A e B** juntos e segure por **5 segundos**. Repita com **C e D**.
+2. **Clonagem**: coloque os dois controles **de frente, encostados**. Aperte o botão do original e o botão do copiador que vai receber o código, **ao mesmo tempo**, e segure por **5 segundos**.
+3. Teste no portão.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09H19LVQM?tag=nerdcaseiro-20" store="amazon" source="controle-remoto-copiador-portao-clona" />
+
+<AffiliateButton href="https://meli.la/2Mh8RFQ" store="mercadolivre" source="controle-remoto-copiador-portao-clona" />
+
+## Copiador, controle "universal" ou controle original?
+
+No anúncio, três tipos de controle aparecem misturados, e eles funcionam de formas diferentes:
+
+| Tipo | Como passa a abrir o portão | Funciona com código rolante? | Quando usar |
+|---|---|---|---|
+| **Copiador** | grava o sinal de outro controle | não | portão de código fixo, para juntar controles num só |
+| **Controle compatível de código fixo** | é **cadastrado na central**, pelo botão de programação | não se aplica | portão de código fixo, quando não há controle original para copiar |
+| **Controle original de código rolante** | é **cadastrado na central** do mesmo fabricante | sim | portões com central anticlonagem |
+
+A diferença entre **copiar** e **cadastrar** é importante. Copiar não exige mexer na central: basta ter um controle que funciona. Cadastrar exige acesso à placa da central, mas é o único caminho quando não há controle funcionando ou quando o código é rolante.
+
+## Os controles antigos com chavinhas
+
+Portões mais antigos podem usar controles com **chaves DIP**, uma fileira de pequenas chaves dentro do controle, cada uma em posição para cima, para baixo ou no meio. A combinação das chaves **é o código**, e a central tem a mesma fileira de chaves com a mesma combinação.
+
+Esses sistemas são de **código fixo** por definição. Para fazer um controle novo funcionar, basta reproduzir a mesma combinação de chaves de um controle compatível, ou usar um copiador na mesma frequência. São também os sistemas **menos seguros**: a combinação é limitada e qualquer pessoa com acesso ao controle pode copiá-la. Se o seu portão ainda é desse tipo, a troca da central é uma melhoria de segurança que vale a pena considerar.
+
+## Quando a cópia não dá certo
+
+Se o procedimento de clonagem não funciona de primeira, antes de concluir que o código é rolante, confira:
+
+1. **Bateria dos dois controles.** O original com bateria fraca transmite um sinal fraco, que o copiador pode não captar. Troque a bateria do original antes de copiar.
+2. **Posição.** Os controles precisam ficar **encostados**, frente a frente, como orienta o anúncio. Mudar levemente a posição de um em relação ao outro às vezes resolve.
+3. **Tempo.** Segure os dois botões pelo tempo indicado, sem soltar antes.
+4. **Reset.** Repita o reset do copiador antes de tentar de novo, para limpar uma gravação incompleta.
+5. **Interferência.** Faça a cópia longe do portão e de outros controles sendo usados.
+6. **Teste no portão** com o controle original logo em seguida. Se nem o original funciona bem, o problema pode ser na central ou na antena.
+
+Se tudo isso falhar, e o portão estiver na lista de exceções do anúncio, como Rossi e Peccinin de código rolante ou o modelo híbrido da PPA, a resposta é o controle original cadastrado na central.
+
+## Alarme e cerca elétrica: o mesmo raciocínio, mais cuidado
+
+O anúncio do copiador lista compatibilidade também com **alarmes** e **cercas elétricas** de código fixo em 433,92 MHz. A lógica técnica é a mesma, mas o peso da segurança é maior: o controle do alarme **desarma** a proteção da casa. Um alarme de código fixo pode ser copiado por quem tiver acesso ao sinal, do mesmo jeito que o portão.
+
+Para o alarme, além do controle, vale conferir se a central permite **senha no teclado** como alternativa e se o fabricante oferece linha com **código rolante**. E as mesmas regras do portão se aplicam: controle perdido pede **apagar a memória** e recadastrar.
+
+## Como descobrir se o seu controle pode ser copiado
+
+Antes de comprar, vale tentar descobrir o tipo de código do seu portão:
+
+1. **Procure no manual da central** ou na etiqueta da placa: "code learning", "código fixo" e "HT6P20" indicam código fixo; "rolling code", "código rolante", "anticlonagem", "KeeLoq" e "HCS" indicam código rolante.
+2. **Veja a marca e o modelo do motor.** Centrais vendidas como anticlonagem usam código rolante. O motor **Rossi DZ Nano 36 Turbo**, por exemplo, vem com central de **código rolante**, como mostra o [review do motor Rossi DZ Nano no Reforma Caseira](https://reformacaseira.com.br/posts/motor-portao-rossi-dz-nano-36-turbo-review/).
+3. **Teste.** Se a clonagem aparentemente funcionar mas o portão não responder, o código é rolante, ou a frequência é outra.
+
+Condomínio merece um cuidado extra: muitos usam **controle cadastrado na central do condomínio**, de código rolante, justamente para impedir cópias. Nesse caso, o caminho é pedir um controle novo à administração.
+
+## Se o seu portão é de código rolante
+
+O caminho é comprar um **controle original compatível com a central** e **cadastrá-lo na própria central**, pelo procedimento do fabricante (normalmente um botão de programação na placa). Não é clonagem: a central passa a reconhecer um controle novo, com a sequência própria dele.
+
+![Kit com dois controles Rossi NTX de 433 MHz](/images/produtos/controle-rossi-ntx-433.webp)
+
+Para centrais **Rossi**, o controle é o **NTX de 433 MHz com código rolante**, vendido em kit com duas unidades. É o mesmo modelo que acompanha o kit do motor DZ Nano.
+
+<AffiliateButton href="https://meli.la/1bBWVah" store="mercadolivre" source="controle-remoto-copiador-portao-clona" />
+
+## Perdeu um controle? O problema é de segurança
+
+Quem perde o controle do portão costuma pensar só em repor. Mas um controle perdido continua **abrindo o portão** para quem o encontrar, e com código fixo, isso vale também para qualquer cópia feita dele.
+
+O caminho seguro, nas centrais com memória de controles, é:
+
+1. **Apagar a memória** de controles da central, pelo procedimento do fabricante (geralmente um botão na placa mantido pressionado por alguns segundos; confira o manual).
+2. **Recadastrar** todos os controles que continuam com a família.
+3. **Cadastrar** o controle novo, que substitui o perdido.
+
+Com isso, o controle perdido deixa de funcionar. Se você não tem acesso à central ou ao manual, o **instalador do portão** faz isso em poucos minutos. Em condomínio, avise a administração para que o controle perdido seja **descadastrado**.
+
+Vale também para quem **mudou de casa**: a central do imóvel pode ter controles antigos cadastrados, de moradores anteriores, de prestadores de serviço, de quem já teve a chave. Apagar a memória e recadastrar os controles da casa é uma das primeiras medidas de segurança depois da mudança.
+
+## O controle no carro: conveniência e risco
+
+A maior parte dos controles de portão mora no **carro**, e isso traz dois cuidados que pouca gente considera:
+
+**Calor.** O painel do carro ao sol chega a temperaturas altas o suficiente para deformar o plástico do controle, descolar a borracha dos botões e encurtar a vida da bateria. Guardar o controle no porta-luvas ou no console, longe do sol direto, prolonga a vida útil.
+
+**Furto.** Um controle à vista no painel, num carro arrombado ou furtado, entrega ao ladrão a **forma de entrar na garagem**, e às vezes o endereço está no próprio documento do carro. Algumas medidas simples:
+
+- mantenha o controle **fora da vista**, guardado;
+- **não identifique** o controle com etiqueta de endereço ou nome do condomínio;
+- em caso de **furto do carro** ou do controle, **apague a memória da central** e recadastre os controles da família, como explicado acima.
+
+## Organizando os controles da família
+
+Em casa com vários moradores, alguns hábitos evitam confusão e problemas de segurança:
+
+- **Um controle por pessoa**, em vez de controles emprestados que circulam e ninguém sabe onde estão.
+- **Anote quantos controles existem** e com quem está cada um. Isso facilita saber se algum se perdeu.
+- **Controle de prestador de serviço** (diarista, cuidador, jardineiro) deve ser **recolhido** ao fim do serviço; em código fixo, lembre que ele pode ter sido copiado.
+- **Confira o limite de memória** da central no manual: cada modelo aceita um número máximo de controles cadastrados. Quando a memória enche, novos controles não entram até que alguns sejam apagados.
+- **Guarde o manual da central** e anote o procedimento de apagar e cadastrar controles. É o tipo de informação que só se procura numa emergência.
+
+Com o copiador de quatro botões, uma boa prática é usar **sempre a mesma ordem** em todos os controles da casa, por exemplo botão A para a garagem e B para o portão social, para ninguém errar o botão com pressa.
+
+## E a casa inteligente? O portão no Home Assistant
+
+Para quem automatiza a casa, a pergunta seguinte é natural: dá para abrir o portão pelo celular ou pelo Home Assistant? Existem dois caminhos, com implicações diferentes:
+
+**1. Ponte de rádio de 433 MHz.** Equipamentos como as pontes RF de 433 MHz aprendem o código de um controle e o retransmitem a partir de um comando da rede. Elas esbarram exatamente no mesmo limite do copiador: **funcionam com código fixo e não com código rolante**. E, como o copiador, dependem de um sistema que já é o menos seguro.
+
+**2. Contato de acionamento na central.** Muitas centrais de portão têm uma entrada para **botoeira**, o botão de parede que abre o portão. Um módulo de relé inteligente ligado a essa entrada "aperta o botão" a pedido do Home Assistant, sem depender do tipo de código do controle. É a solução que funciona também com código rolante, mas envolve abrir a central do motor, que fica ligada à rede elétrica. **Deixe essa instalação com o técnico do portão** ou um eletricista, conforme o manual da central.
+
+Seja qual for o caminho, automação de portão pede **cuidado com a segurança**: o acesso remoto ao Home Assistant precisa estar bem protegido, e é recomendável ter um **sensor de portão aberto** para saber o estado real, em vez de confiar só no comando enviado.
+
+## Copiar controle é seguro?
+
+O copiador não cria uma falha: ele aproveita uma que já existe. Um controle de **código fixo** transmite o mesmo código toda vez, e qualquer equipamento de captura de rádio por perto pode gravar e repetir esse sinal. É a mesma razão pela qual o copiador funciona.
+
+Por isso, se o portão ainda usa código fixo, vale considerar a **troca da central** por uma de código rolante na próxima manutenção. Para a casa, o ganho de segurança é real; o custo é ter de cadastrar controles originais em vez de copiar.
+
+## Erros comuns
+
+- **Comprar o copiador sem saber** se o portão é de código fixo ou rolante.
+- **Comprar na frequência errada** (433 MHz para um sistema de 315 MHz, por exemplo).
+- **Não resetar o copiador** antes da primeira clonagem, como manda o procedimento.
+- **Afastar os controles** durante a cópia: eles precisam ficar encostados.
+- **Achar que o copiador está com defeito** quando o portão é de código rolante.
+- **Repor o controle perdido** sem apagar a memória da central.
+- **Comprar controle sem homologação** da Anatel.
+- **Jogar fora o controle original** depois de copiar: ele é a referência para uma nova cópia e para o cadastro na central.
+
+## Checklist antes de comprar
+
+- [ ] Sei a **frequência** do meu controle (normalmente 433,92 MHz).
+- [ ] Verifiquei se a central é de **código fixo** (code learning) ou **rolante**.
+- [ ] Conferi se a marca do meu portão está na **lista de compatibilidade** do anúncio.
+- [ ] O controle tem **homologação da Anatel**.
+- [ ] Se o portão é de **código rolante**, vou comprar o **controle original** e cadastrar na central.
+- [ ] Se é **condomínio**, conversei com a administração antes.
+- [ ] Sei como **apagar e recadastrar** controles na central, ou tenho o contato do instalador.
+
+## Resumo
+
+- O **copiador** grava o código de outro controle e passa a transmitir o mesmo sinal.
+- Ele funciona **só com código fixo**, na mesma frequência (normalmente **433,92 MHz**).
+- **Código rolante** muda a cada toque e **não pode ser copiado**: é o caso das centrais **Rossi** e **Peccinin** anticlonagem, segundo o próprio anúncio do copiador.
+- Para portão de código rolante, compre um **controle original compatível** e cadastre na central.
+- Código fixo é menos seguro justamente porque pode ser copiado.
+
+## Fontes
+
+- Amazon Brasil — [anúncio do controle copiador 433,92 MHz](https://www.amazon.com.br/dp/B09H19LVQM) (compatibilidade, limitações e procedimento de clonagem)
+- Wikipedia — [Rolling code](https://en.wikipedia.org/wiki/Rolling_code)
+- Microchip — [datasheet do HCS301, codificador KeeLoq de código rolante](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/21143C.pdf)
