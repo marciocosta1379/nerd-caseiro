@@ -1,0 +1,325 @@
+---
+title: 'Câmera Tapo no Home Assistant: imagem ao vivo sem nuvem'
+description: 'Como integrar a câmera Tapo ao Home Assistant pela rede local, seguindo a documentação oficial, com conta da câmera, ONVIF, RTSP e os erros comuns.'
+pubDate: 2026-10-15T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'tapo', 'onvif', 'rtsp', 'camera', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link Tapo C200, câmera Wi-Fi 360°, 1080p, com RTSP e ONVIF'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2ZDZoL4'
+    image: '/images/produtos/tapo-c200-camera.webp'
+    pros:
+      - 'Suporta RTSP e ONVIF, segundo a TP-Link'
+      - 'Pan e tilt controláveis pelo Home Assistant via ONVIF'
+      - 'Mais de 150 mil avaliações, nota 4,8'
+    cons:
+      - 'Só Wi-Fi de 2,4 GHz'
+      - 'Na lista do python-kasa, testada só no hardware 1.0 com firmware 1.3.17'
+  - name: 'Cartão microSD 64 GB WD Purple Intelbras, para gravação contínua'
+    brand: 'WD / Intelbras'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09973KW48?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2MUiPkp'
+    image: '/images/produtos/microsd-wd-purple-64.webp'
+    pros:
+      - 'Feito para gravação 24 horas'
+    cons:
+      - '64 GB guarda poucos dias em gravação contínua'
+faq:
+  - question: 'Preciso de conta na nuvem da TP-Link para usar no Home Assistant?'
+    answer: 'A configuração inicial da câmera é feita pelo app Tapo, com conta TP-Link. Para o Home Assistant, você cria uma conta de câmera, separada, dentro do app. Depois disso, a imagem e os eventos chegam ao Home Assistant pela rede local, por ONVIF ou RTSP.'
+  - question: 'Qual integração usar: ONVIF, TP-Link ou câmera genérica?'
+    answer: 'As três funcionam com a C200. A integração ONVIF traz imagem, sensores de movimento e controle de giro, e é a que este tutorial segue. A integração TP-Link também aceita a C200: ela não aparece na tabela resumida da documentação do Home Assistant, mas está na lista atualizada da biblioteca python-kasa, que a própria documentação indica, testada no hardware 1.0 com firmware 1.3.17. A câmera genérica (RTSP) funciona só com a imagem.'
+  - question: 'Posso gravar no cartão, na nuvem e no Home Assistant ao mesmo tempo?'
+    answer: 'A TP-Link informa que Tapo Care, gravação no cartão e uso por NVR/ONVIF não funcionam os três ao mesmo tempo: só dois deles podem estar ativos simultaneamente. Planeje quais você vai usar.'
+  - question: 'Dá para ver a câmera de fora de casa?'
+    answer: 'Pelo próprio Home Assistant, sim, desde que você tenha acesso remoto seguro a ele. A TP-Link recomenda VPN para acesso remoto ao RTSP e desaconselha abrir portas da câmera para a internet.'
+  - question: 'A imagem aparece com atraso. É normal?'
+    answer: 'Streams de câmera passam por decodificação e costumam ter alguns segundos de atraso no navegador. A documentação do ONVIF no Home Assistant traz opções como o mecanismo de transporte RTSP e argumentos extras do FFmpeg para ajustar o comportamento.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Ter a câmera da sala no **painel do Home Assistant**, ao lado das luzes e dos sensores, muda a forma de usar as duas coisas: a câmera vira um **sensor de movimento** para automações, e o painel ganha uma janela para a casa. As câmeras **Tapo**, da TP-Link, são as mais vendidas do Brasil e suportam os protocolos padrão **ONVIF** e **RTSP**, o que permite essa integração **pela rede local**, sem depender da nuvem para ver a imagem.
+
+Este tutorial segue a **documentação oficial da integração ONVIF** do Home Assistant (versão **2026.10.0**, a mais recente quando o texto foi escrito) e as **perguntas frequentes da TP-Link** sobre RTSP e ONVIF. O exemplo usa a **Tapo C200**, a mais vendida, analisada no review [Câmera Tapo C200 vale a pena?](/posts/tapo-c200-vale-a-pena-review/).
+
+![Câmera Wi-Fi TP-Link Tapo C200 branca](/images/produtos/tapo-c200-camera.webp)
+
+## ONVIF, RTSP e a integração TP-Link: qual caminho?
+
+Há três formas de levar uma câmera Tapo ao Home Assistant, e a escolha depende do modelo:
+
+| Caminho | O que traz | Modelos |
+|---|---|---|
+| **Integração ONVIF** | imagem, **sensores de movimento**, **controle de giro (PTZ)** | câmeras com ONVIF, como a C200 |
+| **Integração TP-Link** | imagem e recursos da câmera, junto com tomadas e lâmpadas da marca | modelos da lista do python-kasa, que inclui a **C200**, a C210 e outros |
+| **Câmera genérica (RTSP)** | só a imagem | qualquer câmera com RTSP |
+
+**Atenção à lista da integração TP-Link.** A tabela resumida da documentação do Home Assistant não mostra a C200 entre as câmeras. Mas a mesma página diz que dispositivos fora dessa tabela podem funcionar e manda consultar a lista atualizada da biblioteca **python-kasa**, que é a base da integração. Nessa lista, a **C200 aparece**, testada no **hardware 1.0 com firmware 1.3.17**. Ou seja, a integração TP-Link também é um caminho para a C200; confira a versão de hardware e de firmware da sua câmera no app Tapo.
+
+Este tutorial segue o **ONVIF** porque ele é um padrão aberto, documentado na própria integração do Home Assistant, e traz imagem, sensores de movimento e controle de giro sem depender da versão de firmware testada pela biblioteca.
+
+### O que é ONVIF e o que é RTSP
+
+- **RTSP** é um protocolo de **vídeo**: é o "cano" pelo qual a imagem sai da câmera. Um endereço RTSP é como um link de transmissão.
+- **ONVIF** é um **padrão de comunicação** entre câmeras e sistemas de vigilância. Por ele, o sistema descobre a câmera, lê os perfis de vídeo (que, por baixo, usam RTSP), recebe **eventos** (como movimento) e envia **comandos** (como girar a câmera).
+
+A TP-Link informa que as câmeras Tapo suportam **ONVIF Profile S**, voltado a vídeo, e que esse perfil **não inclui áudio bidirecional**. Ou seja: pelo Home Assistant, você vê e ouve a câmera, mas não fala por ela; a conversa continua no app Tapo.
+
+## O que você precisa
+
+- **Home Assistant** funcionando, na **mesma rede** da câmera.
+- **Câmera Tapo com RTSP/ONVIF**, configurada no app Tapo e conectada ao Wi-Fi.
+- **IP fixo** para a câmera, reservado no roteador.
+- A integração **FFmpeg** configurada no Home Assistant: a documentação do ONVIF a lista como requisito.
+
+## Passo 1 — Criar a conta de câmera no app Tapo
+
+O Home Assistant **não usa** o seu login da TP-Link. Ele precisa de uma **conta de câmera**, separada, criada no app. Segundo a TP-Link:
+
+1. Abra o **app Tapo** e toque na câmera.
+2. Vá em **Configurações do dispositivo → Configurações avançadas → Conta da câmera**.
+3. Crie um **usuário** e uma **senha**, cada um com **6 a 32 caracteres**.
+
+Duas dicas que evitam problemas:
+
+- **Evite caracteres especiais** na senha da conta de câmera. A própria TP-Link sugere trocar as credenciais se houver falha de autenticação por causa deles.
+- **Não reutilize** a senha da sua conta TP-Link nem a do Wi-Fi.
+
+A documentação do ONVIF no Home Assistant também recomenda **criar um usuário exclusivo** para o Home Assistant.
+
+## Passo 2 — Reservar o IP da câmera
+
+Na página do roteador, encontre a câmera na lista de dispositivos conectados e **reserve o endereço IP** dela (o nome do recurso varia: "reserva de DHCP", "IP fixo", "vincular endereço"). Sem isso, o IP pode mudar depois de uma queda de energia, e o Home Assistant perde a câmera.
+
+Anote o IP: ele vai ser usado nos próximos passos.
+
+## Passo 3 — Adicionar a integração ONVIF
+
+1. Vá em **Configurações → Dispositivos e serviços**.
+2. Se a câmera aparecer como **descoberta**, clique em **Configurar**. Se não, clique em **Adicionar integração** e procure **ONVIF**.
+3. Siga as instruções na tela, informando, se pedido:
+   - o **IP** da câmera;
+   - a **porta ONVIF**: segundo a TP-Link, as câmeras Tapo usam a **porta 2020**;
+   - o **usuário** e a **senha** da conta de câmera do passo 1.
+4. Conclua. O Home Assistant cria um **dispositivo** com as entidades da câmera.
+
+## Passo 4 — Conhecer as entidades
+
+Segundo a documentação do ONVIF, a integração cria:
+
+- **Uma entidade de câmera para cada perfil de vídeo H.264.** A Tapo tem um perfil de **alta qualidade** e outro de **qualidade padrão**. O primeiro costuma ser o de maior qualidade e é o padrão. Entidades que você não vai usar podem ser **desativadas**.
+- **Sensores binários de eventos**, como **detecção de movimento**, quando a câmera os envia.
+- Outros sensores e chaves, conforme o que a câmera oferece.
+
+Quais eventos aparecem depende do que cada modelo informa por ONVIF. Abra o dispositivo e confira: o sensor de **movimento** é o mais útil para automações.
+
+### Dica: use o perfil de qualidade padrão no painel
+
+Para ver a câmera em **miniatura** no painel e no celular, o perfil de **qualidade padrão** carrega mais rápido e pesa menos na rede. Deixe o de **alta qualidade** para quando abrir a câmera em tela cheia.
+
+## Passo 5 — Pôr a câmera no painel
+
+1. Abra o painel e entre no modo de **edição**.
+2. Adicione um **cartão de imagem** de câmera, como o **Picture Entity** ou o cartão de **imagem**, escolhendo a entidade da câmera.
+3. Configure o cartão para mostrar a imagem **ao vivo** ou **atualizada periodicamente**, conforme o desempenho da sua rede.
+
+Câmera ao vivo em vários dispositivos ao mesmo tempo **consome rede e processamento**. Em painéis de tablet que ficam ligados o dia todo, a imagem atualizada a cada poucos segundos costuma ser mais leve que o vídeo contínuo. O tutorial [Tablet barato como painel do Home Assistant na parede](/posts/tablet-painel-home-assistant/) mostra como montar um painel fixo.
+
+## Passo 6 — Girar a câmera pelo Home Assistant
+
+A C200 é uma câmera **pan/tilt**, e a integração ONVIF permite controlá-la pela ação **`onvif.ptz`**. Segundo a documentação, os parâmetros principais são:
+
+| Parâmetro | Valores | Para quê |
+|---|---|---|
+| `pan` | `LEFT`, `RIGHT` | girar na horizontal |
+| `tilt` | `UP`, `DOWN` | inclinar na vertical |
+| `zoom` | `ZOOM_IN`, `ZOOM_OUT` | zoom, em câmeras que têm |
+| `distance` | de 0 a 1 (padrão 0,1) | quanto a câmera se move a cada comando |
+| `speed` | de 0 a 1 | velocidade do movimento |
+| `move_mode` | `ContinuousMove`, `RelativeMove`, `AbsoluteMove`, `GotoPreset`, `Stop` (padrão `RelativeMove`) | modo de movimento |
+| `preset` | token da posição salva | usado com `GotoPreset` |
+
+O exemplo da própria documentação gira a câmera para a direita e inclina para cima:
+
+```yaml
+action: onvif.ptz
+target:
+  entity_id: camera.front_door
+data:
+  pan: RIGHT
+  tilt: UP
+```
+
+Troque `camera.front_door` pela entidade da sua câmera. Uma ideia prática: criar **botões** no painel, cada um chamando a ação com uma direção, para girar a câmera sem abrir o app Tapo. A documentação lembra que a câmera precisa **suportar PTZ** para a ação ter efeito.
+
+## Passo 7 — Usar o movimento em automações
+
+O sensor de **movimento** da câmera é um sensor binário como qualquer outro, e pode disparar automações:
+
+- **Notificação com imagem** quando houver movimento com a casa vazia. O tutorial [Notificação no celular com o app do Home Assistant: passo a passo](/posts/notificacao-celular-home-assistant-app/) mostra como enviar o aviso.
+- **Acender a luz** do cômodo quando a câmera detectar movimento à noite, como no tutorial [Luz que acende sozinha: automação por movimento no Home Assistant](/posts/luz-sensor-movimento-home-assistant-blueprint/), usando o sensor da câmera no lugar do sensor PIR.
+- **Girar a câmera** para uma posição salva quando um sensor de porta abrir.
+
+Um cuidado: sensor de movimento de câmera dispara com **sombras, cortinas e pets** mais facilmente que um sensor PIR dedicado. Ajuste a **sensibilidade** e as **zonas** no app Tapo e teste antes de depender dele.
+
+## O limite de "dois de três" da TP-Link
+
+Um detalhe das perguntas frequentes da TP-Link que pega muita gente: **Tapo Care**, **gravação no cartão** e uso por **NVR/NAS/ONVIF** **não funcionam os três ao mesmo tempo**. Só **dois** deles podem estar ativos simultaneamente. Relatos da comunidade da TP-Link indicam que tentar usar todos pode **desativar a conta de câmera**.
+
+Na prática, escolha:
+
+| Combinação | Para quem |
+|---|---|
+| **Cartão + Home Assistant** | quem quer gravação local na câmera e imagem e eventos no HA, sem mensalidade |
+| **Tapo Care + Home Assistant** | quem quer gravação na nuvem, segura contra roubo da câmera |
+| **Cartão + Tapo Care** | quem não usa o HA para a câmera |
+
+Para gravação contínua no cartão, use um cartão **de alta resistência**, feito para vigilância.
+
+![Cartão de memória microSD WD Purple de 64 GB](/images/produtos/microsd-wd-purple-64.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09973KW48?tag=nerdcaseiro-20" store="amazon" source="camera-tapo-home-assistant-sem-nuvem" />
+
+<AffiliateButton href="https://meli.la/2MUiPkp" store="mercadolivre" source="camera-tapo-home-assistant-sem-nuvem" />
+
+## Limite de streams simultâneos
+
+A comunidade da TP-Link informa que a câmera aceita **até dois streams de alta qualidade e dois de qualidade padrão ao mesmo tempo**. Quando todos estão em uso, uma nova conexão falha. Isso explica um problema comum: a câmera funciona no Home Assistant, mas para de abrir no app, ou vice-versa, quando há **muitos painéis** e **gravadores** puxando a imagem ao mesmo tempo.
+
+Se isso acontecer, reduza o número de lugares que abrem o stream ao mesmo tempo, ou use o perfil de qualidade padrão nos painéis.
+
+## Alternativa: câmera genérica por RTSP
+
+Se o ONVIF não funcionar com o seu modelo, ou se você só quer a **imagem**, dá para usar o endereço **RTSP** direto. Segundo a TP-Link, os endereços são:
+
+- **alta qualidade**: `rtsp://IP_DA_CAMERA/stream1`
+- **qualidade padrão**: `rtsp://IP_DA_CAMERA/stream2`
+
+A porta RTSP é a **554**. Se o programa não pedir usuário e senha, a TP-Link indica incluí-los no endereço, no formato `rtsp://usuario:senha@IP:554/stream1`.
+
+Teste o endereço antes num player de vídeo que abra RTSP no computador. Funcionando ali, ele funciona no Home Assistant pela integração de câmera genérica, só com a imagem, sem eventos nem PTZ.
+
+## E a gravação? O Home Assistant não é um gravador
+
+Uma expectativa comum é que, integrada ao Home Assistant, a câmera passe a **gravar no servidor**. Não é assim por padrão: a integração ONVIF entrega **imagem ao vivo**, **eventos** e **controle**, mas o Home Assistant **não grava continuamente** o vídeo da câmera.
+
+Para gravar, há três caminhos:
+
+- **Cartão microSD na própria câmera**, configurado no app Tapo: o mais simples, sem mensalidade.
+- **Tapo Care**, na nuvem da TP-Link, por assinatura.
+- **Um gravador dedicado** (NVR) ou um programa de vigilância num computador ou servidor, ligado à câmera por RTSP/ONVIF.
+
+Existem projetos da comunidade que funcionam junto com o Home Assistant como gravadores e detectores de objetos. Eles exigem mais processamento e configuração, e merecem um tutorial próprio. Para começar, o **cartão na câmera** mais a **integração ONVIF** cobre a maioria das casas, lembrando o limite de **dois de três** da TP-Link.
+
+## Desempenho: o que a câmera pesa no servidor
+
+Ver uma câmera ao vivo no Home Assistant exige **decodificar vídeo**, e isso consome processamento do servidor e da rede. Em instalações modestas, como um Raspberry Pi, alguns cuidados ajudam:
+
+- **Prefira o perfil de qualidade padrão** (stream2) nos painéis e miniaturas; ele tem menos resolução e menos dados.
+- **Desative as entidades** de perfis que você não usa, como recomenda a documentação.
+- **Evite vários painéis** mostrando vídeo ao vivo o tempo todo; imagens atualizadas periodicamente pesam menos.
+- **Uma câmera de cada vez** em tela cheia, no celular, costuma rodar bem; muitas ao mesmo tempo, não.
+
+Se o servidor fica lento quando a câmera está aberta, a câmera não é a culpada: o problema é a decodificação. Reduzir a qualidade do stream é a primeira medida.
+
+## A rede Wi-Fi decide a qualidade
+
+A C200 é uma câmera **Wi-Fi de 2,4 GHz**. Para o Home Assistant, isso significa que a qualidade do vídeo depende diretamente do sinal no ponto de instalação:
+
+- **Sinal fraco** gera imagem travando, quadros cinzas e desconexões que parecem defeito da integração.
+- **Muitos dispositivos** na rede de 2,4 GHz disputam o canal com a câmera.
+- **Roteador longe** e paredes grossas reduzem a velocidade disponível.
+
+Antes de investigar a configuração, confira o sinal: no app Tapo, a câmera costuma mostrar a intensidade do Wi-Fi. Se for fraco, aproxime o roteador, use um ponto de rede **mesh** ou um repetidor. O comparativo [Os melhores roteadores mesh Wi-Fi para casa em 2026](/posts/melhores-roteadores-mesh-wifi-casa-2026/) ajuda a escolher.
+
+## Teste o stream fora do Home Assistant primeiro
+
+Uma regra de ouro para depurar câmeras: **teste o endereço RTSP num player de vídeo** no computador, antes de configurar o Home Assistant. Players que abrem "fluxo de rede" aceitam o endereço `rtsp://usuario:senha@IP:554/stream1`.
+
+- **Se abre no player**, a câmera, a conta e a rede estão certas, e o problema, se houver, está na configuração do Home Assistant.
+- **Se não abre no player**, o problema é anterior: conta de câmera, IP, rede ou o limite de streams.
+
+Esse teste separa em minutos um problema que, olhando só para o Home Assistant, pode levar horas.
+
+## Acesso de fora de casa, com segurança
+
+A TP-Link é clara: para ver o RTSP remotamente, a recomendação é **VPN**, e **abrir portas da câmera para a internet** por muito tempo **não é aconselhável**, por risco de segurança.
+
+Com o Home Assistant, há um caminho melhor: a câmera fica **só na rede local**, e você acessa o **Home Assistant** de fora, de forma segura. O tutorial [Acesso remoto ao Home Assistant sem abrir porta no roteador](/posts/acesso-remoto-home-assistant-sem-abrir-porta/) mostra as opções. Assim, a câmera nunca fica exposta diretamente.
+
+## Problemas comuns
+
+| Problema | Causa provável | O que fazer |
+|---|---|---|
+| "No usable cameras were found" | a câmera só transmite H.265 | configure um stream em H.264, como indica a documentação |
+| Falha de autenticação | conta de câmera errada ou com caracteres especiais | recrie a conta no app Tapo, sem caracteres especiais |
+| Câmera não é descoberta | rede diferente da do HA | adicione pelo IP; deixe na mesma sub-rede |
+| Imagem trava ou não carrega | Wi-Fi fraco; muitos streams abertos | melhore o sinal; use o perfil de qualidade padrão |
+| Para de gravar no cartão | Tapo Care, cartão e ONVIF ativos juntos | use só dois dos três |
+| Sem imagem estática (snapshot) | perfil sem snapshot | a documentação sugere ativar outros perfis ou usar argumentos extras do FFmpeg |
+| Some depois de um tempo | IP mudou | reserve IP fixo no roteador |
+
+Para depurar eventos, a documentação do ONVIF sugere ativar o log em nível `info` para `homeassistant.components.onvif`.
+
+## E câmeras de outras marcas?
+
+O **ONVIF** é um padrão da indústria de vigilância, e o mesmo caminho deste tutorial serve para muitas câmeras de outras marcas que o suportam. Antes de comprar uma câmera pensando no Home Assistant, vale conferir na ficha do fabricante:
+
+- se ela suporta **ONVIF** e qual **perfil** (o Profile S é o de vídeo);
+- se oferece **RTSP** com endereço documentado;
+- se transmite em **H.264** em pelo menos um perfil, já que a documentação do Home Assistant indica que câmeras só em **H.265** não aparecem como utilizáveis na integração ONVIF;
+- se exige alguma **conta local** ou ativação de recurso no app, como a conta de câmera da Tapo.
+
+Câmeras que só funcionam pelo app e pela nuvem do fabricante, sem ONVIF nem RTSP, ficam fora do Home Assistant, ou dependem de integrações de terceiros. O comparativo [As 6 melhores câmeras IP para casa inteligente](/posts/melhores-cameras-ip-casa-inteligente/) traz outras opções com esse olhar.
+
+## Organize antes de crescer
+
+Quando a casa passa de uma câmera para várias, alguns hábitos facilitam a vida:
+
+- **Renomeie as entidades** com o lugar: "Câmera da sala", "Câmera da garagem".
+- **Atribua cada câmera a uma área** do Home Assistant.
+- **Desative** os perfis e sensores que você não vai usar.
+- **Agrupe** as câmeras num painel próprio de segurança, separado do painel do dia a dia.
+- **Documente** o IP reservado e a conta de câmera de cada uma num lugar seguro.
+
+## Privacidade
+
+Trazer a câmera para o Home Assistant **não elimina** a conta TP-Link, mas permite usar a imagem **localmente**. Algumas boas práticas:
+
+- **Senha forte** na conta de câmera e na conta TP-Link;
+- **Firmware atualizado** pelo app;
+- **Rede separada** para dispositivos de casa inteligente, se o roteador permitir;
+- **Zonas de privacidade** configuradas no app Tapo, que valem também para a imagem enviada;
+- **Acesso remoto** só pelo Home Assistant protegido, nunca com portas abertas na câmera.
+
+## Resumo
+
+1. Escolha o caminho: **ONVIF** (imagem, movimento e PTZ), seguido neste tutorial; **integração TP-Link**, que também aceita a C200 conforme a lista do python-kasa; ou **RTSP**, só para imagem.
+2. Crie a **conta de câmera** no app Tapo (6 a 32 caracteres, sem caracteres especiais).
+3. **Reserve o IP** da câmera no roteador.
+4. Adicione a integração **ONVIF** com o IP, a **porta 2020** e a conta de câmera.
+5. Use o **perfil de qualidade padrão** nos painéis e a ação **`onvif.ptz`** para girar a câmera.
+6. Respeite o limite de **dois de três** (Tapo Care, cartão, ONVIF) e o limite de **streams simultâneos**.
+7. Acesse de fora pelo **Home Assistant**, nunca abrindo portas da câmera.
+
+## Fontes
+
+- Home Assistant — [integração ONVIF](https://www.home-assistant.io/integrations/onvif/) (configuração, entidades, opções e troubleshooting) e [ação onvif.ptz](https://www.home-assistant.io/actions/onvif.ptz/)
+- Home Assistant — [integração TP-Link Smart Home](https://www.home-assistant.io/integrations/tplink/) (câmeras Tapo) e [lista de dispositivos suportados do python-kasa](https://github.com/python-kasa/python-kasa/blob/master/SUPPORTED.md)
+- TP-Link — [How to View Tapo Camera on PC, NAS, or NVR Using RTSP/ONVIF](https://www.tp-link.com/us/support/faq/2680/) e [Tapo Camera ONVIF and RTSP Common Questions](https://www.tp-link.com/us/support/faq/4465/) (conta de câmera, portas, endereços RTSP, limite de armazenamento e acesso remoto)
+- TP-Link Community — [Integrate Your Tapo Cameras into an Existing NVR or NAS with ONVIF and RTSP](https://community.tp-link.com/us/smart-home/kb/detail/412794)
+- Home Assistant — [release 2026.10.0](https://github.com/home-assistant/core/releases/tag/2026.10.0)

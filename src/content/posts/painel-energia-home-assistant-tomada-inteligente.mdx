@@ -1,0 +1,332 @@
+---
+title: 'Painel de energia do Home Assistant com tomada inteligente'
+description: 'Passo a passo, pela documentação oficial, para medir o consumo de aparelhos com tomada inteligente e ver o gasto no painel de energia do HA.'
+pubDate: 2026-10-13T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'energia', 'tapo-p110', 'tomada-inteligente', 'consumo', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link Tapo P110, tomada inteligente Wi-Fi com monitoramento de energia, 10 A, bivolt'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2b3KeRZ'
+    image: '/images/produtos/tapo-p110.webp'
+    pros:
+      - 'Mede o consumo do aparelho ligado nela'
+      - 'Integração TP-Link oficial do Home Assistant, com consulta local'
+      - 'Bivolt, 10 A / 2.400 W'
+      - 'Mais de 1.800 avaliações, nota 4,8'
+    cons:
+      - '10 A: não serve para chuveiro, forno elétrico ou ar-condicionado grande'
+      - 'Pode exigir ativar a compatibilidade com terceiros no app Tapo'
+faq:
+  - question: 'Preciso de medidor na casa inteira para usar o painel de energia?'
+    answer: 'Não para medir aparelhos. Uma tomada inteligente com medição alimenta a seção de dispositivos individuais do painel de energia. O medidor da casa inteira serve para ver o consumo total da rede, que é outra seção do painel.'
+  - question: 'A Tapo P110 funciona sem internet no Home Assistant?'
+    answer: 'A integração TP-Link do Home Assistant consulta a tomada pela rede local, a cada poucos segundos, segundo a documentação. A configuração pede as credenciais da conta TP-Link, e alguns firmwares exigem ativar a compatibilidade com terceiros no app Tapo.'
+  - question: 'Por que meu sensor não aparece na lista do painel de energia?'
+    answer: 'O painel só aceita sensores de energia com device_class energy e state_class total ou total_increasing, sem erros de estatística. Se a tomada só expõe potência em watts, crie um sensor Integral sobre a potência para obter a energia em kWh.'
+  - question: 'Quanto tempo leva para os dados aparecerem?'
+    answer: 'O painel de energia trabalha com estatísticas de longo prazo, agregadas ao longo do tempo. Logo depois de configurar, é normal ver pouca informação; os gráficos ficam úteis depois de algumas horas e de alguns dias de coleta.'
+  - question: 'Posso ligar o chuveiro numa tomada inteligente?'
+    answer: 'Não. A Tapo P110 suporta 10 A e 2.400 W. Chuveiro, forno elétrico, aquecedor potente e ar-condicionado grande passam desse limite. Para esses aparelhos, a medição é feita com medidores de circuito instalados no quadro, por eletricista.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Quanto a geladeira gasta por mês? O computador ligado o dia inteiro pesa na conta? A máquina de café fica consumindo energia parada? O **painel de energia** do Home Assistant responde esse tipo de pergunta com números, e a forma mais simples de alimentá-lo é uma **tomada inteligente com medição de consumo**.
+
+Este tutorial segue a **documentação oficial do Home Assistant** (versão **2026.10.0**, a mais recente quando o texto foi escrito) e usa como exemplo a **TP-Link Tapo P110**, que tem integração oficial com consulta pela rede local. O caminho é o mesmo para outras tomadas com medição: o que muda é a integração de cada marca.
+
+![Tomada inteligente TP-Link Tapo P110 branca, padrão brasileiro](/images/produtos/tapo-p110.webp)
+
+## Antes de tudo: potência não é energia
+
+O painel de energia trabalha com dois tipos de medida, e confundi-los é a origem da maioria dos problemas de configuração. A documentação do Home Assistant resume: **potência** é medida em **watts (W)**; **energia** é medida em **quilowatt-hora (kWh)**.
+
+- **Potência (W)** é o quanto o aparelho está puxando **agora**. A geladeira com o motor ligado pode estar em 120 W; com o motor parado, em poucos watts.
+- **Energia (kWh)** é a **soma** dessa potência ao longo do tempo. É o que a distribuidora cobra na conta.
+
+Matematicamente, como a própria documentação explica, energia é a **integral da potência no tempo**. Um aparelho de 100 W ligado por 10 horas consome 1 kWh.
+
+O painel de energia mostra **energia**. Se a sua tomada só informa potência, é preciso transformar potência em energia, e o Home Assistant tem uma ferramenta para isso, explicada mais adiante.
+
+## O que você precisa
+
+- **Home Assistant** funcionando, na mesma rede da tomada.
+- **Uma tomada inteligente com medição de consumo**, compatível com o Home Assistant.
+- **O aparelho** que você quer medir, dentro do limite da tomada.
+
+### A tomada
+
+A **Tapo P110** é uma tomada Wi-Fi da TP-Link, **bivolt**, de **10 A / 2.400 W**, com **monitoramento de energia**. A **integração TP-Link** do Home Assistant lista a P110 entre as tomadas Tapo suportadas e cria os sensores de consumo quando o dispositivo oferece essa função. Pela documentação, a integração é do tipo **Local Polling**: o Home Assistant consulta a tomada **pela rede local**, a cada poucos segundos, sem depender da nuvem da TP-Link para ler os dados.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20" store="amazon" source="painel-energia-home-assistant-tomada-inteligente" />
+
+<AffiliateButton href="https://meli.la/2b3KeRZ" store="mercadolivre" source="painel-energia-home-assistant-tomada-inteligente" />
+
+### O limite de 10 A
+
+Toda tomada inteligente tem um limite de corrente. A P110 suporta **10 A**, ou **2.400 W**. Isso exclui os maiores consumidores da casa:
+
+| Aparelho | Serve na P110? |
+|---|---|
+| Geladeira, freezer | sim |
+| Computador, monitor, TV, videogame | sim |
+| Máquina de café, micro-ondas pequeno | confira a potência na etiqueta |
+| Ventilador, umidificador, aquário | sim |
+| Máquina de lavar (sem aquecimento) | confira a potência na etiqueta |
+| Ar-condicionado | só os pequenos, e nunca acima de 10 A |
+| **Chuveiro, forno elétrico, aquecedor potente** | **não** |
+
+A potência máxima está na **etiqueta** ou no **manual** de cada aparelho. Na dúvida, não arrisque: tomada sobrecarregada esquenta. O guia [Tomada inteligente de 20 A: quais aparelhos da casa pedem ela](/posts/tomada-inteligente-20a-quais-aparelhos/) explica os aparelhos que exigem mais corrente.
+
+## Por que escolher bem a tomada
+
+Muitas tomadas inteligentes vendidas no Brasil medem consumo, mas nem todas entregam os dados ao Home Assistant do mesmo jeito. Antes de comprar, vale entender as três situações mais comuns:
+
+| Tipo de integração | Como os dados chegam | Consequência |
+|---|---|---|
+| **Local** (como a TP-Link, por consulta na rede) | o Home Assistant lê a tomada direto | funciona sem internet; atualização frequente |
+| **Nuvem** (como a integração Tuya oficial) | o Home Assistant lê da nuvem do fabricante | depende de internet; intervalos podem ser maiores |
+| **Sem integração** | os dados ficam só no app do fabricante | não serve para o painel do Home Assistant |
+
+Para o painel de energia, a integração **local** tem vantagem: a leitura frequente da potência deixa o sensor Integral mais preciso, e uma queda de internet não abre buracos no histórico.
+
+Tomadas da plataforma **Tuya**, muito comuns no Brasil sob várias marcas, podem ser levadas ao Home Assistant pela integração Tuya oficial, que trabalha pela nuvem. O tutorial [Dispositivos Tuya (Positivo, EKAZA) no Home Assistant: passo a passo](/posts/tuya-positivo-ekaza-home-assistant/) mostra o caminho. Se a tomada Tuya expõe a potência no Home Assistant, o mesmo sensor Integral deste tutorial transforma potência em energia.
+
+Uma regra simples para não errar na compra: antes de escolher a tomada, procure a **página da integração** da marca na documentação do Home Assistant e confira se ela cita **sensores de energia ou potência** para o modelo.
+
+## Passo 1 — Configurar a tomada no app Tapo
+
+1. Instale o **app Tapo** e crie a conta TP-Link.
+2. Adicione a P110 seguindo o app e conecte-a ao Wi-Fi de **2,4 GHz**.
+3. Confira se o consumo aparece no app: ligue um aparelho e veja a potência mudar.
+
+### O detalhe que trava a maioria: compatibilidade com terceiros
+
+A documentação da integração avisa que **algumas versões de firmware exigem ativar a opção "Third-Party Compatibility"** (compatibilidade com terceiros) no app oficial. No app **Tapo**, ela fica no **Tapo Lab**. Sem isso, o Home Assistant pode não conseguir autenticar.
+
+Ative a opção antes de seguir. É a causa mais comum de "falha de autenticação" relatada por quem configura tomadas Tapo no Home Assistant.
+
+## Passo 2 — Adicionar a integração TP-Link no Home Assistant
+
+1. Vá em **Configurações → Dispositivos e serviços**.
+2. O Home Assistant costuma **descobrir** a P110 sozinho; ela aparece como descoberta. Se não aparecer, clique em **Adicionar integração** e procure **TP-Link Smart Home**.
+3. Informe o **endereço IP** da tomada (se não foi descoberta) e as **credenciais da conta TP-Link**: o e-mail e a senha usados no app.
+
+Três cuidados que a documentação destaca:
+
+- **O e-mail diferencia maiúsculas de minúsculas.** Digite exatamente como cadastrou.
+- **A descoberta não funciona entre sub-redes.** Se a tomada está numa rede separada (de convidados, por exemplo), adicione manualmente pelo IP.
+- **Use IP fixo** para a tomada, reservando o endereço no roteador. Se o IP mudar, a integração perde a tomada.
+
+## Passo 3 — Conhecer os sensores
+
+Depois de adicionada, a tomada aparece como um **dispositivo** com várias entidades. Além do **interruptor** (liga e desliga), a integração cria os **sensores de consumo** que a tomada oferece. Os mais úteis são:
+
+- **Potência atual**, em watts: o que o aparelho puxa agora.
+- **Consumo de hoje**, em kWh: a energia acumulada no dia.
+- **Consumo do mês**, em kWh, quando disponível.
+
+Um detalhe da documentação: o sensor de **consumo total** (o acumulado desde sempre) é reportado só por dispositivos **Kasa antigos**. Tomadas **Tapo** não o reportam. Isso não impede o uso no painel, como você verá a seguir.
+
+Abra o sensor de **potência** e ligue e desligue o aparelho: o valor deve mudar em poucos segundos.
+
+## Passo 4 — Escolher o sensor certo para o painel
+
+O painel de energia é exigente. Segundo a documentação, para uma entidade de energia aparecer nele:
+
+- ela precisa ser um **sensor**;
+- com **device_class: energy**;
+- com **state_class: total** ou **total_increasing**;
+- numa **unidade suportada** (kWh ou Wh, por exemplo);
+- e **sem erros de estatística**.
+
+Há dois caminhos:
+
+**Caminho A — usar o sensor de energia da própria tomada.** Se o sensor de consumo da P110 aparece na lista de seleção do painel (passo 5), use-o. Sensores que zeram todo dia, como o de consumo de hoje, são tratados pelo Home Assistant quando têm o `state_class` adequado.
+
+**Caminho B — criar a energia a partir da potência.** Se nenhum sensor de energia da tomada aparece na lista, ou se você quer uma medida contínua, crie um sensor **Integral** sobre o sensor de **potência**. É o que a documentação recomenda para aparelhos que só informam potência.
+
+## Passo 5 (caminho B) — Criar o sensor Integral
+
+O **Integral** é um auxiliar (helper) que soma a potência ao longo do tempo, usando a aproximação numérica conhecida como **soma de Riemann**. Pela interface:
+
+1. Vá em **Configurações → Dispositivos e serviços → Auxiliares** (Helpers).
+2. Clique em **Criar auxiliar** e escolha **Integral**.
+3. Preencha:
+   - **Nome**: por exemplo, "Energia da geladeira".
+   - **Sensor de entrada**: o sensor de **potência** da tomada.
+   - **Método de integração**: veja a explicação abaixo.
+   - **Precisão**: 2 ou 3 casas decimais bastam.
+   - **Prefixo métrico**: **k** (quilo), para o resultado sair em **kWh**.
+   - **Unidade de tempo**: **h** (hora).
+4. Salve.
+
+O resultado é um novo sensor, em **kWh**, com a classe de energia, pronto para o painel.
+
+### Qual método escolher
+
+A documentação explica os três métodos:
+
+- **trapezoidal** (padrão): o mais preciso quando o sensor **atualiza com frequência**.
+- **left**: tende a **subestimar**, mas é **muito preciso para sinais em degrau**, que ficam estáveis por longos períodos.
+- **right**: parecido com o left, mas tende a **superestimar**.
+
+Aparelhos como **geladeira** e **aquecedor de aquário** ligam e desligam em degraus: ficam numa potência por um tempo e mudam de uma vez. Para eles, a documentação indica o método **left** como o mais adequado. Como a integração TP-Link consulta a tomada a cada poucos segundos, o **trapezoidal** também funciona bem na maior parte dos casos.
+
+Para quem prefere YAML, a documentação traz este exemplo, que cria um sensor de energia em kWh a partir de um sensor de potência:
+
+```yaml
+sensor:
+  - platform: integration
+    source: sensor.current_power
+    name: energy_spent
+    unit_prefix: k
+    round: 2
+    max_sub_interval:
+      minutes: 5
+```
+
+Troque `sensor.current_power` pelo sensor de potência da sua tomada. Para usar o método left, a documentação orienta acrescentar `method: left` no mesmo bloco. O `max_sub_interval` faz o sensor atualizar mesmo quando a potência não muda, o que é útil para aparelhos que passam horas na mesma potência.
+
+## Passo 6 — Adicionar ao painel de energia
+
+1. Vá em **Configurações → Painéis → Energia** (Settings > Dashboards > Energy).
+2. Na seção de **dispositivos individuais**, adicione um dispositivo.
+3. Escolha o sensor de **energia** (o da tomada ou o Integral criado).
+4. Salve.
+
+A documentação lembra que **só estatísticas compatíveis** aparecem para seleção. Se o sensor não está na lista, volte ao passo 4: ele não tem a classe, o `state_class` ou a unidade exigidos.
+
+Repita para cada tomada. Cada aparelho medido vira uma barra no gráfico de dispositivos individuais.
+
+## Passo 7 — Esperar e ler os gráficos
+
+O painel de energia trabalha com **estatísticas de longo prazo**, agregadas ao longo do tempo. Logo depois de configurar, os gráficos aparecem quase vazios. Isso é normal. Em algumas horas, aparecem as primeiras barras; em alguns dias, o quadro fica útil.
+
+O que observar:
+
+- **Consumo diário** de cada aparelho, e como ele varia de um dia para o outro.
+- **Picos**: horários em que o aparelho consome mais.
+- **Consumo "parado"**: aparelhos que deveriam estar desligados e continuam gastando.
+
+## Transformando kWh em reais
+
+O painel mostra **kWh**. Para saber o custo, multiplique pela **tarifa** da sua distribuidora, que aparece na conta de luz (com impostos e bandeira, o valor por kWh muda de região para região e de mês para mês).
+
+Uma conta de exemplo: um aparelho que consome **0,5 kWh por dia** gasta cerca de **15 kWh por mês**. Multiplique 15 pela tarifa por kWh da sua conta para ter o custo mensal desse aparelho.
+
+O painel de energia também permite configurar o **preço da energia** na parte da **rede elétrica**, para mostrar custos. Isso faz mais sentido quando você tem um **medidor da casa inteira**; para aparelhos individuais, a conta manual com a tarifa da conta de luz já responde à pergunta principal.
+
+## O que medir primeiro
+
+Algumas ideias de aparelhos que costumam surpreender:
+
+| Aparelho | Por que medir |
+|---|---|
+| **Geladeira antiga** | geladeiras mais velhas podem consumir bem mais que as novas; os números ajudam a decidir a troca |
+| **Freezer** | fica ligado 24 horas; vedação gasta aumenta o consumo |
+| **Computador e monitor** | uso longo diário; consumo em repouso |
+| **TV, videogame e decodificador** | consumo em espera, que existe mesmo "desligado" |
+| **Aquecedor de aquário** | liga e desliga o dia todo; consumo maior no inverno |
+| **Desumidificador** | uso contínuo em épocas úmidas |
+| **Máquina de café** | aquecimento constante em alguns modelos |
+
+Comece pelo aparelho que **mais te intriga** e meça por pelo menos uma semana: consumo de um dia isolado engana, porque varia com o uso e com a temperatura.
+
+## Medindo o consumo em espera
+
+Um dos achados mais comuns de quem começa a medir é o **consumo em espera** (stand-by): aparelhos "desligados" que continuam puxando alguns watts, 24 horas por dia. TV, decodificador, caixa de som, carregadores, micro-ondas com relógio e computadores em repouso são os suspeitos de sempre.
+
+Como medir:
+
+1. Ligue o aparelho na tomada inteligente e **desligue-o pelo botão ou controle remoto**, do jeito que ele fica no dia a dia.
+2. Observe o sensor de **potência** por alguns minutos. Esse é o consumo em espera.
+3. Multiplique pelos **24 horas** e pelos **30 dias**: um aparelho que puxa 5 W em espera consome cerca de **3,6 kWh por mês** sem estar sendo usado.
+
+Um único aparelho em espera pesa pouco. A soma de vários, num rack de TV com decodificador, videogame, caixa de som e roteador, pode virar um valor visível na conta. É aí que a automação de **desligar a tomada à noite** se paga.
+
+## Comparar antes e depois
+
+O painel de energia é ótimo para **testar mudanças** e ver o efeito em números, sem achismo. Alguns exemplos:
+
+- **Geladeira**: meça uma semana, ajuste o termostato para uma posição intermediária ou limpe a grade de trás, e meça outra semana.
+- **Freezer**: meça antes e depois de trocar a borracha de vedação.
+- **Computador**: compare dias com o modo de suspensão ativado e desativado.
+- **Aquário**: compare o consumo do aquecedor em semanas frias e quentes, e com e sem tampa.
+
+Duas regras para a comparação ser justa: **mesma duração** (uma semana contra uma semana) e **condições parecidas** (temperatura e uso). Consumo de geladeira muda muito com o calor e com a quantidade de vezes que a porta é aberta.
+
+## Organize antes de crescer
+
+Quando a casa passa de duas ou três tomadas medidas, a organização faz diferença:
+
+- **Renomeie as entidades** com o nome do aparelho, não da tomada: "Potência da geladeira", não "Tapo P110 3".
+- **Atribua cada dispositivo à área** certa (cozinha, sala, escritório). O Home Assistant usa as áreas para organizar painéis e automações.
+- **Anote** que aparelho está em cada tomada. Se trocar o aparelho de tomada, renomeie, ou o histórico do painel fica misturado.
+- **Não troque o sensor** de um dispositivo já no painel sem necessidade: o histórico fica preso à entidade antiga.
+
+## Quando o número parece errado
+
+Tomadas inteligentes medem bem, mas não são medidores de laboratório. Se um número parecer estranho:
+
+- **Compare com a etiqueta** do aparelho: a potência informada pelo fabricante é a máxima; o consumo real costuma ser menor e variar.
+- **Observe o ciclo** completo: geladeira com o compressor ligado e desligado, máquina de lavar em cada etapa. Um instante isolado não representa o uso.
+- **Verifique se outro aparelho** não está ligado no mesmo ponto, por extensão.
+- **Desconfie de picos** isolados absurdos no painel: podem ser falhas de estatística, que a documentação sugere investigar nas estatísticas do Home Assistant.
+
+## Automações que nascem do consumo
+
+Com o consumo medido, o Home Assistant pode **agir** a partir dele. Algumas ideias que usam o sensor de **potência**:
+
+- **Aviso de máquina de lavar terminada**: quando a potência cai abaixo de um valor por alguns minutos, o celular recebe uma notificação. O tutorial [Notificação no celular com o app do Home Assistant: passo a passo](/posts/notificacao-celular-home-assistant-app/) mostra como enviar o aviso.
+- **Desligar o "consumo fantasma"**: à noite, desligar a tomada da TV, do videogame e do decodificador, que gastam energia em espera.
+- **Alerta de geladeira**: se a potência ficar zerada por muito tempo, avisar que a geladeira pode ter desligado.
+- **Aquário**: acompanhar se o aquecedor está ligando mais que o normal, um sinal de que a temperatura ambiente caiu ou de que o termostato está com problema.
+
+## Problemas comuns
+
+| Problema | Causa provável | Solução |
+|---|---|---|
+| Falha de autenticação ao adicionar | compatibilidade com terceiros desativada; e-mail digitado com maiúsculas diferentes | ative a opção no Tapo Lab; confira o e-mail exato |
+| Tomada não é descoberta | rede diferente da do Home Assistant | adicione pelo IP; deixe na mesma sub-rede |
+| Tomada some depois de um tempo | IP mudou | reserve IP fixo no roteador |
+| Sensor não aparece no painel | falta classe, state_class ou unidade; erro de estatística | use o Integral sobre a potência; confira em Ferramentas de desenvolvedor → Estatísticas |
+| Gráfico vazio logo após configurar | estatísticas ainda não agregadas | espere algumas horas |
+| Valores absurdos num dia | sensor que zera somado a outro, ou erro de estatística | a documentação recomenda adicionar cada sensor acumulativo separadamente |
+
+A documentação também orienta, em caso de sensor ausente na lista de seleção, verificar se a entidade está sendo **registrada pelo Recorder**, o componente que guarda o histórico do Home Assistant.
+
+## Segurança elétrica
+
+Tomada inteligente é um equipamento elétrico como outro qualquer:
+
+- **Respeite os 10 A.** Aparelhos de aquecimento são os que mais passam do limite.
+- **Não ligue benjamim ou extensão com vários aparelhos** na tomada inteligente para medir "tudo junto": a soma pode passar do limite. O guia [Extensão, benjamim e adaptador: como usar sem risco de incêndio](https://reformacaseira.com.br/posts/extensao-benjamim-adaptador-seguranca/), do Reforma Caseira, explica os riscos.
+- **Tomada quente** ao toque é sinal de problema: desligue o aparelho e verifique.
+- Para medir o **consumo da casa inteira** ou de **circuitos** como o do chuveiro, existem medidores instalados no **quadro de distribuição**. Esse trabalho é de **eletricista**, não de tomada.
+
+## Resumo
+
+1. Entenda a diferença: **potência (W)** é o agora; **energia (kWh)** é o acumulado.
+2. Configure a **Tapo P110** no app e ative a **compatibilidade com terceiros** no Tapo Lab, se o firmware pedir.
+3. Adicione a integração **TP-Link Smart Home** com as credenciais da conta e **IP fixo**.
+4. Use o sensor de energia da tomada ou crie um **Integral** sobre a potência, com prefixo **k** e unidade **h**.
+5. Adicione o sensor em **Configurações → Painéis → Energia → dispositivos individuais**.
+6. Espere os dados se acumularem e **multiplique os kWh pela tarifa** da sua conta.
+
+## Fontes
+
+- Home Assistant — [integração TP-Link Smart Home](https://www.home-assistant.io/integrations/tplink/) (dispositivos, credenciais, compatibilidade com terceiros, Local Polling)
+- Home Assistant — [painel de energia](https://www.home-assistant.io/docs/energy/) e [dispositivos individuais](https://www.home-assistant.io/docs/energy/individual-devices/)
+- Home Assistant — [FAQ de energia](https://www.home-assistant.io/docs/energy/faq/) (requisitos de device_class, state_class e unidades)
+- Home Assistant — [integração Integral](https://www.home-assistant.io/integrations/integration/) (métodos e exemplo YAML)
+- Home Assistant — [release 2026.10.0](https://github.com/home-assistant/core/releases/tag/2026.10.0)

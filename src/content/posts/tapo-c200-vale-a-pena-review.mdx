@@ -1,0 +1,372 @@
+---
+title: 'Câmera Tapo C200 vale a pena? Review da câmera Wi-Fi 360°'
+description: 'Giro de 360°, visão noturna, cartão microSD e app: o que a Tapo C200 entrega dentro de casa, onde ela falha e como fica a privacidade.'
+pubDate: 2026-10-14
+category: 'casa-inteligente'
+tags: ['camera', 'tapo', 'c200', 'tp-link', 'seguranca', 'review']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link Tapo C200, câmera Wi-Fi 360°, 1080p, visão noturna'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2ZDZoL4'
+    image: '/images/produtos/tapo-c200-camera.webp'
+    pros:
+      - '360° na horizontal e 114° na vertical, controlados pelo app'
+      - 'Visão noturna infravermelha até 9 m'
+      - 'Gravação local em microSD de até 512 GB, sem mensalidade'
+      - 'RTSP e ONVIF: funciona com gravadores e Home Assistant'
+      - 'Mais de 150 mil avaliações, nota 4,8'
+    cons:
+      - 'Só Wi-Fi de 2,4 GHz'
+      - 'Para ambiente interno'
+      - 'Detecção avançada e nuvem dependem de assinatura'
+  - name: 'TP-Link Tapo C210, câmera Wi-Fi 360°, 2K 3 MP'
+    brand: 'TP-Link'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B095CLQ1PT?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1ZHueUX'
+    image: '/images/produtos/tapo-c210.webp'
+    pros:
+      - 'Resolução 2K (3 MP) para mais detalhe'
+      - 'Mesmo app e mesmo formato da C200'
+      - 'Também funciona com a integração TP-Link do Home Assistant'
+    cons:
+      - 'Mais cara'
+  - name: 'Cartão microSD 64 GB WD Purple Intelbras, para gravação contínua'
+    brand: 'WD / Intelbras'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09973KW48?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2MUiPkp'
+    image: '/images/produtos/microsd-wd-purple-64.webp'
+    pros:
+      - 'Feito para gravação 24 horas'
+      - 'Monitoramento de vida útil e 3 anos de garantia, segundo o anúncio'
+    cons:
+      - '64 GB guarda poucos dias em gravação contínua'
+faq:
+  - question: 'A Tapo C200 grava sem internet?'
+    answer: 'Com um cartão microSD, ela grava localmente mesmo que a internet caia, desde que continue ligada na tomada. O acesso remoto pelo celular é que depende de internet.'
+  - question: 'Precisa pagar mensalidade?'
+    answer: 'Não para o básico. A gravação em microSD, a visualização ao vivo e as notificações de movimento funcionam sem assinatura. O Tapo Care, pago, adiciona armazenamento em nuvem e recursos extras; a TP-Link oferece 30 dias de teste.'
+  - question: 'Funciona no Wi-Fi de 5 GHz?'
+    answer: 'Não. Segundo a TP-Link, a Tapo C200 V3 é só 2,4 GHz (802.11b/g/n).'
+  - question: 'Posso usar do lado de fora de casa?'
+    answer: 'Ela é uma câmera para ambiente interno. Para área externa, exposta a chuva e sol, a própria linha Tapo tem modelos externos com proteção contra água.'
+  - question: 'Dá para usar no Home Assistant?'
+    answer: 'Sim. A C200 suporta RTSP e ONVIF, que o Home Assistant aceita por integrações próprias, e também funciona pela integração TP-Link: ela não aparece na tabela resumida da documentação do Home Assistant, mas está na lista atualizada da biblioteca python-kasa, que a documentação indica, testada no hardware 1.0 com firmware 1.3.17.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+
+A **TP-Link Tapo C200** é provavelmente a câmera de segurança mais vendida do Brasil, e uma das mais avaliadas da Amazon em qualquer categoria: são mais de **150 mil avaliações, com nota 4,8**. É uma câmera de mesa ou de parede, **Wi-Fi**, que **gira** para olhar o cômodo inteiro, **enxerga no escuro** e grava num **cartão microSD**, sem mensalidade.
+
+Este review usa as **especificações oficiais da TP-Link** para a versão atual (**V3**) para mostrar o que ela entrega, onde ela tem limites, como escolher onde instalar e os cuidados de **privacidade** e **segurança da conta** que muita gente esquece. Para quem usa **Home Assistant**, há uma seção sobre RTSP e ONVIF.
+
+![Câmera Wi-Fi TP-Link Tapo C200 branca, com a lente na parte esférica](/images/produtos/tapo-c200-camera.webp)
+
+## As especificações oficiais
+
+| Item | Tapo C200 (V3) |
+|---|---|
+| **Resolução** | 1080p Full HD (1920 × 1080), 15 fps |
+| **Rotação** | 360° na horizontal e 114° na vertical (cobertura) |
+| **Visão noturna** | infravermelho de 850 nm, até 9 m; modos IR, colorido e inteligente |
+| **Áudio** | microfone e alto-falante, áudio bidirecional com cancelamento de ruído |
+| **Sirene** | 93 dB |
+| **Detecção** | movimento, pessoas e choro de bebê |
+| **Zonas** | zonas de atividade e zonas de privacidade |
+| **Armazenamento local** | microSD de até 512 GB |
+| **Nuvem** | Tapo Care, por assinatura (30 dias de teste) |
+| **Wi-Fi** | apenas 2,4 GHz (802.11b/g/n) |
+| **Assistentes** | Alexa e Google Assistente |
+| **Protocolos** | RTSP e ONVIF |
+| **Alimentação** | fonte de 9 V, entrada bivolt, cabo de 3 m |
+| **Consumo** | típico de 2 W, máximo de 4,5 W |
+
+*Fonte: página da Tapo C200 V3 no site da TP-Link Brasil.*
+
+## O que significa "360°"
+
+A C200 é uma câmera **pan/tilt**: ela tem dois motores que **giram a lente** na horizontal e na vertical. Pelo app, você arrasta o dedo na imagem e a câmera vira. Na prática, isso significa que **uma câmera no canto de um cômodo vê o cômodo inteiro**, não só um ângulo fixo.
+
+O detalhe técnico: a lente em si vê um pedaço do ambiente de cada vez; o "360°" é a soma das posições que os motores alcançam. A TP-Link informa **360° na horizontal** e **114° de cobertura na vertical**. A câmera **não grava** os 360° ao mesmo tempo: ela grava para onde estiver apontada.
+
+Recursos que tiram proveito do giro:
+
+- **Posições salvas**: você marca pontos, como a porta, o berço ou o sofá, e a câmera vai até eles com um toque.
+- **Patrulha**: a câmera passa sozinha pelas posições salvas, de tempos em tempos.
+- **Rastreamento de movimento**: ela pode acompanhar uma pessoa ou animal que se move no campo de visão.
+
+## Imagem: 1080p a 15 quadros
+
+A C200 grava em **Full HD (1080p)** a **15 quadros por segundo**. Para monitorar a casa, isso é suficiente: dá para ver quem está no cômodo, o que o cachorro está fazendo e se a porta abriu. Os **15 fps** deixam movimentos rápidos um pouco "picados", mas não atrapalham a função de vigilância.
+
+O limite aparece nos **detalhes à distância**: ler um rosto do outro lado de uma sala grande ou uma placa de carro não é tarefa para 1080p. Para mais detalhe, a **Tapo C210**, analisada mais abaixo, sobe para **2K (3 MP)**.
+
+## Visão noturna: infravermelho e colorida
+
+No escuro, a C200 liga **LEDs infravermelhos de 850 nm**, invisíveis para nós (às vezes aparecem como um brilho vermelho fraco), e passa a filmar em **preto e branco**, com alcance de **até 9 metros**, segundo a TP-Link. É suficiente para a maioria dos cômodos de uma casa.
+
+A V3 tem três modos:
+
+- **IR**: preto e branco com infravermelho, o mais nítido no escuro total.
+- **Colorido**: mantém as cores quando há alguma luz no ambiente.
+- **Inteligente**: alterna conforme a situação.
+
+Uma dica de instalação que evita frustração: **não aponte a câmera para um vidro** (janela, porta de vidro, aquário) à noite. O infravermelho **reflete** no vidro e a imagem fica um clarão branco. Para filmar o lado de fora através de uma janela, a visão noturna da câmera interna não funciona.
+
+## Detecção e notificações
+
+A C200 detecta **movimento**, **pessoas** e **choro de bebê**, segundo a TP-Link, e envia notificação ao celular. Alguns ajustes fazem diferença entre um sistema útil e um que apita o dia inteiro:
+
+- **Zonas de atividade**: desenhe no app a área que importa (a porta, por exemplo). Movimento fora dela não dispara. A TP-Link informa que as zonas funcionam com a detecção de **movimento**.
+- **Sensibilidade**: diminua se cortinas, ventiladores e sombras disparam alertas.
+- **Agenda**: notificações só nos horários em que a casa está vazia ou à noite.
+- **Detecção de pessoas**: reduz os alertas causados por pets. Para quem tem cachorro ou gato, faz muita diferença.
+
+Parte dos recursos avançados de detecção e a gravação de clipes na nuvem dependem do **Tapo Care**, a assinatura da TP-Link. O básico (notificação de movimento e gravação no cartão) funciona sem pagar.
+
+## Gravação: cartão, nuvem ou gravador
+
+### No cartão microSD
+
+A forma mais comum de usar a C200 é com um **cartão microSD** dentro da própria câmera. A TP-Link informa suporte a cartões de **até 512 GB**. Dá para gravar de dois jeitos:
+
+- **Contínua**: grava o tempo todo; quando o cartão enche, as gravações mais antigas são sobrescritas.
+- **Por evento**: grava só quando detecta movimento, economizando espaço.
+
+**Quanto cabe** depende da resolução, do movimento na cena e do modo. A TP-Link fala em até **64 dias** de gravação com o cartão máximo, **em condições de laboratório**. Na vida real, cartões menores guardam bem menos dias em gravação contínua.
+
+O cartão importa mais do que parece. Gravação 24 horas por dia **escreve no cartão o tempo todo**, e cartões comuns, feitos para fotos de celular, se desgastam e corrompem. Para câmera, o ideal são cartões **feitos para vigilância**, de **alta resistência** (high endurance), como o **WD Purple**, que o anúncio descreve como próprio para **gravação contínua 24 horas**, com **monitoramento de vida útil**.
+
+![Cartão de memória microSD WD Purple de 64 GB para câmeras](/images/produtos/microsd-wd-purple-64.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09973KW48?tag=nerdcaseiro-20" store="amazon" source="tapo-c200-vale-a-pena-review" />
+
+<AffiliateButton href="https://meli.la/2MUiPkp" store="mercadolivre" source="tapo-c200-vale-a-pena-review" />
+
+Uma limitação importante do armazenamento no cartão: **se alguém levar a câmera, leva as gravações junto**. Para segurança contra invasão, a gravação **fora da câmera** (nuvem ou gravador) é mais robusta.
+
+### Na nuvem (Tapo Care)
+
+O **Tapo Care** é a assinatura da TP-Link para guardar clipes na nuvem. A vantagem é que as gravações **ficam seguras mesmo que a câmera seja destruída ou levada**. A desvantagem é a **mensalidade**. A TP-Link oferece **30 dias de teste**.
+
+### Num gravador (NVR) ou no Home Assistant
+
+A C200 suporta **RTSP** e **ONVIF**, protocolos padrão de câmeras de segurança. Isso permite **gravar em outro equipamento**: um gravador de rede (NVR), um computador ou um servidor caseiro. Para quem já tem uma central de câmeras, a C200 pode entrar nela.
+
+## V1, V2 ou V3: qual versão você está comprando
+
+A Tapo C200 existe há anos e passou por **versões de hardware**: o site da TP-Link mostra as opções **V1, V2 e V3**, com as especificações detalhadas da **V3**, a usada neste review. Por fora, as versões são praticamente iguais; por dentro, podem mudar componentes e recursos.
+
+O que isso significa na prática:
+
+- **Confira a versão** na etiqueta da caixa ou embaixo da câmera, perto do código de barras.
+- **Recursos como a visão noturna colorida** e o suporte a cartões maiores podem depender da versão e do **firmware**. A própria TP-Link informa que o suporte a cartões de até 512 GB exige **atualização de firmware**.
+- **Mantenha o firmware em dia** pelo app: é por ele que chegam novos recursos e correções.
+
+Comprar de vendedor confiável, com nota fiscal, ajuda a receber uma unidade recente e com garantia.
+
+## A sirene
+
+A V3 tem uma **sirene de 93 dB**, acionada pelo app ou por detecção. Ela não substitui um alarme monitorado, mas pode **assustar** um invasor e chamar a atenção de quem está por perto. Em apartamento, use com parcimônia: o som alto incomoda vizinhos, e disparos falsos frequentes fazem todo mundo ignorar o barulho.
+
+## Onde instalar
+
+A posição da câmera define se ela vai ser útil:
+
+| Objetivo | Onde colocar |
+|---|---|
+| **Ver o cômodo inteiro** | num **canto alto**, de onde o giro alcança tudo |
+| **Ver quem entra** | de frente para a **porta**, a uma distância em que o rosto apareça |
+| **Babá eletrônica** | com visão do **berço**, fora do alcance da criança, com o cabo protegido |
+| **Ver o pet** | onde ele passa mais tempo: caminha, comedouro, sofá |
+| **Garagem coberta** | protegida de chuva; lembre que é câmera interna |
+
+Cuidados gerais:
+
+- **Wi-Fi de 2,4 GHz forte** no ponto de instalação: a câmera transmite vídeo o tempo todo, e sinal fraco gera imagem travando.
+- **Tomada perto**: o cabo da fonte tem 3 m.
+- **Fora da luz direta** de janela, que deixa a imagem contra a luz.
+- **Longe de vidros** à noite, pelo reflexo do infravermelho.
+- **Montagem firme** no teto ou na parede, se não ficar sobre um móvel.
+
+A C200 é uma câmera de **ambiente interno**. Para área externa, a linha Tapo tem modelos com proteção contra água, como a do review [Tapo C530WS: vale a pena a câmera externa 360°?](/posts/tapo-c530ws-camera-externa-vale-a-pena/).
+
+## Como babá eletrônica
+
+Um dos usos mais comuns da C200 é no quarto do bebê. Os recursos que ajudam:
+
+- **Detecção de choro**, com notificação no celular, segundo a TP-Link;
+- **áudio bidirecional**, para falar com a criança de outro cômodo;
+- **visão noturna**, para ver o berço no escuro sem acender a luz;
+- **giro**, para acompanhar a criança que já anda pelo quarto.
+
+E os cuidados:
+
+- **Cabo longe do berço.** A comissão de segurança de produtos dos Estados Unidos (CPSC) recomenda manter cabos de monitores de bebê a **pelo menos cerca de 1 metro** do berço, pelo risco de estrangulamento. Prenda o cabo na parede e mantenha a câmera fora do alcance.
+- **Celular não substitui a presença.** A câmera é um apoio; o aviso pode atrasar ou falhar se o Wi-Fi cair.
+- **Wi-Fi do quarto**: teste o sinal antes, para não depender de uma imagem que trava.
+
+## Vigiando o pet
+
+Para quem deixa cachorro ou gato sozinho em casa, a C200 é uma janela para entender a rotina do animal: se ele dorme o dia todo, se chora na porta, se destrói alguma coisa. Algumas dicas:
+
+- Ative a **detecção de pessoas** para não ser notificado a cada movimento do pet, ou, ao contrário, use a detecção de **movimento** com zona no comedouro para saber quando ele come.
+- Use o **áudio bidirecional** com cautela: alguns animais ficam **mais agitados** ao ouvir a voz do tutor sem encontrá-lo.
+- Observe por alguns dias antes de tirar conclusões: um cão que late quando você sai pode se acalmar em poucos minutos.
+
+O Abanou, site da mesma rede, tem um comparativo de [câmeras para monitorar pets](https://abanou.com.br/posts/melhores-cameras-monitorar-pets/).
+
+## Primeiros passos no app
+
+1. **Instale o app Tapo** e crie a conta TP-Link, com **senha forte**.
+2. **Ligue a câmera** e siga o app para conectá-la ao **Wi-Fi de 2,4 GHz**.
+3. **Insira o cartão microSD** com a câmera desligada e **formate pelo app**.
+4. **Escolha o modo de gravação**: contínua ou por evento.
+5. **Configure as zonas** de atividade e de privacidade.
+6. **Ajuste as notificações**: sensibilidade, agenda e tipo de detecção.
+7. **Atualize o firmware**, se o app oferecer.
+8. **Teste à noite**: veja se a visão noturna funciona bem na posição escolhida.
+
+## Quantas câmeras uma casa precisa?
+
+Para a maioria das casas e apartamentos, **uma ou duas câmeras internas** bem posicionadas cobrem o essencial:
+
+- **uma na sala ou no corredor central**, vendo a porta de entrada e a circulação;
+- **uma no cômodo de interesse específico**: quarto do bebê, área do pet, escritório.
+
+Mais câmeras significam mais notificações, mais cartões e mais tráfego na rede Wi-Fi. Comece com uma, ajuste bem, e só depois expanda. O comparativo [As 6 melhores câmeras IP para casa inteligente](/posts/melhores-cameras-ip-casa-inteligente/) mostra outras opções para quem quer ampliar.
+
+## Privacidade: de quem mora e de quem visita
+
+Câmera dentro de casa é uma ferramenta poderosa, e pede bom senso.
+
+**Recursos de privacidade da própria câmera:**
+
+- **Zonas de privacidade**: a TP-Link permite **bloquear áreas** da imagem que nunca são gravadas. Útil para esconder a janela do vizinho, a porta do banheiro ou a cama.
+- **Modo privacidade**: no app, a câmera pode ser desligada e virar a lente, recurso útil quando a família está em casa e não quer ser filmada.
+
+**Boas práticas:**
+
+- **Avise** quem trabalha na casa (diarista, babá, cuidador) que há câmeras, e onde.
+- **Não aponte para áreas íntimas**, como quarto de adultos e banheiro.
+- **Não filme o vizinho**: aponte para dentro do seu espaço.
+- **Converse com a família** sobre quando as câmeras ficam ligadas.
+
+## Segurança da conta
+
+A câmera está tão segura quanto a **conta** que a controla. Quem acessar a sua conta Tapo vê a sua casa. Por isso:
+
+- **Senha forte e única** para a conta TP-Link, que não seja usada em outros serviços.
+- **Verificação em duas etapas**, se disponível na conta.
+- **Firmware atualizado** pelo app: atualizações corrigem falhas de segurança.
+- **Compartilhe o acesso** pelo próprio app, para cada pessoa ter a sua conta, em vez de emprestar a senha.
+- **Remova acessos** de quem não precisa mais.
+- **Rede Wi-Fi protegida** com senha forte; uma **rede separada** para dispositivos de casa inteligente reduz riscos.
+
+## C200 ou C210?
+
+A **Tapo C210** é a irmã mais nova da C200, no mesmo formato e no mesmo app, com **resolução 2K (3 MP)**. A diferença prática está no **detalhe** da imagem: rostos e objetos a alguns metros ficam mais nítidos, e o zoom digital no app rende mais.
+
+![Câmera Wi-Fi TP-Link Tapo C210 branca](/images/produtos/tapo-c210.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B095CLQ1PT?tag=nerdcaseiro-20" store="amazon" source="tapo-c200-vale-a-pena-review" />
+
+<AffiliateButton href="https://meli.la/1ZHueUX" store="mercadolivre" source="tapo-c200-vale-a-pena-review" />
+
+<ComparisonTable
+  rows={[
+    { name: 'Tapo C200', brand: 'TP-Link', rating: 4.8, highlight: '1080p, a mais vendida, 150 mil avaliações', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20' }, { store: 'mercadolivre', url: 'https://meli.la/2ZDZoL4' }] },
+    { name: 'Tapo C210', brand: 'TP-Link', rating: 4.6, highlight: '2K (3 MP), mais detalhe', stores: [{ store: 'amazon', url: 'https://www.amazon.com.br/dp/B095CLQ1PT?tag=nerdcaseiro-20' }, { store: 'mercadolivre', url: 'https://meli.la/1ZHueUX' }] },
+  ]}
+  source="tapo-c200-vale-a-pena-review"
+/>
+
+**C200 basta** para ver o que acontece no cômodo, acompanhar pet e criança, e receber alertas. **A C210 compensa** em cômodos grandes, quando o objetivo é **identificar** pessoas, e para quem quer a imagem mais nítida no celular. Mais resolução também ocupa **mais espaço** no cartão.
+
+## Home Assistant, Alexa e Google
+
+**Alexa e Google Assistente**: a C200 é compatível com as duas, segundo a TP-Link. Em telas inteligentes, como o Echo Show, dá para ver a câmera por comando de voz.
+
+**Home Assistant**: a C200 suporta **RTSP** e **ONVIF**, protocolos padrão que o Home Assistant aceita por integrações próprias, como a integração **ONVIF**. A **integração TP-Link** do Home Assistant também aceita a C200. A tabela resumida da documentação não a mostra, mas a própria página manda consultar a lista atualizada da biblioteca **python-kasa**, base da integração, e ali a **C200 aparece**, testada no **hardware 1.0 com firmware 1.3.17**. Confira a versão da sua câmera no app Tapo. Nos dois casos, é preciso criar uma **conta de câmera** no app Tapo, com usuário e senha próprios.
+
+## Consumo de energia
+
+A TP-Link informa consumo **típico de 2 W** e **máximo de 4,5 W**. Ligada o tempo todo, a 2 W, a câmera consome cerca de **1,4 kWh por mês**. É um gasto pequeno; multiplique pela tarifa da sua conta de luz para ter o valor.
+
+Um ponto prático: a câmera **para quando falta energia**. Para vigiar a casa mesmo em queda de luz, ela e o roteador precisam de uma fonte de backup, como um nobreak ou uma estação de energia. O comparativo [Nobreak ou power bank: o que proteger seu roteador na queda de luz?](/posts/nobreak-ou-power-bank-para-roteador/) discute as opções.
+
+## Problemas comuns
+
+| Problema | Causa provável | Solução |
+|---|---|---|
+| Não encontra a câmera na configuração | celular ou roteador em 5 GHz | use a rede de 2,4 GHz |
+| Imagem travando ou "offline" | sinal Wi-Fi fraco | aproxime o roteador ou use repetidor/mesh |
+| Clarão branco à noite | infravermelho refletindo em vidro | mude a posição; evite apontar para janelas |
+| Muitos alertas falsos | sensibilidade alta, cortinas, pets | zonas de atividade, sensibilidade menor, detecção de pessoas |
+| Gravação some ou corrompe | cartão comum desgastado | use cartão de alta resistência e formate pelo app |
+| Imagem escura de dia | contra a luz da janela | reposicione a câmera |
+
+## Erros comuns
+
+- **Instalar ao ar livre**, exposta a chuva.
+- **Apontar para janela** e perder a visão noturna.
+- **Usar cartão comum** para gravação 24 horas.
+- **Deixar a senha fraca** ou compartilhada entre várias pessoas.
+- **Não atualizar o firmware.**
+- **Filmar áreas íntimas** ou o vizinho.
+- **Confiar só no cartão** para segurança contra invasão.
+
+## Checklist antes de comprar
+
+- [ ] Tenho **Wi-Fi de 2,4 GHz** com bom sinal no ponto de instalação.
+- [ ] Há **tomada** a até 3 m.
+- [ ] O uso é **interno**.
+- [ ] Vou comprar um **cartão de alta resistência**.
+- [ ] Decidi se 1080p basta ou se prefiro a **C210 (2K)**.
+- [ ] Vou proteger a **conta** com senha forte e manter o **firmware** atualizado.
+- [ ] Combinei com a família e com quem trabalha na casa **onde** as câmeras ficam.
+
+## Para quem a Tapo C200 vale a pena
+
+**Vale para:**
+
+- quem quer **ver a casa** pelo celular, acompanhar **pet** e **criança**;
+- quem quer gravar **sem mensalidade**, no cartão;
+- quem quer **uma câmera que vê o cômodo inteiro**, girando;
+- quem usa **Home Assistant**, gravador ou Alexa e Google.
+
+**Não vale para:**
+
+- **área externa** exposta;
+- quem precisa **identificar rostos** à distância (a C210 vai melhor);
+- quem não tem **Wi-Fi de 2,4 GHz** estável no local.
+
+## Resumo
+
+A **Tapo C200** é uma câmera **Wi-Fi interna**, **1080p**, que **gira 360°** na horizontal, tem **visão noturna até 9 m**, **áudio bidirecional**, detecção de **movimento, pessoas e choro de bebê**, **zonas de privacidade** e gravação em **microSD de até 512 GB**, sem mensalidade, além do **Tapo Care** opcional. Suporta **RTSP e ONVIF**, o que a leva a gravadores e ao **Home Assistant**. Os cuidados são o **Wi-Fi só de 2,4 GHz**, o uso **interno**, o **cartão de alta resistência** e a **segurança da conta**.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07XLML2YS?tag=nerdcaseiro-20" store="amazon" source="tapo-c200-vale-a-pena-review" />
+
+<AffiliateButton href="https://meli.la/2ZDZoL4" store="mercadolivre" source="tapo-c200-vale-a-pena-review" />
+
+## Fontes
+
+- TP-Link Brasil — [Tapo C200 V3](https://www.tp-link.com/br/home-networking/cloud-camera/tapo-c200/) (especificações, detecção, armazenamento, Wi-Fi, RTSP/ONVIF, consumo)
+- Home Assistant — [integração TP-Link Smart Home](https://www.home-assistant.io/integrations/tplink/) (câmeras Tapo e conta de câmera) e [lista de dispositivos suportados do python-kasa](https://github.com/python-kasa/python-kasa/blob/master/SUPPORTED.md)
+- Amazon Brasil — anúncios da [Tapo C200](https://www.amazon.com.br/dp/B07XLML2YS), da [Tapo C210](https://www.amazon.com.br/dp/B095CLQ1PT) e do [cartão WD Purple](https://www.amazon.com.br/dp/B09973KW48) (avaliações)

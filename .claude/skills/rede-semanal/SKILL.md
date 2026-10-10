@@ -27,6 +27,10 @@ Tema da trilha da tarde, por site:
 | **Nerd Caseiro** | review / comparativo / listicle | **tutorial** |
 | **Reforma Caseira** | review / comparativo / listicle | **passo a passo** |
 
+**Quarta de achadinhos (fixa desde 14/10/2026):** toda **quarta às 18h**, nos 3 sites, um post de
+**achadinhos do Mercado Livre**, **só botão ML**: Nerd = tecnologia, Reforma = ferramentas/casa,
+Abanou = **aquário**. Planeje esse slot em todo Gate 1 (11+ posts por site na semana).
+
 O `publish-scheduled.mjs` compara o timestamp completo — basta a hora no `pubDate`, sem mexer em
 script. Os workflows já têm os dois crons (`0 10 * * *` e `5 21 * * *` UTC), mas quem dispara de
 verdade é o **n8n**: dois triggers por site, 07h e 18h, timezone America/Sao_Paulo.

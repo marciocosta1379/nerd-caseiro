@@ -1,0 +1,310 @@
+---
+title: 'Lâmpada inteligente Elgin Smart Color vale a pena? Review'
+description: 'Wi-Fi 2,4 GHz, 803 lúmens, 16 milhões de cores e app Elgin Smart: o que a lâmpada mais vendida faz, como integrar à Alexa e ao Home Assistant e onde ela falha.'
+pubDate: 2026-10-12T18:00:00-03:00
+category: 'casa-inteligente'
+tags: ['lampada-inteligente', 'elgin', 'wi-fi', 'tuya', 'alexa', 'home-assistant', 'review']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Lâmpada inteligente Elgin Smart Color 10 W, RGB, Wi-Fi, E27, bivolt'
+    brand: 'Elgin'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2e6mygU'
+    image: '/images/produtos/lampada-elgin-smart-color.webp'
+    pros:
+      - '803 lúmens: luz de uma incandescente de 60 W com 10 W'
+      - 'Funciona com Alexa e Google Assistente, sem hub'
+      - 'Plataforma Tuya: dá para levar ao Home Assistant'
+      - 'Mais de 61 mil avaliações, nota 4,7'
+    cons:
+      - 'Só Wi-Fi de 2,4 GHz'
+      - 'Depende da nuvem para o controle pelo app e pela voz'
+      - 'Interruptor de parede desligado deixa a lâmpada fora do ar'
+faq:
+  - question: 'A Elgin Smart Color precisa de hub?'
+    answer: 'Não. Ela se conecta direto ao roteador pelo Wi-Fi de 2,4 GHz e é configurada pelo app Elgin Smart. Para a Alexa e o Google Assistente, basta vincular a conta do app na assistente.'
+  - question: 'Funciona no Wi-Fi de 5 GHz?'
+    answer: 'Não. Ela usa um módulo Wi-Fi de 2,4 GHz. Se o roteador transmite as duas faixas com o mesmo nome, pode ser preciso separar as redes ou ativar temporariamente só a de 2,4 GHz durante o pareamento.'
+  - question: 'Dá para usar no Home Assistant?'
+    answer: 'Sim. A lâmpada usa a plataforma Tuya, e a integração Tuya oficial do Home Assistant controla os dispositivos cadastrados no app Smart Life ou Tuya Smart. O controle passa pela nuvem da Tuya.'
+  - question: 'Posso desligar no interruptor de parede?'
+    answer: 'Pode, mas a lâmpada fica sem energia e sai do ar: o app, a Alexa e as rotinas deixam de funcionar até o interruptor ser ligado de novo. O ideal é deixar o interruptor sempre ligado e controlar pela lâmpada.'
+  - question: 'Quanto ela gasta de energia?'
+    answer: 'A potência é de 10 W. Ligada seis horas por dia, isso dá cerca de 1,8 kWh por mês. Desligada pelo app, o módulo Wi-Fi continua ativo e consome uma pequena quantidade para ficar à espera de comandos.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A **lâmpada inteligente Elgin Smart Color** é a lâmpada mais vendida da Amazon Brasil, com mais de **61 mil avaliações e nota 4,7**. Para muita gente, ela é o primeiro dispositivo de casa inteligente: rosqueia no bocal, conecta no Wi-Fi e passa a obedecer à voz e ao celular, sem hub, sem fio novo e sem eletricista.
+
+Este review junta a **ficha técnica** publicada pela Elgin e por distribuidores, o que se sabe da **plataforma por trás dela** e o caminho para levá-la ao **Home Assistant**, além dos cuidados que fazem a diferença entre uma lâmpada útil e uma que vive "offline".
+
+![Lâmpada inteligente Elgin Smart Color, bulbo A60 branco com base E27](/images/produtos/lampada-elgin-smart-color.webp)
+
+## As especificações
+
+| Item | Elgin Smart Color 10 W |
+|---|---|
+| **Código** | 48BLEDWIFI00 |
+| **Formato** | bulbo A60, base **E27** |
+| **Potência** | 10 W |
+| **Fluxo luminoso** | 803 lúmens |
+| **Eficiência** | cerca de 80 lm/W |
+| **Tensão** | bivolt (100 a 240 V) |
+| **Cores** | RGB (16 milhões de cores) e luz branca |
+| **Dimerizável** | sim, pelo app e pela voz |
+| **Conexão** | Wi-Fi 2,4 GHz |
+| **App** | Elgin Smart |
+| **Assistentes** | Alexa e Google Assistente |
+| **Vida útil** | 25.000 horas (L70), segundo catálogo da Elgin |
+| **Dimensões** | Ø 61 × 122 mm |
+| **Uso** | ambiente interno |
+| **Garantia** | 1 ano |
+
+*Fontes: anúncio na Amazon, catálogo de iluminação Elgin e fichas de distribuidores. A ficha da Amazon traz alguns campos contraditórios (como "80 lúmens" para a luz branca); onde há conflito, prevalece o número que se repete entre as fontes.*
+
+Um detalhe técnico interessante para o leitor do Nerd Caseiro: o **número de modelo** informado na ficha da Amazon é **TYWE3L**, que é o nome de um **módulo Wi-Fi da Tuya**. Isso conta muito sobre a lâmpada, como explicado mais adiante.
+
+## Quanta luz são 803 lúmens
+
+A potência (10 W) diz quanto a lâmpada **gasta**; os **lúmens** dizem quanta luz ela **entrega**. Pela equivalência usada em programas de eficiência como o ENERGY STAR, cerca de **800 lúmens** correspondem à luz de uma **incandescente de 60 W**. Ou seja: a Elgin Smart Color ilumina como a lâmpada comum de antigamente, gastando um sexto da energia.
+
+Na prática, 803 lúmens:
+
+- **iluminam bem** um quarto, um escritório ou uma sala pequena com uma lâmpada só;
+- **ficam fracos** como luz única de uma sala grande ou de uma cozinha onde se cozinha;
+- **sobram** num abajur ou numa luminária de leitura.
+
+O guia do Reforma Caseira [Lâmpada LED: lúmen, temperatura de cor e a base certa](https://reformacaseira.com.br/posts/lampada-led-lumen-temperatura-base/) explica como dimensionar a luz de cada cômodo.
+
+Um ponto que pouca gente percebe: os **803 lúmens** são o máximo, normalmente na **luz branca**. Nas **cores**, a luz é bem mais fraca: uma lâmpada RGB em azul ou vermelho é luz de **clima**, não de **trabalho**. Ninguém lê um livro na luz roxa.
+
+## Como uma lâmpada Wi-Fi funciona
+
+Por dentro da lâmpada, além dos LEDs e da fonte, há um **pequeno computador com rádio Wi-Fi**. Ele fica sempre ligado, conectado ao seu roteador, esperando comandos. O caminho de um comando é este:
+
+1. Você toca no app ou fala com a Alexa.
+2. O comando vai para a **nuvem** do fabricante, pela internet.
+3. A nuvem envia o comando para a lâmpada, pelo seu roteador.
+4. A lâmpada muda de estado.
+
+Três consequências práticas:
+
+- **Não precisa de hub.** Diferente de lâmpadas Zigbee, a Wi-Fi fala direto com o roteador.
+- **Depende de internet e da nuvem** para o controle pelo app e pela voz. Se a internet cair, o interruptor de parede continua funcionando como numa lâmpada comum.
+- **Cada lâmpada é um aparelho na rede Wi-Fi.** Uma casa com 20 lâmpadas Wi-Fi tem 20 dispositivos a mais no roteador, o que, em roteadores simples, pode pesar. O post [Zigbee ou Wi-Fi: qual protocolo usar na automação residencial](/posts/zigbee-vs-wifi-automacao-residencial/) compara as duas abordagens.
+
+## Só 2,4 GHz: o motivo da maioria dos problemas de instalação
+
+A lâmpada usa um módulo **Wi-Fi de 2,4 GHz**. Ela **não enxerga** redes de 5 GHz. Isso explica a reclamação mais comum de quem não consegue configurá-la.
+
+Roteadores modernos transmitem duas faixas, 2,4 GHz e 5 GHz, e muitos usam o **mesmo nome** para as duas (o chamado "band steering"). Durante o pareamento, o celular pode estar na faixa de 5 GHz e a lâmpada não consegue se juntar à rede.
+
+Como resolver:
+
+- **Separe as redes** no roteador, com nomes diferentes para 2,4 e 5 GHz, e conecte o celular à de 2,4 GHz durante a configuração.
+- **Ou desative a de 5 GHz temporariamente**, só enquanto configura a lâmpada.
+- **Confira a distância**: a lâmpada fica dentro de um bocal, às vezes dentro de um globo de vidro ou de uma luminária metálica, o que reduz o sinal. Configure com o roteador perto, se possível.
+
+Senha da rede com caracteres especiais exóticos e redes com portal de login (como em hotéis) também atrapalham. Rede doméstica comum, com senha WPA2, funciona.
+
+## Configurando passo a passo
+
+1. **Rosqueie a lâmpada** num bocal E27 e **ligue o interruptor**.
+2. **Instale o app Elgin Smart** (Android ou iPhone) e crie a conta.
+3. **Conecte o celular à rede de 2,4 GHz**.
+4. No app, **adicione um dispositivo** e escolha lâmpada. O app orienta como colocar a lâmpada em **modo de pareamento**, normalmente com ela **piscando**; se ela não estiver piscando, o app explica a sequência de liga-desliga no interruptor para entrar nesse modo.
+5. **Informe a senha do Wi-Fi** e aguarde a conexão.
+6. **Dê um nome claro** e coloque a lâmpada num **cômodo**: "Luz do quarto", no cômodo "Quarto". Esse nome vai ser usado pela Alexa e pelo Google.
+
+## Alexa e Google Assistente
+
+A Elgin Smart Color funciona com **Alexa** e **Google Assistente** sem hub. A integração é feita **vinculando a conta** do app Elgin Smart na assistente (habilidade/skill na Alexa, "Funciona com o Google" no Google Home). Depois disso, a lâmpada aparece na lista de dispositivos com o nome dado no app.
+
+Exemplos de comando:
+
+- "Alexa, acender a luz do quarto."
+- "Alexa, luz do quarto em 30%."
+- "Ok Google, luz da sala azul."
+
+Uma dica que evita confusão: **nomes curtos e diferentes** para cada lâmpada. "Luz do quarto" e "Luz do quarto do bebê" fazem a assistente errar com frequência.
+
+O post [Alexa Plus, Echo Dot e Echo Spot: qual Echo comprar](/posts/alexa-plus-echo-dot-echo-spot/) ajuda a escolher a caixa de som que vai dar os comandos.
+
+## Tuya por dentro: o que isso significa
+
+O módulo **TYWE3L** citado na ficha é um módulo da **Tuya**, empresa chinesa que fornece o "cérebro" e a nuvem de milhares de produtos de casa inteligente vendidos com outras marcas. Na prática, a Elgin Smart Color é um produto Tuya com o app e a marca da Elgin.
+
+Isso traz uma vantagem prática: lojistas e usuários relatam que ela também pode ser cadastrada nos apps **Tuya Smart** e **Smart Life**, os apps genéricos da plataforma. Para quem já tem outros produtos Tuya (tomadas, sensores, interruptores de outras marcas), dá para concentrar tudo num app só.
+
+## Levando ao Home Assistant
+
+A plataforma Tuya é também o caminho para o **Home Assistant**. A **integração Tuya oficial** do Home Assistant controla dispositivos cadastrados nos apps **Smart Life** ou **Tuya Smart**, vinculando a conta pelo próprio app. O passo a passo completo, com os cuidados da integração, está em [Dispositivos Tuya (Positivo, EKAZA) no Home Assistant: passo a passo](/posts/tuya-positivo-ekaza-home-assistant/).
+
+Dois pontos a ter em mente:
+
+- **O controle passa pela nuvem da Tuya.** A integração oficial conversa com os servidores da Tuya, não diretamente com a lâmpada. Se a internet cair, a automação do Home Assistant deixa de comandar a lâmpada.
+- **Existem caminhos locais mantidos pela comunidade**, que conversam com a lâmpada pela rede local usando a chave do dispositivo. Eles funcionam em muitos casos, mas dependem de projetos de terceiros que mudam com as versões do firmware. Não é o caminho para quem está começando.
+
+Também circula na comunidade a ideia de **regravar o firmware** de lâmpadas Tuya com software aberto. É uma operação que pode **inutilizar a lâmpada**, depende do chip exato de cada lote e não é recomendada aqui.
+
+## Lâmpada, interruptor ou tomada inteligente?
+
+Há três jeitos de automatizar a iluminação, e cada um resolve um problema diferente:
+
+| Solução | O que faz | Vantagens | Limites |
+|---|---|---|---|
+| **Lâmpada inteligente** (como a Elgin) | a própria lâmpada recebe comandos | instalação sem ferramenta; cores e brilho | interruptor de parede precisa ficar ligado; cada lâmpada é um dispositivo |
+| **Interruptor inteligente** | substitui o interruptor de parede | serve para qualquer lâmpada comum; o interruptor físico continua funcionando | exige mexer na instalação elétrica; normalmente sem cores |
+| **Tomada inteligente** | liga e desliga o que está plugado | perfeita para abajur e luminária de chão | só serve para o que é ligado na tomada |
+
+Uma regra prática: **lâmpada inteligente** para **luz de clima** e para quem não quer (ou não pode, como em imóvel alugado) mexer na parede; **interruptor inteligente** para a **luz principal** de cômodos que a família inteira usa pelo interruptor; **tomada inteligente** para **abajures**. Muitas casas usam os três.
+
+## O que encurta a vida útil
+
+O catálogo da Elgin informa **25.000 horas** de vida útil (L70, ou seja, até a luz cair para 70% do brilho inicial). Esse número é medido em condições de laboratório. Em casa, três fatores costumam encurtá-la:
+
+- **Calor.** LED e eletrônica sofrem com temperatura alta. Luminárias fechadas, de vidro sem ventilação, ou lâmpadas apontadas para cima dentro de um globo esquentam mais que o normal.
+- **Variações de energia.** Picos e quedas de tensão afetam qualquer eletrônico. Em regiões com rede instável, o problema aparece em lâmpadas, carregadores e roteadores.
+- **Liga e desliga constante no interruptor.** Cada vez que a energia volta, a lâmpada reinicia o computador interno e reconecta ao Wi-Fi. Não estraga na hora, mas é um uso para o qual ela não foi pensada.
+
+## Luz da noite: brilho baixo e luz quente
+
+Um uso subestimado da lâmpada inteligente é **mudar a luz ao longo do dia**. À noite, muitas pessoas preferem **luz mais fraca e mais quente** (amarelada), que é mais confortável para relaxar; de dia, luz branca e forte para trabalhar. Com rotinas, isso acontece sozinho:
+
+- ao entardecer, a luz da sala vai para um tom quente e brilho médio;
+- depois de certo horário, brilho baixo;
+- de manhã, branco forte no escritório.
+
+Para o quarto de criança, uma cor suave em brilho mínimo funciona como **luz de companhia**, acesa e apagada pela voz, sem levantar da cama.
+
+## A armadilha do interruptor de parede
+
+Assim como acontece com qualquer lâmpada inteligente, o interruptor de parede é o ponto de atrito. Quando alguém **desliga o interruptor**, a lâmpada **fica sem energia e sai do ar**: o app mostra "offline", a Alexa responde que o dispositivo não está respondendo, e as rotinas param de funcionar.
+
+Soluções, da mais simples à mais trabalhosa:
+
+1. **Combinar com a casa** que o interruptor fica sempre ligado, e acender e apagar pela voz ou pelo app.
+2. **Usar o interruptor como "reset"**: algumas pessoas se acostumam a desligar e ligar o interruptor para acender a lâmpada no último estado. Funciona, mas cada liga-desliga faz a lâmpada reconectar ao Wi-Fi.
+3. **Trocar o interruptor por um interruptor inteligente** e usar lâmpada comum. É outra estratégia, explicada em [Os melhores interruptores inteligentes de parede](/posts/melhores-interruptores-inteligentes-parede/). Ela envolve a instalação elétrica e deve ser feita por quem tem qualificação.
+
+**Não instale lâmpada inteligente em circuito com dimmer de parede.** A lâmpada tem sua própria regulagem de brilho; um dimmer na parede corta a tensão e pode fazer a eletrônica dela funcionar mal.
+
+## Onde usar e onde evitar
+
+| Lugar | Faz sentido? | Por quê |
+|---|---|---|
+| **Quarto** | muito | acender e apagar da cama, luz fraca à noite, despertar com luz |
+| **Sala** | muito | cenas de filme e de recepção; cores para clima |
+| **Escritório** | sim | luz branca forte para trabalhar, rotina de horário |
+| **Abajur e luminária** | muito | ponto de luz de clima, sem precisar levantar |
+| **Área externa coberta** | com cuidado | só protegida da chuva: a lâmpada é para ambiente interno |
+| **Banheiro com vapor** | evite | umidade constante castiga a eletrônica |
+| **Luminária fechada e quente** | evite | calor reduz a vida útil dos LEDs e o sinal de Wi-Fi |
+
+## Várias lâmpadas: grupos e cenas
+
+Quem começa com uma lâmpada costuma passar logo para várias. Duas ferramentas organizam isso:
+
+**Grupos (ou cômodos).** No app e nas assistentes, as lâmpadas de um mesmo ambiente podem ser agrupadas. Um lustre com três lâmpadas vira um único dispositivo: "Alexa, acender a sala" acende as três juntas, no mesmo brilho e na mesma cor. Sem grupo, cada lâmpada responde separadamente e com um pequeno atraso entre elas.
+
+**Cenas.** Uma cena guarda um estado completo: quais lâmpadas, em que brilho e em que cor. "Cena cinema" pode apagar a luz principal e deixar o abajur em 20% de laranja; "cena jantar", a luz da mesa em branco quente médio. Uma cena se aciona com um toque ou um comando de voz.
+
+Algumas dicas para organizar a casa:
+
+- **Nomeie pelo cômodo e pela função**: "luz da mesa", "abajur do sofá", "luz do corredor".
+- **Coloque cada lâmpada no cômodo certo** no app e na assistente. As assistentes usam o cômodo para entender comandos curtos, como "acender a luz" dito para o Echo do próprio quarto.
+- **Comece por um cômodo** e teste as rotinas antes de espalhar lâmpadas pela casa toda.
+- **Fique de olho no roteador.** Cada lâmpada Wi-Fi é um aparelho conectado. Roteadores simples, com muitos dispositivos, podem ficar instáveis; um roteador melhor ou uma rede mesh resolve, como explica [Os melhores roteadores mesh Wi-Fi para casa em 2026](/posts/melhores-roteadores-mesh-wifi-casa-2026/).
+
+## Rotinas que valem a pena
+
+O ganho de uma lâmpada inteligente não está em trocar de cor; está nas **rotinas**. Algumas que funcionam bem:
+
+- **Simulação de presença.** Programe a luz da sala para acender no começo da noite e apagar mais tarde, em dias de viagem. A própria descrição do produto sugere esse uso.
+- **Luz de despertar.** A luz do quarto acende aos poucos, com brilho baixo, no horário do despertador.
+- **Boa noite.** Um comando ("Alexa, boa noite") apaga todas as luzes de uma vez.
+- **Luz fraca de madrugada.** Uma rotina que acende a lâmpada em 10% depois da meia-noite evita o susto da luz forte ao levantar.
+- **Ligar com sensor**, no Home Assistant: com um sensor de movimento, a lâmpada acende sozinha ao entrar no cômodo, como explica [Luz que acende sozinha: automação por movimento no Home Assistant](/posts/luz-sensor-movimento-home-assistant-blueprint/).
+
+## Consumo de energia
+
+Com **10 W**, a lâmpada gasta pouco. Uma conta de referência: ligada **6 horas por dia**, durante **30 dias**, ela consome cerca de **1,8 kWh por mês** na potência máxima. Multiplique pela tarifa da sua concessionária.
+
+Há um consumo pequeno que a lâmpada comum não tem: quando **desligada pelo app**, o **módulo Wi-Fi continua ligado**, à espera de comandos. É um gasto baixo, mas existe em cada lâmpada inteligente da casa. Desligar no interruptor zera esse consumo, ao custo de tirar a lâmpada do ar.
+
+## Privacidade e dependência da nuvem
+
+Uma lâmpada Wi-Fi não tem câmera nem microfone, mas é um computador conectado à internet dentro de casa. Alguns cuidados razoáveis:
+
+- **Senha forte** na conta do app, que controla todos os dispositivos.
+- **Rede de convidados ou rede separada** para dispositivos de casa inteligente, se o roteador permitir. Isso isola as lâmpadas do computador e do celular.
+- **Firmware atualizado** pelo app, quando houver atualização disponível.
+- **Ciência da dependência**: se o serviço de nuvem tiver instabilidade, o controle remoto para. O interruptor de parede é o plano B que sempre funciona.
+
+## Problemas comuns
+
+| Problema | Causa provável | Solução |
+|---|---|---|
+| Não encontra a lâmpada no pareamento | celular ou roteador em 5 GHz | conecte-se à rede de 2,4 GHz; separe as redes |
+| Fica "offline" no app | interruptor desligado ou sinal fraco | ligue o interruptor; aproxime o roteador ou use repetidor |
+| Alexa não acha a lâmpada | conta do app não vinculada | vincule a skill e peça para "descobrir dispositivos" |
+| Liga sozinha depois de queda de luz | comportamento padrão de muitas lâmpadas smart ao voltar a energia | confira no app se há opção de estado após energizar |
+| Cor branca "amarelada" | é a característica da luz branca da lâmpada | use outra lâmpada para luz de trabalho, se precisar de branco frio |
+| Pisca com dimmer de parede | dimmer incompatível | retire o dimmer; use a regulagem pelo app |
+
+## Erros comuns
+
+- **Comprar sem conferir o Wi-Fi de 2,4 GHz** em casa.
+- **Instalar em luminária fechada e quente**, encurtando a vida útil.
+- **Usar com dimmer de parede.**
+- **Dar nomes parecidos** às lâmpadas e confundir a assistente.
+- **Desligar o interruptor** e esperar que a rotina funcione.
+- **Comprar lâmpada colorida para iluminar a cozinha toda**: para luz de trabalho, o branco forte de uma LED comum ou de um painel pode ser melhor.
+- **Tentar regravar o firmware** sem saber o chip e o risco.
+
+## Checklist antes de comprar
+
+- [ ] Meu roteador tem rede de **2,4 GHz** e o sinal chega ao cômodo.
+- [ ] O bocal é **E27**.
+- [ ] O circuito **não tem dimmer** de parede.
+- [ ] A família vai deixar o **interruptor ligado**.
+- [ ] 803 lúmens bastam para o cômodo, ou vou combinar com outra luz.
+- [ ] Vou usar **Alexa ou Google**, ou sei o caminho para o **Home Assistant**.
+
+## Para quem ela vale a pena
+
+**Vale para:**
+
+- quem quer **começar na casa inteligente** com um produto barato e sem hub;
+- **quarto, sala e escritório**, para acender por voz, criar cenas e rotinas;
+- quem já tem **Alexa ou Google** em casa;
+- quem usa **Home Assistant** e aceita a integração pela nuvem da Tuya.
+
+**Não vale para:**
+
+- casa onde o **interruptor de parede** vai continuar sendo usado o tempo todo;
+- quem quer **controle 100% local**, sem nuvem: lâmpadas Zigbee com um coordenador local fazem isso melhor;
+- **luz de trabalho forte** em cômodos grandes.
+
+## Resumo
+
+A **Elgin Smart Color** é uma lâmpada **Wi-Fi de 2,4 GHz**, **10 W e 803 lúmens** (o equivalente a uma incandescente de 60 W), com **16 milhões de cores**, **dimerização** e controle pelo app **Elgin Smart**, pela **Alexa** e pelo **Google Assistente**, sem hub. Por dentro, ela usa um **módulo Tuya**, o que permite cadastrá-la também no Smart Life e levá-la ao **Home Assistant** pela integração Tuya oficial, com controle via nuvem. Os cuidados são a **rede de 2,4 GHz**, o **interruptor sempre ligado** e o uso em **ambiente interno**.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20" store="amazon" source="lampada-inteligente-elgin-smart-color-vale-a-pena" />
+
+<AffiliateButton href="https://meli.la/2e6mygU" store="mercadolivre" source="lampada-inteligente-elgin-smart-color-vale-a-pena" />
+
+## Fontes
+
+- Amazon Brasil — [anúncio da Elgin Smart Color 10 W](https://www.amazon.com.br/dp/B088C4QZV2) (especificações, módulo TYWE3L, avaliações)
+- Elgin — [catálogo de iluminação](https://eadconstrusete.com.br/wp-content/uploads/2024/11/Catalogo-Iluminacao.pdf) (vida útil, IRC, ângulo, dimensões)
+- Martins Atacado — [ficha do 48BLEDWIFI00](https://www.martinsatacado.com.br/produto/lampada-bulbo-led-a60-10w-bivolt-smart-elgindistribuidora_48BLEDWIFI00) (tensão, fluxo, eficiência)
+- Home Assistant — [integração Tuya](https://www.home-assistant.io/integrations/tuya/)
+- ENERGY STAR — [equivalência entre lúmens e watts](https://www.energystar.gov/products/light_bulbs/learn-about-brightness)

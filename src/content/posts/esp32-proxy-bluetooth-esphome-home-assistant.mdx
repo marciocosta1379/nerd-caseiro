@@ -1,0 +1,300 @@
+---
+title: 'ESP32 como proxy Bluetooth no Home Assistant com ESPHome'
+description: 'Como transformar um ESP32 em proxy Bluetooth para ampliar o alcance de sensores BLE no Home Assistant, com a configuração oficial do ESPHome.'
+pubDate: 2026-10-17T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['esp32', 'esphome', 'home-assistant', 'bluetooth', 'ble', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Placa ESP32 DevKit V1 (ESP-WROOM-32) com cabo'
+    brand: 'Genérica'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/295zyNu'
+    image: '/images/produtos/esp32-devkit-v1-cabo.webp'
+    pros:
+      - 'ESP32 "comum" (ESP-WROOM-32), o tipo aceito pelo instalador web do ESPHome'
+      - 'Wi-Fi 2,4 GHz e Bluetooth com BLE'
+      - 'Acompanha cabo USB'
+    cons:
+      - 'Antena na própria placa: alcance menor que placas com antena externa'
+      - 'Pode exigir driver USB-serial no Windows'
+faq:
+  - question: 'Qualquer ESP32 serve como proxy Bluetooth?'
+    answer: 'Para a configuração completa, com conexões ativas, o ESPHome suporta o ESP32. Mas o instalador pronto do site do ESPHome para "Generic ESP32" funciona só com o ESP32 comum, e não com o ESP32-C3 ou outras variantes. Placas com o módulo ESP-WROOM-32, como a DevKit V1, são o caso mais simples.'
+  - question: 'Quantos dispositivos Bluetooth um proxy aguenta?'
+    answer: 'Sensores que só transmitem dados (anúncios), como muitos sensores BTHome, não têm limite de slots. Conexões ativas, usadas por fechaduras e alguns termostatos, têm: no ESP32, o padrão são 3 slots e a documentação recomenda não passar de 5. Dispositivos que se conectam e desconectam liberam o slot para outros.'
+  - question: 'O proxy Bluetooth funciona com Bluetooth de áudio?'
+    answer: 'Não. Apesar do nome bluetooth_proxy, a documentação do ESPHome informa que só dispositivos BLE (Bluetooth Low Energy) e suas integrações no Home Assistant são suportados. Fone, caixa de som e outros aparelhos de Bluetooth clássico ficam de fora.'
+  - question: 'Wi-Fi ou Ethernet: qual é melhor para o proxy?'
+    answer: 'Ethernet. A documentação do ESPHome explica que a placa com cabo de rede tira do rádio do ESP32 o tráfego de Wi-Fi, o que melhora o Bluetooth, e o ranking de desempenho do Home Assistant coloca proxies por Ethernet acima dos por Wi-Fi. Para começar, um ESP32 com Wi-Fi resolve bem.'
+  - question: 'Como saber se o meu sensor Bluetooth funciona com o proxy?'
+    answer: 'O ESPHome não decodifica nem mantém lista de dispositivos compatíveis. Quem interpreta os dados é a integração do aparelho no Home Assistant. Procure o seu dispositivo na lista de integrações do Home Assistant: se houver integração Bluetooth para ele, o proxy repassa os dados.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+O Bluetooth tem alcance curto. Um sensor de temperatura BLE no quarto do fundo, uma fechadura Bluetooth na porta da frente ou um medidor de umidade na varanda muitas vezes ficam longe demais do servidor do Home Assistant para que o adaptador Bluetooth dele os alcance. A solução que o próprio Home Assistant propõe é o **proxy Bluetooth**: um ESP32 barato, ligado na tomada perto dos sensores, que escuta o Bluetooth ali e repassa tudo para o Home Assistant pela rede.
+
+Este tutorial segue a **documentação oficial do componente `bluetooth_proxy` do ESPHome** e a **documentação da integração Bluetooth do Home Assistant**, consultadas em outubro de 2026, quando as versões estáveis eram o **ESPHome 2026.9.1** e o **Home Assistant 2026.10.0**. O YAML deste post é o exemplo oficial, sem adaptação. Como ESPHome e Home Assistant mudam opções entre versões, confira a página oficial se estiver lendo isto meses depois.
+
+## Como o proxy funciona
+
+O ESP32 com o componente `bluetooth_proxy` faz duas coisas:
+
+1. **Escuta os anúncios Bluetooth** (advertisements) dos dispositivos BLE próximos e os envia ao Home Assistant pela rede, por Wi-Fi ou Ethernet.
+2. **Faz conexões ativas** (GATT) em nome do Home Assistant, quando o dispositivo exige conexão para ler ou escrever dados.
+
+Do lado do Home Assistant, a integração Bluetooth **junta automaticamente todos os proxies ESPHome** com os adaptadores USB que existirem. As integrações de cada dispositivo, como a BTHome, recebem os dados da integração Bluetooth sem saber se vieram do adaptador local ou de um proxy. A documentação do ESPHome descreve isso como uma conexão **tolerante a falhas**: se um proxy cai, outro que alcance o dispositivo assume.
+
+Um limite importante, logo de início: **só BLE**. A documentação é explícita: apesar do nome `bluetooth_proxy`, apenas dispositivos BLE e suas integrações no Home Assistant são suportados. Fone de ouvido e caixa de som Bluetooth não passam pelo proxy.
+
+## O que você precisa
+
+- **Um ESP32 "comum"**, com o chip ESP32 original. A placa **DevKit V1 com módulo ESP-WROOM-32** é a mais fácil de encontrar.
+- **Um cabo USB de dados** para a primeira instalação.
+- **Uma fonte USB de 5 V** para deixar o ESP32 ligado no lugar definitivo. Um carregador de celular antigo serve.
+- **Home Assistant** com a integração **ESPHome**.
+- **Rede Wi-Fi de 2,4 GHz** alcançando o ponto onde o proxy vai ficar.
+
+![Placa ESP32 DevKit V1 com módulo ESP-WROOM-32 e cabo USB](/images/produtos/esp32-devkit-v1-cabo.webp)
+
+A placa da lista é a **ESP32 DevKit V1 com o módulo ESP-WROOM-32**, processador dual-core de até 240 MHz, 520 KB de SRAM, 4 MB de flash, Wi-Fi 802.11 b/g/n em 2,4 GHz e Bluetooth com BLE, segundo o anúncio. Acompanha cabo USB.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20" store="amazon" source="esp32-proxy-bluetooth-esphome-home-assistant" label="Ver ESP32 DevKit V1 na Amazon" />
+
+<AffiliateButton href="https://meli.la/295zyNu" store="mercadolivre" source="esp32-proxy-bluetooth-esphome-home-assistant" label="Ver ESP32 DevKit V1 no Mercado Livre" />
+
+### Por que o ESP32 "comum" e não o C3
+
+A página de projetos prontos do ESPHome tem um instalador para **"Generic ESP32"** e avisa: essa opção **só funciona para o ESP32 "comum"**, e **não para o ESP32-C3 ou outras variantes**. Variantes como C3 e S3 podem rodar o proxy com YAML próprio, mas o caminho mais simples, de instalar pelo navegador sem escrever nada, é com o ESP32 original. Ao comprar, confira no anúncio: **ESP32-WROOM-32** ou **ESP32-D0WD**, e não "C3", "S2" ou "S3".
+
+## Antes de começar: confira
+
+- **O chip da placa é ESP32 comum** (ESP-WROOM-32), e não C3, S2 ou S3, se for usar o instalador do navegador.
+- **O cabo transfere dados**, e não só carrega.
+- **O computador reconhece a porta serial** da placa; se não reconhecer, instale o driver do chip USB-serial (CP2102 ou CH340).
+- **A rede Wi-Fi é de 2,4 GHz** e alcança o ponto definitivo do proxy, não só a mesa onde a placa está sendo gravada.
+- **O Home Assistant tem a integração ESPHome** instalada, para descobrir o dispositivo novo.
+
+Com esses cinco pontos resolvidos, a instalação costuma levar poucos minutos.
+
+## Caminho 1: instalar pelo navegador (sem YAML)
+
+O ESPHome mantém uma página de **projetos prontos** em que um proxy Bluetooth é instalado direto do navegador, com poucos cliques e sem programar. É o caminho recomendado para quem nunca usou ESPHome.
+
+1. Abra a página **Ready-Made Projects** do site do ESPHome e escolha **Bluetooth proxy**.
+2. Selecione **Generic ESP32**.
+3. Ligue o ESP32 ao computador pelo **cabo USB de dados**.
+4. Clique para iniciar a instalação e escolha a porta serial da placa quando o navegador pedir. O instalador usa a conexão serial pelo navegador, então use um navegador de desktop compatível, como Chrome ou Edge.
+5. Ao final, o instalador pede os dados do **Wi-Fi** para a placa se conectar à rede.
+6. No Home Assistant, o novo dispositivo ESPHome aparece como **descoberto**. Confirme a adição.
+
+Pronto: a integração Bluetooth do Home Assistant passa a mostrar o proxy entre os adaptadores.
+
+## Caminho 2: pelo ESPHome Device Builder, com o YAML oficial
+
+Quem já usa o ESPHome no Home Assistant, ou quer controlar a configuração, pode criar o dispositivo pelo **ESPHome Device Builder** e usar o **exemplo completo recomendado pela documentação** para um proxy com Wi-Fi. Este é o YAML oficial, copiado da documentação do componente:
+
+```yaml
+substitutions:
+  name: my-bluetooth-proxy
+
+esphome:
+  name: ${name}
+  name_add_mac_suffix: true
+
+esp32:
+  variant: esp32
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+  platform: esphome
+
+esp32_ble_tracker:
+
+bluetooth_proxy:
+  active: true
+```
+
+O que cada bloco faz:
+
+- **`substitutions` e `esphome`:** dão nome ao dispositivo. Com `name_add_mac_suffix: true`, o ESPHome acrescenta ao nome um sufixo com parte do endereço MAC, o que evita nomes repetidos quando há mais de um proxy.
+- **`esp32`:** define a variante (`esp32`, o chip comum) e o framework **`esp-idf`**. A documentação recomenda o esp-idf em vez do arduino porque ele usa menos memória.
+- **`wifi`:** as credenciais da rede, lidas do arquivo de segredos.
+- **`logger`, `api` e `ota`:** registro de eventos, a API que conecta o dispositivo ao Home Assistant e as atualizações pela rede.
+- **`esp32_ble_tracker`:** o componente que escuta o Bluetooth. A documentação avisa que o proxy **depende dele**: sem esse bloco, o proxy não funciona.
+- **`bluetooth_proxy` com `active: true`:** ativa o repasse de conexões ativas, além dos anúncios.
+
+A documentação recomenda: se o proxy apresentar problemas, **reduza a configuração para ficar o mais parecida possível com esse exemplo**. Ou seja, comece por ele e só acrescente outros componentes depois que o proxy estiver estável.
+
+Na primeira instalação, a gravação é feita pelo cabo USB. Depois, as atualizações vão pela rede (OTA).
+
+## As opções do componente
+
+A documentação lista três opções para o `bluetooth_proxy`:
+
+| Opção | O que faz | Padrão no ESP32 |
+|---|---|---|
+| **`active`** | ativa o repasse de conexões GATT ativas | `true` |
+| **`cache_services`** | guarda os serviços GATT na memória flash (NVS), o que acelera bastante as conexões ativas; só no ESP32 | `true` |
+| **`connection_slots`** | número máximo de conexões ativas simultâneas | `3` |
+
+Sobre os slots, a documentação dá os limites do ESP32: **cada slot consome cerca de 1 KB de RAM**, o máximo é **9**, e a **recomendação é não passar de 5**, para evitar problemas de estabilidade e de memória. Proxies com **Ethernet** costumam aguentar **4 slots** com folga, porque não dividem o rádio com o Wi-Fi.
+
+Para um proxy que **só escuta anúncios**, sem conexões ativas, a documentação indica `active: false`.
+
+## Slots: quantos dispositivos cabem
+
+Essa é a dúvida mais comum, e a documentação responde com uma distinção:
+
+- **Anúncios passivos não usam slot.** Sensores que apenas transmitem os dados, como muitos sensores **BTHome**, são recebidos separadamente e **não são limitados** pelos slots. Um proxy pode receber dezenas deles.
+- **Conexões ativas usam slot.** Dispositivos que ficam **conectados o tempo todo**, como algumas fechaduras e termostatos, ocupam um slot permanentemente.
+- **Conexões curtas liberam o slot.** Dispositivos que se conectam, trocam dados e desconectam, como muitos sensores, devolvem o slot, então dá para ter mais dispositivos do que slots.
+
+Na prática: para sensores de temperatura e umidade que transmitem anúncios, o número de slots quase não importa. Para fechaduras Bluetooth, cada uma conta.
+
+## Onde colocar o proxy
+
+A documentação do ESPHome traz recomendações de posicionamento que fazem mais diferença do que qualquer ajuste de configuração:
+
+- **Perto dos dispositivos Bluetooth** que você quer alcançar. Esse é o ponto do proxy.
+- **Longe de roteadores, switches e outros equipamentos de rede**, que geram interferência e degradam a recepção Bluetooth. A recomendação é **pelo menos 3 metros** de distância desses equipamentos.
+- **Fora de racks** e armários com equipamentos.
+
+E, se houver mais de um proxy, a documentação do Home Assistant recomenda que fiquem **afastados o suficiente para não interferirem entre si**.
+
+Na prática, o proxy ideal fica numa tomada no meio do cômodo ou do corredor que concentra os sensores, e não ao lado do roteador, que é onde muita gente tende a deixar.
+
+## Wi-Fi ou Ethernet
+
+O ESP32 usa **o mesmo rádio** para Wi-Fi e Bluetooth. Por isso, a documentação do ESPHome recomenda, para melhor recepção, **uma placa com Ethernet**, que tira o tráfego de rede do rádio, e, de preferência, com **antena externa**. O Home Assistant também ranqueia os adaptadores: **proxies por Ethernet com escaneamento passivo** ficam no topo, acima até de adaptadores USB de alto desempenho, e proxies por Wi-Fi vêm logo depois.
+
+Para começar e para a maioria das casas, um **ESP32 DevKit por Wi-Fi** resolve. Ethernet é o passo seguinte para quem tem muitos dispositivos ou conexões ativas instáveis.
+
+## Escaneamento passivo ou ativo
+
+O `esp32_ble_tracker` escaneia de forma **ativa** por padrão. A documentação explica a diferença:
+
+- **Escaneamento passivo** funciona para a maioria dos dispositivos BLE e basta para o uso contínuo.
+- **Escaneamento ativo** pede dados adicionais aos dispositivos e costuma ser necessário **só para adicionar dispositivos novos** ao Home Assistant. Ele também **aumenta o consumo de bateria** de dispositivos BLE a pilha.
+
+Se o proxy esquentar, ou se a bateria dos sensores durar pouco, a documentação sugere testar o escaneamento passivo, se os seus dispositivos não precisarem do ativo:
+
+```yaml
+esp32_ble_tracker:
+  scan_parameters:
+    active: false
+```
+
+Sobre os outros parâmetros de escaneamento, o aviso é direto: os **valores padrão são recomendados** para a maioria dos usuários. Mudar `interval` ou `window` costuma não trazer benefício e aumenta o uso de CPU e o tráfego de rede; configurações agressivas podem causar **superaquecimento** em proxies com PoE e **instabilidade de Wi-Fi** em proxies por Wi-Fi.
+
+## Conferindo no Home Assistant
+
+Depois de adicionado, o proxy aparece na integração **Bluetooth** do Home Assistant. A documentação descreve o painel de configuração do Bluetooth como o lugar que mostra **todos os adaptadores e proxies juntos**.
+
+Dois comportamentos para conhecer:
+
+- **Failover automático.** Integrações que seguem as boas práticas da biblioteca Bluetooth do Home Assistant **conectam pelo adaptador com melhor sinal** e passam para outro adaptador ativo se aquele ficar indisponível.
+- **O pior adaptador pode limitar o resultado.** A documentação do Home Assistant observa que o desempenho é limitado pelo adaptador de pior desempenho que tenha o melhor sinal até o dispositivo, e recomenda, ao passar para um adaptador melhor, **desativar os antigos e menos eficientes**.
+
+## Os problemas mais comuns
+
+A varredura do fórum do Home Assistant e da documentação da Espressif mostra que os tropeços se concentram na primeira instalação:
+
+### O computador não reconhece a placa
+
+- **Cabo só de carga.** A documentação da Espressif alerta que alguns cabos USB **só carregam** e não têm as linhas de dados, e por isso não servem para programar a placa. A placa liga, mas o computador não vê porta serial. Troque por um cabo de dados conhecido.
+- **Driver USB-serial.** Placas DevKit usam um chip conversor USB-serial, geralmente **CP2102** ou **CH340**, e no Windows cada um tem seu driver. Veja qual chip está na sua placa e instale o driver correspondente.
+
+### A instalação não começa
+
+Algumas placas não entram sozinhas no modo de gravação. O procedimento descrito pela Espressif para as placas DevKit é **segurar o botão BOOT e apertar e soltar o botão EN (reset)**, o que coloca a placa em modo de download de firmware. Depois, solte o BOOT e tente de novo.
+
+### O Home Assistant não conecta ao dispositivo
+
+Em relatos no fórum, o dispositivo instalado não conecta ao Home Assistant porque a configuração **ficou sem a linha `api:`**. O YAML oficial deste post tem o bloco `api:`, que é o que liga o ESP32 ao Home Assistant. Se você escreveu a própria configuração, confira se ele está lá.
+
+### Problemas de memória
+
+A documentação do ESPHome lista três causas:
+
+- **Framework arduino** em vez de **esp-idf**: o esp-idf usa menos memória.
+- **Tabela de partições antiga**: placas gravadas por cabo antes do ESPHome 2022.12.0 com esp-idf, ou antes do 2026.4.0 com arduino, devem atualizar a tabela de partições para aumentar a partição NVS, uma vez por cabo ou por atualização OTA da tabela.
+- **Web server**: o componente de servidor web usa RAM extra; desativá-lo ajuda.
+
+### O dispositivo Bluetooth não aparece
+
+O ESPHome **não decodifica nem mantém lista** de dispositivos compatíveis. Quem interpreta os dados é a integração do dispositivo no Home Assistant. A documentação orienta procurar o dispositivo na **lista de integrações do Home Assistant**. Se não houver integração Bluetooth para ele, o proxy recebe os anúncios, mas o Home Assistant não sabe o que fazer com eles.
+
+## Alimentação: o detalhe que derruba proxies
+
+Um proxy Bluetooth fica ligado 24 horas por dia, usando Wi-Fi e Bluetooth no mesmo rádio. Isso exige uma alimentação estável. Fonte fraca ou cabo fino podem provocar **quedas de tensão nos picos de transmissão**, e o ESP32 se reinicia sozinho para se proteger. No Home Assistant, o sintoma é um proxy que fica **indisponível de tempos em tempos** sem motivo aparente.
+
+Três cuidados resolvem a maior parte dos casos:
+
+- **Use uma fonte USB de qualidade**, de preferência de 1 A ou mais, e não a porta USB de uma TV ou de um roteador.
+- **Use um cabo curto e de boa bitola** no lugar definitivo.
+- **Desconfie de reinícios frequentes** antes de mexer na configuração Bluetooth.
+
+O post [Fonte para ESP32: por que a sua placa reinicia sozinha](/posts/fonte-esp32-placa-reinicia/) mostra como identificar o problema pelo log e qual fonte resolve.
+
+## Que dispositivos se beneficiam do proxy
+
+Qualquer dispositivo BLE com integração no Home Assistant pode usar o proxy. Alguns exemplos de integrações Bluetooth que existem no Home Assistant:
+
+- **BTHome**, um formato aberto de anúncio usado por sensores de vários fabricantes e por firmwares alternativos de termômetros BLE.
+- **Xiaomi BLE**, para termômetros, sensores de planta e outros dispositivos Bluetooth da Xiaomi.
+- **SwitchBot**, para os dispositivos Bluetooth da marca.
+- **Govee BLE** e **Inkbird**, para termômetros e higrômetros dessas marcas.
+
+A maior parte dos sensores dessas famílias funciona por **anúncio**, sem ocupar slot. Fechaduras e alguns dispositivos que recebem comandos usam **conexão ativa**. Antes de comprar um sensor pensando no proxy, procure a integração dele na lista do Home Assistant, como a documentação do ESPHome orienta.
+
+## Atualizando o proxy
+
+ESPHome e Home Assistant têm lançamentos frequentes, e o proxy também precisa ser atualizado de tempos em tempos.
+
+- **Pelo ESPHome Device Builder:** se o dispositivo foi criado ou adotado no Device Builder, a atualização é feita pela rede (OTA), sem cabo, a partir do painel.
+- **Projetos instalados pelo navegador:** a página de projetos prontos informa que o dispositivo pode ser **adotado no painel do ESPHome**, e o YAML do projeto está publicado no GitHub. Adotar o dispositivo é o que permite editar e atualizar a configuração depois.
+
+Antes de atualizar, leia as notas da versão do ESPHome. Mudanças de configuração entre versões são comuns, e é por isso que este post declara a versão em que foi escrito.
+
+## Quantos proxies colocar
+
+Não existe número fixo. A documentação do Home Assistant diz que o número de proxies é **limitado apenas pelo desempenho do sistema** que roda o Home Assistant. Na prática, a quantidade sai da planta da casa:
+
+- **Um proxy por região** onde existem dispositivos BLE que o adaptador do servidor não alcança.
+- **Proxies afastados entre si**, para não interferirem.
+- **Mais um proxy perto de dispositivos com conexão ativa**, como fechaduras, que dependem de sinal estável.
+
+Comece com um, no ponto de maior concentração de sensores, e veja no painel Bluetooth do Home Assistant quais dispositivos ainda chegam com sinal fraco.
+
+## Resumo
+
+- O proxy Bluetooth transforma um **ESP32 comum** num ponto de escuta BLE ligado ao Home Assistant pela rede.
+- **Só BLE**: áudio Bluetooth não passa.
+- O caminho mais simples é o **instalador do navegador**, opção **Generic ESP32**.
+- Para controlar a configuração, use o **YAML oficial**, com **esp-idf** e `esp32_ble_tracker`.
+- **Anúncios não ocupam slot**; conexões ativas sim, com padrão de 3 e recomendação de no máximo 5 no ESP32.
+- **Posicione perto dos sensores e longe do roteador**, a pelo menos 3 metros de equipamentos de rede.
+- **Ethernet** é melhor que Wi-Fi, mas Wi-Fi resolve para começar.
+
+---
+
+*Fontes: [documentação do componente Bluetooth Proxy do ESPHome](https://esphome.io/components/bluetooth_proxy/) e [página de projetos prontos](https://esphome.io/projects/), consultadas com o ESPHome 2026.9.1 como versão estável; [documentação da integração Bluetooth do Home Assistant](https://www.home-assistant.io/integrations/bluetooth/), com o Home Assistant 2026.10.0; relatos do [fórum da comunidade Home Assistant](https://community.home-assistant.io/t/unable-to-add-esp32-bt-proxy/766142) e guia de placas DevKit da Espressif para os problemas de instalação.*
