@@ -119,6 +119,8 @@ Frontmatter: `pubDate` (com hora nos posts de 18h), `author: 'Márcio Costa'`, `
 seção FAQ em texto plano, `featured: true` nos 2-3 de maior apelo. ML pode levar `price` +
 `priceCheckedAt`; **Amazon não**.
 
+**Destaque obrigatório:** `featured: true` em 2-3 posts por semana, espalhados pelos dias (a home mostra os 3 publicados mais recentes com destaque). **Todo post de achadinhos sai com `featured: true`.** Nunca deixar a semana inteira com `featured: false` — a home fica parada nos destaques antigos.
+
 #### 3.5 — ⚠️ VERIFICAR ESTOQUE (obrigatório, antes do Gate 3)
 
 Produto fora de estoque queima o clique. **Cheque todos** antes de apresentar:

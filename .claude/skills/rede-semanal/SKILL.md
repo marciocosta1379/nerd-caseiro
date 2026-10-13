@@ -30,6 +30,7 @@ Tema da trilha da tarde, por site:
 **Quarta de achadinhos (fixa desde 14/10/2026):** toda **quarta às 18h**, nos 3 sites, um post de
 **achadinhos do Mercado Livre**, **só botão ML**: Nerd = tecnologia, Reforma = ferramentas/casa,
 Abanou = **aquário**. Planeje esse slot em todo Gate 1 (11+ posts por site na semana).
+Todo post de achadinhos sai com **`featured: true`** (entra em destaque na home quando é publicado). Nos demais posts, `featured: true` em 2-3 por site por semana.
 
 O `publish-scheduled.mjs` compara o timestamp completo — basta a hora no `pubDate`, sem mexer em
 script. Os workflows já têm os dois crons (`0 10 * * *` e `5 21 * * *` UTC), mas quem dispara de
