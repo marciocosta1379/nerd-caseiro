@@ -1,0 +1,372 @@
+---
+title: 'Fita de LED com ESP32 e WLED integrada ao Home Assistant'
+description: 'Como ligar fita de LED endereçável ao ESP32 com o WLED, instalar pelo navegador e integrar ao Home Assistant, com fonte e versões declaradas.'
+pubDate: 2026-10-20T18:00:00-03:00
+category: 'eletronica-maker'
+tags: ['wled', 'esp32', 'fita-led', 'ws2812b', 'home-assistant', 'iluminacao', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Placa ESP32 DevKit V1 (ESP-WROOM-32) com cabo'
+    brand: 'Genérica'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/295zyNu'
+    image: '/images/produtos/esp32-devkit-v1-cabo.webp'
+    pros:
+      - 'É a placa que a documentação do WLED recomenda para projeto novo'
+      - 'Wi-Fi e Bluetooth embutidos, com cabo na caixa'
+      - 'Barata e fácil de achar'
+    cons:
+      - 'Lógica de 3,3 V: com fio longo até a fita, pode pedir conversor de nível'
+      - 'Conector micro USB'
+  - name: 'Fita de LED WS2812B endereçável, 5 V, 300 LEDs, PCB preto'
+    brand: 'icever'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CFTP3S41?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2fR6noM'
+    image: '/images/produtos/fita-led-ws2812b-300-leds-icever.webp'
+    pros:
+      - 'Cada LED tem controle próprio de cor e brilho'
+      - 'Conector de 3 pinos e fios de alimentação extras nas duas pontas'
+      - 'Pode ser cortada para o tamanho do móvel'
+    cons:
+      - 'Só aceita 5 V: ligar em 12 V ou 24 V queima a fita'
+      - 'IP30: não é à prova d''água'
+  - name: 'Fonte 5 V 6 A (30 W) bivolt com plugue P4'
+    brand: 'GoeSmart'
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0GSWPVV4B?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1xidKW2'
+    image: '/images/produtos/fonte-5v-6a-p4-goesmart.webp'
+    pros:
+      - 'Fonte de tomada: não exige ligar fios na rede elétrica'
+      - 'Bivolt automática, com cabo de cerca de 2,5 m'
+      - 'Proteção contra sobrecarga, curto-circuito e superaquecimento'
+    cons:
+      - '6 A não acendem 300 LEDs no branco máximo; o WLED precisa limitar o brilho'
+      - 'Produto novo, ainda com poucas avaliações'
+  - name: 'Adaptador P4 fêmea para borne, pacote com 10'
+    brand: 'Genérica'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07N93FBP9?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/27925z5'
+    image: '/images/produtos/adaptador-p4-femea-borne.webp'
+    pros:
+      - 'Prende os fios da fita na saída da fonte por parafuso, sem solda'
+      - 'Vem com dez: sobra para outros projetos'
+    cons:
+      - 'Confira a polaridade marcada no borne antes de ligar'
+faq:
+  - question: 'Preciso saber programar para usar o WLED?'
+    answer: 'Não. O WLED é instalado pelo navegador, num site oficial que grava o firmware direto no ESP32 pelo cabo USB. Toda a configuração depois é feita por uma página web servida pelo próprio ESP32 e pelo app WLED. Não há código para escrever nem compilar.'
+  - question: 'Qual a diferença entre fita WS2812B e fita de LED comum?'
+    answer: 'Na fita comum, todos os LEDs acendem na mesma cor ao mesmo tempo. Na WS2812B, cada LED tem um pequeno circuito integrado que recebe a cor e o brilho individualmente. É isso que permite efeitos como arco-íris correndo, cometa e preenchimento progressivo, e é por isso que ela precisa de um controlador como o ESP32 com WLED.'
+  - question: 'Posso ligar a fita direto no pino de 5 V do ESP32?'
+    answer: 'Só alguns poucos LEDs, para teste. Cada LED WS2812B pode consumir dezenas de miliamperes no branco máximo, e o pino de 5 V do ESP32 apenas repassa o que chega pelo USB, que é pouco. A fita deve ser alimentada direto pela fonte, e o ESP32 só envia o sinal de dados, com o terra ligado em comum.'
+  - question: 'O WLED funciona sem o Home Assistant?'
+    answer: 'Funciona. O WLED é independente: tem página web própria, app para celular, efeitos, predefinições e agendamentos. O Home Assistant entra para juntar a fita às outras automações da casa, como acender junto com a chegada de alguém ou no pôr do sol.'
+  - question: 'Quantos LEDs um ESP32 consegue controlar com o WLED?'
+    answer: 'Centenas, sem problema, para os projetos de casa. O limite prático costuma ser a energia e a taxa de atualização dos efeitos, e não o processamento: quanto mais LEDs numa saída, menor a taxa de quadros dos efeitos animados. Para instalações muito grandes, a documentação do WLED descreve o uso de várias saídas de dados.'
+  - question: 'Posso usar fita de 12 V com o WLED?'
+    answer: 'Sim, desde que seja uma fita endereçável compatível, como as WS2815 ou WS2811 de 12 V. O ESP32 continua enviando só o sinal de dados, e a fita é alimentada por uma fonte de 12 V. O que nunca pode acontecer é ligar uma fita de 5 V, como a WS2812B, numa fonte de 12 V, porque ela queima.'
+  - question: 'O WLED funciona sem internet?'
+    answer: 'Funciona. O WLED roda inteiro no ESP32, dentro da rede de casa, e não depende de nuvem. Sem internet, a página web, o aplicativo na mesma rede e o Home Assistant local continuam controlando a fita. Só o acesso de fora de casa depende de internet e de acesso remoto configurado.'
+  - question: 'Por que as cores da fita estão trocadas?'
+    answer: 'É a ordem de cores errada na configuração. Muitas fitas WS2812B usam a ordem GRB, e não RGB. Nas preferências de LED do WLED, troque a ordem de cores até o vermelho aparecer vermelho. Não é defeito da fita.'
+  - question: 'Qual versão do WLED o Home Assistant exige?'
+    answer: 'Segundo a documentação da integração WLED do Home Assistant, o dispositivo precisa rodar o WLED 0.14.0 ou mais novo. A versão estável mais recente quando este texto foi escrito era a 16.0.1, publicada pelo projeto em julho de 2026.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Fita de LED comum acende numa cor só. A fita **endereçável**, como a **WS2812B**, é outra coisa: cada LED recebe a sua própria cor e o seu próprio brilho. É ela que faz o arco-íris correr atrás da TV, o cometa percorrer a prateleira, a escada acender degrau por degrau.
+
+O jeito mais simples de controlar uma fita dessas em casa é com um **ESP32** rodando o **WLED**, um firmware livre feito exatamente para isso. Ele é instalado pelo navegador, sem programar nada, e conversa com o **Home Assistant** por uma integração oficial.
+
+Este tutorial segue a documentação oficial do **WLED** e da integração **WLED do Home Assistant 2026.10.0**. A versão estável mais recente do WLED quando o texto foi escrito era a **16.0.1**. Os links para as fontes estão ao longo do texto, para você conferir.
+
+## Como o conjunto funciona
+
+São três peças, cada uma com um papel:
+
+- **A fita WS2812B:** os LEDs, cada um com um chip que recebe os dados de cor.
+- **O ESP32:** o cérebro. Roda o WLED, fica no Wi-Fi e envia os dados de cor pela linha de dados da fita.
+- **A fonte de 5 V:** alimenta a fita. Os LEDs consomem muito mais que o ESP32, e a energia deles vem direto da fonte.
+
+Os fios entre eles são só três: **5 V**, **terra (GND)** e **dados**. A regra que mais importa, e que a própria documentação do WLED destaca: **o terra do ESP32 e o terra da fita precisam estar ligados juntos**. Sem o terra em comum, o sinal de dados não tem referência, e a fita pisca ou acende cores aleatórias.
+
+## O material
+
+### O ESP32
+
+A página de primeiros passos do WLED é direta: para projeto novo, **o ESP32 é a melhor escolha**. O suporte ao ESP8266, a placa antiga, está chegando ao fim. Qualquer **ESP32 DevKit** comum serve.
+
+![Placa ESP32 DevKit V1 com cabo](/images/produtos/esp32-devkit-v1-cabo.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CDJ9DLW5?tag=nerdcaseiro-20" store="amazon" source="fita-led-esp32-wled-home-assistant" />
+
+<AffiliateButton href="https://meli.la/295zyNu" store="mercadolivre" source="fita-led-esp32-wled-home-assistant" />
+
+### A fita
+
+Procure por **WS2812B de 5 V**. A tensão é o detalhe que não pode passar: fita de 5 V ligada numa fonte de 12 V ou 24 V queima na hora. O anúncio da fita deste tutorial avisa que ela **só aceita 5 V**, traz conector de 3 pinos e fios de alimentação extras nas duas pontas, e pode ser cortada no tamanho certo.
+
+![Fita de LED WS2812B endereçável com PCB preto](/images/produtos/fita-led-ws2812b-300-leds-icever.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CFTP3S41?tag=nerdcaseiro-20" store="amazon" source="fita-led-esp32-wled-home-assistant" />
+
+<AffiliateButton href="https://meli.la/2fR6noM" store="mercadolivre" source="fita-led-esp32-wled-home-assistant" />
+
+### A fonte
+
+Uma fonte de **5 V**, com corrente suficiente para a fita. A escolhida aqui é de **tomada**, com plugue P4 de 5,5 × 2,1 mm: ela vai direto na parede, sem ligar fio nenhum na rede elétrica. Segundo o fabricante, entrega **5 V e até 6 A (30 W)**, é bivolt automática e tem proteção contra sobrecarga, curto-circuito e superaquecimento.
+
+![Fonte 5 V 6 A com plugue P4](/images/produtos/fonte-5v-6a-p4-goesmart.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0GSWPVV4B?tag=nerdcaseiro-20" store="amazon" source="fita-led-esp32-wled-home-assistant" />
+
+<AffiliateButton href="https://meli.la/1xidKW2" store="mercadolivre" source="fita-led-esp32-wled-home-assistant" />
+
+### O adaptador de borne
+
+Para ligar os fios da fita no plugue da fonte sem solda, usa-se um **adaptador P4 fêmea para borne**: o plugue da fonte encaixa nele, e os fios da fita são presos por parafuso, no positivo e no negativo marcados. É a mesma peça usada em câmera de CFTV, barata e fácil de achar.
+
+![Adaptador P4 fêmea para borne](/images/produtos/adaptador-p4-femea-borne.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07N93FBP9?tag=nerdcaseiro-20" store="amazon" source="fita-led-esp32-wled-home-assistant" />
+
+<AffiliateButton href="https://meli.la/27925z5" store="mercadolivre" source="fita-led-esp32-wled-home-assistant" />
+
+## A conta da energia: quantos LEDs a fonte aguenta
+
+Esse é o ponto que mais causa problema em projeto de fita endereçável, e vale fazer a conta antes de ligar.
+
+Cada LED WS2812B tem três pequenos LEDs dentro, vermelho, verde e azul. No **branco em brilho máximo**, os três acendem no máximo ao mesmo tempo, e o consumo por LED chega à casa das **dezenas de miliamperes**. O valor de referência usado pela comunidade é de cerca de **60 mA por LED** nessa condição extrema.
+
+Fazendo a conta para a fita inteira de 300 LEDs: 300 × 60 mA = **18 A**. A fonte de 6 A **não aguenta** a fita toda no branco máximo. E tudo bem, por dois motivos:
+
+1. Efeitos coloridos e brilho médio consomem uma fração disso. Quase ninguém usa a fita no branco máximo.
+2. O WLED tem um **limitador automático de brilho**, que calcula o consumo e reduz o brilho para não passar de um limite que você define.
+
+Na prática, há dois caminhos:
+
+- **Cortar a fita** no tamanho do projeto. Para 1 metro com 60 LEDs, a conta no pior caso dá 3,6 A, com folga na fonte de 6 A.
+- **Usar a fita inteira** com o limitador configurado abaixo da capacidade da fonte, como 5.000 mA, deixando margem. O brilho máximo fica menor, mas efeitos coloridos e brilho médio continuam bonitos.
+
+O limitador é um cálculo, não um disjuntor. Ele protege a fonte no uso normal, mas não substitui fio na bitola certa e fonte bem dimensionada.
+
+## Passo 1: instalar o WLED pelo navegador
+
+A instalação é feita pelo **instalador web oficial**, em `install.wled.me`, que grava o firmware direto do navegador.
+
+1. Ligue o ESP32 no computador pelo cabo USB. **Ainda sem a fita.**
+2. Abra o instalador num navegador baseado em Chromium, como Chrome ou Edge, que têm suporte à comunicação serial pela web.
+3. Escolha a versão estável e clique em **Install**. Selecione a porta serial do ESP32 na lista.
+4. Espere a gravação terminar. O instalador pode oferecer a configuração do Wi-Fi ali mesmo.
+
+Se a porta não aparecer, o mais comum é o driver do chip USB da placa ou um cabo só de carga, sem dados. Troque o cabo antes de qualquer outra coisa.
+
+## Passo 2: colocar o WLED no Wi-Fi de casa
+
+Se o Wi-Fi não foi configurado no instalador, o ESP32 cria a própria rede. Segundo a documentação:
+
+1. No celular, conecte na rede **`WLED-AP`**, com a senha padrão **`wled1234`**.
+2. A página de configuração costuma abrir sozinha. Se não abrir, acesse **`4.3.2.1`** no navegador.
+3. Em **WIFI SETTINGS**, informe o nome e a senha da sua rede de 2,4 GHz e salve.
+
+O ESP32 reinicia e entra na rede de casa. A partir daí, ele é acessado pelo endereço que o roteador der a ele, ou pelo app WLED, que encontra os dispositivos na rede.
+
+## Passo 3: ligar a fita
+
+Com o ESP32 **desligado** e a fonte **fora da tomada**:
+
+1. **Dados:** o fio de dados da fita, geralmente marcado como **DIN** e com a seta apontando para dentro da fita, vai no **GPIO16** do ESP32. A documentação do WLED indica o GPIO16 como pino padrão para ESP32, e lembra que ele pode aparecer serigrafado como **IO16**, **G16** ou **RX2**, conforme a placa.
+2. **Terra:** o GND da fita vai no **negativo da fonte**, pelo borne do adaptador P4, e também num pino **GND do ESP32**.
+3. **5 V:** o 5 V da fita vai no **positivo da fonte**, no outro borne do adaptador.
+4. O ESP32 pode continuar alimentado pelo USB. Se preferir alimentar pela fonte, use o pino **VIN** ou **5V** da placa, e não ligue o USB do computador ao mesmo tempo.
+
+Dois cuidados da documentação:
+
+- **Mantenha o fio de dados curto.** O ESP32 trabalha com sinal de 3,3 V, e a fita espera um sinal de 5 V. Com fio curto, quase sempre funciona. Se a fita precisar ficar longe do ESP32, a documentação recomenda um **conversor de nível lógico**.
+- **Confira a pinagem da sua placa.** O nome dos pinos varia de fabricante para fabricante.
+
+Fita longa costuma perder brilho no final, com o branco puxando para o laranja. É queda de tensão no próprio cobre da fita. A solução é **injetar energia** também no meio ou no fim da fita, usando os fios extras de alimentação, sempre com o terra em comum.
+
+## Passo 4: configurar o WLED
+
+Na página do WLED, abra **Config > LED Preferences**:
+
+1. **Quantidade de LEDs:** o número real de LEDs da fita, depois do corte.
+2. **Tipo:** WS281x.
+3. **Pino de dados:** 16.
+4. **Ordem de cores:** muitas fitas WS2812B usam **GRB**. Se o vermelho aparecer verde, é essa opção.
+5. **Limitador de brilho:** preencha a corrente máxima da fonte, com folga. Para a fonte de 6 A, algo como 5.000 mA.
+
+Salve e volte para a tela principal. Escolha uma cor fixa para conferir se a fita inteira acende, até o último LED. Depois, explore os efeitos e crie **predefinições**, os presets, com as combinações que você mais usa: "Noite", "Filme", "Festa".
+
+## Passo 5: levar para o Home Assistant
+
+A integração **WLED** é oficial no Home Assistant e, segundo a documentação, **exige o WLED 0.14.0 ou mais novo**.
+
+1. Na maioria das redes, o Home Assistant **descobre o WLED sozinho**. Em **Configurações > Dispositivos e serviços**, ele aparece como **Descoberto**. Basta configurar.
+2. Se não aparecer, use **Adicionar integração**, escolha **WLED** e informe o **endereço IP** do ESP32.
+
+A documentação lista o que a integração cria:
+
+- **Uma entidade de luz** para cada segmento da fita. Com dois ou mais segmentos, também uma luz principal, que controla o conjunto.
+- **Seletores** para ativar as **predefinições** e as **listas de reprodução** configuradas no WLED, e para a paleta de cores.
+- **Números** para velocidade e intensidade dos efeitos.
+- **Sensores** como quantidade de LEDs e endereço IP, além de outros desativados por padrão.
+
+E algumas limitações, também documentadas: só a cor principal de cada segmento pode ser definida pelo Home Assistant, e os nomes personalizados de segmento não são usados pela integração.
+
+## Passo 6: uma automação de exemplo
+
+A fita acendendo sozinha no pôr do sol, com a predefinição "Noite" criada no WLED:
+
+```yaml
+alias: "Fita de LED no pôr do sol"
+triggers:
+  - trigger: sun
+    event: sunset
+actions:
+  - action: select.select_option
+    target:
+      entity_id: select.wled_predefinicao
+    data:
+      option: "Noite"
+```
+
+Troque `select.wled_predefinicao` pelo nome real da entidade de predefinição, que aparece na página do dispositivo WLED no Home Assistant, e `"Noite"` pelo nome do seu preset.
+
+Para só acender a fita, sem preset, a ação é a mesma de qualquer luz:
+
+```yaml
+actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.wled
+    data:
+      brightness_pct: 40
+```
+
+A fita também pode acender quando um sensor detecta movimento, como no guia de [luz que acende sozinha](/posts/luz-sensor-movimento-home-assistant-blueprint/), ou junto com qualquer outra automação que já acenda luzes na casa: para o Home Assistant, ela é uma luz como as outras.
+
+## Segmentos: uma fita, várias luzes
+
+Um recurso do WLED que muda o que dá para fazer com uma fita só é o **segmento**. Na tela principal, em **Segments**, você divide a fita em trechos, cada um com sua própria cor, efeito e brilho. Exemplos:
+
+- Fita atrás da TV e embaixo do rack, com o trecho da TV em luz suave e o do rack desligado.
+- Escada com cada degrau como um segmento.
+- Prateleira com cada nicho numa cor diferente.
+
+No Home Assistant, como a documentação descreve, **cada segmento vira uma entidade de luz separada**, e, com dois ou mais segmentos, aparece também uma luz principal, que controla o conjunto. Assim, uma automação pode acender só o trecho da escada de madrugada, sem ligar a fita inteira.
+
+## Presets e playlists
+
+As **predefinições**, os presets, guardam uma combinação completa: cores, efeito, velocidade, brilho e segmentos. As **playlists** alternam entre presets em sequência, com tempo definido para cada um. Duas ideias práticas:
+
+- Um preset **"Noite"**, com brilho baixo e cor quente, para a luz de caminho.
+- Uma playlist **"Festa"**, que alterna efeitos coloridos a cada minuto.
+
+Os presets aparecem no Home Assistant como opções de um seletor, o que é o jeito mais simples de chamar cenas inteiras numa automação, como no exemplo do pôr do sol.
+
+## Sem Home Assistant: app e assistentes de voz
+
+Mesmo sem Home Assistant, o WLED é controlável por vários caminhos:
+
+- **Página web** do próprio ESP32, pelo navegador do celular ou do computador.
+- **Aplicativo WLED**, que encontra os dispositivos na rede e mostra todos numa tela só.
+- **Alexa:** nas configurações de sincronização do WLED, há uma opção para que ele apareça como um dispositivo para a Alexa, permitindo ligar, desligar e mudar o brilho por voz.
+
+Para quem ainda não tem Home Assistant, a fita já é útil desde o primeiro dia. A integração entra quando você quiser juntá-la a outras automações.
+
+## Backup da configuração
+
+Depois de configurar LEDs, segmentos e presets, vale guardar uma cópia. O WLED tem, nas configurações de segurança e atualização, opções para **exportar a configuração e os presets** em arquivos. Se um dia for preciso regravar o ESP32 ou trocar a placa, basta importar os arquivos para voltar tudo como estava.
+
+O mesmo menu é onde ficam as **atualizações de firmware**. Antes de atualizar, faça o backup e leia as notas da versão no repositório oficial do projeto.
+
+## Onde instalar a fita
+
+Algumas ideias que funcionam bem com fita endereçável:
+
+- **Atrás da TV:** luz indireta que reduz o contraste entre a tela e a parede escura.
+- **Embaixo de prateleiras e nichos:** destaca objetos e serve de luz noturna.
+- **Escada:** efeito de acender degrau por degrau com um sensor de presença.
+- **Rodapé do quarto:** luz de caminho para a madrugada, em brilho bem baixo.
+
+Para colar a fita em perfil de alumínio ou em madeira, limpe a superfície com álcool antes. O adesivo da fita adere mal em superfície com gordura ou poeira.
+
+## Segurança
+
+- **Fonte certa, fio certo.** Projeto de fita endereçável grande puxa corrente alta. O fio entre a fonte e a fita precisa aguentar essa corrente sem esquentar. Para projetos maiores que o deste tutorial, a documentação do WLED tem uma calculadora de fio e fusível.
+- **Nada de fita escondida em lugar fechado e quente.** LED e fonte esquentam. Deixe ventilação.
+- **Desligue a fonte antes de mexer nos fios.** Curto-circuito no borne pode danificar a fita e o ESP32.
+- **Confira a polaridade.** O adaptador de borne marca o positivo e o negativo. Invertidos, podem queimar a fita.
+
+A fonte deste tutorial é de tomada, justamente para que nenhum fio da rede elétrica precise ser ligado. Todo o trabalho acontece do lado de 5 V.
+
+## Difusor e perfil: do pontinho à faixa de luz
+
+Fita de LED colada direto na parede ou no móvel mostra cada LED como um ponto brilhante, o famoso efeito "bolinha". Para uma luz contínua:
+
+- **Perfil de alumínio com difusor leitoso**: a fita fica dentro de um trilho, coberta por uma tampa translúcida que espalha a luz. O alumínio também ajuda a dissipar o calor dos LEDs.
+- **Distância**: quanto mais longe a fita está do difusor ou da superfície iluminada, mais os pontos se misturam.
+- **Luz indireta**: apontar a fita para a parede, atrás da TV ou embaixo de um móvel, faz a luz chegar já espalhada.
+- **Densidade**: fitas com mais LEDs por metro dão uma linha mais uniforme, mas consomem mais energia.
+
+## Brilho e conforto no dia a dia
+
+Fita endereçável chama atenção pelos efeitos coloridos, mas, no uso diário, quem acaba ficando é o **branco quente em brilho baixo**. Algumas ideias de uso que costumam funcionar:
+
+- **Luz noturna** em corredor ou embaixo da cama, em brilho mínimo e cor quente, acionada por um sensor de presença no Home Assistant.
+- **Iluminação atrás da TV**, em brilho baixo, que reduz o contraste entre a tela e a parede escura.
+- **Indicadores**: um segmento curto que muda de cor conforme algo da casa, como vermelho quando a porta está aberta, usando os segmentos e os presets do WLED.
+- **Efeitos só em ocasiões**: festas e datas comemorativas, por meio de presets e playlists.
+
+Brilho alto e cores frias à noite atrapalham o descanso. O próprio WLED permite ajustar a transição e o brilho dos presets para cada horário.
+
+## Atualizando o WLED com segurança
+
+O WLED recebe versões novas com frequência, com correções e recursos. Para atualizar sem dor de cabeça:
+
+1. **Faça o backup** da configuração e dos presets, como descrito acima.
+2. **Leia as notas da versão** no repositório oficial, procurando avisos sobre mudanças que exigem reconfigurar.
+3. **Baixe o arquivo** da versão certa para o seu ESP32, conforme a página de releases do projeto.
+4. **Atualize pela interface**, sem desligar a fonte durante o processo.
+5. **Confira** LEDs, segmentos e a integração no Home Assistant depois de reiniciar.
+
+## Antes de fixar de vez: teste na bancada
+
+Colar a fita no móvel e só depois descobrir um problema obriga a descolar tudo. Uma sequência de teste antes da instalação definitiva:
+
+1. **Ligue tudo sobre a mesa**: fonte, ESP32 e a fita ainda enrolada ou esticada no chão.
+2. **Teste o branco** em brilho médio por alguns minutos e observe se o fim da fita muda de cor.
+3. **Teste cores puras**, vermelho, verde e azul, para conferir a ordem de cores configurada.
+4. **Confira a temperatura** da fonte e do ESP32 depois de meia hora.
+5. **Teste a integração** no Home Assistant: ligar, desligar e mudar o brilho pelo painel.
+6. **Só então fixe** a fita, com a superfície limpa e o cabo de dados o mais curto possível.
+
+## Quando não funciona
+
+- **A fita não acende:** confira se o fio de dados está no **DIN**, a entrada da fita, e não na saída. A seta impressa na fita indica o sentido.
+- **Só o primeiro LED acende, ou acende errado:** terra sem ligação em comum ou fio de dados longo demais.
+- **Cores trocadas:** ordem de cores na configuração do WLED.
+- **O fim da fita fica amarelado:** queda de tensão; injete energia no meio ou no fim.
+- **O Home Assistant não encontra o WLED:** informe o IP manualmente e confira se o ESP32 e o Home Assistant estão na mesma rede.
+
+Para saber mais sobre a placa e outros projetos com ela, o [kit de primeiros passos com Arduino e ESP32](/posts/melhores-kits-iniciantes-arduino-esp32/) é um bom ponto de partida.

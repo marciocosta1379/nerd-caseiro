@@ -1,0 +1,297 @@
+---
+title: 'Aviso de máquina de lavar pronta com tomada inteligente'
+description: 'Como montar no Home Assistant um aviso de fim de lavagem pelo consumo da tomada inteligente, com automação conferida na documentação e versão declarada.'
+pubDate: 2026-10-24T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'maquina-de-lavar', 'tomada-inteligente', 'tapo-p110', 'notificacao', 'automacao', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'TP-Link Tapo P110, tomada inteligente Wi-Fi com monitoramento de energia, 10 A, bivolt'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2b3KeRZ'
+    image: '/images/produtos/tapo-p110.webp'
+    pros:
+      - 'Mede a potência do aparelho ligado nela, que é o dado que a automação usa'
+      - 'Integração TP-Link oficial do Home Assistant, consultada a cada 5 segundos pela rede local'
+      - 'Bivolt, 10 A / 2.400 W'
+      - 'Mais de 1.800 avaliações, nota 4,8'
+    cons:
+      - 'Limite de 10 A: máquina lava e seca com aquecimento pode passar disso'
+      - 'Pode exigir ativar a compatibilidade com terceiros no app Tapo'
+faq:
+  - question: 'Qualquer tomada inteligente serve?'
+    answer: 'Não. A automação depende de a tomada medir a potência do aparelho em tempo real. Tomada inteligente sem medição de consumo só liga e desliga, e não sabe se a máquina está lavando ou parada. Na ficha, procure por monitoramento de energia ou medição de consumo, e confira se a tomada tem integração com o Home Assistant.'
+  - question: 'A máquina pode ficar ligada na tomada inteligente o tempo todo?'
+    answer: 'Pode, desde que a potência da máquina esteja dentro do limite da tomada. A Tapo P110 suporta 10 A e 2.400 W. A maioria das lavadoras sem aquecimento de água fica abaixo disso, mas lava e seca e máquinas com aquecimento podem passar. Confira a potência na etiqueta da máquina ou no manual antes de ligar.'
+  - question: 'E se a máquina pausa durante o molho e o aviso chega antes da hora?'
+    answer: 'É o ajuste mais comum. Durante o molho, a potência cai e pode parecer que o ciclo acabou. A solução é aumentar o tempo da opção for no gatilho de fim, para que a potência precise ficar baixa por mais tempo antes de o aviso sair. Olhar o gráfico de potência de uma lavagem completa no histórico mostra quanto dura a pausa mais longa do seu programa.'
+  - question: 'Funciona com máquina de lavar louça e secadora?'
+    answer: 'A lógica é a mesma: o aparelho consome mais enquanto trabalha e cai para quase nada no fim. O que muda são os limites de potência e de tempo, que precisam ser ajustados olhando o histórico de um ciclo completo. Secadoras e lava-louças com aquecimento costumam ter potência alta, então o limite da tomada precisa ser conferido antes.'
+  - question: 'Dá para saber se a máquina parou por falta de água?'
+    answer: 'Em parte. Se a máquina para no meio do ciclo por falta de água, a potência cai e fica baixa, e a automação de fim vai avisar que terminou, o que já serve de alerta para ir conferir. Diferenciar uma parada por problema de um fim normal exigiria lógica mais elaborada, comparando a duração do ciclo com a esperada.'
+  - question: 'Funciona com qualquer marca de máquina de lavar?'
+    answer: 'A lógica funciona com qualquer máquina, porque depende só do consumo elétrico, e não de integração com a marca. O que muda de uma máquina para outra são os números de potência e de tempo, ajustados olhando o histórico de uma lavagem completa.'
+  - question: 'O aviso funciona fora de casa?'
+    answer: 'A notificação pelo app Companion chega no celular pela internet, então funciona fora de casa desde que o app esteja configurado para falar com o Home Assistant. A automação roda no próprio Home Assistant, dentro de casa, e não depende de o celular estar na rede local.'
+  - question: 'Precisa de nuvem para a tomada funcionar com o Home Assistant?'
+    answer: 'Segundo a documentação, a integração TP-Link consulta as tomadas pela rede local, a cada 5 segundos. Os aparelhos Tapo exigem autenticação com a conta TP-Link na configuração. Em alguns firmwares, também é preciso ativar a compatibilidade com terceiros no app Tapo.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A máquina de lavar termina o ciclo, apita uma vez e fica ali, com a roupa molhada esperando. Se ninguém ouviu, a roupa passa horas abafada, amassa e às vezes ganha aquele cheiro de umidade que obriga a lavar de novo.
+
+O Home Assistant resolve isso com uma peça barata: uma **tomada inteligente que mede consumo**. A ideia é simples. Enquanto lava, a máquina puxa energia; quando termina, o consumo cai para quase nada. A automação percebe essa queda e manda um aviso no celular: **"a roupa está pronta"**.
+
+Este tutorial segue a documentação oficial do Home Assistant, na versão **2026.10.0**, e usa a **TP-Link Tapo P110** como exemplo. O caminho vale para qualquer tomada com medição que tenha integração com o Home Assistant.
+
+## Como a automação "sabe" que a máquina terminou
+
+Uma lavagem não consome energia de forma constante. O motor gira, para, gira de novo; a bomba liga para drenar; a centrifugação puxa mais. Mas, olhando o gráfico de potência de um ciclo inteiro, o desenho é sempre parecido:
+
+1. **Parada:** a máquina ligada na tomada, mas sem lavar, fica em poucos watts, só o painel.
+2. **Lavando:** a potência sobe e oscila, com picos na agitação e na centrifugação.
+3. **Fim:** a potência cai de novo para o nível de parada e **fica lá**.
+
+A automação precisa detectar a passagem do passo 2 para o passo 3, sem se confundir com as pausas do meio do ciclo, como o molho. Para isso, ela usa dois recursos do Home Assistant: o **gatilho de estado numérico** e a opção **"for"**, que exige que a condição se mantenha por um tempo.
+
+## Por que não usar só um temporizador
+
+A primeira ideia de quem pensa no problema é um temporizador: o programa dura 1h20, então avisa em 1h20. Funciona mal por três motivos.
+
+- **O tempo do programa muda.** Carga maior, roupa mais pesada ou água entrando devagar alongam o ciclo. Muitas máquinas ajustam o tempo durante a lavagem.
+- **Ninguém lembra de disparar o temporizador.** A automação por consumo começa sozinha, quando a máquina começa.
+- **Pausas e travas.** Se a máquina parar por falta de água ou porque a tampa abriu, o temporizador avisa que terminou quando não terminou.
+
+O consumo, ao contrário, é a própria máquina dizendo o que está fazendo. É por isso que a tomada com medição é o caminho mais confiável, sem precisar abrir a máquina nem instalar nada dentro dela.
+
+## Tomada com medição ou sensor de vibração?
+
+Existe outro caminho conhecido: um **sensor de vibração** colado na máquina. Ele detecta o chacoalhar da lavagem e da centrifugação. Os dois funcionam, mas têm perfis diferentes:
+
+| | Tomada com medição | Sensor de vibração |
+|---|---|---|
+| Instalação | plugar entre a máquina e a parede | colar na máquina |
+| O que mede | potência elétrica real | movimento |
+| Pausas sem movimento | aparecem como potência baixa | aparecem como parado |
+| Limite de potência | depende da tomada | não tem |
+| Mede o gasto de energia | **sim** | não |
+
+Para a maioria das lavadoras sem aquecimento, a tomada é a escolha mais simples e ainda entrega o consumo de cada lavagem. Para máquina de potência alta, acima do limite da tomada, o sensor de vibração é a saída.
+
+## O que você precisa
+
+- **Home Assistant** funcionando na mesma rede da tomada.
+- **App Home Assistant Companion** no celular, para receber o aviso.
+- **Uma tomada inteligente com medição de potência** e integração com o Home Assistant.
+
+### A tomada
+
+A **Tapo P110** é uma tomada Wi-Fi da TP-Link, **bivolt**, de **10 A / 2.400 W**, com **monitoramento de energia**. A integração **TP-Link** do Home Assistant lista a P110 entre as tomadas suportadas e, segundo a documentação, cria sensores de consumo nos aparelhos que medem energia. A consulta é feita **pela rede local a cada 5 segundos**, o que é mais do que suficiente para acompanhar uma lavagem.
+
+![Tomada inteligente TP-Link Tapo P110](/images/produtos/tapo-p110.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20" store="amazon" source="aviso-maquina-de-lavar-pronta-tomada-inteligente-home-assistant" />
+
+<AffiliateButton href="https://meli.la/2b3KeRZ" store="mercadolivre" source="aviso-maquina-de-lavar-pronta-tomada-inteligente-home-assistant" />
+
+### Antes de tudo: a potência da máquina cabe na tomada?
+
+Esse é o ponto de segurança do tutorial. A P110 suporta **10 A e 2.400 W**. A maioria das lavadoras sem aquecimento de água fica abaixo disso. Mas **lava e seca** e máquinas com **aquecimento de água** podem passar do limite.
+
+Confira a potência na **etiqueta da máquina**, normalmente na traseira, ou no manual. Se passar de 2.400 W, essa tomada não serve, e a máquina deve continuar ligada direto na tomada da parede. Também não use benjamim nem extensão para ligar a máquina: ela vai direto na tomada inteligente, e a tomada inteligente direto na parede.
+
+## Passo 1: integrar a tomada ao Home Assistant
+
+1. Configure a P110 no **app Tapo**, no Wi-Fi de 2,4 GHz de casa.
+2. No Home Assistant, vá em **Configurações > Dispositivos e serviços** e adicione a integração **TP-Link Smart Home**. Muitas vezes ela já aparece como descoberta automaticamente.
+3. Informe o e-mail e a senha da conta TP-Link. A documentação avisa que os aparelhos Tapo exigem autenticação.
+4. Se a tomada não aparecer, abra o app Tapo e procure a opção de **compatibilidade com terceiros**, que alguns firmwares exigem ativada.
+
+Abra o dispositivo da tomada e procure o sensor de **potência atual**, em watts. É ele que a automação vai observar. Anote o nome da entidade; neste tutorial ela aparece como `sensor.maquina_de_lavar_potencia`, e você troca pelo nome real.
+
+O mesmo sensor alimenta o painel de energia do Home Assistant, que mostra quanto a máquina gasta por mês. O passo a passo está em [painel de energia com tomada inteligente](/posts/painel-energia-home-assistant-tomada-inteligente/).
+
+## Passo 2: olhar uma lavagem no histórico
+
+Antes de escrever a automação, vale **medir o seu programa de lavagem**. Os números variam de máquina para máquina.
+
+1. Ligue a máquina na tomada e rode uma lavagem normal.
+2. Depois, abra **Histórico** no menu lateral e escolha o sensor de potência.
+3. Observe três números no gráfico:
+   - **Potência em repouso:** o patamar antes e depois do ciclo. Em geral, poucos watts.
+   - **Potência lavando:** onde ficam os vales durante o ciclo. Mesmo nos momentos mais calmos, costuma ficar bem acima do repouso.
+   - **Pausa mais longa:** o maior intervalo em que a potência caiu perto do repouso no meio do ciclo, como no molho.
+
+Com esses números, os limites da automação deixam de ser chute.
+
+## Passo 3: um ajudante para lembrar que a máquina está lavando
+
+O gatilho de estado numérico, segundo a documentação, **dispara quando o valor cruza um limite**, e não fica disparando enquanto o valor continua do mesmo lado. Isso é ótimo, mas não basta: a potência pode cair abaixo do limite quando alguém só abre a tampa e o painel acende.
+
+Por isso, a automação usa um **ajudante** que guarda se a máquina está de fato lavando. Crie em **Configurações > Dispositivos e serviços > Ajudantes > Criar ajudante > Alternar**, com o nome **Máquina lavando**. Ele vira a entidade `input_boolean.maquina_lavando`.
+
+## Passo 4: a automação de início
+
+A primeira automação liga o ajudante quando a potência passa de um limite por alguns minutos. O formato do gatilho segue a documentação do gatilho de estado numérico, com as opções `above` e `for`:
+
+```yaml
+alias: "Máquina de lavar começou"
+triggers:
+  - trigger: numeric_state
+    entity_id: sensor.maquina_de_lavar_potencia
+    above: 10
+    for: "00:02:00"
+actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.maquina_lavando
+```
+
+Em palavras: se a potência ficar **acima de 10 W por 2 minutos**, a máquina está lavando. Os 2 minutos evitam que um pico curto, como apertar um botão do painel, seja confundido com o início de um ciclo. Ajuste os 10 W olhando o histórico: o valor tem que ficar acima do repouso e abaixo dos vales da lavagem.
+
+## Passo 5: a automação de fim, com o aviso
+
+A segunda automação faz o caminho inverso, com uma condição: só avisa se o ajudante disser que a máquina estava lavando.
+
+```yaml
+alias: "Máquina de lavar terminou"
+triggers:
+  - trigger: numeric_state
+    entity_id: sensor.maquina_de_lavar_potencia
+    below: 5
+    for: "00:05:00"
+conditions:
+  - condition: state
+    entity_id: input_boolean.maquina_lavando
+    state: "on"
+actions:
+  - action: notify.mobile_app_seu_celular
+    data:
+      title: "Máquina de lavar"
+      message: "A roupa está pronta para estender."
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.maquina_lavando
+```
+
+O que cada parte faz:
+
+- **`below: 5`** com **`for: "00:05:00"`**: a potência precisa ficar abaixo de 5 W por cinco minutos seguidos. A documentação descreve o `for` como o tempo que o valor precisa permanecer dentro do limite antes de o gatilho disparar.
+- **A condição** garante que o aviso só sai depois de uma lavagem de verdade.
+- **A notificação** usa o app Companion. Troque `seu_celular` pelo nome do seu aparelho, que aparece no menu do próprio app. Se ainda não configurou, o caminho está em [notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/).
+- **O ajudante volta para desligado**, pronto para a próxima lavagem.
+
+### Ajustando os cinco minutos
+
+O tempo do `for` é o ajuste mais importante. Ele precisa ser **maior que a pausa mais longa** do seu programa, aquela que você mediu no histórico. Se o molho deixa a potência baixa por oito minutos, cinco minutos vão gerar um aviso falso no meio do ciclo. Nesse caso, suba para dez ou quinze.
+
+Uma observação da documentação que vale saber: se o Home Assistant reiniciar ou as automações forem recarregadas, **a contagem do `for` recomeça**. Não é problema no uso normal, mas explica um aviso que atrasou depois de uma atualização.
+
+## Lendo o gráfico de potência
+
+O histórico de potência de uma lavagem parece confuso na primeira vez. Um jeito de ler, trecho por trecho:
+
+- **Linha baixa e reta no começo:** a máquina ligada e parada, só com o painel aceso. É o patamar de repouso.
+- **Subida e degraus:** a máquina enchendo de água e começando a agitar. O motor liga e desliga, e o gráfico vira um serrote.
+- **Trechos baixos no meio:** pausas do programa, como o molho. É aqui que mora o risco de aviso falso.
+- **Picos mais altos perto do fim:** a centrifugação, quando o motor gira mais rápido.
+- **Linha baixa e reta no final:** o fim do ciclo. É o trecho que a automação de fim precisa reconhecer.
+
+Medindo o tempo dos trechos baixos do meio, você sabe quanto o `for` da automação de fim precisa ter. Medindo a altura da linha final, você sabe qual valor usar no `below`.
+
+Cada programa da máquina tem um desenho diferente. Se você usa programas muito diferentes, como "rápido" e "pesado", vale olhar o gráfico dos dois e ajustar os números para o mais exigente.
+
+## Mostrando o estado no painel
+
+Além do aviso, dá para colocar o estado da máquina no painel do Home Assistant:
+
+- Um **cartão de entidade** com o ajudante `Máquina lavando` mostra se há lavagem em andamento.
+- Um **cartão de gráfico** com o sensor de potência mostra a lavagem acontecendo em tempo real.
+- O **painel de energia** mostra quanto a máquina gastou no dia e no mês.
+
+Num tablet na parede da cozinha ou da lavanderia, isso vira um indicador útil para a casa toda. Explicamos como montar um em [tablet como painel do Home Assistant](/posts/tablet-painel-home-assistant/).
+
+## Como conferir se deu certo
+
+Depois de salvar as duas automações, rode uma lavagem e acompanhe:
+
+1. Uns dois minutos depois de a máquina começar, o ajudante **Máquina lavando** deve mudar para ligado. Dá para ver em **Ferramentas de desenvolvedor > Estados**.
+2. Ao fim do ciclo, cinco minutos depois de a potência cair, o aviso chega no celular e o ajudante volta para desligado.
+3. Se algo não aconteceu, abra a automação e use **Rastreamentos**, no menu de três pontos. O rastreamento mostra se o gatilho disparou, se a condição barrou e qual ação foi executada.
+
+O rastreamento é a ferramenta que mais ajuda nessa automação, porque mostra o valor da potência no momento do disparo. Se o aviso chegou cedo, ele mostra em que ponto do ciclo isso aconteceu.
+
+## Fazendo pela interface
+
+Tudo pode ser montado no editor visual, sem digitar YAML:
+
+1. **Configurações > Automações e cenas > Criar automação**.
+2. Em **Quando**, escolha **Entidade > Estado numérico**, selecione o sensor de potência, preencha **Abaixo de** com 5 e **Por pelo menos** com 5 minutos.
+3. Em **E se**, adicione **Estado**, com o ajudante `Máquina lavando` em **Ligado**.
+4. Em **Então faça**, adicione a notificação do seu celular e a ação de desligar o ajudante.
+5. Salve e, no menu de três pontos, use **Editar em YAML** para conferir com o exemplo acima.
+
+## Melhorias que valem a pena
+
+### Avisar todo mundo da casa
+
+Se mais de uma pessoa usa o app Companion, basta repetir a ação de notificação para cada aparelho. Assim, quem estiver mais perto estende a roupa.
+
+### Lembrete se ninguém tirar a roupa
+
+Uma terceira automação pode cobrar: se o ajudante foi desligado há mais de uma hora e a máquina não foi usada de novo, outro aviso. Para os casos simples, um segundo aviso com `for` mais longo já resolve.
+
+### Aviso no alto-falante
+
+Quem tem Alexa integrada ao Home Assistant pode trocar ou somar a notificação por um aviso falado. A integração está explicada em [Home Assistant com a Alexa](/posts/home-assistant-alexa-controle-por-voz/).
+
+### Quanto custa cada lavagem
+
+Com o sensor de energia da tomada, dá para ver o consumo de cada ciclo no painel de energia e comparar programas. Às vezes, o programa rápido gasta muito menos que o normal, e serve para a maioria das roupas do dia a dia.
+
+## Plugue de 10 A ou de 20 A: confira antes de comprar a tomada
+
+O padrão brasileiro de plugues e tomadas, a **NBR 14136**, tem duas versões: **10 A**, com pinos mais finos, e **20 A**, com pinos mais grossos. Aparelhos de maior potência podem sair de fábrica com plugue de 20 A, que **não encaixa** numa tomada de 10 A, nem numa tomada inteligente de 10 A.
+
+Antes de comprar a tomada inteligente:
+
+- **Olhe o plugue da máquina**: se os pinos são grossos, é 20 A.
+- **Confira a potência** na etiqueta da máquina e no manual, principalmente em modelos com aquecimento de água, que puxam bem mais durante o aquecimento.
+- **Nunca use adaptador** para encaixar um plugue de 20 A numa tomada de 10 A. O adaptador não aumenta a capacidade da tomada; só esconde o problema.
+
+Se a máquina pede 20 A, a solução segura é uma tomada inteligente com capacidade compatível, se houver no mercado para o seu caso, ou um sensor de vibração, que não fica no caminho da energia.
+
+## Wi-Fi na área de serviço
+
+A lavanderia costuma ser o cômodo com pior sinal de Wi-Fi da casa: fica longe do roteador, atrás de paredes e, às vezes, de azulejos e eletrodomésticos de metal. A tomada inteligente usa Wi-Fi de 2,4 GHz e precisa de sinal estável para mandar as leituras de potência. Sinais de sinal fraco:
+
+- A tomada aparece como **indisponível** no Home Assistant de tempos em tempos.
+- O gráfico de potência tem **buracos**, trechos sem leitura.
+- A automação de fim dispara **atrasada** ou não dispara.
+
+O que ajuda: reposicionar o roteador, usar um repetidor ou um sistema mesh que cubra a área de serviço, e conferir no aplicativo da tomada a intensidade do sinal, quando ele mostrar.
+
+## A rotina que a automação muda
+
+O ganho do aviso não é técnico, é de rotina. Roupa que fica horas molhada dentro da máquina pega cheiro de umidade e amassa mais, o que obriga a lavar de novo ou passar mais. Com o aviso no celular, a roupa vai para o varal logo, o que economiza água, energia e tempo de ferro. Em casas com várias pessoas, o aviso para todos evita a pergunta "alguém tirou a roupa da máquina?".
+
+## Registrando as lavagens
+
+Depois que a automação funciona, ela também pode virar um pequeno registro da lavanderia. Com o ajudante que marca quando a máquina está lavando, o histórico do Home Assistant mostra **quantas lavagens** foram feitas na semana e **quanto tempo** cada uma durou. Combinado com a medição de energia da tomada, dá para comparar programas: quanto o ciclo rápido economiza em relação ao normal, ou quanto uma lavagem com água quente consome a mais. É informação útil na hora de decidir qual programa usar no dia a dia.
+
+## Quando não dá certo
+
+- **O aviso nunca chega:** confira no histórico se o ajudante foi ligado durante a lavagem. Se não foi, o limite de início está alto demais.
+- **O aviso chega no meio do ciclo:** aumente o `for` da automação de fim.
+- **O aviso chega muito depois do fim:** o `for` está longo demais, ou a potência em repouso da sua máquina é maior que 5 W. Veja o patamar no histórico e ajuste o `below`.
+- **A tomada desligou sozinha:** a P110 tem proteção de sobrecarga. Se isso acontece durante a centrifugação, a máquina está perto do limite da tomada, e é sinal de que ela não é a tomada certa para essa máquina.
+
+A mesma receita, com outros números, avisa o fim da lava-louças, da secadora e até da cafeteira. O princípio é sempre o mesmo: o aparelho consome enquanto trabalha, e a queda do consumo diz que ele terminou.

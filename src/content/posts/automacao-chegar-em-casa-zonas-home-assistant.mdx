@@ -1,0 +1,341 @@
+---
+title: 'Automação ao chegar em casa com as zonas do Home Assistant'
+description: 'Como usar zonas e o app Companion do Home Assistant para acender luz e ligar aparelhos ao chegar em casa, com a configuração conferida na documentação.'
+pubDate: 2026-10-22T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'zonas', 'presenca', 'geolocalizacao', 'app-companion', 'automacao', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Lâmpada inteligente Elgin Smart Color 10 W, RGB, Wi-Fi, E27, bivolt'
+    brand: 'Elgin'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2e6mygU'
+    image: '/images/produtos/lampada-elgin-smart-color.webp'
+    pros:
+      - 'Integra ao Home Assistant pela integração Tuya oficial'
+      - 'Não precisa de hub: liga direto no Wi-Fi de 2,4 GHz'
+      - 'Mais de 61 mil avaliações na Amazon'
+    cons:
+      - 'Depende da nuvem da Tuya para o comando chegar'
+      - 'Só Wi-Fi de 2,4 GHz'
+  - name: 'TP-Link Tapo P110, tomada inteligente Wi-Fi com monitoramento de energia, 10 A, bivolt'
+    brand: 'TP-Link'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2b3KeRZ'
+    image: '/images/produtos/tapo-p110.webp'
+    pros:
+      - 'Integração TP-Link oficial do Home Assistant, com consulta pela rede local'
+      - 'Mede o consumo do aparelho ligado nela'
+      - 'Bivolt, 10 A / 2.400 W'
+    cons:
+      - 'Não serve para chuveiro, forno elétrico nem ar-condicionado grande'
+      - 'Pode exigir ativar a compatibilidade com terceiros no app Tapo'
+faq:
+  - question: 'Preciso deixar o GPS do celular ligado o tempo todo?'
+    answer: 'A localização do celular precisa estar ativada e o app Companion precisa ter permissão para usá-la, inclusive em segundo plano. Sem essa permissão, a documentação do app informa que nenhum dado de localização é enviado. O consumo de bateria fica a cargo do sistema do celular, que usa os serviços de localização que já estão ativos para outros apps.'
+  - question: 'A automação funciona se o Home Assistant não estiver acessível de fora de casa?'
+    answer: 'Para a saída de casa e para zonas fora de casa, o app precisa conseguir falar com o Home Assistant pela internet, por acesso remoto. Ao chegar, o celular entra de novo no Wi-Fi de casa e consegue enviar a atualização pela rede local, mas a automação de chegada costuma ficar mais rápida e confiável quando o acesso remoto está configurado.'
+  - question: 'Qual o raio ideal para a zona de casa?'
+    answer: 'O padrão é 100 metros. Em cidade, um raio entre 100 e 200 metros costuma funcionar bem. Raio pequeno demais faz a entrada ser detectada tarde, ou não ser detectada se a precisão do GPS estiver baixa. Raio grande demais faz a casa "detectar" a chegada quando você ainda está na esquina de cima, ou passando perto sem entrar.'
+  - question: 'Funciona para duas pessoas morando na mesma casa?'
+    answer: 'Sim. Cada pessoa instala o app Companion no próprio celular e é cadastrada como uma pessoa no Home Assistant. O estado da zona é o número de pessoas dentro dela, o que permite, por exemplo, desligar tudo só quando a zona de casa chegar a zero, ou seja, quando a última pessoa sair.'
+  - question: 'Por que a automação disparou com atraso?'
+    answer: 'A localização chega em intervalos, não em tempo real. No Android, a documentação do app cita atualizações em segundo plano que costumam chegar entre 1 e 3 minutos, além das atualizações ao entrar e sair de zonas. No iPhone, a mudança significativa de localização depende das torres de celular. Economia de bateria agressiva do fabricante também pode segurar o app em segundo plano.'
+  - question: 'Preciso de internet para o gatilho de zona funcionar?'
+    answer: 'O celular precisa conseguir enviar a localização ao Home Assistant. Dentro de casa, isso acontece pela rede local; fora de casa, pela internet, com acesso remoto configurado. A automação em si roda no Home Assistant, dentro de casa.'
+  - question: 'Funciona com o iPhone?'
+    answer: 'Sim. O app Home Assistant Companion existe para iPhone, e a documentação descreve o envio de localização ao entrar e sair de zonas e pela mudança significativa de localização do iOS. É preciso permitir o acesso à localização sempre, para as atualizações em segundo plano.'
+  - question: 'Posso usar a zona para abrir o portão da garagem?'
+    answer: 'Dá, mas não é recomendável sem uma confirmação. A localização tem margem de erro, e abrir o portão sozinho porque o GPS oscilou não é um risco que valha a pena. O mais seguro é a automação mandar uma notificação com um botão de abrir, e você confirma ao chegar.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Chegar em casa à noite e a luz da sala já estar acesa. Sair de manhã e a cafeteira, esquecida ligada, desligar sozinha. Receber um aviso no celular quando a última pessoa sai e a casa fica vazia. Tudo isso é a mesma automação: **o Home Assistant sabendo onde você está**.
+
+A peça que faz isso funcionar se chama **zona**. Este tutorial mostra como configurar as zonas, como o app **Home Assistant Companion** informa a localização do celular e como montar duas automações completas, uma de chegada e outra de saída. A configuração segue a documentação oficial do Home Assistant, na versão **2026.10.0**, e a documentação do app Companion.
+
+## O que é uma zona
+
+Uma zona é um círculo no mapa, com um centro e um raio. A documentação do Home Assistant resume o papel delas: as zonas fornecem **gatilhos, condições e ações** para automações.
+
+Toda instalação já nasce com uma zona: a **zona de casa**, `zone.home`. Ela é criada a partir da localização que você informou na configuração inicial do Home Assistant, com **raio de 100 metros**.
+
+Duas coisas importantes sobre zonas, também da documentação:
+
+- **O estado de uma zona é um número**: a quantidade de pessoas que estão dentro dela naquele momento. Se duas pessoas da casa estão em casa, `zone.home` vale 2.
+- Uma zona pode ser **passiva**. Zona passiva serve só para automação: fica escondida da interface e não muda o estado de quem está dentro dela.
+
+## Como o Home Assistant sabe onde você está
+
+Quem informa a localização é o **app Companion**, o aplicativo oficial do Home Assistant para Android e iPhone. Depois do primeiro uso, ele cria uma entidade de rastreamento, com nome no formato `device_tracker.<nome_do_aparelho>`.
+
+Segundo a documentação do app, a localização é enviada em algumas situações:
+
+- **Ao entrar ou sair de uma zona** definida no Home Assistant.
+- No **Android**, por **atualizações em segundo plano**, que a documentação descreve como chegando tipicamente **a cada 1 a 3 minutos**.
+- No **iPhone**, pela **mudança significativa de localização** do sistema, que depende das torres de celular e é a forma menos precisa de monitoramento.
+
+E um ponto que não dá para pular: **sem permissão de localização, nenhum dado é enviado**. A documentação também diz que, no iOS, nenhum dos sensores do app funciona com a localização desativada.
+
+O Android tem ainda um ajuste de **precisão mínima**: o app só envia a localização se a precisão estiver dentro de um limite, que por padrão é de **200 metros**. Em lugar de sinal ruim, aumentar esse valor faz chegar atualizações que antes eram descartadas, em troca de um pouco de imprecisão.
+
+## Passo 1: instalar o app e dar as permissões
+
+1. Instale o **Home Assistant** na Play Store ou na App Store e entre no seu servidor.
+2. Quando o app pedir acesso à localização, **permita**, e permita também o uso **em segundo plano**. No Android, a opção aparece como permitir o tempo todo; no iPhone, como permitir sempre.
+3. Confira, no Home Assistant, em **Configurações > Dispositivos e serviços > Mobile App**, se o celular apareceu como dispositivo e se a entidade `device_tracker` foi criada.
+
+Se você já usa o app para receber notificações, essa parte está pronta. O passo a passo completo do app, incluindo o envio de notificações, está em [notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/).
+
+## Passo 2: associar o celular a uma pessoa
+
+O jeito mais limpo de trabalhar com presença é pela **pessoa**, e não pelo celular. Em **Configurações > Pessoas**, abra o seu usuário e, em **Rastrear dispositivo**, escolha o `device_tracker` do seu celular.
+
+A partir daí, a entidade `person.<seu_nome>` assume o estado da zona onde o celular está: `home` em casa, o nome da zona quando estiver em outra zona, e `not_home` fora de todas. Se um dia você trocar de celular, basta associar o aparelho novo à mesma pessoa, e as automações continuam funcionando.
+
+## Passo 3: conferir a zona de casa e criar outras
+
+A zona de casa já existe, mas vale conferir se o centro está no lugar certo.
+
+1. Vá em **Configurações > Áreas, rótulos e zonas > Zonas**.
+2. A zona de casa aparece no mapa. Confira se o centro está sobre a sua casa e ajuste o **raio**. Os 100 metros padrão funcionam bem na maioria dos casos.
+3. Para criar outra zona, como **Trabalho** ou **Escola**, use **Criar zona**, posicione no mapa e defina nome e raio.
+
+Uma dica de raio: em cidade, entre 100 e 200 metros costuma ser o equilíbrio. Raio muito pequeno faz a chegada ser detectada tarde. Raio muito grande faz a casa "achar" que você chegou quando ainda está a duas ruas.
+
+Quem prefere YAML pode declarar as zonas no `configuration.yaml`, no formato da documentação:
+
+```yaml
+zone:
+  - name: Trabalho
+    latitude: -23.5505
+    longitude: -46.6333
+    radius: 150
+    icon: mdi:briefcase
+```
+
+Troque as coordenadas pelas do lugar real. Para pegar latitude e longitude, basta clicar com o botão direito no ponto, no Google Maps.
+
+## Passo 4: a automação de chegada
+
+O gatilho de zona reage quando uma entidade **entra** ou **sai** de uma zona. O formato, segundo a documentação, é este:
+
+```yaml
+triggers:
+  - trigger: zone
+    entity_id: person.voce
+    zone: zone.home
+    event: enter
+```
+
+`event` aceita `enter`, para entrada, ou `leave`, para saída. Troque `person.voce` pelo nome da sua pessoa.
+
+Agora, a automação completa: **acender a luz da sala ao chegar, só se já estiver escuro**. A condição usa o estado do sol, que o Home Assistant mantém na entidade `sun.sun`, com o valor `below_horizon` depois do pôr do sol.
+
+```yaml
+alias: "Acender a luz da sala ao chegar à noite"
+triggers:
+  - trigger: zone
+    entity_id: person.voce
+    zone: zone.home
+    event: enter
+conditions:
+  - condition: state
+    entity_id: sun.sun
+    state: "below_horizon"
+actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.sala
+```
+
+Troque `light.sala` pela entidade da sua lâmpada.
+
+### A lâmpada
+
+Qualquer lâmpada integrada ao Home Assistant serve. A **Elgin Smart Color**, uma das mais vendidas do país, usa a plataforma Tuya e entra pelo caminho da **integração Tuya oficial**, sem hub, direto no Wi-Fi de 2,4 GHz. O review completo, com a integração passo a passo, está em [lâmpada inteligente Elgin Smart Color](/posts/lampada-inteligente-elgin-smart-color-vale-a-pena/).
+
+![Lâmpada inteligente Elgin Smart Color 10 W](/images/produtos/lampada-elgin-smart-color.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20" store="amazon" source="automacao-chegar-em-casa-zonas-home-assistant" />
+
+<AffiliateButton href="https://meli.la/2e6mygU" store="mercadolivre" source="automacao-chegar-em-casa-zonas-home-assistant" />
+
+## Passo 5: a automação de saída
+
+A saída é onde a automação mais economiza, porque resolve o "será que deixei ligado?". A ideia: quando a **última pessoa** sai, desligar a tomada da cafeteira, ou do ferro, ou do aquecedor pequeno, e mandar um aviso no celular.
+
+Aqui entra o estado numérico da zona. Como `zone.home` guarda a **quantidade de pessoas** em casa, o gatilho pode ser "a zona de casa caiu para zero". O gatilho de estado faz isso:
+
+```yaml
+alias: "Desligar a cafeteira quando a casa ficar vazia"
+triggers:
+  - trigger: state
+    entity_id: zone.home
+    to: "0"
+actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.cafeteira
+  - action: notify.mobile_app_seu_celular
+    data:
+      message: "A casa ficou vazia e a cafeteira foi desligada."
+```
+
+Troque `switch.cafeteira` pela entidade da tomada e `notify.mobile_app_seu_celular` pelo nome do seu aparelho. A documentação do app explica que esse nome vem do nome do celular nas configurações do sistema, com espaços e caracteres especiais trocados por sublinhado, e que ele aparece no próprio menu do app.
+
+Se mora sozinho, o gatilho de zona com `event: leave` faz o mesmo papel.
+
+### A tomada
+
+Para desligar aparelhos, a peça é uma **tomada inteligente**. A **Tapo P110** tem integração **TP-Link oficial** no Home Assistant, que consulta a tomada pela rede local, e ainda mede o consumo. O limite é de **10 A / 2.400 W**: serve para cafeteira, ferro de passar e aquecedor pequeno, mas não para chuveiro nem forno elétrico.
+
+![Tomada inteligente TP-Link Tapo P110](/images/produtos/tapo-p110.webp)
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20" store="amazon" source="automacao-chegar-em-casa-zonas-home-assistant" />
+
+<AffiliateButton href="https://meli.la/2b3KeRZ" store="mercadolivre" source="automacao-chegar-em-casa-zonas-home-assistant" />
+
+Como a P110 mede o consumo, ela também alimenta o painel de energia do Home Assistant, que mostra quanto cada aparelho gasta. O passo a passo está em [painel de energia com tomada inteligente](/posts/painel-energia-home-assistant-tomada-inteligente/).
+
+## Casa com mais de uma pessoa
+
+A automação de chegada do passo 4 dispara para uma pessoa específica. Numa casa com duas ou três pessoas, há dois jeitos de pensar:
+
+- **Acender a luz para qualquer um que chegar:** liste as pessoas no mesmo gatilho. O campo `entity_id` aceita mais de uma entidade, e a automação dispara quando qualquer uma delas entra na zona.
+- **Acender só se a casa estava vazia:** aqui o estado numérico da zona ajuda de novo. Um gatilho de estado em `zone.home` com `from: "0"` dispara quando a contagem sai de zero, ou seja, quando a primeira pessoa chega. Assim, a luz não acende de novo a cada pessoa que entra numa casa já ocupada.
+
+```yaml
+triggers:
+  - trigger: state
+    entity_id: zone.home
+    from: "0"
+```
+
+A mesma lógica vale para a saída, como no passo 5: desligar tudo só quando a contagem chega a zero evita apagar a luz na cara de quem ficou em casa.
+
+## Testando sem sair de casa
+
+Ninguém quer dar uma volta no quarteirão para testar cada ajuste. O Home Assistant permite simular a mudança.
+
+1. Vá em **Ferramentas de desenvolvedor > Estados**.
+2. Procure a entidade `person.voce` ou `zone.home`.
+3. Mude o estado manualmente, por exemplo, de `not_home` para `home`, e clique em **Definir estado**.
+
+A mudança é temporária: na próxima atualização do celular, o estado real volta. Mas é suficiente para ver se a automação dispara e se a ação faz o que deveria. Para os gatilhos de zona, o teste mais fiel ainda é o de verdade, porque eles dependem do evento de entrada e saída.
+
+Outra ferramenta útil é o **rastreamento da automação**. Em **Configurações > Automações e cenas**, abra a automação e use o menu de três pontos, em **Rastreamentos**. Ele mostra, passo a passo, o que aconteceu na última execução: qual gatilho disparou, se a condição passou ou barrou, e qual ação foi feita.
+
+## E a privacidade?
+
+Localização é um dado sensível, e é razoável perguntar para onde ela vai. No Home Assistant, o app Companion envia a localização para o **seu próprio servidor**, o Home Assistant que roda na sua casa. Não há um serviço da fabricante no meio guardando o histórico de onde você esteve.
+
+Se o acesso de fora de casa é feito por um serviço de túnel, a comunicação passa por ele, mas o destino continua sendo o seu servidor. Quem quiser restringir ainda mais pode limitar as permissões do app ou usar só o Wi-Fi de casa como sinal de chegada, abrindo mão das zonas fora de casa.
+
+No próprio Home Assistant, o histórico de localização fica guardado como qualquer outro histórico de estado. Ele é útil para entender por que uma automação disparou, e pode ser limitado nas configurações de gravação, se você não quiser guardar esse dado por muito tempo.
+
+## E a bateria do celular?
+
+É a dúvida mais comum. A documentação do app explica que, no iPhone, a localização usa a **mudança significativa de localização** do sistema, um modo de baixo consumo, além dos eventos de entrada e saída das zonas. No Android, as atualizações em segundo plano usam o serviço de localização do Google, o mesmo que outros apps de mapa e entrega já usam.
+
+Na prática, o impacto depende do aparelho e de quantos outros apps já usam localização. Se a bateria cair demais, o primeiro ajuste é reduzir o número de zonas e evitar zonas muito pequenas, que exigem mais precisão.
+
+## Fazendo pela interface, sem YAML
+
+Tudo isso pode ser montado pelo editor visual, que gera o mesmo YAML por baixo:
+
+1. **Configurações > Automações e cenas > Criar automação**.
+2. Em **Quando**, adicione o gatilho **Zona**, escolha a pessoa, a zona e se é entrada ou saída.
+3. Em **E se**, adicione a condição **Estado**, entidade `sun.sun`, estado "Abaixo do horizonte".
+4. Em **Então faça**, adicione a ação **Luz: ligar** e escolha a lâmpada.
+5. Salve. No menu de três pontos, **Editar em YAML** mostra o código, para conferir com os exemplos acima.
+
+## Os tropeços mais comuns
+
+### A automação não dispara
+
+Na ordem, confira:
+
+1. Se o **estado da pessoa** muda quando você sai e volta. Em **Ferramentas de desenvolvedor > Estados**, procure `person.voce`. Se fica parado em `home` ou em `not_home`, o problema é a localização, não a automação.
+2. Se a permissão de localização em **segundo plano** foi dada ao app.
+3. Se o **rastreador certo** está associado à pessoa, principalmente depois de trocar de celular.
+
+### A automação dispara tarde
+
+A localização chega em intervalos, não em tempo real. Se a luz acende alguns minutos depois de você entrar, é o comportamento esperado. Aumentar um pouco o raio da zona de casa adianta o disparo. No Android, sistemas com economia de bateria agressiva podem segurar o app em segundo plano; vale conferir se o Home Assistant está liberado nas configurações de bateria do aparelho.
+
+### A automação dispara sem você sair
+
+É o GPS oscilando na borda da zona, comum em prédio e em lugar com sinal fraco. Duas saídas: aumentar o raio, para a borda ficar longe de onde o celular passa a noite, ou exigir que o estado se mantenha por alguns minutos. O gatilho de estado aceita a opção `for`:
+
+```yaml
+triggers:
+  - trigger: state
+    entity_id: zone.home
+    to: "0"
+    for: "00:05:00"
+```
+
+Com isso, a casa precisa ficar vazia por cinco minutos seguidos antes de a automação agir.
+
+## Economia de bateria do fabricante: o vilão escondido
+
+Muitos casos de "a automação não dispara" no Android não têm nada a ver com o Home Assistant. Fabricantes como Xiaomi, Samsung, Motorola e outros adicionam ao sistema **modos agressivos de economia de bateria**, que fecham aplicativos em segundo plano ou impedem que eles usem a localização com a tela desligada. O app Companion continua instalado, mas para de enviar a localização.
+
+O que costuma resolver:
+
+- **Desativar a otimização de bateria** para o app Home Assistant, nas configurações de bateria do celular.
+- **Permitir execução em segundo plano** e **início automático**, nos celulares que têm esses ajustes.
+- **Bloquear o app na lista de recentes**, em alguns modelos, para o sistema não fechá-lo.
+- **Conferir de novo depois de atualizações** do sistema, que às vezes restauram os ajustes padrão.
+
+O site **Don't kill my app** reúne instruções específicas por marca e modelo, e é uma boa referência quando o celular insiste em fechar o aplicativo.
+
+## Planejando as automações antes de escrever
+
+Antes de abrir o editor, vale montar uma tabela simples com o que você quer, em palavras. Ela evita automações que brigam entre si:
+
+| Situação | Gatilho | Condição | Ação |
+|---|---|---|---|
+| Chegar em casa à noite | Pessoa entra na zona de casa | Depois do pôr do sol | Acender a luz da entrada |
+| Sair por último | Ninguém mais na zona de casa | — | Desligar a tomada do aquecedor ou do ventilador |
+| Chegar ao trabalho | Pessoa entra na zona Trabalho | Dia útil | Notificação com lembrete do dia |
+| Saída das crianças da escola | Pessoa sai da zona Escola | Horário da tarde | Notificação para os responsáveis |
+
+Escrever primeiro em palavras ajuda a perceber condições esquecidas, como "só depois do pôr do sol" ou "só se ninguém estiver em casa", que são o que separa uma automação útil de uma irritante.
+
+## Quando o Home Assistant está fora do ar
+
+Automações por zona dependem de duas coisas funcionando ao mesmo tempo: o **celular enviando a localização** e o **Home Assistant recebendo e processando**. Se o servidor estiver reiniciando, sem energia ou sem internet no momento da sua chegada, a mudança de estado pode acontecer sem que a automação dispare, ou ser processada só quando a próxima atualização de localização chegar.
+
+Por isso, automações de conforto, como acender uma luz, são boas candidatas para o gatilho de zona. Automações críticas, como segurança e acesso, precisam de um plano alternativo, como um interruptor físico que continue funcionando sem o Home Assistant.
+
+## Visitas, babás e diaristas
+
+Quem não tem o app Companion não aparece nas zonas, e isso é ótimo para a privacidade, mas cria situações a prever:
+
+- **Automação de saída** que desliga tudo quando "ninguém está em casa" vai desligar luzes e aparelhos com a diarista ou a babá ainda lá dentro. Uma condição extra, como um sensor de presença no cômodo ou um interruptor de "modo visita", evita o problema.
+- **Hóspedes** por alguns dias: um ajudante do tipo alternador, ligado manualmente, pode suspender as automações de ausência enquanto houver gente em casa.
+- **Crianças sem celular**: se a família considera que há sempre alguém em casa quando as crianças estão, a lógica de ausência precisa de outra fonte, como sensores de presença.
+
+## Ideias para depois
+
+Com as zonas funcionando, outras automações saem quase de graça:
+
+- **Aviso de chegada** para quem está em casa: "Fulano está chegando", quando a pessoa entra numa zona passiva de 1 km ao redor de casa.
+- **Lembrete ao sair do trabalho**: entrar na zona Trabalho com `leave` pode mandar uma lista de compras.
+- **Modo ausente**: casa vazia por mais de uma hora liga uma rotina de luzes simulando presença.
+- **Ar-condicionado antes de chegar**: entrar na zona de 1 km liga o ar do quarto. Quem tem ar com controle remoto infravermelho pode seguir o caminho de [automatizar o ar-condicionado com ESP32](/posts/automatizar-ar-condicionado-esp32-ir-home-assistant/).
+
+E, para portão e fechadura, prefira uma notificação com confirmação do que uma ação automática. A localização tem margem de erro, e abrir a casa por causa de uma oscilação de GPS é um risco que não compensa.
