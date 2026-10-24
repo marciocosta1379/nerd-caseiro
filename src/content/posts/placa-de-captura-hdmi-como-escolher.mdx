@@ -1,0 +1,290 @@
+---
+title: 'Placa de captura HDMI: para que serve e como escolher'
+description: 'Placa de captura HDMI para gravar console, câmera ou outro PC: USB 2.0 ou 3.0, 1080p a 60 fps, passagem de sinal, HDCP e o que esperar das baratas.'
+pubDate: 2026-10-30T18:00:00-03:00
+category: 'audio-video'
+tags: ['placa-de-captura', 'hdmi', 'obs-studio', 'live', 'console', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'UGREEN placa de captura HDMI para USB-A e USB-C, 1080p 60 fps'
+    brand: 'UGREEN'
+    rating: 4.3
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0CFQ2BMPZ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/14Cacvp'
+    image: '/images/produtos/placa-captura-ugreen-1080p.webp'
+    pros:
+      - 'Conector USB-A e USB-C, sem driver'
+      - 'Pequena e leve: cerca de 35 g, segundo o anúncio'
+      - 'Aceita entrada de até 4K a 30 Hz e grava em 1080p a 60 fps'
+    cons:
+      - 'Transmissão de até 480 Mbps (USB 2.0), com vídeo comprimido'
+      - 'Sem saída HDMI para jogar sem atraso'
+  - name: 'Fifine AmpliGame V3, placa de captura USB 3.0 com saída HDMI'
+    brand: 'Fifine'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0FGXT5JXJ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1Nnpg6E'
+    image: '/images/produtos/placa-captura-fifine-v3.webp'
+    pros:
+      - 'USB 3.0, com captura em 1080p a 60 fps'
+      - 'Saída HDMI (loop-out) em até 4K a 30 fps'
+      - 'Entrada de linha e saída para headset'
+    cons:
+      - 'Cabo HDMI não incluso, segundo o anúncio'
+      - 'Iluminação RGB que não acrescenta nada à captura'
+faq:
+  - question: 'Placa de captura serve para usar câmera como webcam?'
+    answer: 'Serve, desde que a câmera tenha saída HDMI limpa, isto é, que envie a imagem pela porta HDMI sem os ícones e menus da tela. A placa recebe o sinal HDMI e o computador passa a ver a câmera como uma webcam. Muitas câmeras desligam sozinhas depois de alguns minutos e precisam de bateria externa ou fonte, o que deve ser conferido no manual da câmera.'
+  - question: 'Por que a imagem do PS5 fica preta na placa de captura?'
+    answer: 'Por causa do HDCP, a proteção contra cópia que o PS5 ativa por padrão. Com o HDCP ligado, a placa recebe imagem preta. A Elgato orienta desativar a opção em Configurações, Sistema, HDMI, Ativar HDCP, com o console ligado direto na TV, antes de conectar a placa. Com o HDCP desligado, alguns aplicativos de vídeo por streaming deixam de funcionar no console até que a opção seja reativada.'
+  - question: 'Placa de captura USB 2.0 serve para live?'
+    answer: 'Serve para começar. As placas USB 2.0 baratas comprimem o vídeo antes de mandar para o computador, porque o USB 2.0 tem banda limitada. A imagem chega em 1080p a 60 quadros por segundo, mas com perda de detalhe em movimento rápido, o que aparece mais em jogos. Para live de conversa, tela de computador ou câmera, o resultado costuma ser suficiente.'
+  - question: 'O que é loop-out ou passagem de sinal?'
+    answer: 'É uma saída HDMI na própria placa, que repete a imagem que entra para uma TV ou um monitor. Serve para jogar olhando para a TV, sem o pequeno atraso que a imagem tem ao passar pelo computador. Sem essa saída, quem joga precisa olhar para a prévia no computador, o que atrapalha em jogos rápidos.'
+  - question: 'Preciso instalar driver para a placa de captura funcionar no OBS?'
+    answer: 'As placas desta lista são do tipo UVC, o padrão das webcams, e funcionam sem driver no Windows, no macOS e no Linux, segundo os anúncios. No OBS Studio, a documentação explica que, no Windows, o dispositivo precisa ter driver com suporte a DirectShow, o que as placas UVC já oferecem pelo próprio sistema.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A placa de captura é o acessório que faz o computador "enxergar" um sinal HDMI. Tudo o que sai por um cabo HDMI, seja um videogame, uma câmera fotográfica, outro computador ou um decodificador, pode entrar na placa e chegar ao computador como se fosse uma webcam. A partir daí, dá para gravar, transmitir ao vivo ou usar numa chamada de vídeo.
+
+Este guia explica **para que serve uma placa de captura**, **o que diferencia uma barata de uma melhor** (USB 2.0 ou 3.0, compressão, passagem de sinal), **o problema do HDCP** em consoles, e o **passo a passo para usar a placa no OBS Studio**. No fim, duas opções em faixas de preço diferentes.
+
+> **Fontes e versões:** a configuração no OBS segue a base de conhecimento oficial do OBS Studio (artigo "Video Capture Sources") e vale para o **OBS Studio 32.2**, a versão estável no momento da consulta, em **23/10/2026**. A orientação sobre HDCP no PS5 segue a central de ajuda da **Elgato**. As especificações das placas vêm dos anúncios. Os links estão no fim do post.
+
+## Para que serve uma placa de captura
+
+Os usos mais comuns, do mais ao menos frequente:
+
+**Gravar e transmitir videogame.** PS5, PS4, Xbox e Nintendo Switch saem por HDMI. A placa recebe esse sinal e o OBS grava ou transmite, com câmera, microfone e cenas montadas no computador. É o uso que fez as placas de captura se popularizarem.
+
+**Usar uma câmera como webcam.** Câmeras mirrorless, DSLR e filmadoras com saída HDMI dão uma imagem muito superior à de qualquer webcam. A placa converte essa saída em uma webcam para o computador. É o caminho clássico de quem quer imagem de estúdio em live e reunião.
+
+**Gravar a tela de outro computador.** Em apresentações, aulas e testes de software, um segundo computador pode mandar a tela por HDMI para o computador que grava, sem instalar nada na máquina apresentada.
+
+**Digitalizar vídeo.** Aparelhos antigos com saída HDMI, ou com conversores de vídeo composto para HDMI, podem ser gravados no computador.
+
+O que a placa **não** faz: ela não melhora a imagem que recebe, não converte jogos em 60 quadros se o jogo roda a 30, e não captura conteúdo protegido contra cópia, como explicado mais adiante.
+
+## Como uma placa de captura funciona
+
+O caminho do sinal é simples:
+
+1. o aparelho de origem manda vídeo e áudio pelo cabo **HDMI**;
+2. a placa recebe esse sinal e o **converte** para um formato que o computador entende;
+3. o sinal convertido segue pelo cabo **USB** até o computador;
+4. o computador reconhece a placa como um **dispositivo de vídeo**, igual a uma webcam, e qualquer programa que use câmera pode usá-la.
+
+A parte que define a qualidade é o passo 2 e o passo 3: **como** a placa converte o sinal e **quanta banda** o cabo USB oferece para mandá-lo.
+
+## USB 2.0 ou USB 3.0: a diferença que mais pesa
+
+Um vídeo em 1080p a 60 quadros por segundo, sem compressão, ocupa cerca de 3 gigabits por segundo. O **USB 2.0** transporta no máximo **480 megabits por segundo**. Não cabe.
+
+Por isso, as placas baratas de USB 2.0 **comprimem** o vídeo dentro da própria placa antes de mandá-lo, geralmente no formato **MJPEG**, uma sequência de imagens JPEG. Funciona, e a imagem chega em 1080p a 60 quadros, mas com perda de detalhe, especialmente em cenas com muito movimento, texturas finas e textos pequenos. Em jogos rápidos, essa perda aparece como blocos e borrões nos momentos de mais ação.
+
+As placas de **USB 3.0** têm banda de vários gigabits por segundo e conseguem mandar o vídeo com **pouca ou nenhuma compressão**, em formatos como YUY2 e NV12. A imagem chega mais fiel, e o computador faz a compressão final uma única vez, na gravação ou na transmissão.
+
+**Na prática:**
+
+- para **live de conversa**, **câmera como webcam** em reunião e **tela de computador** com pouco movimento, a placa USB 2.0 costuma ser suficiente;
+- para **gravar jogos** com qualidade, especialmente jogos rápidos, a placa USB 3.0 faz diferença visível;
+- a placa USB 3.0 só rende o que promete numa **porta USB 3.0** do computador, geralmente azul ou marcada com "SS". Ligada numa porta USB 2.0, ela pode não funcionar ou cair para resoluções menores.
+
+## Resolução de entrada e resolução de captura
+
+Os anúncios misturam dois números, e é aí que surge a maior parte das decepções.
+
+- **Resolução de entrada:** o que a placa **aceita receber** pelo HDMI. Uma placa "4K" muitas vezes aceita receber 4K, mas não grava em 4K.
+- **Resolução de captura:** o que a placa **manda para o computador**. É o que vai aparecer no OBS.
+
+A UGREEN desta lista, por exemplo, aceita **entrada de até 4K a 30 Hz** e captura em **1080p a 60 quadros**, segundo o anúncio. Isso significa que dá para ligar nela um aparelho que manda 4K, mas o computador recebe 1080p.
+
+O que quase nunca vale a pena: pagar mais por "captura em 4K" para live. As plataformas de transmissão, na maioria dos casos, entregam a live em 1080p ou menos, e gravar em 4K exige computador potente e muito espaço em disco. Para gravação de alta qualidade em jogos, 1080p a 60 quadros já é o padrão que a maioria do público assiste.
+
+## Passagem de sinal (loop-out)
+
+Quando a imagem passa pela placa e pelo computador, ela chega na tela com um pequeno **atraso**. Para gravar uma câmera, isso não importa. Para **jogar**, importa muito: em jogos de reflexo, alguns centésimos de segundo de atraso atrapalham.
+
+A solução é a **passagem de sinal**, chamada também de **loop-out** ou **pass-through**: uma saída HDMI na própria placa, que manda a imagem para a TV ou o monitor **direto**, sem passar pelo computador. A pessoa joga olhando a TV, sem atraso, enquanto o computador grava.
+
+A **Fifine AmpliGame V3** desta lista tem essa saída, em até 4K a 30 quadros, segundo o anúncio. A **UGREEN** de USB 2.0 não tem: quem joga usando ela precisa olhar para a prévia do OBS ou usar um divisor HDMI à parte.
+
+Detalhe importante: a resolução e a taxa de quadros da passagem de sinal podem ser diferentes das da captura. Uma placa que passa 4K a 30 quadros pode limitar o console a 4K a 30 na TV, ou levar o console a mandar 1080p a 60. Para quem joga em 120 Hz ou com HDR, as placas de entrada geralmente não acompanham, e o mais simples é configurar o console para 1080p a 60 quadros durante a gravação.
+
+## O problema do HDCP
+
+**HDCP** é uma proteção contra cópia embutida no sinal HDMI. Quando a origem manda sinal com HDCP, uma placa de captura comum recebe **imagem preta**. É um bloqueio proposital, para impedir a gravação de filmes e séries.
+
+**Videogames:** o PS5 e o PS4 vêm com HDCP ativado por padrão. A central de ajuda da Elgato orienta desativar a opção em **Configurações > Sistema > HDMI > Ativar HDCP** no PS5, com o console ligado **direto na TV**, antes de conectar a placa. O anúncio da UGREEN também avisa que PS4 e PS5 funcionam com a placa quando o HDCP está desligado. Com o HDCP desligado, **alguns aplicativos de filmes e séries** do console deixam de funcionar até que a opção seja reativada.
+
+**Xbox e Nintendo Switch:** os guias de configuração das fabricantes de placas costumam tratar os dois como compatíveis sem ajuste de HDCP nos jogos. Se a imagem vier preta, vale conferir as opções de vídeo do console e o manual da placa.
+
+**Decodificadores, TV box e aplicativos de streaming:** o conteúdo protegido não aparece na placa, e não há configuração que mude isso.
+
+**Computadores e câmeras:** câmeras não usam HDCP. Computadores geralmente não aplicam HDCP à área de trabalho, mas aplicam ao reproduzir filmes de serviços de streaming.
+
+## As duas placas
+
+### UGREEN 1080p 60 fps, USB 2.0
+
+![Placa de captura UGREEN pequena com conector HDMI e cabo USB-A e USB-C](/images/produtos/placa-captura-ugreen-1080p.webp)
+
+A **UGREEN** é a placa de entrada. Pequena, com cerca de **35 g**, ela tem entrada HDMI de um lado e conector **USB-A e USB-C** do outro, para ligar em computadores, tablets e alguns celulares. O anúncio informa entrada de até **4K a 30 Hz**, captura em **1080p a 60 quadros**, transmissão de até **480 Mbps** (o limite do USB 2.0), funcionamento **sem driver** e compatibilidade com PS4 e PS5 com o HDCP desligado.
+
+**Para quem é:** quem quer começar a fazer live de jogo ou usar uma câmera como webcam gastando pouco, e quem precisa de uma placa portátil para levar na mochila.
+
+**O limite:** a compressão do USB 2.0 cobra seu preço em jogos rápidos, e não há passagem de sinal. Para jogar olhando a TV, seria preciso um divisor HDMI.
+
+Na Amazon, o anúncio soma quase 1.900 avaliações, com nota 4,3.
+
+<AffiliateButton href="https://meli.la/14Cacvp" store="mercadolivre" source="placa-de-captura-hdmi-como-escolher" />
+<AffiliateButton href="https://www.amazon.com.br/dp/B0CFQ2BMPZ?tag=nerdcaseiro-20" store="amazon" source="placa-de-captura-hdmi-como-escolher" />
+
+### Fifine AmpliGame V3, USB 3.0 com saída HDMI
+
+![Placa de captura Fifine AmpliGame V3 preta com iluminação RGB](/images/produtos/placa-captura-fifine-v3.webp)
+
+A **Fifine AmpliGame V3** é o degrau seguinte. Com **USB 3.0**, ela captura em **1080p a 60 quadros** e tem **saída HDMI** para a TV ou o monitor, em até **4K a 30 quadros**, segundo o anúncio. Ela também traz **entrada de linha** e **saída para headset**, úteis para ouvir o jogo e conversar com a equipe sem tirar o fone, e iluminação RGB com nove modos.
+
+**Para quem é:** quem grava ou transmite jogos com frequência e quer jogar olhando a TV, sem atraso, com imagem menos comprimida.
+
+**O limite:** a passagem de sinal em 4K a 30 quadros não acompanha consoles configurados para 120 Hz ou com HDR; nesses casos, o caminho é configurar o console para 1080p a 60 quadros. O cabo HDMI não vem na caixa, segundo o anúncio da Amazon, e a iluminação RGB é estética, sem efeito na captura.
+
+Na Amazon, o anúncio tem nota 4,7, com menos de cinquenta avaliações.
+
+<AffiliateButton href="https://meli.la/1Nnpg6E" store="mercadolivre" source="placa-de-captura-hdmi-como-escolher" />
+<AffiliateButton href="https://www.amazon.com.br/dp/B0FGXT5JXJ?tag=nerdcaseiro-20" store="amazon" source="placa-de-captura-hdmi-como-escolher" />
+
+### Comparação rápida
+
+| | UGREEN 1080p | Fifine AmpliGame V3 |
+|---|---|---|
+| Interface | USB 2.0 (até 480 Mbps) | USB 3.0 |
+| Captura | 1080p a 60 fps | 1080p a 60 fps |
+| Entrada máxima | 4K a 30 Hz | 4K |
+| Saída HDMI (loop-out) | não | sim, até 4K a 30 fps |
+| Áudio extra | não | entrada de linha e saída de headset |
+| Melhor para | começar, câmera como webcam, portabilidade | jogos, jogar olhando a TV |
+
+## Passo a passo: placa de captura no OBS Studio
+
+O procedimento abaixo segue a base de conhecimento oficial do OBS Studio. O OBS trata a placa de captura exatamente como uma webcam. Quem ainda não conhece cenas, fontes e a tela de configurações do programa encontra o básico no tutorial de [primeira gravação e primeira live no OBS Studio](/posts/obs-studio-primeira-gravacao-primeira-live/).
+
+### Passo 1: ligar os cabos na ordem certa
+
+1. Ligue o **cabo USB** da placa numa porta do computador. Para placas USB 3.0, numa porta USB 3.0.
+2. Ligue o **cabo HDMI** da origem (console, câmera, outro computador) na **entrada HDMI** da placa, marcada como "IN".
+3. Se a placa tiver passagem de sinal, ligue um segundo cabo HDMI da **saída** da placa, marcada como "OUT", na TV ou no monitor.
+4. Ligue a origem. Em console PlayStation, confira antes o HDCP, como explicado acima.
+
+Ao ligar o USB, o sistema reconhece a placa sozinho. No Windows, ela aparece no Gerenciador de Dispositivos em Câmeras; no macOS, aparece nas Informações do Sistema, em USB.
+
+### Passo 2: adicionar a fonte de captura
+
+No OBS, na caixa **Fontes**, clique em **+** e escolha **Dispositivo de captura de vídeo** (no original, *Video Capture Device*). Dê um nome, como "Console" ou "Câmera", e confirme.
+
+Na janela de propriedades, selecione a placa na lista **Dispositivo**. A documentação do OBS resume assim: adicione a fonte, abra as propriedades e escolha o dispositivo na lista.
+
+Duas observações da documentação oficial:
+
+- no **Windows**, o dispositivo precisa ter driver com suporte a **DirectShow**. As placas UVC, como as desta lista, já usam o driver padrão do sistema;
+- a fonte **Dispositivo de captura de vídeo** existe no Windows e no macOS. No **Linux**, o equivalente é a fonte **Dispositivo de captura de vídeo (V4L2)**.
+
+### Passo 3: resolução e taxa de quadros
+
+Nas propriedades da fonte, o campo **Resolução/Tipo de FPS** começa em **Padrão do dispositivo**. A documentação do OBS orienta mudar para **Personalizado** se a imagem não aparecer corretamente. Em **Personalizado**:
+
+- **Resolução:** 1920x1080 para as placas desta lista;
+- **FPS:** 60, se a origem manda 60 quadros;
+- **Formato de vídeo:** em placas USB 2.0, a opção que entrega 1080p a 60 quadros costuma ser **MJPEG**. Em placas USB 3.0, os formatos sem compressão (YUY2 ou NV12) dão a imagem mais fiel, se a porta e o computador acompanharem.
+
+Se a imagem engasgar, a documentação do OBS indica a opção **Buffering**: ativada, ela pode ajudar quando há travadas na reprodução, ao custo de um pequeno atraso.
+
+### Passo 4: o áudio da placa
+
+O som do console ou da câmera chega pela própria placa, junto com a imagem. Nas propriedades da fonte, a documentação descreve o **Modo de saída de áudio**:
+
+- **Apenas capturar áudio:** o OBS recebe o som e o coloca na gravação e na live, mas você não ouve pelo computador. É o modo certo para quem joga ouvindo pela TV ou pelo fone ligado na placa.
+- **Enviar áudio para a área de trabalho:** o som também toca no dispositivo de reprodução padrão do computador, para quem joga olhando o OBS e ouvindo pelo fone do computador.
+
+Escolher o modo errado causa os dois problemas mais comuns de áudio: não ouvir o jogo, ou o som do jogo aparecer **duas vezes** na live, uma pela fonte da placa e outra pela captura de áudio da área de trabalho. Se o som aparecer duplicado, desative a captura de áudio da área de trabalho ou mude o modo de saída da fonte.
+
+### Passo 5: liberar recursos quando a fonte não está na tela
+
+A documentação do OBS cita a opção **Desativar quando não estiver sendo exibido**, que libera recursos ao desligar o dispositivo quando ele está oculto ou fora da cena atual. Para quem tem várias cenas e usa a placa só em uma delas, ela reduz o uso de processamento. O cuidado é que a placa leva um instante para voltar quando a cena é trocada.
+
+### Passo 6: testar antes de gravar de verdade
+
+Grave um minuto com movimento: em jogo, uma cena de ação; em câmera, um movimento de mão na frente da lente. Assista ao arquivo com atenção para:
+
+- **imagem travando ou com quadros pulados:** porta USB errada, computador sobrecarregado ou formato de vídeo pesado demais;
+- **blocos e borrões em movimento:** compressão da placa USB 2.0, ou taxa de bits de gravação baixa;
+- **áudio fora de sincronia:** o OBS permite ajustar o atraso de cada fonte de áudio nas propriedades avançadas de áudio;
+- **som duplicado:** reveja o modo de saída de áudio do passo 4.
+
+## Câmera como webcam: o que conferir na câmera
+
+Para quem vai ligar uma câmera fotográfica na placa, a câmera precisa cumprir três requisitos. Todos estão no manual de cada modelo:
+
+- **Saída HDMI limpa:** a câmera precisa mandar a imagem pelo HDMI **sem os ícones e menus** da tela. Muitas câmeras têm uma opção para ocultar as informações na saída HDMI.
+- **Sem desligamento automático:** várias câmeras desligam depois de alguns minutos ou limitam o tempo de gravação. Para uso como webcam, o desligamento automático precisa ser desativado, quando a câmera permitir.
+- **Alimentação contínua:** a bateria da câmera dura pouco ligada o tempo todo. Um adaptador de bateria falsa, ligado na tomada, ou a alimentação por USB, quando a câmera aceita, resolve.
+
+O tipo de conector HDMI da câmera também varia: HDMI padrão, mini-HDMI ou micro-HDMI. O cabo precisa ter o conector certo de cada lado.
+
+## Problemas comuns e soluções
+
+**Tela preta no OBS.** Verifique, nesta ordem: o HDCP do console, o cabo HDMI na entrada "IN" da placa, a origem ligada e mandando sinal, e se outro programa está usando a placa. Uma placa de captura, como uma webcam, geralmente só pode ser usada por um programa de cada vez. Aplicativos de reunião abertos em segundo plano costumam "segurar" o dispositivo.
+
+**A placa não aparece na lista de dispositivos.** Troque de porta USB, prefira uma porta direto no computador, e não num hub, e confira se o sistema reconhece a placa.
+
+**Imagem esticada ou cortada.** Ajuste a resolução para Personalizado, com a mesma resolução da origem, e use **Transformar > Ajustar à tela** no OBS.
+
+**Imagem travando com placa USB 3.0.** Confira se a porta é realmente USB 3.0 e se o cabo é o que veio com a placa. Cabos USB longos ou de baixa qualidade derrubam a conexão para USB 2.0.
+
+**Atraso entre imagem e som.** O som que passa pela placa e o som do microfone podem chegar em tempos diferentes. O ajuste de sincronia fica nas propriedades avançadas de áudio do OBS, em milissegundos.
+
+**Console em 120 Hz ou HDR sem imagem.** Configure o console para 1080p a 60 Hz e desative o HDR durante a gravação, se a placa não suportar esses modos.
+
+## Placa de captura ou outros caminhos
+
+Antes de comprar, vale saber que há alternativas para alguns usos:
+
+- **Câmera como webcam:** algumas câmeras atuais funcionam como webcam por **cabo USB**, sem placa, com software do fabricante. Vale conferir no site da marca antes.
+- **Celular como câmera:** para quem só quer imagem melhor que a do notebook, o celular pode virar webcam por recursos nativos do sistema, sem placa.
+- **Gravação de jogo no próprio console:** PS5, Xbox e Switch gravam trechos de jogo internamente, sem placa, com limitações de tempo e de edição. Para live com câmera e cenas no computador, a placa continua sendo o caminho.
+
+## Espaço em disco e taxa de bits da gravação
+
+A placa entrega o vídeo ao computador, mas quem decide o tamanho do arquivo é a configuração de gravação do OBS. Duas contas ajudam a planejar:
+
+- **Gravação em 1080p a 60 quadros** com uma taxa de bits na faixa de 10 a 20 megabits por segundo ocupa algo entre 4,5 e 9 gigabytes por hora. Uma sessão de três horas de jogo pode passar de 25 gigabytes.
+- **Transmissão ao vivo** usa taxa de bits menor, definida pela plataforma e pela velocidade de envio da internet, e não ocupa disco, a menos que a gravação local esteja ligada junto.
+
+Gravar em um SSD com espaço livre evita quadros perdidos por lentidão de disco. E o formato de arquivo recomendado pela documentação do OBS para gravação, o MKV, não corrompe o arquivo inteiro se o computador travar no meio; depois, o próprio OBS converte para MP4 pelo menu Arquivo.
+
+## Resumo
+
+- A **placa de captura** transforma qualquer sinal **HDMI** em uma "webcam" para o computador: console, câmera, outro computador.
+- **USB 2.0** comprime o vídeo, e a perda aparece em jogos rápidos. **USB 3.0** entrega imagem mais fiel, se ligada numa porta USB 3.0.
+- **Resolução de entrada** não é **resolução de captura**: muita placa "4K" grava em 1080p.
+- **Passagem de sinal** permite jogar olhando a TV, sem atraso.
+- **HDCP** dá tela preta em PS4 e PS5 até ser desativado em Configurações > Sistema > HDMI.
+- No **OBS**, a placa entra como **Dispositivo de captura de vídeo**, com resolução Personalizada e atenção ao **modo de saída de áudio**.
+- **UGREEN 1080p:** entrada barata e portátil, USB 2.0, sem passagem. **Fifine AmpliGame V3:** USB 3.0 com saída HDMI, para quem grava jogos com frequência.
+
+### Fontes
+
+- OBS Studio, base de conhecimento, [Video Capture Sources](https://obsproject.com/kb/video-capture-sources), consultado em 23/10/2026.
+- Elgato, central de ajuda, [What is HDCP?](https://help.elgato.com/hc/en-us/articles/360040482032) e [configuração com PlayStation 5](https://help.elgato.com/hc/en-us/articles/23706314592269-Elgato-Game-Capture-4K-Pro-PlayStation-5-Setup), consultados em 23/10/2026.
+- Especificações das placas: anúncios dos produtos na Amazon e no Mercado Livre, consultados em 23/10/2026.

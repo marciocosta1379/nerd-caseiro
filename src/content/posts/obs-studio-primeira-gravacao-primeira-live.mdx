@@ -1,0 +1,299 @@
+---
+title: 'OBS Studio: configure a primeira gravação e a primeira live'
+description: 'Passo a passo do OBS Studio para gravar a tela e fazer a primeira live: cenas, fontes, áudio, resolução e taxa de bits, conforme a documentação oficial.'
+pubDate: 2026-10-27T18:00:00-03:00
+category: 'audio-video'
+tags: ['obs-studio', 'live', 'gravacao-de-tela', 'streaming', 'criador-de-conteudo', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Fifine A6T, microfone condensador USB com braço articulado'
+    brand: 'Fifine'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09Q2ZZGH2?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/29n7yzo'
+    image: '/images/produtos/fifine-a6t.webp'
+    pros:
+      - 'Plug and play: aparece no OBS como dispositivo de áudio USB'
+      - 'Braço articulado incluso, que deixa o microfone perto da boca'
+      - 'Mute por toque, útil durante a live'
+    cons:
+      - 'Condensador: capta o teclado se ficar perto dele'
+  - name: 'EMEET S600, webcam 4K com foco automático e dois microfones'
+    brand: 'EMEET'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C2HFKXTZ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/15aXAte'
+    image: '/images/produtos/webcam-emeet-s600.webp'
+    pros:
+      - '4K a 30 quadros e 1080p a 60, com foco automático, segundo a EMEET'
+      - 'Entra no OBS como Dispositivo de captura de vídeo, sem driver extra'
+      - 'Vendida pela loja oficial da EMEET na Amazon'
+    cons:
+      - 'Microfone embutido não substitui um microfone dedicado'
+faq:
+  - question: 'O OBS Studio é gratuito?'
+    answer: 'Sim. O OBS Studio é um programa de código aberto, gratuito, para Windows, macOS e Linux, distribuído pelo site oficial do projeto, obsproject.com. Baixe sempre do site oficial ou da loja de aplicativos do sistema, para evitar versões alteradas.'
+  - question: 'Por que o OBS recomenda gravar em MKV?'
+    answer: 'Segundo o guia de gravação do OBS, o formato MKV evita que o arquivo inteiro seja corrompido se a gravação for interrompida de forma inesperada, por exemplo por uma queda de energia. Depois, o próprio OBS converte o MKV em MP4 pelo menu Arquivo > Remux de gravações, ou automaticamente, com a opção de remux automático nas configurações avançadas.'
+  - question: 'O que é a chave de transmissão?'
+    answer: 'É um código que a plataforma, como YouTube ou Twitch, gera para a sua conta. Com ela, o OBS envia o vídeo para o seu canal. Quem tiver a chave pode transmitir no seu canal, por isso ela nunca deve ser mostrada na tela, enviada a outras pessoas ou publicada.'
+  - question: 'O OBS deixa o computador lento?'
+    answer: 'Gravar e transmitir exigem processamento, principalmente para codificar o vídeo. Usar o codificador de hardware da placa de vídeo, quando disponível, reduz o peso sobre o processador. O assistente de configuração automática do OBS ajusta as opções de acordo com o seu computador.'
+  - question: 'Dá para gravar e transmitir ao mesmo tempo?'
+    answer: 'Sim. O OBS tem botões separados para iniciar a gravação e a transmissão. Gravar ao mesmo tempo que transmite exige mais do computador, especialmente se a gravação usar qualidade diferente da transmissão. Segundo o guia de gravação, qualquer opção diferente de usar a mesma qualidade da transmissão consome recursos extras.'
+  - question: 'Como gravar só uma janela e não a tela inteira?'
+    answer: 'No Windows e no Linux, use a fonte Captura de janela em vez de Captura de tela. No macOS, a fonte de captura de tela do macOS permite escolher uma janela específica. Assim, notificações e outras janelas não aparecem na gravação.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+O **OBS Studio** é o programa mais usado no mundo para gravar a tela e fazer lives. É gratuito, de código aberto, roda em Windows, macOS e Linux e é usado tanto por quem grava uma aula para a escola quanto por quem transmite jogos para milhares de pessoas.
+
+A primeira vez que você abre o OBS, porém, a tela assusta: cenas, fontes, mixer, controles e uma área preta no meio. Este tutorial mostra o caminho mais curto para **a primeira gravação** e **a primeira live**, seguindo o **guia de início rápido**, o **guia de gravação** e o **guia de filtros** da documentação oficial do OBS. A versão de referência é o **OBS Studio 32.2.2**, a mais recente no repositório oficial do projeto no momento em que este texto foi escrito. Em versões futuras, nomes de menus podem mudar; a documentação oficial em obsproject.com/kb é a referência.
+
+## Antes de começar: o que você vai precisar
+
+- **O OBS Studio**, baixado do site oficial, obsproject.com.
+- **Um microfone**. O do notebook funciona para testar, mas um microfone USB muda o resultado.
+- **Uma câmera**, se você quiser aparecer: a webcam do notebook, uma webcam USB ou o próprio celular como webcam.
+- **Espaço em disco**: vídeo ocupa bastante. Uma hora de gravação em boa qualidade pode passar de alguns gigabytes.
+- **Para lives**: uma conta na plataforma (YouTube, Twitch ou outra) com a transmissão ao vivo habilitada, e internet com upload estável.
+
+## Os quatro conceitos do OBS
+
+Entender quatro palavras resolve 90% da confusão:
+
+1. **Cena**: é uma "tela" montada. Você pode ter uma cena "Tela + câmera", outra "Só câmera" e outra "Intervalo", e trocar entre elas durante a live.
+2. **Fonte**: é cada coisa que aparece dentro da cena: a captura da tela, a câmera, uma imagem, um texto, o microfone.
+3. **Mixer de áudio**: mostra o volume de cada fonte de som, com medidores que se mexem quando há som.
+4. **Controles**: os botões de **Iniciar gravação**, **Iniciar transmissão** e o acesso às **Configurações**.
+
+Cenas ficam no painel de cenas; fontes, no painel de fontes logo ao lado. Tudo o que você adiciona entra na cena selecionada.
+
+## Passo 1: o assistente de configuração automática
+
+Na primeira vez que o OBS abre, ele oferece o **assistente de configuração automática**. Segundo o guia de início rápido, o assistente ajusta as configurações de acordo com **o que você quer fazer** (gravar ou transmitir), com o **hardware do seu computador** e, no caso de transmissão, com as **condições da sua rede**.
+
+Use o assistente. Ele escolhe resolução, taxa de quadros e taxa de bits razoáveis para o seu computador. Se você pulou o assistente, ele pode ser executado de novo pelo menu **Ferramentas > Assistente de configuração automática**.
+
+Escolha:
+
+- **Otimizar para gravação**, se o objetivo é gravar aulas, tutoriais e vídeos para editar depois.
+- **Otimizar para transmissão**, se o objetivo é fazer lives. O assistente vai pedir a plataforma e testar a sua conexão.
+
+## Passo 2: adicionar as fontes
+
+Uma sessão nova começa com uma cena vazia. Para adicionar uma fonte, clique no **+** no painel de fontes. O guia de início rápido recomenda estas fontes, conforme o sistema:
+
+- **Captura de tela** (Windows e Linux): grava a tela inteira.
+- **Captura de janela** (Windows e Linux): grava uma janela específica, sem mostrar notificações e outras janelas.
+- **Captura de tela do macOS** (macOS): no Mac, faz o papel das duas anteriores, permitindo escolher a tela inteira ou uma janela.
+- **Captura de jogo** (só Windows): captura jogos com o melhor desempenho.
+- **Dispositivo de captura de vídeo**: a webcam ou uma placa de captura.
+
+Para um tutorial com você no canto da tela:
+
+1. Adicione **Captura de tela** (ou de janela) e escolha o monitor ou a janela.
+2. Adicione **Dispositivo de captura de vídeo** e escolha a webcam.
+3. Na área de visualização, **arraste e redimensione** a câmera para um canto, pelas bordas vermelhas.
+4. A ordem das fontes no painel define o que fica na frente: a câmera precisa estar **acima** da captura de tela na lista.
+
+### Câmera em cima ou embaixo?
+
+Num tutorial de tela, a câmera costuma ficar no **canto inferior direito**, onde menos atrapalha o conteúdo. Confira se ela não cobre botões ou menus que você vai mostrar. Em vídeos com legendas automáticas das plataformas, a parte de baixo pode ser coberta pelas legendas; nesse caso, o canto superior direito é uma alternativa.
+
+## Passo 3: o áudio
+
+Segundo o guia de início rápido, o OBS captura por padrão o **áudio da área de trabalho** (o som do computador) e o **microfone**. Os medidores aparecem no **mixer de áudio**, na parte de baixo da janela.
+
+1. **Fale no microfone** e observe o medidor do microfone. Ele deve se mexer.
+2. **Toque um som no computador** e observe o medidor do áudio da área de trabalho.
+3. Se um medidor não se mexer ou o dispositivo errado estiver sendo capturado, vá em **Configurações > Áudio** e selecione os dispositivos manualmente.
+
+### O microfone certo faz diferença
+
+![Microfone Fifine A6T com braço articulado sobre a mesa](/images/produtos/fifine-a6t.webp)
+
+O OBS trata qualquer microfone USB como um dispositivo de áudio comum. O **Fifine A6T**, por exemplo, é um condensador USB que vem com **braço articulado**, **mute por toque** e **controle de volume**, segundo o fabricante, e aparece no OBS assim que é conectado. O braço é útil na live: deixa o microfone perto da boca, fora do enquadramento da câmera e longe do teclado.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09Q2ZZGH2?tag=nerdcaseiro-20" store="amazon" source="obs-studio-primeira-gravacao-primeira-live" />
+<AffiliateButton href="https://meli.la/29n7yzo" store="mercadolivre" source="obs-studio-primeira-gravacao-primeira-live" />
+
+## Passo 4: filtros de microfone
+
+Os filtros do OBS melhoram muito o som de um microfone em casa. Para adicionar, clique com o botão direito no microfone, no mixer, e escolha **Filtros**. O guia de filtros da documentação lista, entre os filtros de áudio:
+
+- **Supressão de ruído** (*Noise Suppression*): remove ruído de fundo, como chiado e ventilador.
+- **Noise gate**: corta o som quando você não está falando.
+- **Expansor** (*Expander*): reduz o som de fundo, como o noise gate, mas com uma proporção ajustável, de forma mais suave.
+- **Compressor**: limita o áudio acima de um limite, deixando o volume mais uniforme. Também pode abaixar uma fonte quando outra toca, o chamado *ducking*.
+- **Limitador** (*Limiter*): evita distorção quando a voz passa do máximo.
+- **Ganho** (*Gain*): aumenta o volume de fontes muito baixas.
+
+Um ponto de partida comum é começar só com a **supressão de ruído** e o **limitador**, testar, e acrescentar o compressor depois, se o volume da voz variar muito. Exagerar nos filtros deixa a voz com som artificial.
+
+## Passo 5: configurações de gravação
+
+Antes de gravar, confira **Configurações > Saída**. O OBS tem dois modos de saída, **Simples** e **Avançado**. O guia de gravação da documentação faz três recomendações que valem para quem está começando:
+
+1. **Formato de gravação: MKV.** Segundo o guia, o MKV protege a gravação: se ela não for encerrada corretamente, por uma queda de energia ou um travamento, o arquivo inteiro não se perde.
+2. **Qualidade de gravação**: no modo Simples, qualquer opção diferente de **"Igual à transmissão"** usa recursos extras do computador. Se você só grava, sem transmitir, escolha uma qualidade alta; se grava e transmite ao mesmo tempo, considere usar a mesma qualidade da transmissão.
+3. **Converter para MP4 depois**: muitos editores e redes sociais preferem MP4. O guia orienta usar **Arquivo > Remux de gravações**, selecionar os vídeos e clicar em Remux. Quem sempre precisa de MP4 pode ativar o **remux automático para MP4** nas configurações avançadas, e o OBS converte assim que a gravação termina.
+
+Confira também a **pasta de gravação**, para saber onde os vídeos vão ficar, e o espaço livre no disco.
+
+### Codificador
+
+No modo **Avançado**, você escolhe o **codificador**. Se o seu computador tem placa de vídeo com codificador de hardware, ele costuma aparecer na lista e reduz o trabalho do processador. O guia de gravação usa como exemplo o codificador da NVIDIA e sugere testar os codificadores que o seu hardware suporta.
+
+## Passo 6: o teste
+
+O guia de início rápido é enfático: **faça um teste de alguns minutos** antes da primeira gravação ou live de verdade. Na prática:
+
+1. Clique em **Iniciar gravação**.
+2. Fale por dois minutos, mostre a tela, mexa a câmera, toque um som do computador.
+3. Clique em **Parar gravação**.
+4. Abra o arquivo e confira: **o áudio está alto e limpo? A voz e a imagem estão sincronizadas? A imagem está nítida?**
+
+Só depois desse teste, grave o vídeo de verdade.
+
+## Passo 7: a primeira live
+
+Para transmitir:
+
+1. Na plataforma (YouTube, Twitch ou outra), habilite a transmissão ao vivo na sua conta e localize a **chave de transmissão** no painel de criador.
+2. No OBS, vá em **Configurações > Transmissão**, escolha o **serviço** e o **servidor**, e informe a **chave de transmissão**. A documentação do OBS indica que, para os serviços mais usados, a chave pode ser obtida pelo botão que leva ao painel da plataforma, e alguns serviços permitem conectar a conta diretamente.
+3. Volte à tela principal e clique em **Iniciar transmissão**.
+4. Confira na plataforma se a imagem e o som chegaram, com o player aberto num celular, sem som no computador para não dar eco.
+
+### A chave de transmissão é como uma senha
+
+Quem tiver a sua chave consegue transmitir no seu canal. Por isso:
+
+- **Nunca mostre a tela de configurações** durante a live ou em vídeos.
+- **Não envie a chave** para outras pessoas.
+- **Gere uma chave nova** na plataforma se suspeitar que ela vazou.
+
+### Resolução e taxa de bits na live
+
+Na transmissão, a qualidade depende do **upload** da sua internet. O assistente de configuração mede a conexão e sugere valores. Duas regras práticas:
+
+- **Uma conexão instável derruba a live** mais do que uma resolução menor. Prefira 720p estável a 1080p travando.
+- **Wi-Fi oscila**: para lives, um cabo de rede entre o computador e o roteador ajuda muito.
+
+## Um modelo de três cenas para a primeira live
+
+Com o básico funcionando, vale montar algumas cenas para trocar durante a live. Um modelo simples, usado por muitos criadores:
+
+1. **"Começando"**: uma imagem ou um texto, como "a live já vai começar", com uma música de fundo baixa. Você liga a transmissão nessa cena e tem alguns minutos para conferir se tudo chegou à plataforma antes de aparecer.
+2. **"Principal"**: a captura de tela com a câmera no canto, ou só a câmera, dependendo do tipo de live.
+3. **"Intervalo"**: uma imagem com "volto já" e o microfone mudo, para pausas.
+
+Para criar uma cena nova, clique no **+** do painel de cenas. Para reaproveitar a câmera e o microfone em várias cenas, ao adicionar a fonte escolha **adicionar existente**, em vez de criar outra: assim, um ajuste na câmera vale para todas as cenas.
+
+## Atalhos de teclado
+
+Trocar de cena com o mouse durante a live tira o foco do que você está fazendo. O OBS permite definir **atalhos** em **Configurações > Teclas de atalho**: iniciar e parar a gravação, trocar de cena, silenciar o microfone. Escolha combinações que não conflitem com o programa que você está mostrando, como uma tecla com Ctrl e Shift.
+
+## Gravando uma aula com slides
+
+Para gravar uma apresentação:
+
+1. Abra os slides no modo de apresentação, ou numa janela, conforme o programa permitir.
+2. No OBS, use **Captura de janela** e escolha a janela da apresentação, ou **Captura de tela** se a apresentação ocupar o monitor inteiro.
+3. Coloque a câmera no canto, sem cobrir textos importantes dos slides.
+4. Teste a troca de slides durante a gravação: alguns programas abrem a apresentação numa janela nova, que precisa ser selecionada de novo na fonte.
+
+Com **dois monitores**, fica mais fácil: os slides vão para um monitor, que o OBS captura, e o OBS fica aberto no outro, onde você acompanha a gravação.
+
+## Perfis e coleções de cenas
+
+O OBS separa dois conjuntos de configurações, cada um com seu menu na barra superior:
+
+- **Perfil**: guarda as configurações de saída, de vídeo e de transmissão. Útil para ter um perfil "Gravação" com qualidade alta e um perfil "Live" ajustado para a internet.
+- **Coleção de cenas**: guarda as cenas e as fontes. Útil para ter uma coleção para "Aulas" e outra para "Jogos".
+
+Separar os dois evita o erro clássico de mexer numa configuração de live e estragar a configuração de gravação, e vice-versa.
+
+## Onde ficam os vídeos e como não perdê-los
+
+- **Confira a pasta de gravação** em Configurações > Saída. Por padrão, o OBS grava na pasta de vídeos do usuário.
+- **Renomeie os arquivos** logo depois de gravar, com data e assunto. O nome padrão é a data e a hora, o que fica confuso com o tempo.
+- **Faça backup** dos vídeos importantes num HD externo ou na nuvem antes de apagar do computador.
+- **Monitore o espaço livre**: gravações longas em alta qualidade ocupam muitos gigabytes.
+
+## A câmera: o que muda com uma webcam melhor
+
+![Webcam EMEET S600 4K](/images/produtos/webcam-emeet-s600.webp)
+
+A webcam entra no OBS como **Dispositivo de captura de vídeo**. Uma webcam com **foco automático** e sensor maior entrega imagem mais nítida e reage melhor à luz baixa do que a câmera embutida da maioria dos notebooks. A **EMEET S600** grava em **4K a 30 quadros por segundo** ou **1080p a 60**, com **foco automático** e **dois microfones** com redução de ruído, segundo a EMEET. Tem **nota 4,7 na Amazon**, onde é vendida pela loja oficial da marca, e **mais de 10 mil vendidos** no Mercado Livre. Nas propriedades da fonte, no OBS, dá para escolher a resolução e a taxa de quadros da câmera.
+
+<ProsCons
+  pros={['4K a 30 fps e 1080p a 60 fps', 'Foco automático', 'Funciona como dispositivo de vídeo padrão']}
+  cons={['Microfone embutido não substitui um microfone dedicado']}
+/>
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C2HFKXTZ?tag=nerdcaseiro-20" store="amazon" source="obs-studio-primeira-gravacao-primeira-live" />
+<AffiliateButton href="https://meli.la/15aXAte" store="mercadolivre" source="obs-studio-primeira-gravacao-primeira-live" />
+
+## Resolução, tela e taxa de quadros: o que significam
+
+Em **Configurações > Vídeo**, o OBS mostra três números que confundem quem está começando:
+
+- **Resolução base (tela de pintura)**: o tamanho da "tela" onde você monta as cenas. Normalmente igual à resolução do seu monitor.
+- **Resolução de saída (escalonada)**: o tamanho do vídeo que sai do OBS, na gravação ou na live. Pode ser menor que a base, para aliviar o computador e a internet.
+- **Valores comuns de FPS**: a taxa de quadros. **30** é suficiente para aulas, tutoriais e conversas; **60** deixa jogos e movimentos rápidos mais fluidos, mas exige mais do computador e, na live, da internet.
+
+Para aulas e tutoriais de tela, 1080p a 30 quadros por segundo costuma ser um ótimo equilíbrio. Para jogos, muitos criadores preferem 720p a 60 quadros a 1080p a 30, porque a fluidez pesa mais que a resolução. O assistente de configuração automática já sugere uma combinação adequada para o seu computador.
+
+## Áudio do computador sem expor tudo
+
+A fonte de **áudio da área de trabalho** grava todos os sons do computador: notificações, mensagens, alertas. Durante uma live ou uma aula, isso pode expor conversas e gerar sons inesperados. Algumas saídas:
+
+- **Ative o modo "não perturbe"** do sistema durante a gravação.
+- **Feche aplicativos de mensagem** que emitem som.
+- **Silencie o áudio da área de trabalho** no mixer quando não precisar dele, mantendo só o microfone.
+- Em versões recentes do OBS no Windows e no macOS, há fontes de captura de áudio de um aplicativo específico; confira na lista de fontes da sua versão se ela está disponível, para gravar só o som do programa que você está mostrando.
+
+## Problemas mais comuns
+
+| Problema | Causa provável | O que fazer |
+|---|---|---|
+| Tela preta na captura | Permissão de captura negada (macOS) ou captura do monitor errado | Conferir as permissões de gravação de tela do sistema e a tela escolhida na fonte |
+| Medidor do microfone parado | Dispositivo errado ou microfone silenciado | Conferir Configurações > Áudio e o mute do próprio microfone |
+| Eco na live | Som do computador voltando pelo microfone | Usar fone de ouvido em vez de caixa de som |
+| Voz atrasada em relação à imagem | Atraso de câmera ou de áudio | Testar a opção de atraso de sincronização nas propriedades avançadas de áudio |
+| Gravação travando | Codificador pesado para o computador | Usar codificador de hardware ou rodar o assistente de novo |
+| Arquivo MKV não abre no editor | Formato não suportado pelo editor | Arquivo > Remux de gravações para MP4 |
+
+## Os erros mais comuns
+
+- **Pular o teste** e descobrir na edição que o áudio não gravou.
+- **Câmera abaixo da captura de tela** na lista de fontes: ela some atrás da tela.
+- **Mostrar a chave de transmissão** sem querer.
+- **Caixa de som ligada** durante a live: eco garantido.
+- **Excesso de filtros** no microfone.
+- **Disco quase cheio**: a gravação para no meio.
+
+## Resumo
+
+- Use o **assistente de configuração automática** na primeira vez.
+- Monte a cena com **fontes**: captura de tela, câmera e microfone.
+- Confira os medidores no **mixer de áudio** e use **filtros** com moderação.
+- Grave em **MKV** e converta para MP4 com o **remux**, como recomenda o guia oficial.
+- **Teste** antes de gravar ou transmitir de verdade.
+- Proteja a **chave de transmissão** como uma senha.
+
+### Fontes
+
+- OBS Project, Quick Start Guide, Standard Recording Output Guide e Filters Guide, em obsproject.com/kb.
+- OBS Studio 32.2.2, release no repositório oficial github.com/obsproject/obs-studio.

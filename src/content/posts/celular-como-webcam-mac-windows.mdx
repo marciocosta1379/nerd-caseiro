@@ -1,0 +1,316 @@
+---
+title: 'Celular como webcam no PC: Mac e Windows sem gambiarra'
+description: 'Como usar o celular como webcam no computador: Câmera de Continuidade no Mac e Vincular ao Celular no Windows, com requisitos e versões declaradas.'
+pubDate: 2026-10-29T18:00:00-03:00
+category: 'audio-video'
+tags: ['webcam', 'celular', 'camera-de-continuidade', 'windows-11', 'macos', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'CloudValley suporte magnético para notebook e monitor, giratório 360°'
+    brand: 'CloudValley'
+    rating: 4.3
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DTHP9DNY?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2ZVg61q'
+    image: '/images/produtos/suporte-magnetico-cloudvalley.webp'
+    pros:
+      - 'Prende o celular na lateral da tela por ímã, sem garra'
+      - 'Compatível com MagSafe; vem com 2 placas de metal para Android'
+      - 'Braço em alumínio, dobra junto à tampa do notebook'
+    cons:
+      - 'Base adesiva: depois de colada, não troca de lugar com facilidade'
+      - 'Celular fica ao lado da tela, não exatamente no centro'
+  - name: 'Basike tripé para celular de 1,82 m, bastão de selfie e rastreamento facial'
+    brand: 'Basike'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0GWQ7JDZ9?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1ZAuX1o'
+    image: '/images/produtos/tripe-basike-182.webp'
+    pros:
+      - 'Funciona como tripé de mesa e de chão'
+      - 'Coloca o celular na altura dos olhos atrás do monitor'
+      - 'Controle remoto Bluetooth incluso'
+    cons:
+      - 'Haste central fina: balança mais na altura máxima'
+      - 'Ocupa espaço ao lado da mesa'
+faq:
+  - question: 'Qual iPhone funciona como webcam no Mac?'
+    answer: 'Segundo a Apple, a Câmera de Continuidade funciona com iPhone XR ou posterior, com iOS 16 ou mais recente, e com qualquer Mac compatível com o macOS Ventura 13 ou posterior. Os dois aparelhos precisam estar na mesma conta Apple, com autenticação de dois fatores. Alguns efeitos de vídeo têm requisitos adicionais de modelo.'
+  - question: 'Dá para usar o iPhone como webcam no Windows?'
+    answer: 'Não pelos recursos nativos. A Câmera de Continuidade é exclusiva do Mac, e o recurso de câmera conectada do Windows 11 funciona com celulares Android. Para usar um iPhone como webcam no Windows, é preciso um aplicativo de terceiros, que não faz parte deste tutorial.'
+  - question: 'Qual Android funciona como webcam no Windows 11?'
+    answer: 'A página de suporte da Microsoft pede Android 10 ou mais recente, o aplicativo Vincular ao Windows (Link to Windows) na versão 1.24022.0 ou posterior e um PC com Windows 11. O celular precisa estar vinculado ao PC pelo Vincular ao Celular.'
+  - question: 'O celular como webcam funciona sem fio?'
+    answer: 'Sim, nos dois sistemas. No Mac, a Câmera de Continuidade funciona sem fio por Wi-Fi e Bluetooth, ou por cabo USB. No Windows, o recurso da Microsoft usa a conexão do Vincular ao Celular. Para sessões longas, manter o celular carregando é recomendado, porque a câmera e a transmissão consomem bateria.'
+  - question: 'Por que a opção de usar o celular como câmera some sozinha no Windows?'
+    answer: 'É uma reclamação recorrente no fórum da Microsoft. As sugestões da comunidade, que não fazem parte da documentação oficial, são conferir se o acesso à câmera está permitido em Privacidade e segurança no Windows, deixar o Vincular ao Windows sem restrição de bateria no celular, confirmar que os dois aparelhos usam a mesma conta Microsoft e, se nada resolver, desvincular e vincular o celular de novo.'
+  - question: 'Usar o celular como webcam é melhor que uma webcam comum?'
+    answer: 'Em qualidade de imagem, quase sempre. A câmera traseira de um celular recente tem sensor e processamento melhores que os de webcams de entrada. As desvantagens são práticas: o celular fica ocupado durante a chamada, precisa de suporte e de carga, e a conexão depende de requisitos de sistema. Para uso diário e constante, uma webcam dedicada é mais cômoda.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A câmera traseira de um celular de poucos anos atrás é, quase sempre, melhor que a webcam do notebook. Sensor maior, lente melhor, processamento de imagem que trabalha bem com pouca luz. Durante anos, usar essa câmera no computador exigia aplicativo de terceiros, driver instalado à mão e conexão que caía no meio da reunião. Hoje, **Apple e Microsoft têm recurso nativo** para isso.
+
+No **Mac**, é a **Câmera de Continuidade**, que transforma o iPhone em webcam. No **Windows 11**, é o recurso de **câmera conectada** do **Vincular ao Celular**, que faz o mesmo com celulares **Android**. Este tutorial mostra os dois caminhos, com os requisitos de cada um, o passo a passo e os problemas mais comuns.
+
+> **Fontes e versões:** o procedimento segue as páginas de suporte da **Apple** ("Use iPhone as a webcam for your Mac") e da **Microsoft** ("Use your mobile device's camera"), consultadas em **23/10/2026**. Requisitos citados: **macOS Ventura 13** ou posterior e **iOS 16** ou posterior no Mac; **Windows 11**, **Android 10** ou posterior e **Vincular ao Windows 1.24022.0** ou posterior no PC. Os links estão no fim do post. Menus e nomes de opções podem mudar em versões futuras.
+
+## Qual caminho serve para você
+
+A combinação de aparelhos define o caminho, e ela é mais rígida do que parece:
+
+| Computador | Celular | Recurso nativo |
+|---|---|---|
+| Mac | iPhone | Câmera de Continuidade |
+| Windows 11 | Android | Câmera conectada do Vincular ao Celular |
+| Mac | Android | Não há recurso nativo |
+| Windows | iPhone | Não há recurso nativo |
+| Windows 10 | Qualquer | Não há recurso nativo |
+
+Nas combinações cruzadas, a saída é um aplicativo de terceiros, que instala um driver de câmera virtual no computador. Esses aplicativos existem e funcionam, mas ficam fora deste tutorial: cada um tem requisitos, versões gratuitas limitadas e instalação própria, e o objetivo aqui é o caminho oficial, sem software extra.
+
+Há ainda um terceiro caminho para Android, mais recente: o modo **webcam USB** do próprio Android, explicado mais adiante. Ele depende do fabricante do celular.
+
+## Por que vale usar o celular como webcam
+
+A webcam de notebook é, em quase todos os modelos, o componente em que o fabricante mais economiza. A tampa fina limita o tamanho do sensor e da lente, e o resultado é uma imagem que até funciona com boa luz, mas fica granulada, lavada e com pouco contraste em ambiente comum de casa.
+
+A câmera traseira do celular resolve três coisas de uma vez:
+
+- **Sensor maior:** capta mais luz, e a imagem tem menos ruído em ambiente interno.
+- **Processamento melhor:** o celular ajusta exposição, cor e faixa dinâmica com muito mais recursos que uma webcam simples.
+- **Lente melhor:** com foco automático rápido e, em muitos modelos, mais de uma lente.
+
+O custo é prático: o celular fica ocupado durante a chamada, precisa de um suporte e de carga, e depende dos requisitos de sistema descritos a seguir.
+
+## Caminho 1: iPhone como webcam no Mac
+
+### Requisitos
+
+Segundo a página de suporte da Apple:
+
+- **iPhone XR ou posterior**, com **iOS 16** ou mais recente;
+- **Mac compatível com macOS Ventura 13** ou posterior;
+- os dois aparelhos com sessão iniciada na **mesma conta Apple**, com **autenticação de dois fatores** ativada;
+- **Câmera de Continuidade ativada no iPhone**, o que é o padrão;
+- para uso sem fio: **Bluetooth e Wi-Fi ligados** nos dois aparelhos, e o Mac não pode estar usando **AirPlay** nem **Sidecar**;
+- o iPhone não pode estar **compartilhando a conexão de celular** (o roteador pessoal), e o Mac não pode estar **compartilhando a conexão de internet**;
+- para uso por cabo USB: o iPhone precisa estar configurado para **confiar no Mac**.
+
+A Apple também informa que alguns efeitos de vídeo e modos de microfone têm requisitos adicionais. Se um efeito não aparecer, o mais provável é que o modelo de iPhone não o suporte.
+
+### Passo 1: conferir a configuração no iPhone
+
+A Câmera de Continuidade vem ligada de fábrica. Se nada aparecer no Mac, vale conferir o ajuste no iPhone: em **Ajustes > Geral > AirPlay e Continuidade** (o nome da seção pode variar entre versões do iOS), a opção **Câmera de Continuidade** deve estar ativada.
+
+Confira também, no Mac, se a conta Apple é a mesma do iPhone, em **Ajustes do Sistema**, no topo da barra lateral.
+
+### Passo 2: posicionar o iPhone
+
+A Apple descreve a posição esperada: o iPhone **perto do Mac**, **bloqueado**, **estável** e com as **câmeras traseiras voltadas para você**, sem obstrução.
+
+Três detalhes importam aqui:
+
+- **Bloqueado:** a tela do iPhone fica apagada durante o uso. Se o iPhone for desbloqueado, a transmissão pausa.
+- **Câmeras traseiras para você:** a tela fica virada para o lado oposto. A câmera usada é a traseira, que é a melhor do aparelho.
+- **Orientação:** com o iPhone na **horizontal**, os aplicativos podem selecioná-lo **automaticamente**. Na vertical, ele também funciona, mas é preciso escolher no menu do aplicativo.
+
+**Estável** quer dizer em um suporte, e não apoiado em pé contra uma caneca. O iPhone precisa ficar parado na altura dos olhos, de preferência acima da tela ou ao lado dela.
+
+![Suporte magnético CloudValley preso na lateral da tampa de um notebook, segurando um iPhone](/images/produtos/suporte-magnetico-cloudvalley.webp)
+
+Para notebook, um suporte magnético que se prende na tampa resolve. O **CloudValley** desta lista tem uma base adesiva que vai atrás da tela e um braço que gira, segundo o anúncio, até **360°**, posicionando o celular ao lado da tela. Ele é compatível com **MagSafe** e vem com **duas placas de metal** para celulares sem ímã, como os Android. Com a base colada perto da borda de cima, o celular fica mais próximo da altura dos olhos. Por ser adesiva, a base deve ser colada com calma no lugar definitivo: o próprio anúncio pede para esperar algumas horas antes de usar.
+
+<AffiliateButton href="https://meli.la/2ZVg61q" store="mercadolivre" source="celular-como-webcam-mac-windows" />
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DTHP9DNY?tag=nerdcaseiro-20" store="amazon" source="celular-como-webcam-mac-windows" />
+
+### Passo 3: escolher a câmera no aplicativo
+
+Com o iPhone posicionado, abra o aplicativo de vídeo no Mac e escolha o iPhone **no menu de vídeo, de câmera ou nas configurações do aplicativo**, como orienta a Apple. No **FaceTime**, a opção fica no menu **Vídeo**. No **Zoom**, no **Google Meet** pelo navegador, no **Microsoft Teams** e no **OBS Studio**, ela aparece na lista de câmeras disponíveis, com o nome do iPhone.
+
+No OBS, o iPhone entra como uma fonte de **Dispositivo de Captura de Vídeo**, igual a qualquer webcam. O passo a passo das fontes e cenas do OBS está no tutorial de [primeira gravação e primeira live no OBS Studio](/posts/obs-studio-primeira-gravacao-primeira-live/).
+
+### Passo 4: o microfone
+
+A Apple informa que, em geral, **não é preciso selecionar o microfone do iPhone**. Ele só é escolhido automaticamente se o Mac não tiver microfone embutido ou externo. Para usar o microfone do iPhone de propósito, a escolha fica em **Ajustes do Sistema > Som > Entrada**, ou no ajuste de microfone do próprio aplicativo.
+
+Na prática, o microfone do iPhone fica a mesma distância da boca que o do Mac. A melhora de áudio de verdade vem de um microfone perto da boca, não da troca de um microfone embutido por outro.
+
+### Passo 5: os efeitos de vídeo
+
+Com o iPhone como câmera, o macOS libera efeitos que dependem da câmera do celular. A página da Apple lista, entre outros:
+
+- **Palco Central (Center Stage):** acompanha o rosto e reenquadra a imagem quando a pessoa se move.
+- **Visão da Mesa (Desk View):** mostra a mesa vista de cima, usando a lente ultra-angular, ao mesmo tempo que o rosto. Útil para mostrar papel, desenho ou montagem.
+- **Modo Retrato:** desfoca o fundo.
+- **Luz de Estúdio:** escurece o fundo e ilumina o rosto.
+- **Reações** e **Sobreposição do Apresentador**.
+
+Os efeitos ficam no menu de vídeo da barra de menus ou na Central de Controle do Mac, conforme a versão do macOS, enquanto a câmera está em uso. Como dito acima, alguns dependem do modelo do iPhone.
+
+### Pausar e desconectar
+
+A página da Apple descreve como a sessão se comporta:
+
+- **Ligação no iPhone:** vídeo e áudio pausam até a ligação terminar e o iPhone ser bloqueado e posicionado de novo.
+- **Ligação atendida no Mac:** a sessão pausa, e pode ser preciso escolher o iPhone de novo no aplicativo depois.
+- **Para parar:** use os controles do aplicativo, desbloqueie o iPhone, toque em **Pausar** ou **Desconectar** na tela do iPhone, ou afaste o iPhone para fora do alcance do Bluetooth.
+
+A Apple também recomenda deixar o iPhone **carregando** durante o uso, e o Mac avisa se a bateria do iPhone ficar baixa.
+
+### Privacidade
+
+Enquanto a câmera ou o microfone estão em uso, um **indicador de privacidade** aparece na barra de status do iPhone e na barra de menus do Mac. Sem fio, o iPhone ainda toca um **som curto** quando um aplicativo começa a usar a câmera ou o microfone.
+
+## Caminho 2: Android como webcam no Windows 11
+
+### Requisitos
+
+Segundo a página de suporte da Microsoft:
+
+- **PC com Windows 11** ou posterior;
+- **celular Android 10** ou mais recente;
+- aplicativo **Vincular ao Windows** (Link to Windows), no celular, na versão **1.24022.0** ou posterior.
+
+O celular precisa estar **vinculado ao PC** pelo recurso **Vincular ao Celular** (Phone Link). Nos requisitos gerais desse recurso, a Microsoft pede os dois aparelhos na **mesma rede Wi-Fi** e informa que **contas corporativas ou de estudante não são suportadas**.
+
+Fontes mais antigas, como o anúncio do recurso no blog do programa Windows Insider em fevereiro de 2024, citavam Android 9. A página de suporte atual pede **Android 10**, e é ela que vale.
+
+### Passo 1: atualizar o Vincular ao Windows no celular
+
+Na **Play Store**, procure **Vincular ao Windows** e atualize. Em vários celulares Samsung, ele já vem instalado no sistema, e a atualização chega pela própria loja. A versão aparece na página do aplicativo, nas informações de **Sobre**.
+
+### Passo 2: vincular o celular ao PC
+
+No PC, abra **Configurações > Bluetooth e dispositivos > Dispositivos móveis**. Se o celular ainda não estiver vinculado, use a opção de **adicionar dispositivo** e siga o processo: o Windows mostra um código QR, que é lido pelo aplicativo Vincular ao Windows no celular. Os dois aparelhos precisam usar a **mesma conta Microsoft**.
+
+### Passo 3: ativar o uso como câmera conectada
+
+Ainda em **Configurações > Bluetooth e dispositivos > Dispositivos móveis**, selecione o celular e ative a opção de **usar como câmera conectada**. A Microsoft informa que, a partir daí, o celular aparece como **opção de câmera nas Configurações do Windows e em outros aplicativos de câmera**.
+
+Na primeira vez, o celular pede permissão para o Vincular ao Windows usar a câmera.
+
+### Passo 4: posicionar o celular
+
+Mesma regra do iPhone: celular firme, na altura dos olhos, com a câmera traseira voltada para você. Para ter a melhor imagem, a câmera traseira é a escolha; a dianteira serve para quando é preciso ver a própria tela.
+
+Uma observação da página da Microsoft: se a **rotação de tela** estiver bloqueada no celular, é preciso **desbloquear** para que a imagem gire entre horizontal e vertical. Para reunião, a horizontal é a orientação certa.
+
+Em monitor de mesa, um suporte magnético funciona com as placas de metal que acompanham os modelos compatíveis com Android. Outra opção é um tripé atrás do monitor, com a câmera logo acima da borda da tela.
+
+![Tripé Basike de 1,82 m com celular, controle remoto e pernas abertas](/images/produtos/tripe-basike-182.webp)
+
+O **Basike** desta lista funciona como tripé de mesa e de chão, com altura de até **1,82 m** segundo o fabricante, e coloca o celular na altura dos olhos atrás de um monitor sem ocupar a mesa. O que observar em um tripé de celular, da firmeza da haste à cabeça, está no guia de [tripé para celular de 1,80 m](/posts/tripe-celular-180m-altura-firmeza-controle/).
+
+<AffiliateButton href="https://meli.la/1ZAuX1o" store="mercadolivre" source="celular-como-webcam-mac-windows" />
+<AffiliateButton href="https://www.amazon.com.br/dp/B0GWQ7JDZ9?tag=nerdcaseiro-20" store="amazon" source="celular-como-webcam-mac-windows" />
+
+### Passo 5: escolher a câmera no aplicativo
+
+No aplicativo de vídeo, escolha o celular no **menu de câmera**, como em qualquer webcam. A Microsoft indica que a troca de câmera usada por um aplicativo é feita **nas configurações do próprio aplicativo**, e que **fundo e efeitos** também se desativam ali.
+
+No PC, uma janela pequena do recurso aparece com controles da transmissão. Segundo o anúncio do recurso no blog do Windows Insider, ela permite trocar entre a câmera frontal e a traseira e pausar a transmissão.
+
+### Quando a imagem não aparece
+
+A página da Microsoft traz três situações:
+
+- **Prévia preta com um ícone branco:** o celular não recebeu o pedido de permissão. Procure uma janela nova com ícone de câmera na barra de tarefas do Windows, que orienta os próximos passos.
+- **Permissão negada:** no celular, abra **Configurações > Aplicativos**, encontre o **Vincular ao Windows** e confira se a permissão de **câmera** está ativada.
+- **Transmissão que não volta:** se a imagem não retomar sozinha, use o botão de **atualizar** dentro da janela do recurso.
+
+A página também avisa que, se o celular pedir permissão de câmera sem que você esteja usando o recurso, é sinal de que algum aplicativo o selecionou como webcam. Basta trocar a câmera no aplicativo.
+
+### Quando a opção de câmera desliga sozinha
+
+No fórum de perguntas da Microsoft, uma reclamação aparece com frequência: a opção de usar o celular como câmera conectada **desliga sozinha** logo depois de ativada. As sugestões que circulam na comunidade, e que **não fazem parte da documentação oficial**, são:
+
+1. no Windows, em **Configurações > Privacidade e segurança > Câmera**, conferir se o acesso à câmera está permitido para os aplicativos;
+2. no celular, deixar o **Vincular ao Windows sem restrição de bateria**, porque a economia de energia do Android pode encerrar o aplicativo em segundo plano;
+3. confirmar que o celular e o PC usam a **mesma conta Microsoft**;
+4. se nada resolver, **desvincular e vincular** o celular de novo.
+
+O item 2 resolve muitos problemas do Vincular ao Celular em geral, não só da câmera. Cada fabricante coloca a opção em um lugar diferente, geralmente na página do aplicativo, em **Bateria**.
+
+## O modo webcam USB do próprio Android
+
+Há um terceiro caminho, independente do Windows e da Microsoft. A documentação do **Android Open Source Project** descreve o suporte para usar o aparelho como **webcam USB** a partir do **Android 14 QPR1**. Ligado por cabo, o celular aparece no computador como uma câmera **UVC**, o padrão das webcams comuns, e funciona em Windows, macOS, Linux e ChromeOS sem instalar nada.
+
+Quando o recurso existe, a escolha fica nas **preferências de USB**, a notificação que aparece ao ligar o cabo: em vez de transferir arquivos, seleciona-se a opção de **webcam**. Uma tela de prévia no celular permite escolher a câmera frontal ou traseira, ajustar o zoom e tocar para focar.
+
+O problema é a disponibilidade. A própria documentação explica que o recurso depende de configurações do kernel e do sistema que o fabricante precisa incluir, e celulares atualizados para o Android 14 a partir de versões mais antigas podem não ter o suporte. Na prática, a forma de saber é ligar o celular por cabo e verificar se a opção de webcam aparece nas preferências de USB. Se aparecer, é o caminho mais simples de todos, e funciona até em Mac com Android.
+
+## Posição, luz e enquadramento
+
+Com o celular funcionando como webcam, a qualidade final depende de três coisas que nenhum recurso de sistema resolve.
+
+**Altura da câmera.** A lente deve ficar na altura dos olhos ou um pouco acima. Câmera abaixo do rosto mostra o queixo, as narinas e o teto. É o erro mais comum de quem apoia o celular na mesa.
+
+**Câmera perto da tela.** Quanto mais longe a câmera fica da janela da reunião na tela, mais a pessoa parece estar olhando para o lado. Com o celular ao lado do notebook, vale arrastar a janela da chamada para o lado da tela mais próximo da câmera.
+
+**Luz na frente.** A câmera do celular lida bem com pouca luz, mas não faz milagre com luz atrás da pessoa. Janela às costas deixa o rosto escuro. A luz principal deve vir da frente, um pouco acima dos olhos.
+
+**Lente limpa.** A câmera traseira do celular vive encostada em mesa, bolso e mão. Uma passada de pano de microfibra antes da chamada evita a imagem com névoa, que muita gente atribui à câmera.
+
+**Enquadramento.** Para reunião, o enquadramento clássico mostra da cabeça até o meio do peito, com um pouco de espaço acima da cabeça. Na câmera principal do celular, o campo de visão costuma ser mais fechado que o de uma webcam, o que ajuda a esconder o cômodo. A lente ultra-angular, quando o aplicativo permite escolhê-la, mostra mais o ambiente.
+
+## Bateria, calor e uso prolongado
+
+Câmera ligada e transmissão constante consomem bateria e geram calor. Para reuniões longas e lives, três cuidados:
+
+- **Deixe o celular carregando**, como a própria Apple recomenda para a Câmera de Continuidade.
+- **Tire a capa grossa** se o celular esquentar muito durante sessões longas. Capas espessas retêm calor.
+- **Evite o sol direto** no celular durante o uso.
+
+Celulares que esquentam demais reduzem o desempenho e podem diminuir a qualidade da imagem ou pausar a câmera. Se isso acontecer com frequência, uma sessão mais curta ou um ambiente mais fresco resolve.
+
+## Problemas comuns e o que conferir
+
+**O iPhone não aparece na lista de câmeras do Mac.** Confira, nesta ordem: mesma conta Apple nos dois aparelhos, autenticação de dois fatores ativa, Wi-Fi e Bluetooth ligados, iPhone bloqueado e parado com as câmeras traseiras para você, Mac sem AirPlay nem Sidecar em uso, e iPhone sem compartilhar a conexão. Se ainda assim não aparecer, ligar o iPhone por cabo USB e confiar no Mac costuma resolver.
+
+**O iPhone aparece, mas a imagem trava.** Conexão sem fio fraca é a causa mais comum. A conexão por cabo elimina a variação.
+
+**A sessão pausa toda hora.** Ligações, desbloqueio do iPhone e a saída do alcance do Bluetooth pausam a transmissão. Modo Foco ativado durante as reuniões reduz as interrupções.
+
+**O Android não aparece como câmera no Windows.** Confira a versão do Android (10 ou mais recente), a versão do Vincular ao Windows (1.24022.0 ou posterior), a mesma conta Microsoft nos dois aparelhos e a opção de câmera conectada ativada em Dispositivos móveis.
+
+**A opção de câmera conectada desliga sozinha.** Veja a lista de sugestões da comunidade acima, começando pela restrição de bateria do Vincular ao Windows.
+
+**A imagem está de lado.** No Android, desbloqueie a rotação de tela. No iPhone, gire o aparelho para a horizontal.
+
+**O aplicativo usa a câmera errada.** Os aplicativos guardam a última câmera escolhida. Ao voltar para a webcam do notebook ou trocar de celular, mude a câmera nas configurações do aplicativo.
+
+## Celular como webcam ou webcam dedicada?
+
+O celular como webcam vence em qualidade de imagem quase sempre, e custa só o suporte. Mas tem desvantagens que pesam no uso diário:
+
+- **o celular fica ocupado** durante toda a chamada;
+- **depende de requisitos**, de conta e de conexão, e qualquer atualização pode mudar menus e comportamento;
+- **precisa de suporte e de carga** a cada uso.
+
+Para reunião ocasional, gravação de vez em quando ou uma live por semana, o celular resolve muito bem. Para quem passa o dia em chamadas, uma webcam dedicada, sempre ligada e sempre no lugar, tende a ser mais cômoda, mesmo com imagem um pouco inferior.
+
+## Resumo
+
+- **Mac + iPhone:** Câmera de Continuidade, nativa. iPhone XR ou posterior com iOS 16+, Mac com macOS Ventura 13+, mesma conta Apple. iPhone bloqueado, parado e com as câmeras traseiras voltadas para você; escolha no menu de câmera do aplicativo.
+- **Windows 11 + Android:** câmera conectada do Vincular ao Celular. Android 10+, Vincular ao Windows 1.24022.0+, celular vinculado. Ative em **Configurações > Bluetooth e dispositivos > Dispositivos móveis**.
+- **Android 14 QPR1 ou mais recente:** pode ter o modo webcam USB próprio, se o fabricante incluiu o recurso.
+- **Combinações cruzadas:** só com aplicativo de terceiros.
+- **Em todos os casos:** celular firme na altura dos olhos, luz na frente, lente limpa e carregador ligado.
+
+### Fontes
+
+- Apple, [Use iPhone as a webcam for your Mac](https://support.apple.com/en-us/102546), consultado em 23/10/2026.
+- Microsoft, [Use your mobile device's camera](https://support.microsoft.com/en-us/windows/apps/phonelink/use-your-mobile-device-s-camera), consultado em 23/10/2026.
+- Microsoft, [Phone Link requirements and setup](https://support.microsoft.com/en-us/windows/apps/phonelink/phone-link-requirements-and-setup), consultado em 23/10/2026.
+- Microsoft, blog do Windows Insider, [anúncio do recurso de câmera conectada](https://blogs.windows.com/windows-insider/2024/02/29/ability-to-use-a-mobile-devices-camera-as-a-webcam-on-your-pc-begins-rolling-out-to-windows-insiders/), 29/02/2024.
+- Android Open Source Project, [Use a device as a webcam](https://source.android.com/docs/core/camera/webcam), consultado em 23/10/2026.
+- Microsoft Q&A, discussão sobre a opção de câmera conectada que desliga sozinha (sugestões da comunidade, não oficiais).

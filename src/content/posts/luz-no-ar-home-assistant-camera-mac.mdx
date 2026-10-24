@@ -1,0 +1,333 @@
+---
+title: 'Luz "no ar" automática no Home Assistant com a câmera do Mac'
+description: 'Como acender uma luz de "no ar" sozinha quando a câmera do Mac liga, usando os sensores do app Companion do Home Assistant, conforme a documentação.'
+pubDate: 2026-10-31T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'macos', 'companion', 'automacao', 'home-office', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Lâmpada inteligente Elgin Smart Color 10 W, RGB, Wi-Fi, E27, bivolt'
+    brand: 'Elgin'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2e6mygU'
+    image: '/images/produtos/lampada-elgin-smart-color.webp'
+    pros:
+      - 'RGB: acende em vermelho para sinalizar "no ar"'
+      - 'Entra no Home Assistant pela integração Tuya oficial'
+      - 'Mais de 61 mil avaliações na Amazon'
+    cons:
+      - 'Depende da nuvem da Tuya: o comando pode levar um instante'
+      - 'Só Wi-Fi de 2,4 GHz'
+faq:
+  - question: 'Funciona com Windows em vez de Mac?'
+    answer: 'Não com os sensores deste tutorial. Os sensores de câmera e microfone em uso descritos aqui são do app Companion do Home Assistant para macOS. No Windows, o caminho passa por aplicativos de terceiros que enviam sensores ao Home Assistant, com configuração própria, fora do escopo deste passo a passo.'
+  - question: 'A luz acende com qualquer aplicativo de vídeo?'
+    answer: 'O sensor da documentação indica se uma câmera do sistema está em uso, sem depender do aplicativo. Por isso, ele deve mudar de estado com FaceTime, Zoom, Google Meet no navegador, Teams, OBS ou qualquer outro programa que ligue a câmera. Há relatos na comunidade de sensores que deixam de atualizar quando o app Companion é encerrado pelo macOS ou trava, e por isso o app precisa ficar aberto.'
+  - question: 'Por que o nome do sensor no meu Home Assistant é diferente do da documentação?'
+    answer: 'A documentação lista os sensores como binary_sensor.camera_in_use e binary_sensor.audio_input_in_use. Na prática, o Home Assistant costuma acrescentar o nome do dispositivo ao identificador, como binary_sensor.macbook_camera_in_use. O identificador correto aparece na página do dispositivo, em Configurações, Dispositivos e serviços.'
+  - question: 'Posso usar outra lâmpada ou uma fita LED?'
+    answer: 'Sim. Qualquer luz integrada ao Home Assistant que aceite a ação light.turn_on funciona, como lâmpadas Zigbee, fitas LED com WLED ou ESPHome. Se a luz não tiver cor, basta acender e apagar, sem o campo de cor. Também dá para usar uma tomada inteligente para ligar um letreiro, com a ação switch.turn_on.'
+  - question: 'A luz demora para acender. É normal?'
+    answer: 'Com a Elgin Smart Color, o comando passa pela nuvem da Tuya, e alguns instantes de atraso são esperados. O atraso também depende de quando o app Companion envia a mudança do sensor. Lâmpadas controladas localmente, como as Zigbee, costumam responder mais rápido.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Quem trabalha ou grava em casa conhece a cena: a reunião começa, alguém abre a porta do quarto, e a família inteira aparece na chamada. O sinal de **"no ar"** dos estúdios de rádio resolve isso há décadas, com uma luz vermelha do lado de fora da porta. Com o **Home Assistant**, essa luz pode **acender sozinha** quando a câmera do computador liga e apagar quando ela desliga.
+
+Este tutorial mostra como fazer isso num **Mac**, usando os **sensores de câmera e microfone** que o **app Companion do Home Assistant para macOS** envia ao servidor. A luz é uma lâmpada inteligente RGB, que acende em vermelho; o mesmo vale para qualquer luz que o Home Assistant controle.
+
+> **Fontes e versões:** os sensores seguem a documentação oficial do **app Companion** (página "Sensors"), e a sintaxe das automações segue a documentação do **Home Assistant 2026.10** (gatilho de estado e ação `light.turn_on`), consultadas em **23/10/2026**. Os links estão no fim do post. O Home Assistant muda a sintaxe de automações entre versões; em versões muito antigas, a estrutura do YAML é diferente.
+
+## Como funciona
+
+A ideia tem três partes:
+
+1. O **app Companion** do Home Assistant, instalado no Mac, cria **sensores** no servidor do Home Assistant. Entre eles, um que diz se **alguma câmera do sistema está em uso** e outro que diz se **algum microfone está em uso**.
+2. Uma **automação** no Home Assistant observa esses sensores. Quando a câmera liga, ela acende a luz em vermelho.
+3. Outra automação apaga a luz quando a câmera e o microfone desligam.
+
+Como o sensor olha para a **câmera do sistema**, e não para um aplicativo específico, a automação funciona com FaceTime, Zoom, Google Meet, Teams, OBS ou qualquer outro programa que ligue a câmera.
+
+## O que você vai precisar
+
+- **Home Assistant** funcionando, em qualquer forma de instalação, com acesso pelo Mac.
+- **Um Mac** com o **app Home Assistant** (o Companion para macOS) instalado e conectado ao servidor.
+- **Uma luz integrada ao Home Assistant.** Este tutorial usa uma lâmpada RGB, para acender em vermelho, mas qualquer luz serve.
+
+A luz fica do **lado de fora** da porta, ou num ponto visível de quem entra: corredor, abajur ao lado da porta, luminária no batente.
+
+![Lâmpada inteligente Elgin Smart Color RGB, rosca E27](/images/produtos/lampada-elgin-smart-color.webp)
+
+A **Elgin Smart Color** é a lâmpada inteligente mais vendida da Amazon Brasil, com mais de 61 mil avaliações. Ela é **RGB**, o que permite acender em vermelho, liga direto no Wi-Fi de 2,4 GHz e usa a plataforma **Tuya**, que entra no Home Assistant pela **integração Tuya oficial**. A integração passo a passo está no review de [lâmpada inteligente Elgin Smart Color](/posts/lampada-inteligente-elgin-smart-color-vale-a-pena/). O ponto de atenção é que o comando passa pela nuvem da Tuya, então pode levar um instante para a luz acender.
+
+<AffiliateButton href="https://meli.la/2e6mygU" store="mercadolivre" source="luz-no-ar-home-assistant-camera-mac" />
+<AffiliateButton href="https://www.amazon.com.br/dp/B088C4QZV2?tag=nerdcaseiro-20" store="amazon" source="luz-no-ar-home-assistant-camera-mac" />
+
+## Por que a câmera, e não a agenda
+
+Há outras formas de acender uma luz de "no ar", e vale entender por que a câmera é o melhor gatilho.
+
+**Pela agenda.** Uma automação que lê o calendário e acende a luz no horário da reunião parece prática, mas erra nos dois sentidos: a reunião começa atrasada, termina antes, é cancelada em cima da hora, ou nem estava na agenda. A luz acende quando não há ninguém em chamada e fica apagada na ligação de última hora.
+
+**Pelo aplicativo de reunião.** Alguns aplicativos de videoconferência têm integrações próprias de status, mas cada um funciona de um jeito, e a luz só acompanharia aquele aplicativo. Quem usa Meet de manhã, Teams à tarde e grava no OBS à noite precisaria de três integrações.
+
+**Por um botão.** Um botão físico ou no celular, apertado ao entrar na reunião, é simples e confiável, mas depende de lembrar de apertar, e é exatamente isso que se esquece na pressa.
+
+**Pela câmera e pelo microfone.** O sensor responde ao que realmente importa: a câmera ou o microfone estão ligados, em qualquer aplicativo. Não depende de agenda, de integração nem de memória. É o gatilho mais fiel ao "estou no ar".
+
+## Onde colocar a luz
+
+A luz de "no ar" só funciona se quem vai entrar a vê **antes** de abrir a porta.
+
+- **Do lado de fora da porta**, num abajur no corredor ou numa luminária de parede ao lado do batente, é o lugar mais eficiente.
+- **No corredor que leva ao cômodo**, se não houver tomada ou bocal perto da porta.
+- **Dentro do cômodo, visível pela fresta ou pelo vidro da porta**, quando a porta tem vidro.
+
+Evite colocar a luz **atrás de quem grava**, dentro do enquadramento da câmera: uma lâmpada vermelha acesa no fundo do vídeo chama atenção e muda a cor da imagem.
+
+Para o vermelho ser percebido como sinal, a luz precisa estar **sozinha** no ponto: uma lâmpada vermelha no meio de outras brancas acesas se perde. Um abajur dedicado ao corredor resolve.
+
+## Passo 1: instalar e conectar o app Companion no Mac
+
+O app oficial do Home Assistant para macOS está na **Mac App Store**, com o nome **Home Assistant**. Instale, abra e conecte ao servidor, com o endereço e o usuário do Home Assistant.
+
+Depois de conectado, o Mac aparece como um **dispositivo** no Home Assistant, em **Configurações > Dispositivos e serviços**, na integração **Mobile App**. É dentro desse dispositivo que ficam os sensores.
+
+No Mac, o app Companion também tem a tela de sensores. A documentação indica o caminho em **Configurações > Companion App > Sensores** dentro do app, onde é possível ver e gerenciar os sensores que ele envia.
+
+## Passo 2: encontrar os sensores de câmera e microfone
+
+A documentação do Companion lista, para macOS:
+
+| Sensor | O que informa |
+|---|---|
+| `binary_sensor.camera_in_use` | se uma câmera do sistema está em uso |
+| `sensor.active_camera` | o nome da câmera ativa, ou `Inactive` quando nenhuma está em uso |
+| `binary_sensor.audio_input_in_use` | se um microfone do sistema está em uso |
+| `sensor.active_audio_input` | o nome do microfone ativo, ou `Inactive` quando nenhum está em uso |
+
+Os sensores binários ficam `on` quando a câmera ou o microfone está em uso e `off` quando não estão. A documentação também informa que, no macOS, alguns sensores são atualizados **imediatamente** quando mudam, além das atualizações periódicas.
+
+**O nome real do sensor.** Na prática, o Home Assistant costuma incluir o **nome do dispositivo** no identificador. Se o Mac se chama "MacBook", o sensor tende a aparecer como `binary_sensor.macbook_camera_in_use`. Para descobrir o identificador exato:
+
+1. abra **Configurações > Dispositivos e serviços > Dispositivos**;
+2. clique no dispositivo do Mac;
+3. procure o sensor de câmera em uso e abra as configurações dele; o **ID da entidade** aparece ali.
+
+Neste tutorial, os exemplos usam `binary_sensor.macbook_camera_in_use` e `binary_sensor.macbook_audio_input_in_use`. **Substitua pelos identificadores do seu Mac.**
+
+**Teste rápido:** com a página do sensor aberta no Home Assistant, abra o FaceTime ou outro app de câmera no Mac. O estado deve mudar para `on` (no painel, aparece como "Detectado" ou equivalente). Feche o app, e o estado volta para `off`. Se nada mudar, veja a seção de problemas no fim do post antes de continuar.
+
+## Passo 3: encontrar o identificador da luz
+
+Da mesma forma, encontre o identificador da luz em **Configurações > Dispositivos e serviços > Entidades**, buscando pelo nome. Neste tutorial, a luz se chama `light.luz_no_ar`. Substitua pelo identificador da sua.
+
+Vale renomear a entidade da luz para algo claro, como "Luz no ar", nas configurações da entidade. Isso facilita encontrar a automação e o painel depois.
+
+## Pelo editor visual, sem YAML
+
+Quem prefere não colar código pode montar a mesma automação no **editor visual** do Home Assistant. Os nomes dos campos podem variar levemente entre versões, mas a lógica é a mesma do YAML:
+
+1. em **Configurações > Automações e cenas**, crie uma automação nova;
+2. em **Quando**, adicione um gatilho do tipo **Estado** (ou "Entidade", "Estado mudou", conforme a versão), escolha o sensor de câmera em uso do Mac e, em **Para**, escolha o estado ligado ou detectado;
+3. em **Então faça**, adicione a ação de **ligar a luz**, escolha a luz e, nas opções, defina o brilho e a cor vermelha;
+4. salve com um nome claro, como "Luz no ar - acender".
+
+O editor visual gera exatamente o YAML mostrado a seguir. A qualquer momento, o menu de três pontos alterna para **Editar em YAML**, o que ajuda a conferir se o resultado ficou igual ao do tutorial.
+
+## Passo 4: a automação que acende a luz
+
+No Home Assistant, abra **Configurações > Automações e cenas**, crie uma nova automação e, no menu de três pontos, escolha **Editar em YAML**. Cole o código abaixo, trocando os identificadores:
+
+```yaml
+alias: Luz no ar - acender
+description: Acende a luz vermelha quando a câmera do Mac liga
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.macbook_camera_in_use
+    to: "on"
+actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.luz_no_ar
+    data:
+      brightness_pct: 100
+      color_name: red
+mode: single
+```
+
+O que cada parte faz, conforme a documentação:
+
+- **`triggers`** com **`trigger: state`**: dispara quando o estado da entidade muda. O **`to: "on"`** limita o disparo à mudança **para** ligado, ou seja, quando a câmera começa a ser usada.
+- **`actions`** com **`action: light.turn_on`**: acende a luz indicada em **`target`**.
+- **`data`**: **`brightness_pct`** define o brilho em porcentagem, e **`color_name`** define a cor pelo nome. Os dois campos estão na lista de opções da ação `light.turn_on` na documentação.
+- **`mode: single`**: se a automação já estiver rodando, uma nova execução não começa por cima.
+
+Salve e teste: abra um app de câmera no Mac. A luz deve acender em vermelho.
+
+### E se a reunião for só de áudio?
+
+Em ligação sem câmera, o microfone está ligado e a câmera não. Para a luz acender também nesse caso, basta acrescentar um segundo gatilho, com o sensor de microfone:
+
+```yaml
+alias: Luz no ar - acender
+description: Acende a luz vermelha quando a câmera ou o microfone do Mac liga
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.macbook_camera_in_use
+    to: "on"
+  - trigger: state
+    entity_id: binary_sensor.macbook_audio_input_in_use
+    to: "on"
+actions:
+  - action: light.turn_on
+    target:
+      entity_id: light.luz_no_ar
+    data:
+      brightness_pct: 100
+      color_name: red
+mode: single
+```
+
+Com dois gatilhos, qualquer um deles dispara a automação.
+
+Um cuidado: o microfone fica em uso também em situações que não são reunião, como ditado por voz, gravação de áudio rápida e alguns aplicativos que mantêm o microfone aberto. Se a luz começar a acender sem motivo, volte à versão só com a câmera.
+
+## Passo 5: a automação que apaga a luz
+
+Apagar exige um pouco mais de cuidado do que acender. Em algumas chamadas, a câmera desliga e religa por um instante, por exemplo ao trocar de câmera ou ao compartilhar a tela. Se a luz apagar imediatamente, ela pisca no meio da reunião.
+
+A solução é a opção **`for`** do gatilho de estado, que, segundo a documentação, exige que o novo estado **dure** um tempo antes de disparar. Com `for: "00:00:15"`, a luz só apaga depois de 15 segundos com a câmera desligada.
+
+```yaml
+alias: Luz no ar - apagar
+description: Apaga a luz quando a câmera e o microfone do Mac desligam
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.macbook_camera_in_use
+    to: "off"
+    for: "00:00:15"
+  - trigger: state
+    entity_id: binary_sensor.macbook_audio_input_in_use
+    to: "off"
+    for: "00:00:15"
+conditions:
+  - condition: state
+    entity_id: binary_sensor.macbook_camera_in_use
+    state: "off"
+  - condition: state
+    entity_id: binary_sensor.macbook_audio_input_in_use
+    state: "off"
+actions:
+  - action: light.turn_off
+    target:
+      entity_id: light.luz_no_ar
+mode: single
+```
+
+O que muda em relação à automação de acender:
+
+- **dois gatilhos** com **`to: "off"`** e **`for`**: qualquer um dos dois sensores desligado por 15 segundos dispara a automação;
+- **`conditions`**: antes de apagar, a automação confere se **os dois** estão desligados. Assim, se a câmera desligou mas o microfone continua em uso, a luz fica acesa;
+- **`action: light.turn_off`**: apaga a luz.
+
+Se a automação de acender usa só a câmera, a de apagar também pode usar só a câmera: um gatilho e nenhuma condição.
+
+## Passo 6: testar de verdade
+
+Com as duas automações salvas, faça o teste completo:
+
+1. **Abra uma chamada de teste**, com câmera. A luz deve acender em vermelho em poucos segundos.
+2. **Desligue e religue a câmera** dentro da chamada, rápido. A luz deve continuar acesa, graças ao `for`.
+3. **Desligue a câmera e mantenha o microfone**, se usou a versão com microfone. A luz deve continuar acesa.
+4. **Encerre a chamada.** Depois de cerca de 15 segundos, a luz deve apagar.
+
+O histórico de cada automação, em **Configurações > Automações e cenas**, mostra quando ela disparou e por quê. É o primeiro lugar para olhar se algo não funcionar como esperado. O rastreamento da execução (o "trace") mostra cada passo, inclusive as condições que não passaram.
+
+## Como ler o rastreamento quando algo falha
+
+Toda automação do Home Assistant guarda o **rastreamento** das últimas execuções. Para abrir, entre na automação e use o menu de três pontos, opção de rastreamentos. Ele mostra um diagrama com o caminho que a execução percorreu:
+
+- **o gatilho que disparou**, com o estado anterior e o novo do sensor;
+- **cada condição**, marcada como aprovada ou não, com o valor que o sensor tinha no momento;
+- **cada ação**, com o resultado.
+
+Três leituras resolvem a maioria dos casos:
+
+- **a automação nunca aparece no rastreamento:** o gatilho não disparou, e o problema está no sensor ou no identificador da entidade;
+- **disparou, mas parou numa condição:** na automação de apagar, isso é esperado quando um dos sensores ainda está ligado. Se não deveria estar, o sensor ficou preso em `on`;
+- **a ação rodou, mas a luz não mudou:** o problema está na integração da luz, não na automação. Testar a luz direto pelo painel confirma.
+
+## Variações úteis
+
+**Cor diferente para câmera e para áudio.** Duas automações de acender separadas: uma com o gatilho da câmera, acendendo em vermelho, e outra com o gatilho do microfone, acendendo em amarelo, por exemplo. Quem passa pela porta sabe se pode entrar sem aparecer no vídeo.
+
+**Brilho menor à noite.** Uma luz vermelha forte no corredor à noite incomoda. Basta ajustar o `brightness_pct` para um valor menor, ou criar uma condição de horário.
+
+**Luz sem cor.** Se a lâmpada for só branca, remova a linha `color_name`. A luz acesa já é o sinal.
+
+**Letreiro "no ar" numa tomada inteligente.** Um letreiro ligado na tomada funciona igual, trocando `light.turn_on` por `switch.turn_on`, e `light.turn_off` por `switch.turn_off`, com o identificador da tomada.
+
+**Notificação em vez de luz.** A mesma automação pode mandar uma notificação para o celular de outra pessoa da casa, avisando que a reunião começou.
+
+## Problemas comuns
+
+**O sensor não muda quando a câmera liga.** Confira, nesta ordem:
+
+- o **app Companion está aberto** no Mac. Há relatos na comunidade de que o macOS pode encerrar o app em segundo plano, e os sensores deixam de atualizar até o app ser aberto de novo;
+- o app tem **permissão de Rede Local** nos Ajustes do Sistema do macOS. Uma issue no repositório oficial do app relata sensores do Mac, como o de câmera, que deixam de funcionar em versões recentes do macOS por causa dessa permissão;
+- o Mac está **conectado ao servidor** do Home Assistant: a página do dispositivo mostra a última atualização dos sensores.
+
+**A luz acende, mas demora.** Com lâmpadas que dependem de nuvem, como as Tuya, alguns segundos de atraso são normais. O atraso também depende de quando o app envia a mudança do sensor.
+
+**A luz pisca no meio da reunião.** Aumente o tempo do `for` na automação de apagar, para 30 segundos ou mais.
+
+**A luz acende sem reunião.** Algum aplicativo está usando o microfone ou a câmera em segundo plano. O sensor `sensor.active_camera` ou `sensor.active_audio_input` mostra o nome do dispositivo ativo, o que ajuda a descobrir qual. Se o problema for o microfone, use só o gatilho de câmera.
+
+**O app Companion parou e a luz ficou acesa.** Se o app travar com a câmera ligada, o Home Assistant não recebe a mudança para `off`, e a luz fica acesa. Na comunidade, uma solução discutida é uma automação que avisa quando os sensores do Mac ficam muito tempo sem atualizar. Para começar, apagar a luz manualmente pelo painel resolve.
+
+## Por que o app precisa ficar aberto
+
+O ponto mais frágil desta automação não é o Home Assistant, é o **app Companion no Mac**. Os sensores existem enquanto o app está rodando e conectado ao servidor. Alguns cuidados reduzem as falhas:
+
+- **Abrir o app no login.** Nos Ajustes do Sistema do macOS, em **Geral > Itens de Início** (o nome pode variar entre versões do macOS), o app Home Assistant pode ser adicionado para abrir junto com o sistema.
+- **Não fechar o app pelo menu.** Fechar a janela não encerra o app, que continua na barra de menus. Encerrar pelo menu, sim.
+- **Manter o app atualizado.** As correções de sensores do Mac chegam por atualizações do app. A issue citada nas fontes é um exemplo de problema que depende de versão.
+- **Conferir de vez em quando.** A página do dispositivo do Mac no Home Assistant mostra a hora da última atualização de cada sensor. Se ela estiver muito antiga com o Mac em uso, o app parou de enviar.
+
+Em Mac que entra em repouso, os sensores param de atualizar enquanto ele dorme. Ao acordar, o app reconecta e envia o estado atual. Isso não afeta a luz durante uma reunião, já que o Mac não dorme com a câmera ligada.
+
+## Uma luz para várias pessoas
+
+Em casas com mais de uma pessoa trabalhando em casa, cada uma com seu Mac, dá para ter **uma luz por porta**: cada Mac tem seus próprios sensores, e cada automação controla a luz do seu cômodo.
+
+Se a luz for **compartilhada**, por exemplo uma única luz no corredor para dois escritórios, a automação de acender pode ter os gatilhos dos dois Macs, e a de apagar precisa de condições para os sensores dos dois, para não apagar enquanto uma das pessoas ainda estiver em chamada. A estrutura é a mesma do Passo 5, com mais gatilhos e mais condições.
+
+## Segurança e privacidade
+
+Os sensores informam **se** a câmera e o microfone estão em uso e o **nome** do dispositivo ativo. Eles **não** enviam imagem nem som ao Home Assistant. Ainda assim, o histórico do Home Assistant passa a registrar os horários em que a câmera do Mac foi usada, o que é uma informação pessoal. Quem acessa o Home Assistant da casa consegue ver esse histórico.
+
+Para quem prefere não registrar esse histórico, o app Companion permite desativar sensores específicos na tela de sensores do app.
+
+## Resumo
+
+- O **app Companion do Home Assistant para macOS** envia sensores de **câmera em uso** e **microfone em uso**, documentados como `binary_sensor.camera_in_use` e `binary_sensor.audio_input_in_use`. Na prática, o identificador costuma incluir o nome do Mac.
+- Uma automação com **gatilho de estado** `to: "on"` acende a luz com **`light.turn_on`**, em vermelho com `color_name: red`.
+- A automação de apagar usa **`for`** para não piscar e **condições** para só apagar quando câmera e microfone estiverem desligados.
+- O **app precisa ficar aberto** no Mac, com permissão de Rede Local, para os sensores atualizarem.
+- Qualquer luz do Home Assistant serve; a **Elgin Smart Color** é uma lâmpada RGB que entra pela integração Tuya oficial.
+
+### Fontes
+
+- Home Assistant Companion, [Sensors](https://companion.home-assistant.io/docs/core/sensors), consultado em 23/10/2026.
+- Home Assistant, [gatilho de estado (State trigger)](https://www.home-assistant.io/triggers/state/), documentação da versão 2026.10, consultado em 23/10/2026.
+- Home Assistant, [ação light.turn_on](https://www.home-assistant.io/actions/light.turn_on/), consultado em 23/10/2026.
+- GitHub, [home-assistant/iOS, issue 4192](https://github.com/home-assistant/iOS/issues/4192), sobre sensores do Mac e permissão de Rede Local.
+- Fórum da comunidade Home Assistant, [Detect if macOS app running](https://community.home-assistant.io/t/detect-if-macos-app-running/487360).
