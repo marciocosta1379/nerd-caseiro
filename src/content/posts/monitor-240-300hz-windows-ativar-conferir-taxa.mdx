@@ -1,0 +1,280 @@
+---
+title: 'Monitor de 240 ou 300 Hz no Windows: ative e confira a taxa real'
+description: 'Monitor de alta taxa preso em 60 Hz? Como escolher a taxa no Windows, conferir no painel da placa de vídeo, usar o cabo certo e testar o resultado.'
+pubDate: 2026-11-07T18:00:00-03:00
+category: 'home-office'
+tags: ['monitor-gamer', 'taxa-de-atualizacao', 'windows-11', 'displayport', 'pc-gamer', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Cabo DisplayPort 1.4 ELG, 2 m, 32,4 Gbps'
+    brand: 'ELG'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08LY1BKFT?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/14qbyaR'
+    image: '/images/produtos/cabo-displayport-elg-14.webp'
+    pros:
+      - 'Padrão DisplayPort 1.4, com banda de até 32,4 Gbps'
+      - 'Comprimento de 2 metros'
+      - 'Mais de 1.700 avaliações na Amazon, nota 4,8'
+    cons:
+      - 'Só é necessário se o cabo da caixa estiver faltando ou for curto'
+faq:
+  - question: 'Por que meu monitor de 240 Hz está em 60 Hz?'
+    answer: 'O Windows nem sempre escolhe a taxa máxima sozinho. Também podem limitar a taxa: um cabo ou uma entrada que não suportam a taxa desejada, como o HDMI 2.0 em alguns monitores, um driver de vídeo desatualizado ou a conexão na saída de vídeo da placa-mãe em vez da placa de vídeo. A taxa é escolhida em Configurações > Sistema > Tela > Tela avançada.'
+  - question: 'Onde mudar a taxa de atualização no Windows 11?'
+    answer: 'Segundo a Microsoft, em Iniciar > Configurações > Sistema > Tela > Tela avançada, na opção Escolha uma taxa de atualização. Com vários monitores, selecione primeiro o monitor em Escolher tela. As taxas exibidas dependem do que o monitor suporta.'
+  - question: 'O que significa o asterisco ao lado de algumas taxas?'
+    answer: 'Segundo a Microsoft, taxas marcadas com asterisco não são suportadas na resolução atual. Escolher uma delas faz o Windows mudar a resolução para conseguir aquela taxa. Para manter a resolução nativa do monitor, escolha uma taxa sem asterisco.'
+  - question: 'Preciso usar DisplayPort ou HDMI?'
+    answer: 'Depende do monitor. Muitos monitores de taxa alta alcançam o máximo só pelo DisplayPort. A ficha da AOC para o AGON C27G4Z, por exemplo, informa até 240 Hz pelo HDMI 2.0 e até 280 Hz pelo DisplayPort 1.4. Consulte a ficha técnica do seu monitor para saber qual entrada entrega a taxa máxima.'
+  - question: 'Qual a diferença entre taxa de atualização e FPS?'
+    answer: 'A taxa de atualização, em hertz, é quantas vezes por segundo o monitor redesenha a imagem. O FPS, quadros por segundo, é quantas imagens por segundo a placa de vídeo gera. Um monitor de 240 Hz só mostra 240 imagens diferentes por segundo se a placa de vídeo gerar 240 quadros. Com menos quadros, o monitor repete imagens ou ajusta a taxa pelo Adaptive Sync.'
+  - question: 'Cabo HDMI comum serve para 144 Hz?'
+    answer: 'Depende da versão do HDMI do monitor e da placa de vídeo, da resolução e da taxa. Em muitos monitores Full HD, o HDMI 2.0 chega a 144 Hz ou mais, mas alguns monitores limitam a taxa por HDMI. A ficha técnica do monitor informa a taxa máxima por entrada. Para taxas acima do limite do HDMI do monitor, use DisplayPort.'
+  - question: 'O que é a Taxa de Atualização Dinâmica do Windows?'
+    answer: 'É um recurso exclusivo do Windows 11 que alterna a taxa de atualização conforme o uso, para economizar energia, por exemplo em notebooks. Segundo a Microsoft, só pode ser ativada se o hardware suportar. O Windows 10 não tem o recurso.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Um monitor de **240, 280 ou 300 Hz** só entrega essa fluidez se o Windows, a placa de vídeo e o cabo estiverem configurados para isso. E é surpreendentemente comum o monitor sair da caixa, ser ligado e continuar trabalhando em **60 Hz** por semanas, sem o dono perceber. O movimento do mouse parece "bom", mas nada perto do que o monitor oferece.
+
+Este tutorial mostra o passo a passo para **ativar a taxa máxima** no Windows, **conferir no painel da placa de vídeo**, escolher o **cabo e a entrada certos** e **verificar** se a taxa está realmente sendo usada.
+
+> **Fontes e versão:** os passos no Windows seguem a página de suporte da Microsoft **"Alterar a taxa de atualização no monitor no Windows"**, para o **Windows 11**; as taxas por entrada do exemplo vêm da **ficha técnica oficial da AOC** para o monitor C27G4Z. Consultas em **31/10/2026**. Os nomes de menus dos painéis da NVIDIA e da AMD podem mudar entre versões dos drivers. O post não se baseia em teste próprio. Links no fim.
+
+## Por que a taxa alta faz diferença
+
+A **taxa de atualização**, em hertz, é quantas vezes por segundo o monitor redesenha a imagem. Num monitor de 60 Hz, cada quadro fica na tela por cerca de **16,7 milissegundos**; num de 240 Hz, por cerca de **4,2 ms**; num de 280 Hz, por cerca de **3,6 ms**.
+
+Duas coisas melhoram com taxas mais altas:
+
+- **fluidez**: objetos em movimento, como a mira, um carro ou a rolagem de uma página, avançam em passos menores e parecem mais contínuos;
+- **atraso**: o intervalo entre o que acontece no jogo e o que aparece na tela fica menor, o que ajuda em jogos competitivos.
+
+O salto mais perceptível é de **60 para 120 ou 144 Hz**. Acima disso, os ganhos continuam, mas cada degrau é menor. Mesmo assim, para quem comprou um monitor de 240 Hz ou mais, deixá-lo em 60 Hz é desperdiçar a principal característica do aparelho.
+
+## Um teste rápido para saber se está em 60 Hz
+
+Antes de qualquer configuração, faça um teste simples: mova o **ponteiro do mouse** rapidamente em círculos na tela, ou arraste uma janela de um lado para o outro. Em 60 Hz, o ponteiro deixa um rastro de "fantasmas" espaçados. Em 240 Hz, os passos ficam bem mais próximos e o movimento parece mais contínuo. Se o movimento não parece diferente do de um monitor comum, há grande chance de o monitor estar em 60 Hz.
+
+## Antes de começar: o que define a taxa máxima
+
+A taxa que você consegue usar depende de **quatro** coisas ao mesmo tempo:
+
+1. **O monitor**: a taxa máxima que ele suporta, e **por qual entrada**.
+2. **A entrada e o cabo**: HDMI e DisplayPort têm limites diferentes de banda, conforme a versão.
+3. **A placa de vídeo**: a saída precisa suportar a taxa na resolução do monitor.
+4. **O Windows e o driver**: a taxa precisa ser escolhida nas configurações.
+
+Se qualquer um dos quatro limitar, a taxa fica abaixo do máximo.
+
+## Passo 1: confira a ficha do monitor
+
+Abra a ficha técnica do seu monitor, no site do fabricante, e procure:
+
+- a **taxa máxima**;
+- a taxa máxima **por entrada**, às vezes listada como frequência vertical de cada porta.
+
+**Exemplo:** a ficha da AOC para o **AGON C27G4Z** informa frequência vertical de **48 a 240 Hz** pelo **HDMI 2.0** e de **48 a 280 Hz** pelo **DisplayPort 1.4**. Ou seja, nesse monitor, para passar de 240 Hz, é preciso usar o **DisplayPort**. A análise completa desse modelo está no guia do [AOC AGON G4Z](/posts/monitor-aoc-agon-g4z-280-ou-300-hz/).
+
+## Passo 2: ligue na placa de vídeo, não na placa-mãe
+
+Em PCs com **placa de vídeo dedicada**, o cabo do monitor precisa ir na **placa de vídeo**, cujas saídas ficam na parte de baixo da traseira do gabinete, na horizontal. As saídas de vídeo que ficam **mais acima**, junto das portas USB e de áudio, são da **placa-mãe** e usam o vídeo integrado do processador, quando ele existe.
+
+Ligar o monitor na saída da placa-mãe é um erro comum logo depois da montagem: o PC pode até dar imagem, mas com o vídeo integrado, sem o desempenho da placa dedicada e, muitas vezes, sem a taxa máxima.
+
+## Passo 3: use a entrada e o cabo certos
+
+Se o monitor alcança a taxa máxima só pelo **DisplayPort**, use um **cabo DisplayPort**, de preferência o que veio na caixa. A ficha da AOC lista um cabo DisplayPort entre os itens da caixa do C27G4Z, com a observação de que os acessórios podem variar conforme o país.
+
+![Cabo DisplayPort 1.4 da ELG, preto, com conectores com trava](/images/produtos/cabo-displayport-elg-14.webp)
+
+Se o cabo faltou, é curto demais ou está danificado, um cabo **DisplayPort 1.4** resolve. O **cabo ELG DisplayPort 1.4** de **2 metros** anuncia banda de até **32,4 Gbps**, o máximo do padrão 1.4, e tem mais de **1.700 avaliações** na Amazon, com nota **4,8**. Para monitores Full HD de taxa alta, o DisplayPort 1.4 tem banda de sobra.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08LY1BKFT?tag=nerdcaseiro-20" store="amazon" source="monitor-240-300hz-windows-ativar-conferir-taxa" />
+<AffiliateButton href="https://meli.la/14qbyaR" store="mercadolivre" source="monitor-240-300hz-windows-ativar-conferir-taxa" />
+
+**Evite adaptadores** entre HDMI e DisplayPort para jogos de taxa alta: muitos adaptadores limitam a taxa ou não funcionam no sentido desejado.
+
+**No menu do próprio monitor**, confira se a **entrada selecionada** é a porta onde o cabo está ligado. Alguns monitores também têm opções que limitam a taxa, como modos de economia de energia ou uma configuração de "taxa máxima" em uma das entradas.
+
+## Passo 4: atualize o driver de vídeo
+
+Drivers desatualizados ou o driver genérico do Windows podem não oferecer todas as taxas. Baixe o driver mais recente **no site oficial** do fabricante da placa de vídeo: **NVIDIA**, **AMD** ou **Intel**. Depois de instalar, reinicie o computador.
+
+## Passo 5: escolha a taxa no Windows
+
+Segundo a Microsoft, no Windows 11:
+
+1. Abra **Iniciar > Configurações > Sistema > Tela**.
+2. Clique em **Tela avançada**.
+3. Se houver mais de um monitor, selecione o monitor em **Escolher tela**.
+4. Em **Escolha uma taxa de atualização**, selecione a **taxa mais alta** disponível.
+
+A Microsoft observa que as taxas exibidas **dependem da tela** e do que ela suporta. Também explica que taxas marcadas com **asterisco** não são suportadas na resolução atual: escolher uma delas **muda a resolução**. Para manter a resolução nativa, escolha uma taxa **sem asterisco**.
+
+Se a taxa máxima do monitor **não aparece** na lista, volte aos passos 2, 3 e 4: geralmente o problema é a entrada, o cabo ou o driver.
+
+### Se a tela ficar preta depois de mudar a taxa
+
+Ao mudar a taxa ou a resolução, o Windows mostra uma janela perguntando se você quer **manter as alterações**. Se a tela ficar preta ou sem sinal e você não confirmar, o Windows **volta sozinho** à configuração anterior depois de alguns segundos. Não desligue o computador: espere a tela voltar. Se acontecer, a taxa escolhida não é suportada pela combinação de entrada, cabo e monitor.
+
+## Passo 6: confira no painel da placa de vídeo
+
+Os painéis de controle das placas de vídeo também têm a opção de taxa de atualização. Vale conferir se estão de acordo com o Windows:
+
+- **NVIDIA**: no **Painel de Controle da NVIDIA**, na seção de tela, a opção de **alterar a resolução** mostra a **taxa de atualização**. Também é ali que fica a opção de **G-SYNC** ou de compatibilidade com G-SYNC, para monitores com Adaptive Sync.
+- **AMD**: no **AMD Software: Adrenalin Edition**, na seção de **Tela**, ficam as opções de **FreeSync** e a taxa de atualização.
+- **Intel**: no **Centro de Comando de Gráficos Intel**, na seção de tela.
+
+Os nomes exatos variam entre versões dos drivers. Se o Windows e o painel mostrarem taxas diferentes, ajuste para a mesma taxa máxima nos dois.
+
+## Passo 7: ative a sincronização variável
+
+Monitores de taxa alta costumam ter **Adaptive Sync**, compatível com **FreeSync** (AMD) e com o modo **compatível com G-SYNC** (NVIDIA). A sincronização variável ajusta a taxa do monitor aos quadros que a placa de vídeo entrega, reduzindo o **rasgo de imagem** e as **travadas** quando os quadros variam.
+
+Para usar:
+
+1. **No menu do monitor**, ative o Adaptive Sync ou FreeSync, se houver opção.
+2. **No painel da placa de vídeo**, ative o FreeSync (AMD) ou o G-SYNC compatível (NVIDIA).
+3. **No Windows**, em **Configurações > Sistema > Tela > Gráficos**, há também uma opção de **taxa de atualização variável** para jogos que não têm suporte próprio, quando o hardware permite.
+
+## Passo 8: verifique a taxa real
+
+Escolher a taxa não garante que ela esteja sendo aplicada. Formas de conferir:
+
+- **No Windows:** em **Configurações > Sistema > Tela > Tela avançada**, a seção de **informações da tela** mostra a taxa de atualização em uso.
+- **No menu do monitor:** muitos monitores mostram a **resolução e a taxa** recebidas na tela de informações do OSD. É a confirmação mais direta: é o que o monitor está recebendo de fato.
+- **Testes de movimento no navegador:** páginas de teste de movimento mostram a taxa detectada pelo navegador e permitem comparar o movimento de objetos em diferentes taxas. Use páginas conhecidas e, se a taxa detectada for 60, confira as configurações anteriores.
+
+## Passo 9: nos jogos
+
+Mesmo com o Windows em 240 Hz, cada **jogo** pode ter configurações próprias:
+
+- **Modo de tela**: prefira **tela cheia** ou **tela cheia sem bordas**, conforme o jogo. Em alguns jogos, o modo janela limita a taxa;
+- **Limite de quadros**: muitos jogos vêm com limite de 60 ou 144 quadros por segundo. Ajuste para a taxa do monitor ou um pouco abaixo dela;
+- **Taxa de atualização nas opções de vídeo do jogo**: alguns jogos têm a própria opção de taxa; escolha a máxima;
+- **V-Sync**: com Adaptive Sync ativado, a recomendação dos fabricantes de placas de vídeo costuma variar entre deixar o V-Sync do jogo desligado e usar a opção do painel; confira a orientação da NVIDIA ou da AMD para o seu caso.
+
+## Resolução nativa e escala
+
+Ao configurar a taxa, mantenha também a **resolução nativa** do monitor, a resolução física do painel, como **1920 x 1080** num monitor Full HD. Ela aparece como **recomendada** em **Configurações > Sistema > Tela**. Resoluções diferentes da nativa deixam a imagem borrada e, às vezes, mudam as taxas disponíveis.
+
+Para deixar textos e ícones maiores ou menores, use a opção de **Escala**, na mesma tela, em vez de mudar a resolução. A escala não afeta a taxa de atualização.
+
+## HDR e taxa de atualização
+
+Em alguns monitores, ativar o **HDR** no Windows muda as opções disponíveis de taxa ou de profundidade de cor, porque o sinal HDR exige mais banda. Se, depois de ligar o HDR em **Configurações > Sistema > Tela**, a taxa máxima sumir da lista, a combinação de entrada, cabo e monitor não comporta as duas coisas ao mesmo tempo naquela resolução. Para jogos competitivos, a escolha mais comum é priorizar a **taxa** e deixar o HDR desligado.
+
+## Dois monitores com taxas diferentes
+
+Uma configuração comum é um monitor principal de taxa alta para jogos e um secundário de 60 Hz para chat, vídeos ou trabalho. Algumas dicas:
+
+- configure **cada monitor separadamente** em **Escolher tela**, na tela avançada;
+- defina o monitor de taxa alta como **principal**, em **Configurações > Sistema > Tela**, marcando a opção de torná-lo a tela principal. Muitos jogos abrem no monitor principal;
+- vídeos tocando no monitor secundário enquanto você joga no principal podem, em algumas combinações de drivers, afetar a fluidez. Se notar travadas só com os dois em uso, mantenha os drivers atualizados e teste pausar o vídeo para comparar.
+
+## O mouse também tem uma "taxa"
+
+Monitores de taxa alta combinam com mouses que informam a posição ao computador com frequência. Essa frequência é a **taxa de sondagem** (polling rate), em hertz: um mouse de **1.000 Hz** informa a posição mil vezes por segundo. Muitos mouses gamers permitem ajustar a taxa pelo software do fabricante. Um mouse com taxa de sondagem baixa num monitor de 240 Hz pode fazer o ponteiro parecer menos suave do que o monitor permitiria.
+
+## Gravação e transmissão
+
+Quem grava ou transmite jogos deve lembrar que a **gravação** tem a própria taxa de quadros, definida no programa de gravação, geralmente **30 ou 60 quadros por segundo**. Jogar a 240 Hz e gravar a 60 quadros é normal: a gravação não precisa acompanhar a taxa do monitor, e plataformas de vídeo trabalham com taxas de quadros bem menores que as de monitores gamers.
+
+## Energia: notebook e modo economia
+
+Em **notebooks**, o Windows pode reduzir a taxa de atualização para economizar bateria, principalmente com a **Taxa de Atualização Dinâmica** ou em modos de economia de energia. Ao ligar o notebook na tomada para jogar, confira se a taxa voltou ao máximo. Em desktops, os planos de energia normalmente não afetam a taxa do monitor.
+
+## Notebooks ligados a monitores de taxa alta
+
+Em notebooks, a saída de vídeo é o limite:
+
+- muitas saídas **HDMI** de notebooks são **HDMI 2.0**, o que limita a taxa em vários monitores;
+- portas **USB-C com saída de vídeo** podem usar DisplayPort, com um cabo USB-C para DisplayPort;
+- em notebooks com placa de vídeo dedicada, algumas portas são ligadas ao vídeo integrado e outras à placa dedicada; o manual do notebook informa qual usar.
+
+## Consoles no mesmo monitor
+
+Quem liga um **console** no mesmo monitor deve saber que a taxa máxima do console é diferente da do PC. Os consoles da geração atual trabalham com saída de até **120 Hz** em jogos compatíveis, pelo **HDMI**. Num monitor com HDMI 2.0, o console funciona normalmente, com as taxas e resoluções que a porta comporta. Para o console, as configurações de vídeo ficam no menu do próprio aparelho, e o Windows não tem nada a ver com elas.
+
+Um detalhe prático: se o PC usa o **DisplayPort** e o console usa o **HDMI**, basta trocar a **entrada** no menu do monitor, sem desconectar cabos.
+
+## Checklist final
+
+Antes de considerar a configuração concluída, confira:
+
+- [ ] cabo ligado na **placa de vídeo**, não na placa-mãe;
+- [ ] **DisplayPort** em uso, se o monitor só chega ao máximo por ele;
+- [ ] **entrada certa** selecionada no menu do monitor;
+- [ ] **driver de vídeo** atualizado, baixado do site oficial;
+- [ ] **resolução nativa** e **taxa máxima sem asterisco** no Windows;
+- [ ] taxa igual no **painel da placa de vídeo**;
+- [ ] **Adaptive Sync**, FreeSync ou G-SYNC compatível ativado no monitor e no painel;
+- [ ] taxa confirmada no **menu de informações do monitor**;
+- [ ] **limite de quadros** e **modo de tela** ajustados em cada jogo.
+
+## Depois de atualizações
+
+Atualizações grandes do Windows e dos drivers de vídeo às vezes **restauram configurações** de tela. Também acontece de a taxa voltar ao padrão depois de trocar o cabo de porta ou de desconectar o monitor. Se o movimento do mouse parecer menos fluido de repente, refaça a conferência do passo 5: leva menos de um minuto.
+
+## Taxa de atualização não é taxa de quadros
+
+Duas coisas parecidas se confundem com frequência:
+
+- **taxa de atualização** (Hz): quantas vezes por segundo o **monitor** redesenha a imagem;
+- **taxa de quadros** (FPS): quantas imagens por segundo a **placa de vídeo** gera.
+
+Um monitor de 240 Hz mostrando um jogo a 90 quadros por segundo exibe 90 imagens diferentes por segundo; o restante das atualizações repete quadros ou é ajustado pelo Adaptive Sync. Para aproveitar o monitor, as duas taxas precisam andar perto. Por isso, em jogos competitivos, muitos jogadores reduzem as configurações gráficas para aumentar os quadros por segundo e chegar perto da taxa do monitor.
+
+## Problemas comuns
+
+**A taxa máxima não aparece no Windows.** Confira se o cabo está na placa de vídeo, se a entrada certa está selecionada no monitor, se o cabo é DisplayPort quando necessário e se o driver está atualizado.
+
+**A taxa volta para 60 Hz sozinha.** Pode acontecer depois de atualizar o driver ou de trocar de entrada. Repita o passo 5.
+
+**A tela pisca ou fica preta em taxas altas.** Pode ser o cabo. Teste outro cabo DisplayPort, de preferência o da caixa ou um certificado.
+
+**Os jogos não parecem mais fluidos.** Confira o limite de quadros e o modo de tela no jogo, e se a placa de vídeo está gerando quadros suficientes.
+
+**Dois monitores com taxas diferentes.** Em algumas configurações com dois monitores de taxas diferentes, o Windows e os drivers lidam com a diferença de formas variadas; mantenha drivers atualizados e configure cada monitor separadamente em **Escolher tela**.
+
+## Erros comuns
+
+**Ligar o monitor na saída da placa-mãe.** Use as saídas da placa de vídeo.
+
+**Usar HDMI quando o monitor só chega ao máximo pelo DisplayPort.** Confira a ficha.
+
+**Escolher uma taxa com asterisco.** Ela muda a resolução.
+
+**Não atualizar o driver de vídeo.** Algumas taxas podem não aparecer.
+
+**Esquecer o limite de quadros dos jogos.** O jogo continua travado em 60 ou 144.
+
+**Esperar 240 quadros de uma placa que não chega lá.** O monitor mostra os quadros que a placa entrega.
+
+**Mudar a resolução para ajustar o tamanho do texto.** Use a escala do Windows e mantenha a resolução nativa.
+
+## Resumo
+
+- Confira na **ficha do monitor** a taxa máxima **por entrada**: no AOC C27G4Z, **240 Hz pelo HDMI 2.0** e **280 Hz pelo DisplayPort 1.4**.
+- Ligue o cabo na **placa de vídeo**, use **DisplayPort** quando necessário e atualize o **driver**.
+- No Windows: **Configurações > Sistema > Tela > Tela avançada > Escolha uma taxa de atualização**, sem asterisco.
+- Confira no **painel da placa de vídeo** e ative **FreeSync** ou **G-SYNC compatível**.
+- Verifique a taxa real no **menu do monitor** e ajuste o **limite de quadros** dos jogos.
+- Mantenha a **resolução nativa** e use a **escala** para ajustar o tamanho dos textos.
+- Depois de **atualizações** do Windows ou dos drivers, confira de novo: a taxa pode voltar ao padrão.
+- Lembre que **taxa de atualização** (monitor) e **FPS** (placa de vídeo) são coisas diferentes.
+
+### Fontes
+
+- Microsoft, [alterar a taxa de atualização no monitor no Windows](https://support.microsoft.com/pt-br/windows/hardware/display-graphics/change-the-refresh-rate-on-your-monitor-in-windows): caminho no Windows 11, taxas com asterisco e Taxa de Atualização Dinâmica.
+- AOC, ficha técnica oficial do monitor C27G4Z: taxas por entrada e itens da caixa.
+- NVIDIA, AMD e Intel: painéis de controle dos drivers de vídeo.
+- ELG, especificações do cabo DisplayPort 1.4 conforme o anúncio.

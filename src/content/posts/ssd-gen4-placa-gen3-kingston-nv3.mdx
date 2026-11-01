@@ -1,0 +1,303 @@
+---
+title: 'SSD Gen4 em placa Gen3: quanto o Kingston NV3 perde na prática'
+description: 'O Kingston NV3 é PCIe 4.0, mas muitas placas são PCIe 3.0. O que a interface limita, o que muda no dia a dia e quando o SSD Gen4 ainda vale a pena.'
+pubDate: 2026-11-05
+category: 'home-office'
+tags: ['ssd', 'nvme', 'pcie-4', 'pcie-3', 'kingston-nv3', 'upgrade']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Kingston NV3 1 TB, SSD M.2 2280 NVMe PCIe 4.0'
+    brand: 'Kingston'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DBR3DZWG?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2JdqvY9'
+    image: '/images/produtos/kingston-nv3-1tb.webp'
+    pros:
+      - 'Até 6.000/4.000 MB/s em placa PCIe 4.0, segundo a Kingston'
+      - 'Garantia limitada de 5 anos e 320 TB de TBW'
+      - 'Funciona em slots PCIe 3.0, limitado à velocidade da interface'
+    cons:
+      - 'Em PCIe 3.0, a leitura sequencial fica perto do teto da interface'
+  - name: 'Kingston NV3 500 GB, SSD M.2 2280 NVMe PCIe 4.0'
+    brand: 'Kingston'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DBR9RZLV?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2wrTmqz'
+    image: '/images/produtos/kingston-nv3-500gb.webp'
+    pros:
+      - 'Até 5.000/3.000 MB/s em PCIe 4.0, segundo a Kingston'
+      - 'Opção mais barata para sistema e programas'
+    cons:
+      - 'Escrita sequencial e TBW (160 TB) menores que os do modelo de 1 TB'
+  - name: 'Kingston NV3 2 TB, SSD M.2 2280 NVMe PCIe 4.0'
+    brand: 'Kingston'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DBR6TRZQ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1JiWNtz'
+    image: '/images/produtos/kingston-nv3-2tb.webp'
+    pros:
+      - 'Até 6.000/5.000 MB/s em PCIe 4.0, segundo a Kingston'
+      - '640 TB de TBW, o dobro do modelo de 1 TB'
+    cons:
+      - 'Mais caro: compensa para bibliotecas grandes de jogos ou vídeo'
+faq:
+  - question: 'SSD PCIe 4.0 funciona em placa PCIe 3.0?'
+    answer: 'Sim. O padrão PCI Express é compatível com gerações anteriores. Um SSD PCIe 4.0, como o Kingston NV3, funciona num slot M.2 NVMe PCIe 3.0, mas a velocidade fica limitada ao máximo da interface PCIe 3.0. A própria Kingston informa que as velocidades anunciadas se baseiam em uma placa-mãe PCIe 4.0.'
+  - question: 'Quanto um SSD Gen4 perde numa placa Gen3?'
+    answer: 'Na leitura e escrita sequenciais, como copiar arquivos grandes, o SSD fica limitado ao teto da interface PCIe 3.0 x4, de pouco menos de 4 GB/s teóricos, bem abaixo dos 6.000 MB/s anunciados para o NV3 de 1 TB em PCIe 4.0. No uso comum, como ligar o Windows, abrir programas e carregar jogos, a diferença tende a ser pequena, porque essas tarefas dependem mais de acessos pequenos e aleatórios do que da velocidade sequencial máxima.'
+  - question: 'Vale comprar SSD Gen4 se minha placa é Gen3?'
+    answer: 'Pode valer, se o preço for próximo ao de um SSD Gen3 equivalente. O SSD Gen4 funciona normalmente na placa atual e já fica pronto para entregar mais velocidade numa troca futura de placa-mãe ou de computador. Se o Gen4 for bem mais caro, um bom SSD Gen3 entrega praticamente a mesma experiência numa placa Gen3.'
+  - question: 'Como saber se meu slot M.2 é PCIe 3.0 ou 4.0?'
+    answer: 'Consulte o manual ou a página de especificações da placa-mãe, na seção de armazenamento. Em placas AMD, os chipsets da série 500, como B550 e X570, têm slot M.2 PCIe 4.0 ligado ao processador Ryzen 5000; placas das séries 300 e 400, como A320 e B450, trabalham em PCIe 3.0. Em notebooks, a ficha do fabricante informa o tipo do slot.'
+  - question: 'Por que o SSD de 1 TB aparece com 931 GB no Windows?'
+    answer: 'Os fabricantes contam a capacidade em base decimal, em que 1 TB equivale a um trilhão de bytes, enquanto o Windows usa a contagem binária, em que cada unidade vale 1.024 da anterior. O mesmo número de bytes aparece como cerca de 931 GB. Além disso, a Kingston observa que parte da capacidade é usada para formatação e funções internas do SSD e não fica disponível para dados.'
+  - question: 'O que significa TBW no SSD?'
+    answer: 'TBW é a quantidade total de dados que pode ser gravada no SSD dentro da garantia. A Kingston informa 320 TB para o NV3 de 1 TB, com garantia limitada de 5 anos ou até atingir esse limite de uso, o que vier primeiro. Para uso doméstico, esse volume é difícil de alcançar dentro do prazo da garantia.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+O **Kingston NV3** é um dos SSDs mais vendidos do Brasil, e o anúncio destaca números chamativos: até **6.000 MB/s** de leitura na versão de 1 TB. Mas há um detalhe que o anúncio não explica: esses números valem para uma placa-mãe **PCIe 4.0**. Muitos computadores em uso, inclusive vários PCs AM4 e notebooks de alguns anos atrás, têm o slot M.2 em **PCIe 3.0**.
+
+A pergunta, então, é direta: vale a pena colocar um SSD **Gen4** numa placa **Gen3**? O SSD funciona? Quanto ele perde? E isso faz diferença no dia a dia? Este guia responde com os números da ficha técnica da Kingston e as especificações do padrão PCI Express.
+
+> **Fontes:** as especificações do NV3 vêm da **ficha técnica oficial da Kingston**; as velocidades por geração do PCI Express seguem as especificações do PCI-SIG, a organização que mantém o padrão. Consultas em **31/10/2026**. O post não se baseia em teste próprio. Links no fim.
+
+## O que é Gen3 e Gen4
+
+**Gen3** e **Gen4** são as gerações **3.0** e **4.0** do **PCI Express**, a interface que liga o SSD NVMe ao processador ou ao chipset. Cada geração dobra a taxa de transferência por linha:
+
+| Geração | Taxa por linha | Taxa aproximada em x4 |
+|---|---|---|
+| PCIe 3.0 | 8 GT/s | cerca de 3,9 GB/s |
+| PCIe 4.0 | 16 GT/s | cerca de 7,9 GB/s |
+
+Os SSDs NVMe M.2 usam **quatro linhas** (x4). Os valores da tabela são o **teto teórico** da interface, antes de considerar a sobrecarga do protocolo; na prática, os SSDs mais rápidos de cada geração chegam um pouco abaixo desses tetos.
+
+O padrão é **compatível entre gerações**: um SSD PCIe 4.0 funciona num slot PCIe 3.0, e um SSD PCIe 3.0 funciona num slot PCIe 4.0. Nos dois casos, a conexão trabalha na **geração mais baixa** entre as duas.
+
+## HD, SSD SATA e NVMe: onde fica cada um
+
+Para colocar os números em perspectiva, vale lembrar os outros tipos de armazenamento:
+
+- **HD mecânico**: depende de discos que giram e de uma cabeça de leitura que se move. Em acessos aleatórios, é muito mais lento que qualquer SSD, e é por isso que computadores com HD demoram tanto para ligar.
+- **SSD SATA**: usa a interface SATA III, de **6 Gb/s**, o que limita a velocidade sequencial a pouco mais de **500 MB/s**. É o formato dos SSDs de 2,5 polegadas e dos M.2 SATA.
+- **SSD NVMe PCIe 3.0**: já várias vezes mais rápido que o SATA na velocidade sequencial.
+- **SSD NVMe PCIe 4.0**: dobra o teto da interface em relação ao 3.0.
+
+Num computador com placa Gen3, o NV3 entrega a velocidade de um **NVMe Gen3 rápido**, o que já é um salto grande para quem vem de HD ou de SSD SATA.
+
+## O Kingston NV3, pela ficha técnica
+
+![SSD Kingston NV3 de 1 TB, M.2 2280](/images/produtos/kingston-nv3-1tb.webp)
+
+Segundo a ficha técnica oficial da Kingston:
+
+| Capacidade | Leitura / gravação sequencial (PCIe 4.0) | Resistência (TBW) |
+|---|---|---|
+| 500 GB | 5.000 / 3.000 MB/s | 160 TB |
+| 1 TB | 6.000 / 4.000 MB/s | 320 TB |
+| 2 TB | 6.000 / 5.000 MB/s | 640 TB |
+| 4 TB | 6.000 / 5.000 MB/s | 1.280 TB |
+
+Outros dados da ficha: interface **NVMe PCIe 4.0 x4**, formato **M.2 2280** (também existe a versão **2230**, menor), memória **NAND 3D**, temperatura de operação de **0 a 70 °C**, **MTBF de 2 milhões de horas** e **garantia limitada de 5 anos**, com suporte técnico gratuito.
+
+A nota de rodapé da ficha é o que importa aqui: as velocidades são baseadas em desempenho "imediato", **usando uma placa-mãe PCIe 4.0**, e podem variar conforme o hardware, o software e o uso.
+
+**Uma observação sobre anúncios:** alguns anúncios do NV3 de 1 TB mostram, na descrição, os números da versão de 500 GB (5.000/3.000 MB/s). A ficha da Kingston é a referência: para 1 TB, **6.000/4.000 MB/s** em PCIe 4.0.
+
+## Quanto ele perde numa placa Gen3
+
+Numa placa **PCIe 3.0**, o NV3 fica limitado ao **teto da interface**:
+
+- **Leitura sequencial**: em vez de até 6.000 MB/s, fica limitada a pouco menos de **3,9 GB/s teóricos**, e na prática um pouco abaixo disso. É a maior perda.
+- **Gravação sequencial**: os 4.000 MB/s anunciados para o modelo de 1 TB também esbarram no teto da interface.
+
+Ou seja: na **velocidade sequencial**, o NV3 numa placa Gen3 se comporta como um SSD NVMe Gen3 rápido.
+
+## E no dia a dia?
+
+Aqui está o ponto que o número de MB/s esconde. **Velocidade sequencial** é o que aparece quando você copia um arquivo grande de uma vez, como um vídeo de dezenas de gigabytes ou a imagem de um disco. Essa é a situação em que Gen4 e Gen3 se diferenciam mais.
+
+A maior parte do uso comum, porém, depende de **acessos pequenos e aleatórios**: ligar o Windows, abrir um programa, carregar as texturas de um jogo, abrir uma pasta com milhares de fotos. Nessas tarefas, o SSD lê muitos arquivos pequenos espalhados, e a velocidade sequencial máxima pesa pouco. O que pesa é a **latência** e o desempenho com arquivos pequenos.
+
+Por isso, na prática:
+
+| Tarefa | Diferença entre Gen4 e Gen3 |
+|---|---|
+| Ligar o Windows | tende a ser pequena |
+| Abrir programas | tende a ser pequena |
+| Carregar jogos | geralmente pequena |
+| Copiar arquivos muito grandes | aparece com clareza |
+| Editar vídeo pesado direto do SSD | pode aparecer |
+
+O **salto grande** de sensação está em sair de um **HD** ou de um **SSD SATA** para **qualquer SSD NVMe**. Entre NVMe Gen3 e Gen4, a diferença existe, mas é bem menor no uso doméstico.
+
+## Quando o Gen4 vale a pena mesmo numa placa Gen3
+
+Mesmo com a limitação, comprar um SSD Gen4 para uma placa Gen3 pode fazer sentido:
+
+- **quando o preço é próximo** ao de um SSD Gen3 equivalente, o que tem acontecido com frequência, já que a geração 4.0 se tornou o padrão de mercado;
+- **quando você planeja trocar a placa-mãe** ou o computador nos próximos anos: o SSD vai junto e passa a render tudo na plataforma nova;
+- **para reaproveitar depois** num case externo, num notebook mais novo ou até num console portátil, no caso do formato 2230.
+
+E faz **menos** sentido:
+
+- quando o Gen4 custa **bem mais** que um Gen3 de qualidade e capacidade iguais;
+- quando a única tarefa pesada é jogar e navegar: o dinheiro rende mais em **capacidade** do que em geração.
+
+## Como saber a geração do seu slot
+
+**No manual da placa-mãe:** a seção de armazenamento informa, para cada slot M.2, a geração do PCIe e se ele aceita NVMe, SATA ou os dois.
+
+**Em placas AMD AM4**, uma regra útil:
+
+- **chipsets da série 500** (B550, X570): o slot M.2 principal, ligado ao processador, é **PCIe 4.0** com processadores Ryzen 5000;
+- **chipsets das séries 300 e 400** (A320, B350, B450, X470): os slots trabalham em **PCIe 3.0**.
+
+**Em placas Intel**, a geração depende do chipset e do processador; o manual é a referência.
+
+**Em notebooks**, a ficha do fabricante, na página do modelo exato, informa o tipo do slot. Notebooks mais antigos podem ter slot **só M.2 SATA**, que não aceita SSD NVMe de forma alguma.
+
+**Placas com dois slots:** é comum o slot principal ser PCIe 4.0 e o secundário, ligado ao chipset, ser PCIe 3.0. Instale o SSD do sistema no slot mais rápido.
+
+## Capacidade real: por que 1 TB aparece como menos
+
+Ao instalar um SSD de 1 TB, o Windows mostra algo perto de **931 GB**. Não falta nada: a diferença vem de duas formas de contar. Os fabricantes usam a contagem decimal, em que 1 TB são 1.000.000.000.000 bytes. O Windows usa a contagem binária, em que cada unidade vale 1.024 da anterior. O mesmo número de bytes aparece, então, como cerca de 931 "GB" no Windows.
+
+Além disso, como a própria ficha da Kingston observa, parte da capacidade de qualquer dispositivo de armazenamento flash é usada para formatação e funções internas, e não fica disponível para os seus arquivos. As partições criadas pelo Windows, como a de recuperação, também ocupam um pouco de espaço.
+
+## O NV3 em formato 2230
+
+A Kingston também vende o NV3 no formato **M.2 2230**, com 30 mm de comprimento, nas capacidades de 500 GB, 1 TB e 2 TB. Segundo a ficha técnica, o formato menor é pensado para **sistemas pequenos, como notebooks e consoles de jogos portáteis**. As velocidades e o TBW por capacidade são os mesmos da versão 2280. Antes de comprar, confira qual formato o seu aparelho aceita: um SSD 2280 não cabe num slot 2230, e um 2230 num slot 2280 precisa de um suporte adaptador para ser preso.
+
+## Como medir a velocidade no seu PC
+
+Depois de instalar o SSD, você pode conferir em que velocidade ele está trabalhando:
+
+- **Gerenciador de Tarefas**: na aba **Desempenho**, selecione o disco e acompanhe a velocidade de leitura e gravação enquanto copia um arquivo grande. É uma medida aproximada, mas mostra se o SSD está na faixa esperada.
+- **Programas de benchmark de disco**: medem leitura e gravação sequenciais e aleatórias de forma padronizada. Use sempre a versão do site oficial do desenvolvedor.
+- **Kingston SSD Manager**: mostra o modelo, o firmware e a saúde do SSD, além do percentual de uso usado para a garantia.
+
+Numa placa Gen3, espere a leitura sequencial perto do teto da interface. Se ficar muito abaixo disso, confira se o SSD está no slot certo e se o slot não está compartilhando linhas com outro dispositivo, uma situação comum em algumas placas, descrita no manual.
+
+## Trocar a placa-mãe só pelo PCIe 4.0 compensa?
+
+Raramente. Trocar a placa-mãe só para ganhar PCIe 4.0 no SSD costuma custar muito para um ganho que, no uso comum, é pequeno. A troca faz mais sentido quando vem junto com outro motivo:
+
+- **trocar o processador** por um que a placa atual não suporta;
+- **precisar de mais slots M.2**, portas USB mais rápidas ou rede melhor;
+- **a placa atual apresentar defeitos**.
+
+Nesses casos, o SSD Gen4 que você já tem passa a render tudo na placa nova, sem custo adicional.
+
+## SSD como disco secundário
+
+Uma forma comum de aproveitar um NVMe numa placa com dois slots é usar o SSD mais rápido para o **sistema e os programas** e o outro para **dados e jogos**. Mesmo um segundo slot limitado a Gen3, ligado ao chipset, entrega uma experiência muito boa para jogos e arquivos. O importante é que o **sistema** esteja no disco mais rápido, porque é ele que mais sofre com acessos pequenos e constantes.
+
+## Qual capacidade escolher
+
+![SSD Kingston NV3 de 500 GB](/images/produtos/kingston-nv3-500gb.webp)
+
+A escolha da capacidade costuma ser mais importante que a geração:
+
+- **500 GB**: atende sistema, programas e alguns jogos. Pela ficha, tem gravação sequencial menor (3.000 MB/s em PCIe 4.0) e TBW de **160 TB**.
+- **1 TB**: o ponto de equilíbrio mais comum, com **320 TB** de TBW.
+- **2 TB**: para quem tem biblioteca grande de jogos, fotos ou vídeos; **640 TB** de TBW.
+
+Numa placa Gen3, as diferenças de velocidade entre as capacidades ficam ainda menores, porque todas esbarram no mesmo teto de leitura. O que continua valendo é o **espaço** e a **resistência**.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DBR9RZLV?tag=nerdcaseiro-20" store="amazon" source="ssd-gen4-placa-gen3-kingston-nv3" />
+<AffiliateButton href="https://meli.la/2wrTmqz" store="mercadolivre" source="ssd-gen4-placa-gen3-kingston-nv3" />
+
+**1 TB:**
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DBR3DZWG?tag=nerdcaseiro-20" store="amazon" source="ssd-gen4-placa-gen3-kingston-nv3" />
+<AffiliateButton href="https://meli.la/2JdqvY9" store="mercadolivre" source="ssd-gen4-placa-gen3-kingston-nv3" />
+
+![SSD Kingston NV3 de 2 TB](/images/produtos/kingston-nv3-2tb.webp)
+
+**2 TB:**
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DBR6TRZQ?tag=nerdcaseiro-20" store="amazon" source="ssd-gen4-placa-gen3-kingston-nv3" />
+<AffiliateButton href="https://meli.la/1JiWNtz" store="mercadolivre" source="ssd-gen4-placa-gen3-kingston-nv3" />
+
+## TBW e garantia: o que significam
+
+**TBW** (terabytes gravados) é o volume total de dados que o fabricante garante que o SSD aguenta gravar. A Kingston calcula o TBW com base numa carga de trabalho de cliente padronizada pelo JEDEC, e a garantia do NV3 é limitada a **5 anos** ou ao **percentual de uso** que o SSD informa, o que vier primeiro. Esse percentual pode ser conferido no **Kingston SSD Manager**: um SSD novo mostra 0, e um SSD que atingiu o limite da garantia mostra 100 ou mais.
+
+Para ter uma ideia: gravar **320 TB** em cinco anos significa gravar, em média, mais de **170 GB por dia**, todos os dias. O uso doméstico típico, com navegação, documentos e instalação de jogos de vez em quando, fica muito abaixo disso.
+
+## Temperatura: Gen4 esquenta mais?
+
+SSDs NVMe esquentam quando trabalham pesado por muito tempo, e alguns reduzem a velocidade para se proteger. A ficha da Kingston informa operação de **0 a 70 °C**. Numa placa Gen3, como a interface limita a velocidade máxima, o SSD tende a trabalhar menos no limite em transferências longas. Em placas com **dissipador no slot M.2**, use o dissipador; em notebooks, o fabricante já projeta o espaço para o SSD sem acessórios extras.
+
+## O que realmente deixa o PC mais rápido
+
+Se a ideia é dar vida nova a um computador com placa Gen3, a ordem de impacto costuma ser:
+
+1. **Trocar HD por SSD**: a maior mudança de sensação.
+2. **Ter espaço livre** no SSD: um SSD quase cheio perde desempenho de escrita.
+3. **Memória suficiente**, em dual channel: menos uso de arquivo de paginação no disco.
+4. **Geração do SSD**: Gen4 sobre Gen3 aparece principalmente em cópias grandes.
+
+O passo a passo de instalação e de clonagem do sistema, para não precisar reinstalar o Windows, está no tutorial de [instalar um SSD NVMe e clonar o sistema](/posts/instalar-ssd-nvme-pc-clonar-sistema/). E, para notebooks mais antigos, o guia de [SSD NVMe para dar sobrevida ao notebook antigo](/posts/ssd-nvme-sobrevida-notebook-antigo/) trata das limitações específicas desses modelos.
+
+## Em notebook: bateria e calor
+
+Em notebooks, a escolha do SSD também afeta **autonomia** e **temperatura**. A Kingston descreve o NV3 como um SSD de **baixo consumo de energia** e **aquecimento reduzido**. Numa placa Gen3, o SSD não chega às velocidades máximas, e o consumo tende a ficar ainda mais contido nas transferências longas.
+
+Dois cuidados específicos de notebook:
+
+- **confira a espessura**: a ficha informa **2,3 mm** de espessura para o NV3, por ser de lado único. Alguns notebooks finos têm pouco espaço sob a tampa, e SSDs com chips dos dois lados ou com dissipadores podem não caber;
+- **não adicione dissipadores** que não estavam previstos pelo fabricante do notebook: a tampa pode pressionar a placa ou o SSD.
+
+## Velocidade não substitui backup
+
+SSDs são confiáveis, mas, como qualquer armazenamento, podem falhar, e a falha de um SSD costuma ser repentina, sem os ruídos de aviso que um HD às vezes dá. Além disso, exclusões acidentais, vírus e roubo do computador levam os dados da mesma forma.
+
+A regra prática é manter **cópias dos arquivos importantes em outro lugar**: num disco externo, num segundo SSD ou na nuvem. Um SSD antigo que sobrou de um upgrade, colocado num case externo, vira um bom disco de backup. O tutorial de instalação e clonagem mostra como aproveitar o SSD antigo dessa forma.
+
+## Firmware: só atualize com motivo
+
+O **Kingston SSD Manager** também permite atualizar o firmware do NV3 quando há versão nova. Atualizações de firmware corrigem problemas pontuais, mas toda atualização tem um risco pequeno de falha. A recomendação mais segura é atualizar só quando a Kingston indicar uma correção que se aplica ao seu caso, com **backup feito** e **energia estável**, de preferência com o notebook ligado ao carregador.
+
+## Erros comuns
+
+**Comprar SSD NVMe para slot que só aceita M.2 SATA.** Ele não funciona; confira o manual.
+
+**Esperar 6.000 MB/s numa placa Gen3.** O teto da interface é bem menor.
+
+**Pagar muito mais pelo Gen4 sem plano de trocar a placa.** Nesse caso, um Gen3 de qualidade entrega quase a mesma experiência.
+
+**Confundir os números dos anúncios.** A versão de 500 GB tem velocidades menores; confira a ficha da Kingston por capacidade.
+
+**Instalar o SSD do sistema no slot mais lento.** Em placas com dois slots, use o mais rápido para o sistema.
+
+**Encher o SSD até o limite.** Deixe espaço livre para manter o desempenho.
+
+## Resumo
+
+- SSD **PCIe 4.0 funciona em slot PCIe 3.0**, limitado à velocidade da interface.
+- O teto do **PCIe 3.0 x4** fica perto de **3,9 GB/s teóricos**; o NV3 de 1 TB anuncia **6.000/4.000 MB/s** em placa **PCIe 4.0**, segundo a Kingston.
+- No **uso comum**, a diferença entre Gen3 e Gen4 tende a ser **pequena**; ela aparece em **cópias grandes**.
+- O Gen4 vale a pena numa placa Gen3 quando o **preço é próximo** ou quando há **plano de trocar a placa**.
+- **Capacidade** e **espaço livre** costumam pesar mais que a geração.
+- Confira o **formato** (2280 ou 2230) e o **tipo do slot** (NVMe ou só SATA) antes de comprar.
+- O NV3 tem **garantia limitada de 5 anos** e TBW de **160 a 1.280 TB**, conforme a capacidade.
+
+### Fontes
+
+- Kingston, [ficha técnica do SSD NV3 NVMe PCIe 4.0](https://www.kingston.com/datasheets/snv3s_br.pdf): velocidades, TBW, garantia e notas de desempenho.
+- PCI-SIG, especificações do PCI Express 3.0 e 4.0: taxas de transferência por linha.

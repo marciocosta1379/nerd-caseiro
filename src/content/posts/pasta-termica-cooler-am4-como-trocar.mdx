@@ -1,0 +1,326 @@
+---
+title: 'Pasta térmica e cooler no AM4: como trocar sem errar a quantidade'
+description: 'Passo a passo para limpar a pasta antiga, aplicar a quantidade certa e instalar o cooler no soquete AM4, sem arrancar o processador nem esquecer a película.'
+pubDate: 2026-11-06T18:00:00-03:00
+category: 'home-office'
+tags: ['pasta-termica', 'cooler', 'am4', 'ryzen', 'manutencao-pc', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Pasta térmica Implastec TS-Cold, 10,5 W/mK, 4 g'
+    brand: 'Implastec'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0C2ZGCCW7?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1cjuiDW'
+    image: '/images/produtos/pasta-termica-implastec-ts-cold.webp'
+    pros:
+      - 'Condutividade térmica de 10,5 W/mK, segundo a Implastec'
+      - 'Fabricante nacional, vendida e entregue pela Amazon'
+      - 'Mais de 2.300 avaliações, nota 4,8'
+    cons:
+      - 'Seringa de 4 g: suficiente para várias aplicações, não para dezenas'
+  - name: 'Álcool isopropílico para limpeza de componentes eletrônicos, 1 L'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DGB8HSNQ?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2sCUamp'
+    image: '/images/produtos/alcool-isopropilico-1l.webp'
+    pros:
+      - 'Evaporação rápida, sem deixar umidade nos componentes'
+      - 'Remove pasta térmica antiga, poeira e resíduos'
+    cons:
+      - 'Inflamável: use em local ventilado, longe de chamas'
+faq:
+  - question: 'Quanta pasta térmica usar no processador?'
+    answer: 'Para processadores de desktop do tamanho de um Ryzen AM4, a referência mais comum é uma quantidade do tamanho de uma ervilha ou de um grão de arroz grande no centro do processador. A pressão do cooler espalha a pasta. Pasta demais escorre pelas bordas e não melhora a temperatura; pasta de menos deixa áreas sem contato.'
+  - question: 'Precisa espalhar a pasta térmica antes de colocar o cooler?'
+    answer: 'Não é obrigatório. A aplicação em ponto no centro, espalhada pela pressão do cooler, é a mais usada e evita bolhas de ar. Espalhar com uma espátula também funciona, desde que a camada fique fina e uniforme. O importante é cobrir a superfície do processador sem excesso e sem criar bolhas de ar.'
+  - question: 'De quanto em quanto tempo trocar a pasta térmica?'
+    answer: 'Não há um prazo fixo. A troca é necessária sempre que o cooler for retirado, porque a camada original se rompe. Fora isso, vale trocar quando as temperaturas subirem sem outro motivo aparente, como poeira acumulada. Pastas de boa qualidade costumam durar anos.'
+  - question: 'Posso usar álcool comum para limpar a pasta térmica?'
+    answer: 'O mais indicado é o álcool isopropílico, que evapora rápido e não deixa resíduos nem umidade nos componentes. Álcool comum de limpeza pode conter água e outros aditivos. Use papel macio ou pano sem fiapos e espere secar completamente antes de aplicar a pasta nova.'
+  - question: 'A pasta térmica que vem com o cooler é boa?'
+    answer: 'Em geral, a pasta que vem pré-aplicada ou em seringa junto com coolers de marcas conhecidas atende bem o uso doméstico. Ela tem a vantagem de já estar na quantidade e no formato previstos pelo fabricante. Trocar por uma pasta de outra marca só faz diferença perceptível em casos específicos; o mais importante é a aplicação e o aperto corretos do cooler.'
+  - question: 'Pasta térmica conduz eletricidade?'
+    answer: 'Depende do tipo. Pastas à base de silicone ou cerâmica costumam ser isolantes; a ARCTIC, por exemplo, informa que a MX-4 é livre de metal e não condutora. Pastas com partículas metálicas e o metal líquido podem conduzir eletricidade. Em qualquer caso, a pasta deve ficar só sobre a tampa do processador, sem escorrer para o soquete.'
+  - question: 'Por que o cooler arrancou o processador do soquete?'
+    answer: 'Pasta térmica antiga e fria pode colar a base do cooler no processador. Ao puxar o cooler para cima, o processador AM4 sai junto, mesmo com a alavanca abaixada, e os pinos podem entortar. Para evitar, use o PC por alguns minutos antes, para aquecer a pasta, e gire levemente o cooler para os lados antes de levantar.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A **pasta térmica** é uma camada fina entre o processador e o cooler, quase invisível depois de montada, e ainda assim decide boa parte da temperatura do PC. Ela é necessária sempre que você **troca o processador**, **troca o cooler** ou simplesmente **retira o cooler** para limpar. Aplicada errado, em excesso, com bolhas ou esquecendo a película plástica do cooler, ela faz um processador bom esquentar como se estivesse sem cooler.
+
+Este tutorial mostra o processo completo no **soquete AM4**, o dos Ryzen 1000 a 5000: como **retirar o cooler sem arrancar o processador**, como **limpar a pasta antiga**, **quanta pasta aplicar** e como **instalar o cooler** e conferir a temperatura.
+
+> **Fontes:** os princípios de aplicação da pasta seguem a documentação da **ARCTIC** sobre a pasta MX-4 (preenchimento de microimperfeições e aplicação sem bolsas de ar); as especificações da pasta Implastec vêm do fabricante; a temperatura máxima do Ryzen 7 5700X vem da **página de suporte da AMD**. Consultas em **31/10/2026**. Cada cooler tem um procedimento de fixação próprio: o **manual do seu cooler** é a referência. O post não se baseia em teste próprio. Links no fim.
+
+## Por que a pasta é necessária
+
+A base do cooler e a tampa metálica do processador parecem lisas, mas, vistas de perto, têm **microimperfeições**. Quando as duas superfícies se encostam, ficam minúsculos espaços de **ar** entre elas, e o ar conduz muito mal o calor. A pasta térmica é feita de **micropartículas** que preenchem essas cavidades, como descreve a ARCTIC, e permite que o calor passe do processador para o cooler.
+
+O objetivo, portanto, é ter **uma camada fina** que preencha as imperfeições, **sem bolhas** e **sem excesso**. Pasta não é isolante nem cola: quanto mais fina e uniforme a camada, melhor.
+
+## Tipos de pasta térmica
+
+As pastas vendidas para PCs se dividem em três grupos principais:
+
+| Tipo | Características | Cuidados |
+|---|---|---|
+| **À base de silicone ou cerâmica com micropartículas** | as mais comuns; fáceis de aplicar | escolha marcas conhecidas |
+| **Com partículas metálicas ou óxidos metálicos** | condução alta | algumas podem conduzir eletricidade; não deixe escorrer |
+| **Metal líquido** | condução muito alta | **conduz eletricidade** e reage com alumínio; uso para entusiastas |
+
+A ARCTIC destaca que a MX-4 é **livre de metal** e **não condutora de eletricidade**, ao contrário de pastas à base de óxidos metálicos ou de metal líquido. Para quem está fazendo a primeira troca, uma pasta não condutora, de boa marca, é a escolha mais segura: se um pouco escorrer pelas bordas, não há risco de curto-circuito.
+
+**Metal líquido não é para iniciantes.** Ele conduz eletricidade, exige proteção dos componentes em volta e reage com bases de alumínio. Fica fora do escopo deste tutorial.
+
+## W/mK: o número da embalagem
+
+A **condutividade térmica**, em **W/mK** (watts por metro por kelvin), é o número mais destacado nas embalagens. Quanto maior, melhor a pasta conduz o calor, em tese. Na prática:
+
+- o valor é medido pelo próprio fabricante, com métodos que **nem sempre são comparáveis** entre marcas;
+- numa camada bem fina, como deve ser a aplicação, a diferença entre pastas boas fica pequena;
+- a **aplicação correta** e o **aperto uniforme** do cooler costumam pesar mais que alguns pontos de W/mK.
+
+Ou seja: entre pastas de marcas conhecidas, o W/mK ajuda a comparar, mas não decide sozinho. Uma pasta mediana bem aplicada vence uma pasta topo de linha mal aplicada.
+
+## O que você vai precisar
+
+- **Pasta térmica** nova;
+- **Álcool isopropílico** e **papel macio** ou pano sem fiapos, para limpar a pasta antiga;
+- **Chave Phillips**, conforme o cooler;
+- **Uma lanterna**, para ver os detalhes dentro do gabinete;
+- **Paciência**: não é um procedimento para ser feito com pressa.
+
+![Seringa de pasta térmica Implastec TS-Cold de 4 g](/images/produtos/pasta-termica-implastec-ts-cold.webp)
+
+A **Implastec TS-Cold** é uma pasta térmica nacional com condutividade térmica de **10,5 W/mK**, segundo o fabricante, feita à base de um fluido de silicone com micropartículas e indicada para processadores, placas de vídeo e consoles. Vem numa **seringa de 4 g**, suficiente para várias aplicações num processador de desktop. Na Amazon, é vendida e entregue pela Amazon, com nota **4,8** em mais de 2.300 avaliações.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0C2ZGCCW7?tag=nerdcaseiro-20" store="amazon" source="pasta-termica-cooler-am4-como-trocar" />
+<AffiliateButton href="https://meli.la/1cjuiDW" store="mercadolivre" source="pasta-termica-cooler-am4-como-trocar" />
+
+## Passo 1: aqueça a pasta antiga
+
+Este passo evita o acidente mais comum no AM4. Nos processadores AM4, os **pinos ficam no próprio processador**. A pasta térmica antiga, principalmente se estiver fria e ressecada, pode **colar** a base do cooler no processador. Se você puxar o cooler direto para cima, o processador pode sair junto, **mesmo com a alavanca do soquete abaixada**, e os pinos podem entortar.
+
+Para evitar:
+
+1. **Use o PC por 5 a 10 minutos** antes de desligar, para a pasta amolecer com o calor.
+2. Desligue pelo menu Iniciar, **tire o cabo da tomada** e espere alguns segundos.
+
+## Passo 2: retire o cooler com cuidado
+
+1. Abra a lateral do gabinete e toque numa parte metálica para descarregar a eletricidade estática.
+2. **Desconecte o cabo da ventoinha** do conector **CPU_FAN** da placa-mãe.
+3. **Solte a fixação** do cooler, conforme o modelo: parafusos, presilhas ou a alavanca do suporte de fábrica da AMD. Em coolers presos por **quatro parafusos**, solte em **X**, um pouco de cada vez, alternando os cantos opostos.
+4. Com a fixação solta, **gire o cooler levemente** para um lado e para o outro, poucos graus, como quem desatarraxa uma tampa, até sentir que ele se soltou do processador.
+5. Só então **levante o cooler**.
+
+Se o processador vier junto, **não puxe** o processador do cooler à força. Gire os dois com cuidado até se soltarem, sem tocar nos pinos, e depois examine os pinos antes de recolocar o processador no soquete.
+
+## Passo 3: limpe a pasta antiga
+
+Toda a pasta antiga precisa sair, do processador e da base do cooler.
+
+1. Retire o excesso com **papel macio seco**.
+2. Umedeça um papel ou pano sem fiapos com **álcool isopropílico** e limpe a tampa do processador e a base do cooler até o metal ficar limpo.
+3. **Não deixe** o álcool nem a pasta escorrerem para as bordas do processador e para o soquete.
+4. **Espere secar** completamente, alguns minutos.
+
+![Frasco de álcool isopropílico de 1 litro para limpeza de componentes](/images/produtos/alcool-isopropilico-1l.webp)
+
+O **álcool isopropílico** é o mais indicado porque **evapora rápido** e não deixa umidade nos componentes. Este de 1 litro é vendido para limpeza de componentes eletrônicos e rende muitas manutenções. É **inflamável**: use em local ventilado e longe de chamas.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DGB8HSNQ?tag=nerdcaseiro-20" store="amazon" source="pasta-termica-cooler-am4-como-trocar" />
+<AffiliateButton href="https://meli.la/2sCUamp" store="mercadolivre" source="pasta-termica-cooler-am4-como-trocar" />
+
+**Se for trocar o processador:** levante a alavanca do soquete, retire o processador antigo, coloque o novo alinhando o **triângulo dourado** do canto com a marca do soquete, deixe-o **cair por gravidade**, sem forçar, e abaixe a alavanca.
+
+## Se algum pino entortou
+
+Se o processador saiu junto com o cooler ou caiu, examine os pinos antes de recolocá-lo:
+
+1. Segure o processador **pelas bordas**, com os pinos para cima, sob boa iluminação.
+2. Olhe as fileiras **de lado**, contra a luz, nas duas direções. Pinos alinhados formam linhas retas; um pino torto quebra a linha.
+3. Se houver um pino **levemente** inclinado, o processador pode não encaixar no soquete ou pode encaixar e causar falhas.
+
+Endireitar pinos é possível, mas exige **muito cuidado**: pinos quebrados não têm conserto simples. Se você não tem experiência, vale procurar uma assistência técnica antes de forçar o processador no soquete. **Nunca force** o processador para dentro do soquete: ele deve cair por gravidade quando está alinhado.
+
+## Aproveite para limpar a poeira
+
+Com o cooler fora do gabinete, é o melhor momento para limpar:
+
+- **as aletas do cooler**: com pincel macio ou ar comprimido, segurando a ventoinha para ela não girar em alta rotação;
+- **a ventoinha**: as pás acumulam uma camada de poeira que reduz o fluxo de ar;
+- **os filtros de poeira do gabinete**: removíveis na maioria dos modelos, podem ser lavados com água e secos completamente.
+
+Um cooler limpo com pasta nova costuma devolver ao PC as temperaturas de quando era novo.
+
+## Passo 4: prepare o cooler
+
+**Cooler novo:** muitos coolers vêm com **pasta já aplicada** na base, em forma de um quadrado cinza. Se você vai usá-la, não aplique outra por cima. Se preferir usar a sua pasta, limpe a pasta de fábrica com álcool isopropílico antes.
+
+**Confira a película:** muitos coolers vêm com um **plástico protetor** colado na base, às vezes transparente e difícil de ver. **Retire a película** antes de montar. Esquecer a película é uma das causas mais comuns de processador superaquecendo logo depois da montagem.
+
+**Monte os suportes:** se o cooler usa suportes próprios para o AM4, monte-os na placa-mãe seguindo o manual do cooler. Muitos coolers aproveitam a **placa traseira** (backplate) que já vem na placa-mãe AM4, trocando só os suportes plásticos de cima.
+
+## Passo 5: aplique a pasta na quantidade certa
+
+Este é o ponto que mais gera dúvida. Para um processador AM4:
+
+- coloque **um ponto de pasta no centro** do processador, do tamanho de uma **ervilha** ou de um **grão de arroz grande**;
+- **não espalhe** a pasta: a pressão do cooler vai espalhá-la de forma uniforme;
+- se preferir espalhar, use a espátula que vem com algumas pastas, formando uma **camada fina e uniforme**, sem buracos.
+
+**Por que não usar mais?** Pasta demais **escorre pelas bordas** e pode chegar ao soquete e aos componentes em volta, sem nenhum ganho de temperatura. Uma camada grossa conduz o calor **pior** que uma camada fina.
+
+**Por que não usar menos?** Pasta de menos deixa áreas da tampa **sem contato**, com ar no lugar, e a temperatura sobe.
+
+O tamanho do ponto depende um pouco da **viscosidade** da pasta: pastas mais grossas espalham menos e pedem um ponto um pouco maior. A embalagem e a página do fabricante costumam indicar o método recomendado.
+
+## Passo 6: instale o cooler
+
+1. **Posicione o cooler** sobre o processador, de uma vez, **descendo reto**. Evite apoiar, levantar e reposicionar: cada vez que o cooler sai, a pasta se rompe e podem se formar bolhas.
+2. Confira a **orientação**: num air cooler de torre, a ventoinha deve soprar **da frente para a traseira** do gabinete, em direção à saída de ar. A seta na lateral da ventoinha indica a direção do ar.
+3. **Fixe o cooler** seguindo o manual. Em fixações por **quatro parafusos**, aperte **em X**, um pouco de cada vez, alternando os cantos opostos, até o fim do curso. Isso garante pressão uniforme e espalha a pasta por igual.
+4. **Não aperte com força excessiva**: a maioria dos coolers tem um batente que indica o fim do aperto.
+5. **Conecte a ventoinha** no conector **CPU_FAN**. Em water coolers, conecte a **bomba** no conector indicado no manual, como CPU_FAN ou AIO_PUMP.
+
+## Passo 7: confira a temperatura
+
+1. Feche o gabinete, reconecte os cabos e ligue o PC.
+2. Entre na **BIOS** (Delete ou F2 na inicialização) e confira a **temperatura do processador** em repouso, que aparece na tela principal na maioria das placas.
+3. No Windows, use um programa de monitoramento, como o **Ryzen Master** da AMD, e observe a temperatura em uso leve e durante um jogo ou tarefa pesada.
+
+A AMD informa **90 °C** como temperatura máxima de operação do Ryzen 7 5700X. Com um cooler adequado e a pasta bem aplicada, o processador deve trabalhar com folga abaixo disso.
+
+**Sinais de problema:**
+
+- temperatura **muito alta já em repouso**, subindo rápido: película esquecida, cooler mal encaixado ou, no water cooler, bomba desligada;
+- temperatura que **sobe e desliga o PC**: cooler sem contato adequado ou ventoinha parada;
+- diferença grande entre o **antes e o depois** da troca: pasta em excesso, em falta ou com bolhas.
+
+Em qualquer desses casos, desligue, retire o cooler, limpe e repita a aplicação.
+
+## O cooler que vem na caixa do processador
+
+Alguns processadores Ryzen vêm com o cooler **Wraith** da AMD na caixa, e ele já traz **pasta pré-aplicada** na base, protegida por uma tampa plástica. Se você está montando o PC pela primeira vez com esse cooler:
+
+- **não aplique pasta** sobre a pasta de fábrica;
+- retire só a tampa plástica de proteção, sem tocar na pasta;
+- instale direto, seguindo o encaixe do suporte de fábrica do AM4.
+
+Se o cooler de fábrica for retirado depois, a pasta original se rompe: aí sim, limpe tudo e aplique pasta nova.
+
+## Notebooks, consoles e placas de vídeo
+
+Trocar a pasta térmica em **notebooks**, **consoles** e **placas de vídeo** segue o mesmo princípio, mas é bem mais delicado:
+
+- **garantia**: abrir esses aparelhos pode **anular a garantia**. Confira antes;
+- **almofadas térmicas (thermal pads)**: placas de vídeo e notebooks usam almofadas para resfriar memórias e componentes de alimentação. Elas têm **espessuras específicas** e costumam se rasgar na desmontagem; trocá-las pela espessura errada pode deixar o dissipador sem contato com o chip principal;
+- **parafusos de tamanhos diferentes** e cabos frágeis tornam a desmontagem mais arriscada;
+- em notebooks, a **bateria** precisa ser desconectada antes de mexer na placa, conforme o manual do fabricante.
+
+Para quem está começando, o processador de um desktop é o lugar certo para aprender. Em notebooks e placas de vídeo, se a temperatura estiver alta, vale considerar uma assistência técnica especializada.
+
+## Checklist antes de fechar o gabinete
+
+Antes de ligar o PC depois da troca, confira:
+
+- [ ] película plástica da base do cooler **retirada**;
+- [ ] cooler firme, sem balançar, com os parafusos apertados **em X** até o fim do curso;
+- [ ] ventoinha conectada no **CPU_FAN** (e bomba conectada, se for water cooler);
+- [ ] nenhuma pasta escorrida para fora do processador;
+- [ ] cabos longe das pás das ventoinhas;
+- [ ] memória e placa de vídeo encaixadas, caso tenham sido mexidas;
+- [ ] cabo de energia do processador (**EPS**, de 4+4 ou 8 pinos, perto do soquete) conectado.
+
+Esse último item é esquecido com frequência quando o cooler é grande e cobre a área do conector: muitas vezes é mais fácil conectar o cabo **antes** de instalar o cooler.
+
+## Quanto tempo leva
+
+Uma troca de pasta num desktop, com calma, leva de **20 a 40 minutos**, incluindo a limpeza e a conferência das temperaturas. A maior parte do tempo vai na limpeza e no cuidado com a fixação do cooler. Não é um procedimento para fazer com pressa, nem no meio de um prazo de trabalho: reserve um momento em que o PC possa ficar desligado sem problema.
+
+## Comparar antes e depois
+
+Para saber se a troca melhorou alguma coisa, vale **anotar as temperaturas antes** de desmontar:
+
+1. Com o PC ligado há uns 15 minutos em uso leve, anote a temperatura do processador em **repouso**.
+2. Rode por alguns minutos uma tarefa que use o processador de forma pesada e constante, como um jogo exigente, uma renderização ou a compressão de um arquivo grande, e anote a temperatura **sob carga**.
+3. Depois da troca, repita **as mesmas tarefas**, pelo mesmo tempo, com o ambiente em temperatura parecida.
+
+Se as temperaturas ficarem iguais ou menores, a troca deu certo. Se subirem, alguma coisa ficou errada: quantidade de pasta, bolhas, aperto desigual ou película esquecida.
+
+Uma observação: compare sempre com a **mesma tarefa** e o **mesmo tempo** de carga. Um jogo diferente, uma janela aberta ou um dia mais quente mudam a temperatura sem que a pasta tenha nada a ver com isso. Variações pequenas, de um ou dois graus, estão dentro do normal entre uma medição e outra.
+
+## Quando trocar a pasta térmica
+
+A pasta precisa ser trocada:
+
+- **sempre que o cooler for retirado**, porque a camada se rompe;
+- **ao trocar o processador ou o cooler**;
+- quando as temperaturas **sobem com o tempo** sem outro motivo aparente, depois de descartada a poeira.
+
+Fora isso, não é preciso trocar a pasta periodicamente se o PC está com temperaturas normais.
+
+## Temperatura ambiente e verão
+
+A temperatura do processador acompanha a **temperatura do ambiente**. No verão brasileiro, com o quarto a 30 °C ou mais, é normal o processador trabalhar alguns graus acima do que trabalhava no inverno, mesmo com tudo bem montado. Antes de concluir que a pasta está ruim, compare as temperaturas em condições parecidas.
+
+Algumas medidas ajudam nos dias quentes:
+
+- manter o gabinete **longe de paredes** e de cantos fechados, com espaço para a saída de ar;
+- não colocar o gabinete **dentro de armários** ou nichos sem ventilação;
+- evitar o **sol direto** sobre o gabinete;
+- manter os **filtros limpos**.
+
+## Como guardar a pasta que sobrou
+
+Uma seringa de 4 g rende várias aplicações num processador de desktop. Para guardar:
+
+- **feche bem a tampa** da seringa, para a pasta não ressecar;
+- guarde em local **fresco** e longe do sol;
+- antes de usar de novo, descarte a primeira pequena porção que sair, caso a ponta tenha ressecado.
+
+Se a pasta estiver **seca, endurecida ou separada**, com um líquido oleoso de um lado e pó do outro, compre uma nova: uma pasta degradada não preenche bem as imperfeições.
+
+## Erros comuns
+
+**Puxar o cooler sem aquecer nem girar.** É a forma clássica de arrancar o processador AM4 e entortar os pinos.
+
+**Esquecer a película plástica da base do cooler.** O processador superaquece em minutos.
+
+**Usar pasta demais.** Ela escorre para o soquete e piora a condução de calor.
+
+**Aplicar pasta sobre pasta.** Limpe a antiga antes de aplicar a nova.
+
+**Reposicionar o cooler várias vezes.** Forma bolhas de ar; posicione de uma vez.
+
+**Apertar um canto inteiro antes dos outros.** Aperte em X, aos poucos.
+
+**Esquecer de conectar a ventoinha no CPU_FAN.** Algumas placas não deixam o PC ligar sem a ventoinha conectada; outras ligam e o processador superaquece.
+
+**Usar álcool comum com água.** Prefira o isopropílico.
+
+## Resumo
+
+- A pasta preenche as **microimperfeições** entre processador e cooler; o objetivo é uma **camada fina, sem bolhas**.
+- Antes de retirar o cooler no **AM4**, **aqueça a pasta** usando o PC por alguns minutos e **gire o cooler** levemente antes de levantar.
+- Limpe a pasta antiga com **álcool isopropílico** e espere secar.
+- Retire a **película** da base do cooler.
+- Aplique um **ponto do tamanho de uma ervilha** no centro e deixe o cooler espalhar.
+- Fixe o cooler **em X**, aos poucos, e confira a **temperatura** na BIOS e no Windows.
+
+### Fontes
+
+- ARCTIC, página da pasta térmica MX-4: preenchimento de microimperfeições, aplicação sem bolsas de ar e composição não condutora.
+- Implastec, especificações da pasta TS-Cold conforme o anúncio.
+- AMD, [página de suporte do Ryzen 7 5700X](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-7-5700x.html): temperatura máxima de operação.
+- Fabricantes de coolers: manuais de instalação de cada modelo.

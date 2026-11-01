@@ -1,0 +1,330 @@
+---
+title: 'Wake on LAN no Home Assistant: ligue o PC sem levantar da cama'
+description: 'Configure o Wake on LAN no Home Assistant 2026.10: integração, botão, switch em YAML, ajustes na BIOS e no Windows e a Inicialização Rápida.'
+pubDate: 2026-11-08T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ['home-assistant', 'wake-on-lan', 'automacao', 'windows', 'rede', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Cabo de rede UGREEN Cat 6, 3 m'
+    brand: 'UGREEN'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B082TFDXB2?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2jwBYAc'
+    image: '/images/produtos/cabo-rede-ugreen-cat6-3m.webp'
+    pros:
+      - 'Cat 6 U/UTP, com conectores banhados a ouro, segundo a UGREEN'
+      - '3 metros: alcança roteador ou switch no mesmo cômodo'
+      - 'Wake on LAN funciona de forma muito mais confiável por cabo'
+    cons:
+      - 'Para distâncias maiores, é preciso um cabo mais longo'
+faq:
+  - question: 'Wake on LAN funciona pelo Wi-Fi?'
+    answer: 'Em geral, o Wake on LAN depende de uma conexão de rede por cabo. Algumas placas Wi-Fi suportam despertar o computador a partir do modo de suspensão, mas o suporte varia muito e costuma não funcionar com o computador desligado. Para um funcionamento previsível, ligue o PC ao roteador ou a um switch por cabo de rede.'
+  - question: 'O Wake on LAN liga o PC totalmente desligado?'
+    answer: 'Depende. Segundo a Microsoft, com o desligamento padrão do Windows 10 e 11, que usa a Inicialização Rápida, o despertar por Wake on LAN não é suportado, porque o Windows desarma a placa de rede. O Windows suporta o despertar a partir da suspensão e da hibernação solicitada pelo usuário. Algumas placas-mãe permitem armar a placa de rede para despertar do desligamento pela BIOS, independentemente do Windows.'
+  - question: 'O Home Assistant consegue desligar o PC?'
+    answer: 'Não de forma universal. A documentação do Home Assistant explica que não existe um jeito universal de desligar um computador remotamente. O switch do Wake on LAN tem a opção turn_off para executar uma ação definida por você, como um comando que suspende ou desliga o computador, e a documentação traz um exemplo para Linux usando SSH.'
+  - question: 'Qual a diferença entre o botão e o switch do Wake on LAN no Home Assistant?'
+    answer: 'O botão é criado pela interface e só envia o pacote mágico para ligar o computador; ele não sabe se o computador ligou. O switch é configurado em YAML, também liga o computador e pode mostrar se ele está ligado, usando o ping no endereço informado em host, e permite definir uma ação para desligar com turn_off.'
+  - question: 'Preciso abrir portas no roteador para usar o Wake on LAN?'
+    answer: 'Não, para uso pelo Home Assistant. O pacote mágico é enviado dentro da rede local pelo próprio Home Assistant. Para ligar o PC estando fora de casa, o caminho mais seguro é acessar o Home Assistant remotamente e pressionar o botão; o Home Assistant, que está na rede local, envia o pacote.'
+  - question: 'O Wake on LAN funciona com o Home Assistant em Docker?'
+    answer: 'Pode funcionar, mas o pacote de broadcast precisa chegar à rede física. Em Docker, isso costuma exigir que o contêiner use a rede do host; em máquinas virtuais, que a placa de rede virtual esteja em modo bridge. Se o botão não funcionar só nesses cenários, revise a configuração de rede do contêiner ou da máquina virtual.'
+  - question: 'Onde encontro o endereço MAC do meu PC?'
+    answer: 'No Windows, abra o Prompt de Comando e digite ipconfig /all. Na seção da placa de rede com fio (Ethernet), o campo Endereço Físico é o MAC, no formato 00-11-22-33-44-55. No Home Assistant, ele é informado com dois-pontos, como 00:11:22:33:44:55.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Ligar o computador do escritório antes de chegar em casa, acordar o PC da sala para assistir a um filme de um servidor de mídia, ou simplesmente ligar o PC do quarto pelo celular sem levantar da cama: é isso que o **Wake on LAN** permite. Ele envia um pacote especial pela rede, o **pacote mágico**, que faz a placa de rede do computador acordá-lo.
+
+O **Home Assistant** tem uma integração oficial de Wake on LAN, configurada pela interface em poucos minutos. A parte que mais dá trabalho, na prática, não é o Home Assistant, e sim o **computador**: BIOS, placa de rede e um comportamento do Windows que pega muita gente de surpresa. Este tutorial cobre as três partes.
+
+> **Fontes e versão:** a configuração no Home Assistant segue a **documentação oficial da integração Wake on LAN**, com referência ao **Home Assistant 2026.10** (2026.10.4, a versão mais recente no repositório oficial na data de consulta); o comportamento do Windows segue o artigo da Microsoft **"Wake on LAN behavior"**. Consultas em **31/10/2026**. Os exemplos de YAML são os da documentação oficial. O post não se baseia em teste próprio. Links no fim.
+
+## Como o Wake on LAN funciona
+
+Quando o computador está em suspensão ou, em alguns casos, desligado, a placa de rede pode continuar recebendo uma pequena quantidade de energia e "escutando" a rede. Ao receber o **pacote mágico** com o seu próprio endereço **MAC** repetido, ela acorda o computador.
+
+Para isso funcionar, três coisas precisam estar certas:
+
+1. **o computador**: BIOS e placa de rede configuradas para aceitar o despertar;
+2. **o sistema operacional**: o Windows precisa deixar a placa de rede "armada" para despertar;
+3. **quem envia o pacote**: no nosso caso, o Home Assistant, na **mesma rede local** do computador.
+
+## O que você vai precisar
+
+- um **Home Assistant** funcionando na mesma rede do computador;
+- o computador ligado ao roteador ou a um switch **por cabo de rede**;
+- o **endereço MAC** da placa de rede com fio do computador;
+- acesso à **BIOS** do computador e permissão de administrador no Windows.
+
+**Por que cabo?** O Wake on LAN foi pensado para redes com fio, e o despertar pelo Wi-Fi é muito menos confiável: depende de suporte específico da placa Wi-Fi e costuma não funcionar com o computador desligado.
+
+![Cabo de rede UGREEN Cat 6 de 3 metros, cinza, com conectores RJ45](/images/produtos/cabo-rede-ugreen-cat6-3m.webp)
+
+Se o computador ainda não está no cabo, um **cabo de rede Cat 6** resolve. O da **UGREEN**, de **3 metros**, é **Cat 6 U/UTP** com conectores **banhados a ouro**, segundo o fabricante, e atende a distância comum entre o PC e o roteador ou um switch no mesmo cômodo. Para distâncias maiores, existem versões mais longas.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B082TFDXB2?tag=nerdcaseiro-20" store="amazon" source="wake-on-lan-home-assistant-ligar-pc" />
+<AffiliateButton href="https://meli.la/2jwBYAc" store="mercadolivre" source="wake-on-lan-home-assistant-ligar-pc" />
+
+## Passo 1: descubra o endereço MAC
+
+No computador com Windows:
+
+1. Abra o **Prompt de Comando** (digite "cmd" no menu Iniciar).
+2. Digite `ipconfig /all` e pressione Enter.
+3. Procure a seção do adaptador **Ethernet** (a placa de rede com fio) e anote o **Endereço Físico**, no formato `00-11-22-33-44-55`.
+4. Anote também o **Endereço IPv4**, que será útil para o switch.
+
+No Home Assistant, o MAC é escrito com **dois-pontos**: `00:11:22:33:44:55`.
+
+**Dica:** configure no roteador uma **reserva de IP** (DHCP estático) para o computador. Assim, o IP não muda e o Home Assistant consegue sempre verificar se ele está ligado.
+
+## Passo 2: ative o Wake on LAN na BIOS
+
+O nome e o local da opção variam muito entre fabricantes de placas-mãe. Os nomes mais comuns são **Wake on LAN**, **Power On By PCI-E**, **Resume by LAN** ou algo parecido, geralmente num menu de **gerenciamento de energia** (Power Management) ou de **APM**.
+
+1. Entre na BIOS (geralmente **Delete** ou **F2** na inicialização).
+2. Procure a opção de Wake on LAN ou de ligar pelo PCI-E e **ative**.
+3. Algumas placas têm uma opção chamada **ErP** ou **EuP**, de economia de energia no desligamento. Com ela **ativada**, a placa corta a energia da placa de rede quando o PC está desligado, e o Wake on LAN não funciona a partir do desligamento. O manual da placa explica o efeito no seu modelo.
+4. Salve e saia (geralmente **F10**).
+
+O **manual da placa-mãe** é a referência para o nome exato e para o comportamento de cada opção.
+
+## Passo 3: configure a placa de rede no Windows
+
+1. Clique com o botão direito no menu Iniciar e abra o **Gerenciador de Dispositivos**.
+2. Expanda **Adaptadores de rede** e abra as **propriedades** da placa de rede **com fio** (Ethernet).
+3. Na aba **Gerenciamento de Energia**, marque:
+   - **Permitir que este dispositivo acorde o computador**;
+   - **Permitir que apenas um pacote mágico acorde o computador**, opção recomendada para evitar que qualquer tráfego de rede acorde o PC.
+4. Na aba **Avançado**, procure opções como **Wake on Magic Packet** e **Wake on pattern match** e confira se a do pacote mágico está **ativada**. Os nomes dependem do fabricante da placa de rede.
+5. Clique em **OK**.
+
+Se a aba Gerenciamento de Energia não aparecer, instale o **driver mais recente da placa de rede**, do site do fabricante da placa-mãe ou do chip de rede.
+
+## Passo 4: entenda o que o Windows faz no desligamento
+
+Este é o ponto que mais causa a impressão de que "o Wake on LAN não funciona". Segundo a Microsoft:
+
+- no Windows 10 e 11, o **desligamento padrão** usa o **desligamento híbrido**, também chamado de **Inicialização Rápida**;
+- nesse modo, o despertar por Wake on LAN a partir do desligamento **não é suportado**: o Windows **desarma** a placa de rede, porque o usuário espera consumo zero no estado desligado;
+- o Wake on LAN é suportado a partir da **suspensão** e quando o usuário pede explicitamente a **hibernação**;
+- a Microsoft observa que, em alguns sistemas, o **firmware e o hardware** podem armar a placa de rede para despertar do desligamento, mesmo sem participação do Windows.
+
+**Na prática, você tem três caminhos:**
+
+1. **Usar a suspensão** em vez de desligar: é o caminho suportado pela Microsoft e o mais confiável.
+2. **Usar a hibernação** pedida explicitamente.
+3. **Desativar a Inicialização Rápida**, se você precisa ligar o PC a partir do desligamento e a sua placa-mãe suporta isso pela BIOS. O caminho, segundo a Microsoft, é: **Painel de Controle > Opções de Energia > Escolher a função dos botões de energia** e desmarcar **Ligar inicialização rápida**. A própria Microsoft **não recomenda** desativar o recurso, que acelera a inicialização; a decisão é sua.
+
+## Passo 5: adicione a integração no Home Assistant
+
+Segundo a documentação oficial, a integração **Wake on LAN** é configurada pela interface:
+
+1. Vá em **Configurações > Dispositivos e serviços**.
+2. Clique em **Adicionar integração** e procure **Wake on LAN**.
+3. Preencha os campos:
+   - **Mac address**: o endereço MAC do computador, como `00:01:02:03:04:05`;
+   - **SecureOn password**: opcional; uma senha anexada ao pacote mágico, usada apenas se a sua placa de rede tiver esse recurso configurado;
+   - **Broadcast address**: o endereço para onde o pacote será enviado;
+   - **Broadcast port**: a porta de envio.
+4. Conclua.
+
+A integração cria um **botão**. Segundo a documentação, o botão **só liga o computador**: ele envia o pacote mágico para o MAC configurado e, por ser um botão, **não tem estado**, ou seja, não consegue saber se o computador recebeu o comando e ligou.
+
+**Sobre a porta:** a documentação orienta a **não mudar a porta** de broadcast a menos que o seu dispositivo esteja configurado para escutar em outra. A porta usada nos exemplos oficiais é a **9**.
+
+## Passo 6: teste
+
+1. Coloque o computador em **suspensão** (menu Iniciar > Energia > Suspender).
+2. Espere alguns segundos.
+3. No Home Assistant, pressione o **botão** do Wake on LAN.
+4. O computador deve acordar.
+
+Se funcionar com a suspensão, a configuração está correta. Teste depois com o desligamento, se você seguiu o caminho 3 do passo 4.
+
+## Opcional: o switch com estado (YAML)
+
+Se você quer ver no Home Assistant se o PC está **ligado ou desligado**, a documentação oferece um **switch** configurado em YAML. Ele exige que o binário **ping** esteja disponível no sistema do Home Assistant. O exemplo mínimo da documentação é:
+
+```yaml
+# Example configuration.yaml entry
+switch:
+  - platform: wake_on_lan
+    mac: MAC_ADDRESS
+```
+
+As opções documentadas são:
+
+| Opção | Obrigatória | O que faz |
+|---|---|---|
+| `mac` | sim | endereço MAC do computador |
+| `name` | não | nome do switch; padrão "Wake on LAN" |
+| `host` | não | IP ou nome do computador, usado para verificar se está ligado |
+| `turn_off` | não | ação executada ao desligar o switch |
+| `broadcast_address` | não | endereço do envio; padrão 255.255.255.255 |
+| `broadcast_port` | não | porta do envio |
+
+Sem o `host`, segundo a documentação, o estado do switch é **presumido** pela última ação. Com o `host`, o Home Assistant usa o ping para saber se o computador responde.
+
+**Sobre desligar:** a documentação é clara: **não existe um jeito universal** de desligar um computador remotamente. A opção `turn_off` existe para você chamar um script quando tiver um método próprio. O exemplo oficial mostra um computador **Linux** suspenso por **SSH**:
+
+```yaml
+switch:
+  - platform: wake_on_lan
+    name: "TARGET"
+    mac: XX:XX:XX:XX:XX:XX
+    turn_off:
+      action: shell_command.turn_off_TARGET
+
+shell_command:
+  turn_off_TARGET: "ssh hass@TARGET sudo pm-suspend"
+```
+
+Esse exemplo depende de chaves SSH e de permissões configuradas no computador de destino, como a documentação descreve passo a passo. Para computadores com Windows, desligar remotamente exige outras ferramentas, fora do escopo da integração.
+
+## Opcional: um botão auxiliar com automação
+
+A documentação observa que o switch aparece com as ações de ligar e desligar, o que pode confundir se você não usa o desligamento. A alternativa sugerida é um **botão auxiliar** com uma **automação**:
+
+1. Em **Configurações > Dispositivos e serviços > Auxiliares**, crie um auxiliar do tipo **Botão**, por exemplo "Wake PC".
+2. Crie uma automação com gatilho de **Estado** nesse botão. O gatilho, em YAML, fica assim, segundo a documentação:
+
+```yaml
+trigger: state
+entity_id:
+  - input_button.wake_pc
+```
+
+3. Como ação, escolha **Wake on LAN: Send magic packet** e informe o MAC. A ação, em YAML, fica assim:
+
+```yaml
+action: wake_on_lan.send_magic_packet
+data:
+  broadcast_port: 9
+  mac: 00:11:22:33:44:55
+```
+
+4. Salve. Ao pressionar o botão auxiliar, o Home Assistant envia o pacote mágico.
+
+Para usar **só a ação** de enviar o pacote mágico, sem botão nem switch, a documentação indica adicionar ao `configuration.yaml`:
+
+```yaml
+# Example configuration.yaml entry
+wake_on_lan:
+```
+
+## Suspensão: quanto o PC gasta parado
+
+Como a Microsoft documenta o Wake on LAN a partir da **suspensão**, muita gente passa a deixar o PC suspenso em vez de desligado. Vale entender o que isso significa:
+
+- na **suspensão**, o Windows mantém o conteúdo da memória energizado e desliga a maior parte dos componentes. O consumo é **baixo**, mas não zero;
+- ao acordar, o PC volta **exatamente onde estava**, com programas e janelas abertos, em poucos segundos;
+- uma **queda de energia** durante a suspensão faz o conteúdo da memória se perder, como num desligamento abrupto. Salve os trabalhos antes de suspender.
+
+Para quem quer consumo mínimo e ainda assim ligar pela rede, a **hibernação** solicitada pelo usuário é uma alternativa suportada pela Microsoft: o conteúdo da memória vai para o disco, e o PC fica praticamente desligado. A hibernação pode precisar ser habilitada nas opções de energia do Windows para aparecer no menu.
+
+## Notebooks, docks e adaptadores USB
+
+Notebooks sem porta de rede costumam usar **adaptadores USB para Ethernet** ou **docks USB-C**. Nesses casos:
+
+- o suporte a Wake on LAN depende do **chip do adaptador** e do **driver**: alguns suportam despertar da suspensão, outros não;
+- o **MAC** a usar é o do **adaptador**, e ele muda se você trocar de adaptador ou dock;
+- o notebook precisa estar **ligado na tomada**, e algumas configurações de energia do fabricante desligam as portas USB na suspensão.
+
+Para quem quer ligar o PC pela rede com frequência, um **desktop com porta de rede integrada** é o cenário mais previsível.
+
+## Painel e atalhos no celular
+
+O botão do Wake on LAN, ou o botão auxiliar, pode ser colocado num **painel** do Home Assistant, como um cartão de botão. No aplicativo do Home Assistant no celular, esse painel vira um controle remoto do PC. Também é possível colocar o botão na tela inicial do celular, pelos atalhos e widgets do aplicativo, conforme o sistema do celular.
+
+Combinado com o switch em YAML e o `host`, o mesmo painel mostra se o PC está ligado, o que ajuda a saber se o comando funcionou.
+
+## Ideias de automação
+
+Com a ação de enviar o pacote mágico disponível, dá para combinar com outros gatilhos do Home Assistant:
+
+- **ligar o PC do escritório** quando você chega em casa, usando a presença do celular;
+- **ligar o PC em um horário** nos dias de trabalho, para ele estar pronto quando você sentar;
+- **ligar o PC por comando de voz**, se você usa assistentes integrados ao Home Assistant;
+- **um botão no painel** do Home Assistant no celular, para ligar o PC de qualquer cômodo.
+
+## E de fora de casa?
+
+O pacote mágico funciona na **rede local**. Para ligar o PC estando fora de casa, o caminho mais seguro é acessar o **próprio Home Assistant** remotamente e apertar o botão lá: o Home Assistant, que está dentro da rede, envia o pacote. Abrir portas do roteador para enviar pacotes mágicos pela internet não é necessário e aumenta a exposição da rede. As formas seguras de acessar o Home Assistant fora de casa estão no guia de [acesso remoto ao Home Assistant sem abrir porta](/posts/acesso-remoto-home-assistant-sem-abrir-porta/).
+
+## Home Assistant em Docker ou máquina virtual
+
+Se o Home Assistant roda em **Docker** ou numa **máquina virtual**, o pacote de broadcast precisa chegar à rede física. Em Docker, isso costuma exigir que o contêiner use a **rede do host**; em máquinas virtuais, que a placa de rede virtual esteja em **modo bridge**. Se o botão não funcionar só nesses cenários, a configuração de rede do contêiner ou da máquina virtual é a principal suspeita.
+
+## Segurança: o que o pacote mágico permite
+
+O pacote mágico **só liga** o computador; ele não dá acesso aos arquivos nem ao sistema. Mesmo assim, algumas boas práticas valem:
+
+- mantenha o envio do pacote **dentro da rede local**, pelo Home Assistant, em vez de expor o recurso à internet;
+- o **SecureOn**, campo opcional da integração, anexa uma senha ao pacote mágico. Ele só funciona se a **placa de rede** suportar e estiver configurada com a mesma senha; a maioria das placas de rede domésticas não usa esse recurso;
+- mantenha o PC com **senha de entrada** no Windows: ligar o computador remotamente não deve significar deixá-lo aberto para quem estiver perto.
+
+## Como saber se o pacote está chegando
+
+Se nada funciona e você quer separar o problema em partes:
+
+1. Confira no **histórico** do Home Assistant se o botão foi pressionado e se a automação, quando usada, foi executada.
+2. Confira se o Home Assistant e o PC estão na **mesma rede** e na mesma faixa de endereços, por exemplo 192.168.1.x. Redes de convidados e redes separadas por VLAN costumam bloquear broadcast.
+3. Teste com o PC em **suspensão**, o cenário suportado pela Microsoft, antes de testar a partir do desligamento.
+4. Confira de novo o **MAC** da placa com fio.
+
+Se o PC acorda da suspensão com o botão do Home Assistant, a parte do Home Assistant está funcionando, e qualquer problema restante está na BIOS, na placa de rede ou no modo de desligamento do Windows.
+
+## Problemas comuns
+
+**O PC não acorda da suspensão.** Confira as opções da placa de rede no Gerenciador de Dispositivos e se o MAC está certo, da placa **com fio**.
+
+**Acorda da suspensão, mas não do desligamento.** É o comportamento descrito pela Microsoft com a Inicialização Rápida. Use a suspensão ou, se a placa-mãe suportar, desative a Inicialização Rápida e confira a opção ErP na BIOS.
+
+**Funcionava e parou.** Atualizações de driver ou da BIOS podem restaurar as opções. Confira de novo os passos 2 e 3.
+
+**O PC acorda sozinho.** Marque **Permitir que apenas um pacote mágico acorde o computador** na placa de rede.
+
+**O switch mostra o estado errado.** Confira o `host`: o IP precisa ser o do computador, de preferência com reserva de IP no roteador, e o computador precisa responder ao ping, o que pode exigir liberar o ping no firewall do Windows.
+
+## Erros comuns
+
+**Usar o MAC da placa Wi-Fi.** Use o da placa com fio.
+
+**Esperar que funcione a partir do desligamento padrão do Windows.** A Microsoft documenta que não é suportado com a Inicialização Rápida.
+
+**Esquecer a opção da BIOS.** Sem ela, a placa de rede não fica alimentada.
+
+**Mudar a porta sem necessidade.** A documentação recomenda manter a padrão.
+
+**Abrir portas do roteador para usar de fora.** Acesse o Home Assistant remotamente, com segurança, e envie o pacote de dentro da rede.
+
+**Não reservar o IP do PC no roteador.** O switch com `host` deixa de mostrar o estado certo quando o IP muda.
+
+## Resumo
+
+- Ligue o PC ao roteador **por cabo** e anote o **MAC** da placa com fio (`ipconfig /all`).
+- Ative o **Wake on LAN** na **BIOS** e confira a opção **ErP**.
+- No **Gerenciador de Dispositivos**, permita que a placa de rede acorde o computador, **apenas por pacote mágico**.
+- Segundo a Microsoft, o Wake on LAN funciona a partir da **suspensão** e da **hibernação**; com a **Inicialização Rápida**, não funciona a partir do desligamento.
+- No Home Assistant 2026.10, adicione a integração **Wake on LAN** pela interface: ela cria um **botão** que liga o PC.
+- Para estado, use o **switch em YAML** com `host`; para desligar, `turn_off` com um método seu.
+- Para usar de fora de casa, acesse o **Home Assistant remotamente**; não é preciso abrir portas do roteador.
+- Em **Docker** ou **máquina virtual**, confira se o broadcast chega à rede física.
+- Teste primeiro com a **suspensão**: se funcionar, o Home Assistant está certo e o restante é BIOS, placa de rede ou Windows.
+
+### Fontes
+
+- Home Assistant, [documentação da integração Wake on LAN](https://www.home-assistant.io/integrations/wake_on_lan/): configuração pela interface, botão, switch, ação e exemplos.
+- Home Assistant, release **2026.10.4** no repositório oficial github.com/home-assistant/core.
+- Microsoft, [Wake on LAN behavior](https://learn.microsoft.com/en-us/troubleshoot/windows-client/setup-upgrade-and-drivers/wake-on-lan-feature): suspensão, hibernação e Inicialização Rápida.
+- UGREEN, especificações do cabo Cat 6 conforme o anúncio.

@@ -1,0 +1,312 @@
+---
+title: 'Windows 11 do zero: instalação limpa com pendrive, passo a passo'
+description: 'Como criar o pendrive de instalação do Windows 11 com a ferramenta oficial da Microsoft, iniciar pelo USB e fazer a instalação limpa sem perder a ativação.'
+pubDate: 2026-11-03T18:00:00-03:00
+category: 'home-office'
+tags: ['windows-11', 'instalacao-limpa', 'pendrive-bootavel', 'formatar-pc', 'tutorial', 'upgrade']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Pendrive SanDisk Ultra Shift 32 GB, USB 3.0'
+    brand: 'SanDisk'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08K7PBBDC?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2eh5yzM'
+    image: '/images/produtos/sandisk-ultra-shift-32gb.webp'
+    pros:
+      - '32 GB: acima dos 8 GB mínimos que a Microsoft pede'
+      - 'USB 3.0, até 100 MB/s de leitura, segundo a SanDisk'
+      - 'Mais de 4.600 avaliações na Amazon, nota 4,7'
+    cons:
+      - 'Todo o conteúdo do pendrive é apagado na criação da mídia'
+faq:
+  - question: 'De que tamanho de pendrive preciso para instalar o Windows 11?'
+    answer: 'A Microsoft pede um pendrive em branco com pelo menos 8 GB. Todo o conteúdo do pendrive é apagado quando a ferramenta cria a mídia de instalação, por isso use um pendrive sem arquivos importantes ou faça backup antes.'
+  - question: 'Vou perder a ativação do Windows na instalação limpa?'
+    answer: 'Em um computador que já tinha o Windows ativado, a ativação costuma voltar sozinha depois da instalação limpa, porque fica vinculada ao hardware do computador e, muitas vezes, à conta Microsoft. Durante a instalação, quando o programa pedir a chave do produto, escolha a opção de que não tem a chave e instale a mesma edição que estava no computador, Home ou Pro.'
+  - question: 'O Windows 11 exige conta Microsoft e internet?'
+    answer: 'Segundo a Microsoft, as edições Home e Pro para uso pessoal exigem conectividade com a internet e uma conta Microsoft durante a configuração inicial do dispositivo. Tenha a senha da conta e a conexão Wi-Fi ou cabo de rede à mão antes de começar.'
+  - question: 'Posso instalar o Windows 11 em um PC antigo?'
+    answer: 'A Microsoft exige, entre outros itens, processador compatível com 2 ou mais núcleos, 4 GB de memória, 64 GB de armazenamento, firmware UEFI com inicialização segura e TPM 2.0. Instalar em hardware que não atende os requisitos não é recomendado pela Microsoft e pode causar problemas de compatibilidade e de atualizações. O aplicativo Verificação de Integridade do PC informa se o computador atende os requisitos.'
+  - question: 'Posso usar o mesmo pendrive em outros computadores?'
+    answer: 'Sim. A mídia criada pela Ferramenta de Criação de Mídia serve para instalar o Windows 11 em outros computadores compatíveis, desde que cada um tenha a sua própria licença. Como a ferramenta baixa a versão mais recente no momento da criação, refazer o pendrive de tempos em tempos reduz a quantidade de atualizações depois da instalação.'
+  - question: 'A instalação limpa apaga tudo?'
+    answer: 'Sim, se você apagar as partições do disco durante a instalação, como recomendado para uma instalação limpa. Programas, arquivos e configurações do disco onde o Windows for instalado são removidos. Faça backup de documentos, fotos, senhas e arquivos de jogos salvos antes de começar.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Uma **instalação limpa** do Windows é o equivalente a deixar o computador como novo: o sistema é instalado do zero, sem programas acumulados, sem restos de instalações antigas e sem os problemas que se somam com os anos. É o caminho indicado quando o PC está lento e instável, quando você troca o disco por um SSD novo e prefere começar do zero, ou quando monta um computador novo.
+
+O processo é mais simples do que parece e usa só ferramentas oficiais da Microsoft: um **pendrive**, a **Ferramenta de Criação de Mídia** e alguns ajustes na inicialização do computador. Este tutorial mostra o caminho completo, do backup à primeira tela do Windows.
+
+> **Fontes e versão:** os passos seguem a página oficial de download do **Windows 11** da Microsoft, com as instruções da **Ferramenta de Criação de Mídia**, e a página de **requisitos do sistema do Windows 11**, consultadas em **31/10/2026**. Nomes de telas podem variar levemente entre versões do instalador; as páginas da Microsoft são a referência. O post não se baseia em teste próprio. Links no fim.
+
+## Quando a instalação limpa vale a pena
+
+Nem todo computador lento precisa de uma instalação limpa. Ela faz mais sentido quando:
+
+- o sistema está **instável**, com travamentos, telas azuis ou erros que não somem com atualizações;
+- o computador acumulou **anos de programas**, extensões e restos de instalações;
+- você **trocou o disco** por um SSD novo e prefere começar do zero, em vez de clonar o disco antigo. Para quem prefere manter tudo como está, o caminho é a clonagem, mostrada no tutorial de [instalar um SSD NVMe e clonar o sistema](/posts/instalar-ssd-nvme-pc-clonar-sistema/);
+- você vai **vender ou doar** o computador e quer entregar um sistema limpo;
+- o computador foi **montado agora** e ainda não tem sistema.
+
+Se o problema for só lentidão, vale antes revisar os programas que iniciam com o Windows, desinstalar o que não usa e conferir o espaço livre no disco. Às vezes isso resolve sem formatar nada.
+
+## Licença: onde ela fica
+
+Uma dúvida comum é se a instalação limpa "perde a licença". Na maioria dos computadores vendidos com Windows, não perde:
+
+- **Licença digital**: a ativação fica registrada nos servidores da Microsoft, vinculada ao hardware do computador e, quando você usa conta Microsoft, à sua conta. Depois da reinstalação, o Windows reconhece o computador e ativa sozinho.
+- **Notebooks e desktops de marca**: muitos têm a chave do Windows **gravada no firmware** da placa-mãe. O instalador lê essa chave automaticamente.
+- **Chave comprada separadamente**: guarde a chave antes de formatar. Ela fica no e-mail de compra ou na caixa do produto.
+
+Antes de começar, confira em **Configurações > Sistema > Ativação** se o Windows está ativado e com qual tipo de licença. Se estiver tudo certo ali, a reativação depois da instalação tende a ser automática.
+
+## Antes de começar: o que você vai precisar
+
+Segundo a Microsoft, para criar a mídia de instalação:
+
+- **conexão com a internet** (podem ser aplicadas taxas do provedor);
+- **um pendrive em branco com pelo menos 8 GB**: todo o conteúdo dele será apagado;
+- **espaço livre** no computador para o download;
+- **permissão de administrador** para rodar a ferramenta;
+- uma **licença do Windows 11** ou um computador com Windows 10 qualificado para a atualização.
+
+Além disso, para a instalação em si:
+
+- **backup** de tudo o que importa;
+- **a senha da sua conta Microsoft**: as edições Home e Pro para uso pessoal exigem conta Microsoft e internet na configuração inicial, segundo a Microsoft;
+- **drivers de rede** à mão, se o computador for muito novo ou usar uma placa de rede incomum (veja a seção de problemas).
+
+## O pendrive
+
+![Pendrive SanDisk Ultra Shift de 32 GB, USB 3.0](/images/produtos/sandisk-ultra-shift-32gb.webp)
+
+Qualquer pendrive com **8 GB ou mais** serve, mas um pendrive **USB 3.0** deixa a criação da mídia e a instalação mais rápidas. O **SanDisk Ultra Shift de 32 GB** é USB 3.0, com leitura de até **100 MB/s** segundo a SanDisk, e tem mais de **4.600 avaliações** na Amazon, com nota **4,7**. Depois da instalação, o pendrive pode continuar guardado como **mídia de recuperação**: ter um pendrive de instalação pronto economiza tempo numa emergência.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08K7PBBDC?tag=nerdcaseiro-20" store="amazon" source="windows-11-instalacao-limpa-pendrive" />
+<AffiliateButton href="https://meli.la/2eh5yzM" store="mercadolivre" source="windows-11-instalacao-limpa-pendrive" />
+
+## Passo 1: confira os requisitos
+
+A Microsoft lista os requisitos mínimos do Windows 11:
+
+| Item | Requisito mínimo |
+|---|---|
+| Processador | 1 GHz ou mais, com 2 ou mais núcleos, em processador compatível |
+| Memória | 4 GB |
+| Armazenamento | 64 GB ou mais |
+| Firmware | UEFI, compatível com Inicialização Segura |
+| TPM | versão 2.0 |
+| Placa de vídeo | DirectX 12 ou posterior, com driver WDDM 2.0 |
+| Tela | alta definição (720p), maior que 9 polegadas |
+
+Se o computador já roda o Windows 11, ele atende os requisitos. Se roda o Windows 10, o aplicativo **Verificação de Integridade do PC**, da Microsoft, informa se o computador pode receber o Windows 11. A Microsoft não recomenda instalar em hardware que não atende os requisitos, porque isso pode resultar em problemas de compatibilidade.
+
+**TPM e Inicialização Segura:** em muitos PCs montados, o TPM vem **desativado** na BIOS, com nomes como **fTPM** (em placas AMD) ou **PTT** (em placas Intel). Se a verificação acusar falta de TPM, procure essa opção na BIOS antes de concluir que o computador não é compatível.
+
+## Passo 2: faça o backup
+
+A instalação limpa **apaga o disco** onde o Windows será instalado. Antes de qualquer coisa, copie para um disco externo ou para a nuvem:
+
+- **Documentos, fotos, vídeos e músicas**: as pastas do usuário, em C:\Usuários\SeuNome;
+- **Área de trabalho e Downloads**: muita gente esquece;
+- **Favoritos e senhas do navegador**: o mais simples é sincronizar com a conta do navegador;
+- **Jogos salvos** que não estão na nuvem;
+- **Chaves de licença** de programas pagos;
+- **Arquivos de configuração** de programas que você usa no trabalho.
+
+Uma dica: anote a lista de **programas instalados** (em Configurações > Aplicativos > Aplicativos instalados). Depois da instalação, você vai precisar reinstalar só o que realmente usa.
+
+## A criptografia do dispositivo e o BitLocker
+
+Muitos computadores com Windows 11 vêm com a **criptografia do dispositivo** ou o **BitLocker** ativados. Isso protege os dados se o computador for roubado, mas exige um cuidado antes da instalação limpa: os arquivos do backup precisam ter sido copiados **com o Windows aberto**, já descriptografados. Depois de apagar as partições, não há o que recuperar do disco antigo.
+
+Se você tiver **mais de um disco** e algum deles estiver criptografado com BitLocker e for continuar sendo usado depois da reinstalação, guarde a **chave de recuperação** do BitLocker. Ela fica na conta Microsoft, na área de dispositivos, ou num arquivo que você salvou quando ativou o recurso. Sem a chave, o disco criptografado pode ficar inacessível no sistema novo.
+
+## Passo 3: crie o pendrive com a Ferramenta de Criação de Mídia
+
+Num computador com Windows e acesso à internet, que pode ser o próprio PC ou outro:
+
+1. Acesse a **página de download do Windows 11** no site da Microsoft.
+2. Na seção **Criar mídia de instalação do Windows 11**, baixe a **Ferramenta de Criação de Mídia**.
+3. Conecte o **pendrive**.
+4. Execute a ferramenta **como administrador** e **aceite os termos de licença**.
+5. Na tela **O que você quer fazer?**, escolha **Criar mídia de instalação para outro PC**.
+6. Selecione o **idioma**, a **edição** e a **arquitetura de 64 bits**. O idioma deve ser o mesmo que você vai usar no computador.
+7. Escolha **Unidade flash USB**.
+8. Selecione o **pendrive** na lista. Confira com atenção: **todo o conteúdo do pendrive será excluído**, segundo a própria Microsoft.
+9. Aguarde o download e a criação da mídia. Pode levar um tempo, conforme a internet.
+
+**Baixe a ferramenta só do site da Microsoft.** Imagens do Windows baixadas de outros sites podem estar alteradas.
+
+## Passo 4: inicie o computador pelo pendrive
+
+Com o pendrive pronto, conecte-o no computador onde o Windows será instalado e reinicie. É preciso fazer o computador **iniciar pelo pendrive**, e não pelo disco.
+
+**Pelo menu de inicialização:** logo que o computador ligar, pressione a tecla do **menu de inicialização**. Segundo a Microsoft, as mais comuns são **F2, F12, Delete ou Esc**; a tecla certa aparece na tela de abertura ou no manual. No menu, escolha o pendrive, que pode aparecer com o nome do fabricante, como SanDisk, ou como **UEFI: USB**.
+
+**Pela BIOS:** se o menu não aparecer, entre na BIOS e coloque o pendrive em primeiro lugar na ordem de inicialização (**Boot Order**). Salve e saia.
+
+**Se o pendrive não aparecer como opção**, a Microsoft indica que pode ser necessário **desativar temporariamente a Inicialização Segura** na BIOS, conforme as instruções do fabricante do computador. Na maioria dos computadores atuais, isso não é necessário com a mídia oficial. Se precisar desativar, **reative depois** da instalação.
+
+## Passo 5: o instalador
+
+O computador vai carregar o instalador do Windows a partir do pendrive.
+
+1. Na primeira tela, confira **idioma**, **formato de hora e moeda** e **teclado**. Para teclados brasileiros com Ç, escolha **Português (Brasil ABNT2)**.
+2. Avance e escolha **Instalar o Windows**.
+3. **Chave do produto:** se o computador já tinha o Windows ativado, escolha a opção de que **não tem a chave do produto**. A ativação costuma voltar automaticamente depois, quando o computador se conecta à internet.
+4. **Edição:** escolha a **mesma edição** que estava no computador, **Home** ou **Pro**. Instalar uma edição diferente da licença faz a ativação falhar.
+5. **Aceite os termos de licença**.
+
+## Passo 6: escolha o disco e apague as partições
+
+Esta é a etapa que exige mais atenção. O instalador mostra a lista de discos e partições.
+
+**Para uma instalação limpa no disco do sistema:**
+
+1. Identifique o **disco certo** pelo tamanho. Se houver mais de um disco no computador, como um SSD e um HD de dados, cuidado para não apagar o disco de dados.
+2. **Exclua as partições do disco onde o Windows será instalado**, uma por uma, até restar apenas **Espaço não alocado** nesse disco.
+3. Selecione o **Espaço não alocado** e avance. O instalador cria as partições necessárias sozinho.
+
+**Atenção:** excluir partições **apaga os dados** delas. Por isso o backup do passo 2 é obrigatório. Se houver um segundo disco com arquivos, **não mexa nas partições dele**.
+
+**Uma precaução extra:** se possível, **desconecte fisicamente** os discos de dados durante a instalação, deixando conectado só o disco onde o Windows vai ficar. Assim, não há risco de apagar o disco errado.
+
+## O que o instalador cria no disco
+
+Ao instalar no **espaço não alocado**, o instalador do Windows cria sozinho algumas partições pequenas, além da partição principal:
+
+- **partição do sistema EFI**: guarda os arquivos de inicialização usados pelo firmware UEFI;
+- **partição reservada da Microsoft (MSR)**: usada internamente pelo sistema;
+- **partição principal (C:)**: onde fica o Windows, os programas e os arquivos;
+- **partição de recuperação**: guarda o ambiente de recuperação do Windows.
+
+Essas partições aparecem depois no **Gerenciamento de Disco**. **Não apague** as partições EFI e de recuperação: sem elas, o computador pode não iniciar ou perder as ferramentas de recuperação.
+
+## Quanto tempo leva
+
+O tempo total depende do computador, do pendrive e da internet:
+
+- **criar o pendrive**: depende principalmente do download, que tem alguns gigabytes;
+- **instalação**: em computadores com SSD e pendrive USB 3.0, costuma ser bem mais rápida que em computadores com HD e pendrive USB 2.0;
+- **atualizações e drivers**: o Windows Update logo depois da instalação pode levar mais tempo que a própria instalação, porque o sistema baixa todas as atualizações publicadas desde a versão que está no pendrive.
+
+Reserve uma tarde, principalmente se for reinstalar muitos programas.
+
+## Passo 7: a instalação
+
+O instalador copia os arquivos e **reinicia o computador algumas vezes**. É normal.
+
+**Na primeira reinicialização, retire o pendrive** ou, se o computador voltar a iniciar pelo pendrive, ajuste a ordem de inicialização. A Microsoft observa que, se a tela de instalação aparecer de novo depois de concluída a instalação, é preciso reverter a mudança na ordem de inicialização para que o computador inicie pelo disco interno.
+
+## Passo 8: a configuração inicial
+
+Depois da instalação, o Windows abre a configuração inicial:
+
+1. **Região** e **layout do teclado**.
+2. **Rede**: conecte ao Wi-Fi ou ao cabo de rede. As edições Home e Pro para uso pessoal exigem internet e conta Microsoft nessa etapa.
+3. **Conta Microsoft**: entre com a sua conta.
+4. **PIN**: crie um PIN para entrar no computador.
+5. **Privacidade**: revise as opções de localização, diagnóstico e anúncios, e desative o que não quiser.
+6. **Backup e sincronização**: o Windows pode oferecer o backup do OneDrive; aceite ou recuse conforme a sua preferência.
+
+## Passo 9: depois da instalação
+
+Com o Windows aberto:
+
+1. **Windows Update**: em **Configurações > Windows Update**, verifique e instale todas as atualizações, inclusive as **opcionais de drivers**. Reinicie quantas vezes for preciso.
+2. **Drivers**: o Windows Update instala a maioria. Para a **placa de vídeo**, instale o driver mais recente do site da NVIDIA, AMD ou Intel. Para o **chipset**, use o site do fabricante da placa-mãe ou do processador.
+3. **Ativação**: em **Configurações > Sistema > Ativação**, confira se o Windows está ativado.
+4. **Programas**: reinstale só o que você realmente usa, baixando sempre dos sites oficiais.
+5. **Arquivos**: copie de volta o backup.
+6. **Ponto de restauração**: depois de tudo configurado, crie um ponto de restauração do sistema.
+
+## Organize o sistema novo desde o começo
+
+Uma instalação limpa é uma boa oportunidade para deixar o computador mais organizado:
+
+- **Instale só o que usa.** Cada programa a mais é algo para atualizar e, às vezes, um processo rodando em segundo plano.
+- **Revise os aplicativos de inicialização** em **Configurações > Aplicativos > Inicialização** e desligue o que não precisa abrir com o Windows.
+- **Separe os dados**: se tiver um segundo disco, guarde nele fotos, vídeos e documentos. Numa próxima reinstalação, eles ficam intactos.
+- **Ative o backup** de arquivos, seja pelo OneDrive, seja por um disco externo com o **Histórico de Arquivos**.
+- **Mantenha o pendrive de instalação guardado.** Em uma emergência, ele permite reinstalar ou acessar as ferramentas de recuperação do Windows.
+
+## Problemas comuns
+
+**O computador não inicia pelo pendrive.** Use o menu de inicialização (F2, F12, Delete ou Esc, conforme o fabricante) ou ajuste a ordem na BIOS. Teste outra porta USB, de preferência na traseira do gabinete, ligada direto à placa-mãe. Em último caso, a Microsoft indica desativar temporariamente a Inicialização Segura.
+
+**O instalador não encontra o disco.** Em alguns notebooks com controladoras de armazenamento específicas, o instalador precisa de um driver para enxergar o SSD. O driver fica no site do fabricante do notebook; copie-o para o pendrive e use a opção **Carregar driver** na tela de escolha do disco. Em alguns computadores, mudar o modo da controladora na BIOS também resolve, mas siga o manual do fabricante.
+
+**Sem internet na configuração inicial.** Se o Windows não reconhecer a placa de rede, teste o cabo de rede, que costuma funcionar sem driver extra, ou use o compartilhamento de internet do celular por USB. O driver da placa Wi-Fi pode ser instalado depois, pelo Windows Update.
+
+**O Windows não ativou.** Confira se instalou a **mesma edição** da licença. Em **Configurações > Sistema > Ativação**, a **Solução de problemas de ativação** ajuda, principalmente quando a licença está vinculada à conta Microsoft.
+
+**A tela de instalação aparece de novo depois de instalar.** Retire o pendrive ou ajuste a ordem de inicialização para o disco interno.
+
+## Em um PC recém-montado
+
+Num computador montado agora, alguns cuidados antes de instalar o sistema evitam retrabalho:
+
+1. **Entre na BIOS** na primeira vez que ligar e confira se todas as peças aparecem: processador, quantidade de memória e o SSD.
+2. **Confira a data e a hora** da BIOS.
+3. **Verifique se o TPM está ativado**, como **fTPM** em placas AMD ou **PTT** em placas Intel, e se o modo de inicialização é **UEFI**.
+4. **Deixe só o SSD do sistema conectado**, se houver outros discos, para o instalador não colocar partições de inicialização no disco errado.
+5. **Separe num segundo pendrive**, ou numa pasta do próprio pendrive de instalação, o **driver de rede** da placa-mãe, baixado do site do fabricante. Placas muito recentes às vezes têm chips de rede que o instalador ainda não reconhece.
+
+Depois de o Windows instalado e atualizado, aí sim vale entrar de novo na BIOS para ajustes como o perfil de memória. Fazer mudanças de desempenho antes de ter um sistema estável dificulta descobrir a causa se algo der errado.
+
+## Notebook: cuidados específicos
+
+Em notebooks, alguns pontos merecem atenção:
+
+- **Deixe o carregador ligado** durante todo o processo;
+- **Baixe os drivers** no site do fabricante, na página do modelo exato: muitos notebooks têm drivers de teclado, touchpad, áudio e gerenciamento de energia que o Windows Update não instala;
+- **Anote o modelo exato**, que fica numa etiqueta embaixo do notebook;
+- Em notebooks com **partição de recuperação do fabricante**, a instalação limpa remove essa partição se você apagar todas as partições do disco. Se quiser preservá-la, apague só as partições do Windows, mas o mais comum é recomeçar do zero e usar o pendrive como mídia de recuperação.
+
+## Instalação limpa ou "Restaurar o PC"?
+
+O Windows tem uma opção interna chamada **Restaurar o PC**, em **Configurações > Sistema > Recuperação**, que reinstala o sistema sem pendrive. Ela pode manter ou remover os arquivos pessoais.
+
+- **Restaurar o PC** é mais simples e resolve boa parte dos problemas de lentidão.
+- **A instalação limpa pelo pendrive** é a escolha quando o disco foi trocado, quando o sistema está tão danificado que a restauração falha, ou quando você quer apagar completamente as partições e começar do zero.
+
+## Erros comuns
+
+**Não fazer backup.** A instalação limpa apaga o disco.
+
+**Usar um pendrive com arquivos importantes.** Todo o conteúdo dele é apagado.
+
+**Apagar as partições do disco errado.** Identifique os discos pelo tamanho e, se possível, desconecte os discos de dados.
+
+**Instalar uma edição diferente da licença.** Home e Pro têm licenças diferentes.
+
+**Esquecer de retirar o pendrive.** O computador pode voltar ao instalador.
+
+**Baixar imagens do Windows de sites não oficiais.** Use só a ferramenta da Microsoft.
+
+**Deixar a Inicialização Segura desativada.** Se precisou desativar, reative depois.
+
+## Resumo
+
+- Requisitos do Windows 11: processador compatível, **4 GB** de memória, **64 GB** de armazenamento, **UEFI com Inicialização Segura** e **TPM 2.0**.
+- Faça **backup** e anote os programas que usa.
+- Crie o pendrive com a **Ferramenta de Criação de Mídia**, em um pendrive de **8 GB ou mais**, que será apagado.
+- Inicie pelo pendrive com **F2, F12, Delete ou Esc**, conforme o fabricante.
+- Escolha **não tenho a chave do produto** e a **mesma edição** da licença.
+- **Exclua as partições** só do disco certo e instale no **espaço não alocado**.
+- Tenha **internet e conta Microsoft** para a configuração inicial e rode o **Windows Update** no fim.
+
+### Fontes
+
+- Microsoft, [download do Windows 11 e Ferramenta de Criação de Mídia](https://www.microsoft.com/pt-br/software-download/windows11).
+- Microsoft, [requisitos do sistema do Windows 11](https://support.microsoft.com/pt-br/windows/requisitos-do-sistema-do-windows-11-86c11283-ea52-4782-9efd-7674389a7ba3).
+- SanDisk, especificações do Ultra Shift conforme o anúncio.

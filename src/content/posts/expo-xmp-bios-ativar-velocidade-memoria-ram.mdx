@@ -1,0 +1,301 @@
+---
+title: 'EXPO e XMP na BIOS: como ativar e conferir a velocidade da RAM'
+description: 'Sua memória de 3200 pode estar rodando a 2400. O que são XMP, EXPO e DOCP, como ativar o perfil na BIOS e conferir no Windows se a RAM está na velocidade certa.'
+pubDate: 2026-11-05T18:00:00-03:00
+category: 'home-office'
+tags: ['memoria-ram', 'xmp', 'expo', 'docp', 'bios', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Kingston FURY Beast DDR4 3200 MT/s, kit 16 GB (2 x 8 GB)'
+    brand: 'Kingston'
+    rating: 4.4
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B097K2WBL3?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2z4Q9s6'
+    image: '/images/produtos/kingston-fury-beast-ddr4-2x8.webp'
+    pros:
+      - 'Perfis XMP de 3000 e 3200 MT/s, CL16, 1,35 V, segundo a ficha do módulo'
+      - 'Kit de dois pentes: dual channel na hora'
+      - 'Mais de 3 mil avaliações na Amazon'
+    cons:
+      - 'Sem o perfil ativado, trabalha a 2400 MT/s'
+  - name: 'Kingston FURY Beast DDR4 3200 MT/s, kit 32 GB (2 x 16 GB)'
+    brand: 'Kingston'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B097K2WKZW?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2mBv39e'
+    image: '/images/produtos/kingston-fury-beast-ddr4-2x16.webp'
+    pros:
+      - '32 GB em dois pentes, com XMP de 3200 MT/s CL16'
+      - 'Nota 4,7 em mais de mil avaliações na Amazon'
+    cons:
+      - 'Para uso só de escritório, 16 GB já atendem'
+faq:
+  - question: 'O que é XMP?'
+    answer: 'XMP, de Extreme Memory Profile, é um perfil gravado no próprio pente de memória pela fabricante, com a velocidade, as latências e a tensão para as quais o pente foi testado. Sem o perfil ativado, a memória trabalha na configuração padrão do SPD, geralmente mais lenta. Ativar o perfil na BIOS faz a memória funcionar na velocidade anunciada.'
+  - question: 'Qual a diferença entre XMP, EXPO e DOCP?'
+    answer: 'XMP é o padrão de perfis de memória criado pela Intel e usado também em placas AMD. EXPO é o padrão de perfis da AMD para memória DDR5. DOCP, A-XMP e nomes parecidos são os nomes que fabricantes de placas-mãe AMD dão à opção que lê o perfil XMP em memórias DDR4. Em um PC AM4 com DDR4, a opção na BIOS costuma se chamar DOCP, A-XMP ou simplesmente XMP.'
+  - question: 'Ativar o XMP é seguro?'
+    answer: 'O perfil traz configurações testadas pela fabricante da memória, e ativá-lo é uma prática comum. Ainda assim, ele funciona acima do padrão JEDEC, e a estabilidade depende também do processador e da placa-mãe. Se o PC ficar instável depois de ativar, volte ao padrão ou escolha um perfil mais baixo. Consulte o manual da placa e a lista de memórias compatíveis do fabricante.'
+  - question: 'Por que meu programa mostra 1600 MHz numa memória de 3200?'
+    answer: 'DDR significa taxa de dados dupla: a memória transfere dados duas vezes por ciclo. Alguns programas mostram a frequência real do clock, de 1600 MHz, enquanto o anúncio mostra a taxa de transferência efetiva, de 3200 MT/s, frequentemente escrita como 3200 MHz. As duas informações indicam a mesma coisa.'
+  - question: 'Preciso ativar o XMP num notebook?'
+    answer: 'Na maioria dos notebooks, não há opção de XMP na BIOS, e a memória trabalha na velocidade definida pelo fabricante do notebook. Os módulos de notebook costumam ser identificados por perfis automáticos. A ativação manual de perfis é um recurso típico de placas-mãe de desktop.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Você compra um kit de memória de **3200 MT/s**, monta o PC, liga e tudo funciona. O que muita gente não sabe é que, na maioria dos casos, essa memória **não está rodando a 3200**. Ela está rodando na velocidade padrão, mais baixa, e continua assim até que alguém ative o **perfil de memória** na BIOS.
+
+Este tutorial explica o que são **XMP**, **EXPO** e **DOCP**, por que a memória vem "desligada" da velocidade anunciada, como **ativar o perfil** na BIOS e como **conferir no Windows** se a memória está trabalhando na velocidade certa. É um ajuste de alguns minutos que faz diferença, principalmente em processadores Ryzen.
+
+> **Fontes e versão:** os perfis do Kingston FURY Beast DDR4 3200 vêm da ficha técnica do módulo (dados de SPD e XMP); a diferença entre XMP, EXPO e DOCP segue a documentação dos fabricantes de memória e de placas-mãe; a leitura no Windows segue o **Gerenciador de Tarefas do Windows 11**. Consultas em **31/10/2026**. O nome exato das opções muda de placa para placa: o **manual da sua placa-mãe** é a referência. O post não se baseia em teste próprio. Links no fim.
+
+## Por que a memória vem mais lenta
+
+Todo pente de memória tem um pequeno chip chamado **SPD**, que guarda as configurações em que ele funciona. Ali ficam dois tipos de informação:
+
+1. **O perfil padrão JEDEC**: a configuração padronizada pelo JEDEC, a organização que define os padrões de memória. É uma configuração conservadora, que qualquer placa-mãe compatível consegue usar sem ajuste.
+2. **Os perfis de desempenho**, como o **XMP**: configurações mais rápidas, testadas pela fabricante da memória.
+
+Ao ligar o PC pela primeira vez, a placa-mãe usa o **perfil padrão**, porque é o mais seguro. O perfil de desempenho só entra em uso se você **ativá-lo na BIOS**.
+
+**Um exemplo concreto:** na ficha técnica do **Kingston FURY Beast DDR4 3200**, o perfil padrão do SPD é de **2400 MT/s, CL17, 1,2 V**. Os perfis XMP são de **3000 MT/s, CL16, 1,35 V** e **3200 MT/s, CL16, 1,35 V**. Sem ativar o XMP, a memória comprada como 3200 trabalha a **2400**.
+
+## Decifrando a etiqueta da memória
+
+Uma etiqueta de memória costuma trazer vários números. No exemplo do FURY Beast:
+
+- **DDR4**: a geração da memória. DDR4 e DDR5 não são compatíveis entre si: os encaixes são diferentes e cada placa aceita só um tipo;
+- **3200 MT/s**, muitas vezes escrito como "3200 MHz": a **taxa de transferência** efetiva, em milhões de transferências por segundo;
+- **PC4-25600**: a mesma informação em largura de banda teórica por pente, cerca de 25.600 MB/s;
+- **CL16**: a **latência CAS**, explicada abaixo;
+- **1,35 V**: a tensão do perfil de desempenho. O padrão JEDEC do DDR4 é de 1,2 V;
+- **16 GB (2 x 8 GB)**: a capacidade total e a divisão em pentes.
+
+### Latência: o que significa CL16
+
+A **latência CAS**, ou **CL**, é o número de ciclos de clock que a memória leva para começar a entregar um dado depois de receber o pedido. Quanto **menor** o número, mais rápida a resposta, **na mesma velocidade**. Mas a latência só pode ser comparada levando em conta a velocidade: uma memória mais rápida tem ciclos mais curtos, então um CL um pouco maior numa velocidade mais alta pode ter resposta parecida, em nanossegundos, com um CL menor numa velocidade mais baixa.
+
+No perfil padrão do FURY Beast, a memória trabalha a 2400 MT/s com CL17; no perfil XMP, a 3200 MT/s com CL16. Ou seja, ativar o perfil melhora as duas coisas ao mesmo tempo: mais velocidade e latência menor.
+
+## XMP, EXPO, DOCP: os nomes
+
+Os nomes confundem, mas a ideia é a mesma: um perfil de desempenho gravado na memória.
+
+| Nome | O que é | Onde aparece |
+|---|---|---|
+| **XMP** (Extreme Memory Profile) | padrão de perfis criado pela Intel | placas Intel e muitas placas AMD |
+| **EXPO** | padrão de perfis da AMD para **DDR5** | placas AMD AM5 |
+| **DOCP** | nome usado pela ASUS em placas AMD para ler perfis XMP | placas ASUS AMD |
+| **A-XMP** | nome usado pela MSI em placas AMD | placas MSI AMD |
+| **EOCP**, **XMP** | outros nomes usados por fabricantes | varia por marca |
+
+**Em um PC AM4 com DDR4**, como os com Ryzen 5000, não existe EXPO: ele é exclusivo da DDR5. A opção na BIOS vai se chamar **XMP**, **DOCP**, **A-XMP** ou algo parecido, conforme a marca da placa.
+
+**Em um PC AM5 com DDR5**, as memórias podem ter perfil **EXPO**, **XMP** ou os dois, e a BIOS mostra as opções disponíveis.
+
+## A memória do exemplo
+
+![Kit de memória Kingston FURY Beast DDR4 de 16 GB com dois pentes pretos](/images/produtos/kingston-fury-beast-ddr4-2x8.webp)
+
+O **Kingston FURY Beast DDR4 3200** em kit de **16 GB (2 x 8 GB)** é um dos kits de memória mais vendidos na Amazon. Segundo a ficha técnica do módulo, ele traz perfis **XMP 2.0** de 3000 e 3200 MT/s com latência **CL16** e tensão de **1,35 V**, e é anunciado como pronto para **AMD Ryzen**. Por ser um **kit de dois pentes**, já funciona em **dual channel** nas placas com dois ou quatro slots.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B097K2WBL3?tag=nerdcaseiro-20" store="amazon" source="expo-xmp-bios-ativar-velocidade-memoria-ram" />
+<AffiliateButton href="https://meli.la/2z4Q9s6" store="mercadolivre" source="expo-xmp-bios-ativar-velocidade-memoria-ram" />
+
+## Passo 1: veja a velocidade atual no Windows
+
+Antes de mexer na BIOS, confira em que velocidade a memória está trabalhando:
+
+1. Abra o **Gerenciador de Tarefas** (Ctrl + Shift + Esc).
+2. Vá na aba **Desempenho** e clique em **Memória**.
+3. No canto inferior, veja o campo **Velocidade**.
+
+Se o valor for **2400** (ou 2133, em algumas memórias) e o kit for vendido como **3200**, o perfil não está ativado. Anote também os campos **Slots usados**, que mostra quantos pentes estão instalados, e o total de memória.
+
+**Atenção à unidade:** o Gerenciador de Tarefas mostra a taxa de transferência efetiva. Alguns programas de diagnóstico mostram a **frequência real do clock**, que é a **metade**: uma memória de 3200 MT/s aparece como **1600 MHz**. Não é defeito: **DDR** significa **taxa de dados dupla**, ou seja, duas transferências por ciclo.
+
+## Passo 2: confira os slots da placa-mãe
+
+Antes de ativar o perfil, confira se os pentes estão nos **slots certos**. Em placas com **quatro slots** e **dois pentes**, o manual indica quais slots usar para o dual channel, geralmente o **segundo e o quarto** a partir do processador, marcados como **A2 e B2**. Pentes nos slots errados podem funcionar em single channel ou ter mais dificuldade para atingir a velocidade do perfil.
+
+O manual da placa tem um diagrama com a ordem recomendada. Na dúvida, siga o manual.
+
+## Passo 3: entre na BIOS
+
+1. **Reinicie o computador.**
+2. Logo na tela de abertura, pressione **Delete** ou **F2**, as teclas mais comuns para entrar na BIOS. A tecla certa aparece na tela ou no manual.
+3. Muitas BIOS abrem num **modo simplificado** (chamado de EZ Mode, por exemplo). O perfil de memória costuma aparecer já nessa tela.
+
+## Passo 4: ative o perfil
+
+O local e o nome variam por fabricante. Em geral:
+
+- **Modo simplificado:** procure uma opção como **XMP**, **DOCP**, **A-XMP** ou **Perfil de memória**, muitas vezes já na primeira tela, com um botão ou uma lista.
+- **Modo avançado:** procure em menus como **Ai Tweaker**, **OC**, **Tweaker**, **Extreme Tweaker** ou **Overclocking**, na opção de perfil de memória.
+
+Escolha o perfil desejado, geralmente o **Perfil 1** ou o perfil com a velocidade anunciada do kit, como **DDR4-3200**.
+
+**Não altere outras opções** que você não conhece. O perfil já ajusta velocidade, latências e tensão sozinho.
+
+## Passo 5: salve e reinicie
+
+1. Pressione **F10** (na maioria das placas) para **salvar e sair**, e confirme.
+2. O PC vai reiniciar. Na primeira inicialização depois de mudar a memória, é **normal** a tela demorar um pouco mais para aparecer ou o PC reiniciar sozinho uma vez: a placa está "treinando" a memória com as novas configurações.
+
+## Passo 6: confira no Windows
+
+Com o Windows aberto, volte ao **Gerenciador de Tarefas > Desempenho > Memória** e veja o campo **Velocidade**. Agora ele deve mostrar a velocidade do perfil, como **3200**.
+
+Se continuar na velocidade antiga, o perfil não foi salvo. Volte à BIOS e confira.
+
+## Passo 7: verifique a estabilidade
+
+O perfil foi testado pela fabricante da memória, mas a estabilidade também depende do **processador** e da **placa-mãe**. Depois de ativar:
+
+- **use o PC normalmente** por alguns dias, incluindo jogos ou tarefas pesadas;
+- fique atento a **travamentos**, **telas azuis**, **reinicializações** e **erros em programas** que não aconteciam antes;
+- para um teste mais direto, o Windows tem a ferramenta **Diagnóstico de Memória do Windows**: digite "diagnóstico de memória" no menu Iniciar e escolha reiniciar e verificar.
+
+Se aparecer instabilidade, volte à BIOS e escolha um **perfil mais baixo**, como o de 3000 MT/s no exemplo do FURY Beast, ou volte ao **padrão**.
+
+## Dois ou quatro pentes?
+
+Com **quatro pentes**, a placa-mãe tem mais trabalho para manter a memória estável em velocidades altas, porque o controlador de memória do processador precisa lidar com mais módulos. Na prática, alguns sistemas que aceitam o perfil com dois pentes precisam de um perfil mais baixo com quatro.
+
+Por isso, quando a ideia é ter 32 GB, um **kit de 2 x 16 GB** costuma ser uma escolha mais simples do que **quatro pentes de 8 GB**. Também deixa dois slots livres para uma ampliação futura.
+
+## A lista de compatibilidade da placa
+
+Os fabricantes de placas-mãe publicam listas de **memórias testadas**, chamadas de **QVL** (Qualified Vendor List), na página de suporte de cada modelo. Uma memória fora da lista **não é necessariamente incompatível**: a lista mostra apenas o que o fabricante testou. Mas, se você está escolhendo um kit novo, priorizar um modelo da lista reduz a chance de problemas com o perfil.
+
+## Placas de entrada e limites de velocidade
+
+Algumas placas-mãe de entrada **limitam a velocidade máxima** de memória que aceitam, ou têm poucas opções de ajuste na BIOS. Nesses casos, o perfil pode não aparecer ou ficar limitado a uma velocidade menor que a do kit. O **manual** e a **página de especificações** da placa informam a velocidade máxima de memória suportada, muitas vezes com a indicação de que velocidades acima do padrão dependem do processador e são consideradas overclock.
+
+Também vale lembrar que o **processador** tem uma velocidade de memória oficial. A ficha técnica da AMD indica suporte a memória **DDR4-3200** para os Ryzen 5000, por exemplo. Perfis mais rápidos que a especificação do processador podem funcionar, mas ficam por conta da combinação entre processador, placa e memória.
+
+## Comprar mais memória para somar à que você já tem
+
+Quem tem um pente e quer comprar outro para fazer dual channel deve saber que **pentes comprados separadamente** podem ter chips e configurações internas diferentes, mesmo sendo do mesmo modelo comercial. Muitas vezes funcionam juntos sem problemas; às vezes, o perfil fica instável. A regra mais segura é:
+
+- comprar **kits completos**, testados juntos pela fabricante;
+- se for somar a um pente existente, escolher **o mesmo modelo, velocidade, latência e capacidade**;
+- se der instabilidade, usar a **velocidade do pente mais lento** ou um perfil mais baixo.
+
+## Monitorar depois: temperatura e tensão
+
+A tensão de **1,35 V** do perfil XMP do exemplo é a tensão de trabalho prevista pela fabricante para esse perfil, e os dissipadores dos pentes dão conta do calor nessa condição. Não é preciso aumentar a tensão manualmente, nem mexer em outros valores. Ajustes manuais de tensão e latência são o terreno do **overclock de memória**, que exige testes longos de estabilidade e foge do objetivo deste tutorial: ativar o perfil que a fabricante já testou.
+
+## Se o PC não ligar depois de ativar
+
+Às vezes, a combinação de memória, processador e placa não aceita o perfil, e o PC **não dá imagem** ou fica reiniciando. Não é motivo de pânico:
+
+1. **Espere alguns minutos**: muitas placas tentam várias vezes e, se não conseguem, **voltam sozinhas** à configuração segura.
+2. Se não voltar, **limpe a CMOS**, o procedimento que restaura a BIOS ao padrão de fábrica. Dependendo da placa, isso é feito por um **botão de Clear CMOS** na traseira, por um **jumper** na placa ou retirando a **bateria redonda** da placa por alguns minutos, com o PC desligado da tomada. O manual da placa mostra o método certo.
+3. Depois de voltar ao padrão, a memória funciona de novo na velocidade padrão. Atualizar a BIOS da placa, seguindo o guia do fabricante, às vezes melhora a compatibilidade com memórias.
+
+## Em PCs com DDR5 e EXPO
+
+Em plataformas mais novas, como a **AM5** da AMD, a memória é **DDR5**, e os kits podem trazer perfis **EXPO**, **XMP** ou os dois. O procedimento é o mesmo:
+
+1. Confira a velocidade atual no Gerenciador de Tarefas.
+2. Na BIOS, procure a opção **EXPO** ou **XMP** e escolha o perfil.
+3. Salve com F10 e confira de novo no Windows.
+
+Dois cuidados específicos da DDR5:
+
+- o **primeiro boot** depois de instalar memória nova ou mudar o perfil pode demorar **bem mais** que o normal, às vezes vários minutos, por causa do treinamento de memória. A tela pode ficar preta nesse tempo. **Não desligue**; espere;
+- algumas placas têm opções para acelerar boots futuros guardando o resultado desse treinamento; o manual da placa explica.
+
+## Quando não ativar o perfil
+
+Há situações em que manter o padrão faz sentido:
+
+- **computadores de trabalho em que a estabilidade absoluta é prioridade**, como uma máquina que processa dados importantes sem supervisão. O ganho de velocidade pode não compensar qualquer risco;
+- **quando aparecem erros** mesmo com o perfil mais baixo: nesse caso, a combinação de peças não está aceitando o perfil, e a velocidade padrão é a escolha segura;
+- **logo depois de montar o PC**: primeiro instale e atualize o sistema na configuração padrão; ative o perfil depois. Assim, se algo der errado, fica fácil saber a causa.
+
+## Notebooks: o que esperar
+
+Em notebooks, a memória funciona na configuração definida pelo fabricante, e a BIOS raramente oferece opção de perfil. Ao trocar ou ampliar a memória de um notebook, o que importa é escolher **o tipo e a velocidade** indicados no manual: DDR4 ou DDR5, SO-DIMM, e a velocidade suportada. Uma memória mais rápida que o suportado pelo notebook geralmente funciona, mas na velocidade máxima do notebook, não na anunciada.
+
+Notebooks com memória **soldada na placa** não permitem troca nem ampliação, ou permitem apenas no slot livre, quando existe. A ficha do modelo informa.
+
+## Um resumo das opções por tipo de PC
+
+| PC | Opção na BIOS | O que fazer |
+|---|---|---|
+| Desktop AM4 com DDR4 | XMP, DOCP ou A-XMP | ativar o perfil do kit |
+| Desktop AM5 com DDR5 | EXPO ou XMP | ativar o perfil e aguardar o primeiro boot |
+| Desktop Intel com DDR4 ou DDR5 | XMP | ativar o perfil |
+| Notebook | geralmente não há | usar memória do tipo e velocidade do manual |
+
+## Por que isso importa nos Ryzen
+
+Nos processadores **Ryzen**, a velocidade da memória influencia diretamente a comunicação interna do processador, por isso a diferença entre rodar a memória a 2400 e a 3200 MT/s tende a aparecer mais do que em muitas plataformas Intel, principalmente em **jogos**. Para quem montou um PC AM4, ativar o perfil é um dos ajustes com melhor relação entre esforço e resultado.
+
+Além da velocidade, o **dual channel** pesa: **dois pentes** entregam o dobro da largura de banda de um único pente. As duas coisas, perfil ativado e dois pentes, andam juntas.
+
+## Mais memória: o kit de 32 GB
+
+![Kit de memória Kingston FURY Beast DDR4 de 32 GB com dois pentes](/images/produtos/kingston-fury-beast-ddr4-2x16.webp)
+
+Para quem edita vídeo, trabalha com máquinas virtuais ou joga com muitos programas abertos, o **kit de 32 GB (2 x 16 GB)** da mesma linha FURY Beast DDR4 3200 traz os mesmos princípios: dois pentes e perfil XMP de 3200 MT/s com CL16. Na Amazon, tem nota **4,7** em mais de mil avaliações.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B097K2WKZW?tag=nerdcaseiro-20" store="amazon" source="expo-xmp-bios-ativar-velocidade-memoria-ram" />
+<AffiliateButton href="https://meli.la/2mBv39e" store="mercadolivre" source="expo-xmp-bios-ativar-velocidade-memoria-ram" />
+
+## Antes de começar: anote a configuração atual
+
+Um cuidado simples antes de mexer na BIOS: **fotografe com o celular** as telas principais da BIOS, especialmente a de memória e a de inicialização. Se precisar voltar alguma opção ou se uma limpeza de CMOS apagar ajustes que você tinha feito, como a ordem de inicialização ou a ativação do TPM, as fotos mostram como estava.
+
+Algumas placas também permitem **salvar perfis da BIOS**, com nomes como "Save Profile" ou "OC Profile", num slot interno ou num pendrive. Salvar um perfil com a configuração que já funciona antes de ativar o XMP é mais uma camada de segurança.
+
+## Depois de uma atualização de BIOS
+
+Atualizar a BIOS da placa-mãe costuma **restaurar todas as opções ao padrão**, inclusive o perfil de memória. Depois de qualquer atualização de BIOS, confira de novo no Gerenciador de Tarefas: é comum descobrir, meses depois, que a memória voltou a rodar na velocidade padrão sem ninguém perceber.
+
+## Erros comuns
+
+**Achar que a memória já roda na velocidade anunciada.** Sem o perfil, ela roda no padrão.
+
+**Procurar "EXPO" num PC com DDR4.** EXPO é da DDR5; em DDR4 a opção é XMP, DOCP ou A-XMP.
+
+**Usar os slots errados.** Siga o manual para o dual channel.
+
+**Misturar kits diferentes.** Pentes de marcas, velocidades ou latências diferentes podem não funcionar juntos no perfil. Compre kits completos.
+
+**Mudar outras opções da BIOS junto.** Ative só o perfil; mudanças sem saber o efeito dificultam achar a causa de um problema.
+
+**Entrar em pânico se o PC demorar para ligar.** O treinamento de memória é normal na primeira vez; se não voltar, limpe a CMOS.
+
+**Confundir 1600 MHz com 3200.** É a mesma memória, medida de jeitos diferentes.
+
+**Não conferir depois de atualizar a BIOS.** A atualização costuma restaurar o padrão, e a memória volta a 2400 sem aviso.
+
+## Resumo
+
+- A memória vem configurada no **padrão JEDEC**, mais lento. O FURY Beast DDR4 3200, por exemplo, tem padrão de **2400 MT/s** e perfis XMP de **3000 e 3200 MT/s**, segundo a ficha do módulo.
+- **XMP** é o padrão da Intel; **EXPO** é o da AMD para **DDR5**; **DOCP** e **A-XMP** são nomes de fabricantes de placas AMD para a opção que lê o XMP em **DDR4**.
+- Confira a velocidade no **Gerenciador de Tarefas > Desempenho > Memória**.
+- Na BIOS, ative o perfil, salve com **F10** e confira de novo no Windows.
+- Se ficar instável, use um **perfil mais baixo**; se não ligar, **limpe a CMOS**.
+- Use **dois pentes nos slots indicados** para o dual channel.
+- Depois de **atualizar a BIOS**, confira de novo: a atualização costuma desativar o perfil.
+- Na dúvida, consulte o **manual da placa-mãe** e a **lista de memórias compatíveis** do fabricante antes de comprar ou trocar pentes.
+- Fotografe as telas da BIOS antes de mudar qualquer coisa.
+
+### Fontes
+
+- Ficha técnica do módulo Kingston FURY Beast DDR4 3200 (KF432C16BB): perfil SPD padrão e perfis XMP.
+- Microsoft, Gerenciador de Tarefas do Windows 11 e Diagnóstico de Memória do Windows.
+- Fabricantes de placas-mãe: manuais com a ordem dos slots, o nome da opção de perfil de memória e o procedimento de limpeza da CMOS.

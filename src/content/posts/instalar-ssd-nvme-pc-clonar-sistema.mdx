@@ -1,0 +1,300 @@
+---
+title: 'Como instalar um SSD NVMe no PC e clonar o sistema sem reinstalar'
+description: 'Passo a passo para instalar um SSD M.2 NVMe no PC ou notebook e clonar o Windows com o Acronis True Image for Kingston, sem perder programas e arquivos.'
+pubDate: 2026-11-02T18:00:00-03:00
+category: 'home-office'
+tags: ['ssd', 'nvme', 'clonar-disco', 'upgrade', 'windows', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Kingston NV3 1 TB, SSD M.2 2280 NVMe PCIe 4.0'
+    brand: 'Kingston'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0DBR3DZWG?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2JdqvY9'
+    image: '/images/produtos/kingston-nv3-1tb.webp'
+    pros:
+      - 'Inclui o software de clonagem Acronis, segundo o anúncio'
+      - 'Formato M.2 2280, o mais comum em PCs e notebooks'
+      - 'Mais de 11 mil avaliações na Amazon, nota 4,8'
+    cons:
+      - 'Em placas PCIe 3.0 a velocidade fica limitada pela interface'
+  - name: 'Case externo para SSD M.2 NVMe, USB-C 10 Gbps'
+    rating: 4.5
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0GZT61H7G?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/24PrjJL'
+    image: '/images/produtos/case-ssd-m2-nvme-usbc.webp'
+    pros:
+      - 'Permite clonar em notebooks que têm só um slot M.2'
+      - 'Aceita SSDs 2230, 2242, 2260 e 2280'
+      - 'Depois da troca, transforma o SSD antigo em disco externo'
+    cons:
+      - 'Só funciona com SSD NVMe; não aceita M.2 SATA'
+faq:
+  - question: 'Clonar o SSD apaga o disco antigo?'
+    answer: 'Não. A clonagem copia o conteúdo do disco de origem para o disco de destino. Quem é apagado é o disco de destino, o SSD novo, que recebe a cópia. O disco antigo continua intacto, o que permite voltar atrás se algo der errado. Mesmo assim, faça backup dos arquivos importantes antes de começar.'
+  - question: 'O Acronis True Image for Kingston é gratuito?'
+    answer: 'A Kingston oferece o Acronis True Image for Kingston para quem tem um SSD Kingston instalado no computador; o anúncio do Kingston NV3 cita o software de clonagem incluso. Segundo a Kingston, o programa é obtido pelo Kingston SSD Manager, funciona no Windows e não é compatível com macOS nem Linux. Sem um SSD Kingston presente, o programa pede ativação.'
+  - question: 'Posso clonar um disco maior para um SSD menor?'
+    answer: 'Só se os dados ocupados no disco antigo couberem no SSD novo. Se o disco antigo tem 1 TB, mas só 300 GB estão ocupados, a clonagem para um SSD de 500 GB costuma ser possível no modo automático, que redimensiona as partições. Se os dados ocupados forem maiores que o SSD novo, é preciso apagar ou mover arquivos antes.'
+  - question: 'Meu notebook tem só um slot M.2. Como clonar?'
+    answer: 'Use um case externo USB para SSD M.2 NVMe. Coloque o SSD novo no case, ligue na porta USB do notebook, faça a clonagem e depois troque os SSDs: o novo vai para dentro do notebook e o antigo pode ficar no case, como disco externo.'
+  - question: 'Quanto tempo leva para clonar um disco?'
+    answer: 'Depende da quantidade de dados ocupados e da velocidade dos dois discos e da conexão. Clonar um SSD com poucas dezenas de gigabytes pode levar minutos; clonar um HD antigo com centenas de gigabytes, principalmente por USB, pode passar de uma hora. Reserve tempo e deixe o computador ligado na tomada durante todo o processo.'
+  - question: 'Depois de clonar, o Windows precisa ser ativado de novo?'
+    answer: 'Em geral, não, porque a placa-mãe continua a mesma e a ativação do Windows fica vinculada ao hardware do computador. A clonagem copia o sistema como estava, com programas, configurações e arquivos.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+Trocar o HD ou um SSD antigo por um **SSD NVMe** é um dos upgrades com melhor custo-benefício para um PC ou notebook. O sistema liga mais rápido, os programas abrem mais rápido e o computador inteiro parece mais novo. O receio de muita gente é ter que **reinstalar o Windows**, todos os programas e configurar tudo de novo.
+
+Não precisa. Com a **clonagem**, o conteúdo do disco antigo é copiado inteiro para o SSD novo: Windows, programas, arquivos e configurações. Depois, basta trocar os discos ou mudar a ordem de inicialização. Este tutorial mostra o processo completo, da escolha do SSD à primeira inicialização, usando o **Acronis True Image for Kingston**, o software de clonagem que a Kingston oferece para os SSDs da marca.
+
+> **Fontes e versão:** os passos de obtenção e uso do **Acronis True Image for Kingston** seguem a página de suporte da Kingston sobre o programa, e a inicialização de discos segue a documentação de Gerenciamento de Disco da Microsoft, consultadas em **31/10/2026**. A referência de sistema é o **Windows 11**. Nomes de menus podem mudar em versões futuras do programa; a página de suporte da Kingston é a referência. O post não se baseia em teste próprio. Links no fim.
+
+## Por que um SSD NVMe muda tanto o computador
+
+Um **HD** guarda os dados em discos magnéticos que giram, e uma cabeça de leitura se move até o ponto certo para ler cada arquivo. Isso leva tempo, principalmente quando o sistema precisa ler milhares de arquivos pequenos ao ligar ou ao abrir um programa. Um **SSD** não tem partes móveis: os dados ficam em chips de memória flash, e o acesso é quase instantâneo.
+
+Entre os SSDs, há dois degraus:
+
+- **SSD SATA**, no formato de 2,5 polegadas ou M.2 SATA: limitado pela interface SATA, que fica na casa de pouco mais de 500 MB/s;
+- **SSD NVMe**, no formato M.2: usa a interface **PCIe**, com várias vezes a velocidade sequencial do SATA.
+
+Na prática do dia a dia, o salto de **HD para qualquer SSD** é o que mais se sente: o Windows liga em segundos e os programas abrem quase na hora. O salto de **SSD SATA para NVMe** é menor no uso comum, mas aparece ao copiar arquivos grandes, carregar jogos e trabalhar com vídeo.
+
+## Quanto espaço comprar
+
+A regra prática é olhar o **espaço ocupado hoje** e somar uma boa folga:
+
+- **500 GB**: atende quem usa o computador para escritório, navegação e estudos, com poucos jogos;
+- **1 TB**: o tamanho mais equilibrado para quem joga ou guarda fotos e vídeos no próprio computador;
+- **2 TB ou mais**: para bibliotecas grandes de jogos ou edição de vídeo.
+
+SSDs costumam funcionar melhor com **espaço livre**: deixar o disco completamente cheio reduz o desempenho de escrita em muitos modelos. Planejar uma folga de pelo menos 15% a 20% é uma boa prática.
+
+## Antes de começar: o que você vai precisar
+
+- **O SSD novo**, compatível com o slot do seu computador (veja a próxima seção);
+- **Uma chave de fenda Phillips pequena**;
+- **Um case externo USB para SSD NVMe**, se o seu notebook tiver **só um slot M.2**;
+- **Backup** dos arquivos importantes em outro lugar, como um HD externo ou a nuvem;
+- **Tempo**: a clonagem pode levar de alguns minutos a mais de uma hora, conforme a quantidade de dados;
+- **Energia estável**: em notebook, deixe o carregador ligado durante todo o processo.
+
+## Passo 0: confira se o SSD é compatível
+
+Antes de comprar, confira três coisas na ficha da placa-mãe ou do notebook:
+
+**1. O slot M.2 aceita NVMe?** Existem dois tipos de SSD no formato M.2: **NVMe**, que usa a interface PCIe e é muito mais rápido, e **M.2 SATA**, mais antigo e lento. Alguns notebooks e placas mais velhas aceitam só M.2 SATA. O manual informa o tipo do slot.
+
+**2. O tamanho físico.** O número depois de "M.2" indica as medidas: **2280** significa 22 mm de largura por 80 mm de comprimento, o formato mais comum. Alguns notebooks e consoles portáteis usam **2230** ou **2242**, menores.
+
+**3. A geração do PCIe.** SSDs **PCIe 4.0** funcionam em slots **PCIe 3.0**, mas ficam limitados à velocidade do slot. Não é um problema de compatibilidade, só de velocidade máxima.
+
+## O SSD: Kingston NV3
+
+![SSD Kingston NV3 de 1 TB no formato M.2 2280](/images/produtos/kingston-nv3-1tb.webp)
+
+O **Kingston NV3** de **1 TB** é um SSD **M.2 2280 NVMe PCIe 4.0**, um dos mais vendidos na Amazon, com mais de **11 mil avaliações** e nota **4,8**. Para este tutorial, um detalhe é importante: segundo o anúncio, ele **inclui o software de clonagem Acronis**, e a Kingston disponibiliza o **Acronis True Image for Kingston** para quem tem um SSD da marca instalado. A ficha técnica da Kingston informa garantia limitada de **5 anos** e resistência de **320 TB gravados** (TBW) para a versão de 1 TB.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0DBR3DZWG?tag=nerdcaseiro-20" store="amazon" source="instalar-ssd-nvme-pc-clonar-sistema" />
+<AffiliateButton href="https://meli.la/2JdqvY9" store="mercadolivre" source="instalar-ssd-nvme-pc-clonar-sistema" />
+
+## Dois cenários: desktop com dois slots ou notebook com um
+
+A forma de clonar depende de quantos slots M.2 o computador tem.
+
+**Cenário A: dois slots M.2 (ou um slot M.2 livre e o sistema num SSD SATA ou HD).** É o caso da maioria dos desktops e de alguns notebooks maiores. Você instala o SSD novo no slot livre, clona com os dois discos dentro do computador e depois escolhe o SSD novo como disco de inicialização.
+
+**Cenário B: um único slot M.2, já ocupado pelo SSD do sistema.** É o caso da maioria dos notebooks finos. O SSD novo precisa ficar **fora** do computador durante a clonagem, num **case externo USB**. Depois, você troca os SSDs.
+
+![Case externo transparente para SSD M.2 NVMe com conexão USB-C](/images/produtos/case-ssd-m2-nvme-usbc.webp)
+
+O **case externo para SSD M.2 NVMe** desta lista tem conexão **USB-C de 10 Gbps** e aceita SSDs **2230, 2242, 2260 e 2280**. O anúncio avisa, e vale repetir: ele **funciona só com SSD NVMe** e **não aceita M.2 SATA**. Depois da troca, o SSD antigo pode ficar no case e virar um **disco externo** para backup.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0GZT61H7G?tag=nerdcaseiro-20" store="amazon" source="instalar-ssd-nvme-pc-clonar-sistema" />
+<AffiliateButton href="https://meli.la/24PrjJL" store="mercadolivre" source="instalar-ssd-nvme-pc-clonar-sistema" />
+
+## Passo 1: prepare o disco antigo
+
+Antes de clonar, vale deixar o disco de origem em ordem. Quanto menos dados, mais rápida a clonagem.
+
+1. **Apague o que não precisa**: downloads antigos, instaladores e arquivos temporários. A ferramenta **Limpeza de Disco** do Windows ajuda.
+2. **Confira o espaço ocupado**: em **Este Computador**, veja quantos gigabytes estão em uso no disco do sistema. Esse total precisa caber no SSD novo.
+3. **Faça backup** dos arquivos importantes num disco externo ou na nuvem. A clonagem não apaga o disco antigo, mas um backup protege contra qualquer imprevisto.
+4. **Feche os programas** e salve tudo antes de começar.
+
+## Passo 2: instale o SSD novo
+
+**Desligue o computador** pelo menu Iniciar, tire o cabo da tomada e, em notebook, desconecte o carregador. Toque numa parte metálica do gabinete para descarregar a eletricidade estática.
+
+**No desktop (cenário A):**
+
+1. Abra a lateral do gabinete.
+2. Localize o **slot M.2 livre** na placa-mãe. Muitas placas têm uma placa de metal, o **dissipador do M.2**, aparafusada sobre o slot; retire os parafusos e levante o dissipador.
+3. Se o dissipador tiver uma **película plástica** na almofada térmica, retire a película.
+4. Encaixe o SSD **inclinado**, a cerca de 30 graus, com os contatos dourados no slot. O chanfro do conector só encaixa de um jeito.
+5. **Abaixe o SSD** até ficar paralelo à placa e prenda com o **parafuso** ou a **trava** do slot.
+6. Recoloque o dissipador e feche o gabinete.
+
+**No notebook (cenário B):**
+
+1. Coloque o SSD novo no **case externo**, seguindo as instruções do case: normalmente o SSD encaixa num conector e é preso por uma trava ou um parafuso.
+2. Feche o case e **ligue na porta USB** do notebook, de preferência uma porta USB-C ou USB 3, mais rápidas.
+
+## Passo 3: confira se o Windows enxerga o SSD
+
+Ligue o computador. Um SSD novo costuma vir **sem partição**, e por isso não aparece em **Este Computador**. Para conferir:
+
+1. Clique com o botão direito no menu Iniciar e abra **Gerenciamento de Disco**.
+2. O SSD novo deve aparecer na lista, como **Não alocado**.
+3. Se o Windows pedir para **inicializar o disco**, escolha **GPT**, o estilo de partição recomendado pela Microsoft para discos modernos e obrigatório para iniciar o Windows 11 em modo UEFI.
+
+**Não crie partições nem formate o SSD** a essa altura. O programa de clonagem vai cuidar disso. Se o SSD **não aparecer** de jeito nenhum, desligue e confira o encaixe, ou, no notebook, teste outra porta USB.
+
+## Passo 4: instale o Acronis True Image for Kingston
+
+Segundo a página de suporte da Kingston, o caminho é este:
+
+1. Baixe o **Kingston SSD Manager (KSM)** no site da Kingston.
+2. Instale e abra o KSM.
+3. Selecione a aba **Acronis**.
+4. Clique em **Download for Windows** e siga a instalação do **Acronis True Image for Kingston**.
+
+**Requisitos, segundo a Kingston:** Windows 11, 10 ou 8.1, com **permissão de administrador**, um **SSD Kingston instalado** e acesso à internet para baixar o KSM. O programa **não é compatível com macOS nem Linux**. Sem um SSD Kingston presente no computador, o programa mostra uma tela pedindo ativação: é por isso que o SSD novo precisa estar conectado **antes** de abrir o Acronis.
+
+**Baixe sempre do site oficial da Kingston**, e não de sites de download de terceiros, que podem distribuir versões alteradas.
+
+## Passo 5: clone o disco
+
+Com o programa aberto, a sequência descrita pela Kingston é:
+
+1. Selecione **Ferramentas** (Tools) e clique em **Clonar disco** (Clone Disk).
+2. Escolha o **método de clonagem**: o **Automático** é o recomendado para a maioria dos casos. Ele copia as partições e ajusta o tamanho delas ao SSD novo.
+3. Selecione o **disco de origem**: o disco onde o Windows está hoje.
+4. Selecione o **disco de destino**: o **SSD novo**.
+5. Confira o resumo e confirme.
+
+**Atenção redobrada no passo 4.** O disco de destino é **sobrescrito**. Se você escolher o disco errado como destino, vai apagar dados. Identifique os discos pelo **modelo** e pela **capacidade** que o programa mostra: o Kingston NV3 aparece com o nome do modelo e o tamanho.
+
+O programa pode pedir para **reiniciar** o computador e fazer a clonagem fora do Windows. É normal: assim, nenhum arquivo do sistema está em uso durante a cópia. **Não desligue o computador** enquanto a clonagem estiver em andamento.
+
+## Passo 6: faça o computador iniciar pelo SSD novo
+
+Terminada a clonagem, o computador ainda tem dois discos com o mesmo Windows. Agora é preciso fazê-lo iniciar pelo novo.
+
+**No desktop (cenário A):**
+
+1. Desligue o computador.
+2. Ligue e entre na **BIOS/UEFI**, geralmente pressionando **Delete** ou **F2** logo na inicialização. A tecla aparece na tela ou no manual da placa.
+3. Na seção de inicialização (**Boot**), coloque o **SSD novo** em primeiro lugar na ordem de inicialização.
+4. Salve e saia, normalmente com **F10**.
+
+**No notebook (cenário B):**
+
+1. Desligue o notebook e desconecte o carregador e o case.
+2. Abra a tampa inferior, seguindo o manual do fabricante. Alguns notebooks pedem cuidado com travas plásticas e, em alguns modelos, com a bateria, que deve ser desconectada antes de mexer na placa, se o manual indicar.
+3. **Retire o SSD antigo** e coloque o **SSD novo** no mesmo slot, inclinado, e prenda com o parafuso.
+4. Feche o notebook e ligue. Como agora só há o SSD novo, ele inicia por ele.
+
+## Passo 7: confira se deu tudo certo
+
+Com o Windows aberto a partir do SSD novo:
+
+1. Abra **Este Computador** e confira se o disco do sistema (C:) mostra a **capacidade nova**.
+2. Abra o **Gerenciador de Tarefas**, aba **Desempenho**, e veja se o disco do sistema aparece como **SSD** com o modelo novo.
+3. Abra alguns programas e arquivos para confirmar que tudo está no lugar.
+
+Se a capacidade aparecer menor do que o SSD, pode haver **espaço não alocado** no fim do disco. No **Gerenciamento de Disco**, clique com o botão direito na partição C: e use **Estender Volume** para ocupar o espaço livre, se a opção estiver disponível.
+
+## Depois da troca: acompanhar a saúde do SSD
+
+O **Kingston SSD Manager**, o mesmo programa usado para obter o Acronis, também mostra informações do SSD Kingston: modelo, versão de firmware e indicadores de **saúde** e de **uso**, como a quantidade de dados já gravados. Vale abrir de vez em quando para acompanhar.
+
+**Atualização de firmware:** o KSM também permite atualizar o firmware do SSD quando há versão nova. Atualizações corrigem problemas e às vezes melhoram a compatibilidade, mas qualquer atualização de firmware tem um risco pequeno de falha. Por isso, só atualize se houver um motivo, como uma correção citada pela Kingston para um problema que você tem, e sempre com **backup** feito e energia estável.
+
+**O Windows cuida do resto:** o Windows reconhece SSDs e faz automaticamente a **otimização** adequada, o comando TRIM, pela ferramenta **Otimizar unidades**. Não é preciso desfragmentar um SSD; a própria ferramenta do Windows já trata SSDs de forma diferente dos HDs.
+
+## O dissipador do M.2 é necessário?
+
+SSDs NVMe esquentam quando trabalham pesado por muito tempo, como numa cópia de arquivos enormes, e alguns reduzem a velocidade para se proteger quando a temperatura sobe. Muitas placas-mãe vêm com um **dissipador de metal** sobre o slot M.2; se a sua tem, use-o, retirando a película plástica da almofada térmica antes de montar.
+
+Para uso doméstico, jogos e trabalho de escritório, um SSD sem dissipador em gabinete ventilado costuma funcionar bem. Em notebooks, o espaço é apertado e o fabricante já projeta o slot para o SSD sem dissipador adicional; não force peças que não cabem na tampa.
+
+## Eletricidade estática e o parafuso do M.2
+
+Dois detalhes pequenos que causam muita dor de cabeça:
+
+- **Eletricidade estática:** toque numa parte metálica sem pintura do gabinete antes de pegar o SSD, e segure-o pelas bordas, sem tocar nos contatos dourados nem nos chips. Evite trabalhar sobre tapete ou com roupa de lã.
+- **O parafuso do M.2:** é minúsculo e some com facilidade. Muitas placas trazem o parafuso já preso no suporte do slot; em outras, ele vem num saquinho junto com a placa-mãe. SSDs vendidos avulsos geralmente **não trazem parafuso**. Antes de abrir o computador, confira se o parafuso está lá. Placas mais novas usam travas sem parafuso.
+
+## Clonagem em computadores de marca
+
+Em notebooks e desktops de marca, como Dell, Lenovo, HP e Samsung, o fabricante às vezes cria **partições extras** no disco, como a partição de recuperação. O modo **Automático** de clonagem copia essas partições junto. Se depois da clonagem você não precisar da partição de recuperação, ela pode ser mantida sem problema: ocupa pouco espaço e pode ser útil para restaurar o sistema original.
+
+Alguns notebooks também usam **criptografia do dispositivo** ou o **BitLocker** ativado. Antes de clonar, confira em **Configurações > Privacidade e segurança > Criptografia do dispositivo** se a criptografia está ligada e tenha à mão a **chave de recuperação**, que pode ser pedida depois da troca de disco. A chave fica na conta Microsoft usada no computador.
+
+## O que fazer com o disco antigo
+
+**No desktop:** só reaproveite o disco antigo **depois de usar o SSD novo por alguns dias** e confirmar que está tudo certo. Ele é a sua garantia de volta. Depois, você pode **formatá-lo** e usá-lo como disco de dados ou de backup, pelo Gerenciamento de Disco.
+
+**No notebook:** o SSD antigo pode ir para o **case externo** e virar um disco portátil. Antes de formatar, mantenha-o intacto por alguns dias, pelo mesmo motivo.
+
+**Atenção a dois discos com o mesmo Windows no mesmo PC:** enquanto o disco antigo ainda tiver o sistema, o computador pode iniciar pelo disco errado se a ordem de inicialização mudar. Quando tiver certeza de que o SSD novo funciona bem, formate o antigo.
+
+## Problemas comuns
+
+**O SSD novo não aparece no Gerenciamento de Disco.** Desligue e confira o encaixe. Em algumas placas, um slot M.2 divide recursos com portas SATA ou com outro slot e fica desativado conforme a configuração; o manual da placa explica. No case externo, troque de porta ou de cabo.
+
+**O Acronis pede ativação.** O programa não detectou um SSD Kingston. Confira se o SSD está conectado e aparece no Gerenciamento de Disco antes de abrir o programa.
+
+**A clonagem falha no meio.** Erros de leitura no disco antigo podem interromper a cópia. Rode a verificação de erros do Windows no disco de origem e tente de novo. Em discos antigos com defeito, a reinstalação limpa pode ser o caminho mais seguro.
+
+**O computador continua iniciando pelo disco antigo.** Ajuste a ordem de inicialização na BIOS ou retire o disco antigo.
+
+**Depois da troca, o notebook não inicia.** Confira o encaixe do SSD e, na BIOS, se o SSD aparece. Em último caso, recoloque o SSD antigo: ele está intacto e o notebook volta a funcionar como antes.
+
+## Clonar ou reinstalar?
+
+Clonar preserva tudo, inclusive o que você **não** queria preservar: programas esquecidos, arquivos acumulados e eventuais problemas do sistema. Uma **instalação limpa** do Windows deixa o sistema mais enxuto, mas exige reinstalar todos os programas e reconfigurar o computador.
+
+**Clonar costuma valer a pena quando** o sistema funciona bem e você quer só trocar o disco por um mais rápido. **Reinstalar costuma valer a pena quando** o sistema está lento, cheio de erros ou instável, ou quando o disco antigo apresenta defeitos.
+
+## Erros comuns
+
+**Escolher o disco errado como destino.** O destino é apagado. Confira modelo e capacidade.
+
+**Comprar um SSD NVMe para um slot que só aceita M.2 SATA.** Confira o manual antes.
+
+**Formatar o SSD antes de clonar.** Não precisa; o programa de clonagem cuida das partições.
+
+**Desligar o computador durante a clonagem.** Interrompa só pelo próprio programa.
+
+**Formatar o disco antigo logo depois da troca.** Use o SSD novo por alguns dias antes.
+
+**Baixar o programa de clonagem de sites de terceiros.** Use sempre o site do fabricante.
+
+## Resumo
+
+- Confira se o slot aceita **NVMe** e o **tamanho** (2280, 2242, 2230) antes de comprar.
+- Desktop com slot livre: instale o SSD dentro do PC. Notebook com **um slot**: use um **case externo USB NVMe**.
+- No **Gerenciamento de Disco**, inicialize como **GPT** se o Windows pedir, sem criar partições.
+- Obtenha o **Acronis True Image for Kingston** pelo **Kingston SSD Manager**, aba **Acronis**; ele exige um **SSD Kingston** instalado e roda só no **Windows**.
+- **Ferramentas > Clonar disco > Automático**, origem = disco atual, **destino = SSD novo**.
+- Ajuste a **ordem de inicialização** ou troque os SSDs, e só formate o disco antigo depois de alguns dias.
+
+### Fontes
+
+- Kingston, [Acronis True Image for Kingston: download e instalação](https://www.kingston.com/br/support/technical/acronis-download), e guia de clonagem da Kingston, em [kingston.com/cloning](https://www.kingston.com/cloning).
+- Microsoft, documentação de Gerenciamento de Disco: inicialização de discos novos e estilo de partição GPT.
+- Kingston, [ficha técnica do NV3](https://www.kingston.com/datasheets/snv3s_br.pdf): garantia e resistência.
+- Case externo: especificações conforme o anúncio.

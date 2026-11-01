@@ -1,0 +1,267 @@
+---
+title: 'Ryzen 7 5700X em 2026: o upgrade que ainda segura a plataforma AM4'
+description: 'Ryzen 7 5700X no AM4: 8 núcleos, 65 W, sem cooler na caixa. Para quem o upgrade compensa, compatibilidade de placa-mãe, BIOS e qual cooler usar.'
+pubDate: 2026-11-03
+category: 'home-office'
+tags: ['ryzen-7-5700x', 'processador', 'am4', 'upgrade', 'pc-gamer', 'amd']
+featured: true
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'AMD Ryzen 7 5700X, 8 núcleos e 16 threads, AM4'
+    brand: 'AMD'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B09VCHQHZ6?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1ZJPSbK'
+    image: '/images/produtos/ryzen-7-5700x.webp'
+    pros:
+      - '8 núcleos e 16 threads com TDP de 65 W, segundo a AMD'
+      - 'Encaixa no soquete AM4: aproveita placa-mãe e memória DDR4'
+      - 'Mais de 11 mil avaliações na Amazon, nota 4,7'
+    cons:
+      - 'Não vem com cooler: é preciso comprar um à parte'
+      - 'Sem vídeo integrado: exige placa de vídeo dedicada'
+  - name: 'Air cooler GamerStorm x Redragon AK400, 4 heatpipes, 120 mm'
+    brand: 'Redragon'
+    rating: 4.8
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0G5RDXV7N?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/1EWVszt'
+    image: '/images/produtos/air-cooler-ak400.webp'
+    pros:
+      - 'Torre com 4 heatpipes e ventoinha de 120 mm'
+      - 'Vendido e entregue pela Amazon, nota 4,8'
+    cons:
+      - 'Confira a altura do cooler com a largura do gabinete'
+faq:
+  - question: 'O Ryzen 7 5700X vem com cooler?'
+    answer: 'Não. Na página de suporte da AMD, a solução térmica do Ryzen 7 5700X aparece como não incluída. É preciso comprar um cooler à parte, compatível com o soquete AM4. Um air cooler de torre com quatro heatpipes atende com folga o TDP de 65 W do processador.'
+  - question: 'O Ryzen 7 5700X funciona em placa B450 ou A320?'
+    answer: 'Depende da placa e da versão da BIOS. Placas B550 e X570 suportam a série Ryzen 5000. Em placas das séries 400, como B450, e em várias da série 300, como A320 e B350, o suporte depende de uma atualização de BIOS liberada pelo fabricante da placa. Confira a lista de processadores suportados do seu modelo exato no site do fabricante antes de comprar.'
+  - question: 'O Ryzen 7 5700X tem vídeo integrado?'
+    answer: 'Não. O 5700X não tem gráficos integrados, por isso o PC precisa de uma placa de vídeo dedicada para dar imagem. Quem precisa de vídeo integrado no AM4 deve olhar os modelos com G no nome, como o Ryzen 7 5700G.'
+  - question: 'Vale mais a pena o 5700X ou trocar para AM5?'
+    answer: 'Para quem já tem placa-mãe AM4 e memória DDR4, o 5700X permite um upgrade grande trocando só o processador e o cooler. Mudar para AM5 exige placa-mãe nova e memória DDR5, o que aumenta bastante o custo. Para montar um PC do zero, o AM5 oferece mais caminho de upgrade no futuro; para atualizar um PC AM4 existente, o 5700X costuma ter melhor custo-benefício.'
+  - question: 'Qual a temperatura máxima do Ryzen 7 5700X?'
+    answer: 'A AMD informa temperatura máxima de operação (Tjmax) de 90 °C para o Ryzen 7 5700X. Em uso normal com um cooler adequado, ele trabalha bem abaixo disso. Temperaturas próximas desse limite em jogos indicam cooler mal instalado, pasta térmica ruim ou gabinete sem ventilação.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A plataforma **AM4** da AMD estreou em 2017 e ainda está em milhões de PCs. Quem montou um computador com um Ryzen 5 1600, 2600 ou 3600 tem hoje um caminho de upgrade que não exige trocar placa-mãe nem memória: tirar o processador antigo e colocar um **Ryzen 5000**. Entre eles, o **Ryzen 7 5700X** é um dos mais vendidos na Amazon e virou a escolha mais comum para esse tipo de atualização.
+
+Este guia explica **o que o 5700X entrega**, **para quem o upgrade compensa**, como conferir a **compatibilidade da placa-mãe**, o que muda em relação aos outros Ryzen 5000 e o detalhe que pega muita gente desprevenida: **ele não vem com cooler**.
+
+> **Fontes:** as especificações vêm da ficha técnica dos processadores Ryzen 3000 e 5000 e da página de suporte do Ryzen 7 5700X, ambas da AMD, consultadas em **31/10/2026**. A compatibilidade de cada placa-mãe deve ser conferida na lista de processadores suportados do fabricante da placa. O post não se baseia em teste próprio. Links no fim.
+
+## O que é o Ryzen 7 5700X
+
+![Processador AMD Ryzen 7 5700X na embalagem](/images/produtos/ryzen-7-5700x.webp)
+
+Segundo a ficha técnica da AMD, o Ryzen 7 5700X tem:
+
+| Especificação | Ryzen 7 5700X |
+|---|---|
+| Núcleos / threads | 8 / 16 |
+| Frequência base | 3,4 GHz |
+| Frequência máxima (boost) | até 4,6 GHz |
+| Cache L3 | 32 MB |
+| TDP | 65 W |
+| PCI Express | 4.0 |
+| Soquete | AM4 |
+| Temperatura máxima (Tjmax) | 90 °C |
+| Cooler na caixa | não incluído |
+| Vídeo integrado | não |
+
+Os números que mais importam para quem vem de um Ryzen mais antigo são os **8 núcleos e 16 threads** com **TDP de 65 W**. É a mesma quantidade de núcleos do Ryzen 7 5800X, com frequências um pouco menores e um TDP bem mais baixo, de 65 W contra 105 W do 5800X, segundo a mesma ficha da AMD. Na prática, isso significa um processador que **esquenta menos** e **pede menos da fonte e do cooler**.
+
+O **cache L3 de 32 MB** é outro ponto. Nos Ryzen 5000, a AMD reorganizou o cache para que todos os núcleos acessem o mesmo bloco, o que beneficia principalmente jogos.
+
+## Para quem o upgrade compensa
+
+O 5700X faz mais sentido para quem:
+
+- já tem uma **placa-mãe AM4** e **memória DDR4**, e quer mais desempenho sem trocar a plataforma;
+- vem de um **Ryzen das séries 1000, 2000 ou 3000**, especialmente os de 4 ou 6 núcleos;
+- **joga** e sente que o processador limita a placa de vídeo, com quedas de quadros em jogos que exigem muito do processador;
+- faz **edição de vídeo, renderização ou compila código**, tarefas que aproveitam bem os 8 núcleos;
+- quer **trabalhar e jogar** com muitos programas abertos ao mesmo tempo.
+
+**Para quem o upgrade compensa menos:**
+
+- quem já tem um **Ryzen 5 5600 ou 5600X**: o ganho existe em tarefas que usam muitos núcleos, mas em jogos a diferença tende a ser pequena para o investimento;
+- quem tem uma **placa de vídeo de entrada** e joga em resoluções altas: nesse caso, a placa de vídeo costuma ser o limite, e trocar o processador muda pouco;
+- quem vai **montar um PC do zero**: aí vale comparar com a plataforma AM5, que oferece mais caminho de atualização no futuro.
+
+## Como saber se o processador está limitando o PC
+
+Antes de gastar com o processador, vale confirmar que ele é mesmo o gargalo. Um teste simples, com qualquer programa de monitoramento que mostre o uso da placa de vídeo durante o jogo, como a sobreposição de desempenho da própria NVIDIA ou da AMD:
+
+- se a **placa de vídeo** fica perto de **95% a 100% de uso** durante o jogo, ela é o limite, e um processador mais forte muda pouco;
+- se a placa de vídeo fica **bem abaixo** disso, com quedas de quadros, enquanto **um ou mais núcleos do processador** ficam perto do máximo, o processador está segurando o desempenho.
+
+Jogos competitivos, que rodam em taxas de quadros muito altas, e jogos de simulação e estratégia, com muitos elementos na tela, costumam depender mais do processador. Jogos visualmente pesados em resolução alta costumam depender mais da placa de vídeo.
+
+## E o 5700X3D?
+
+Na mesma plataforma, a AMD também vende o **Ryzen 7 5700X3D**, com a tecnologia **3D V-Cache**, que empilha cache adicional sobre o processador. Esse cache extra beneficia principalmente **jogos**. Em contrapartida, o 5700X3D costuma custar mais que o 5700X e trabalha com frequências menores. Para quem usa o PC **só para jogar** e quer o máximo do AM4, ele merece a comparação de preço; para quem **joga e trabalha** com tarefas que usam muitos núcleos, o 5700X tende a ter melhor custo-benefício.
+
+## Compatibilidade: a placa-mãe precisa aceitar
+
+O soquete é o mesmo, mas **nem toda placa AM4 aceita os Ryzen 5000 de fábrica**. O suporte depende do **chipset** e, principalmente, da **versão da BIOS**:
+
+- **Placas B550 e X570**: suportam a série Ryzen 5000. Placas mais antigas desses chipsets podem precisar de uma atualização de BIOS se saíram de fábrica antes do lançamento da série.
+- **Placas B450 e X470** (série 400): o suporte veio por **atualizações de BIOS** liberadas pelos fabricantes das placas.
+- **Placas A320, B350 e X370** (série 300): vários modelos receberam suporte por BIOS mais recentes, mas **não todos**.
+
+**Como conferir:** procure o **modelo exato** da sua placa-mãe no site do fabricante, como ASUS, Gigabyte, MSI ou ASRock, e abra a **lista de processadores suportados**, geralmente chamada de **CPU Support List**. Ela informa se o Ryzen 7 5700X é suportado e **a partir de qual versão de BIOS**.
+
+**Para descobrir o modelo da placa:** no Windows, abra o **Informações do Sistema** (digite "msinfo32" no menu Iniciar) e veja os campos **Fabricante da placa base** e **Produto da placa base**. O campo **Versão/data do BIOS** mostra a versão atual.
+
+## A atualização de BIOS: o cuidado principal
+
+Se a lista de suporte pedir uma BIOS mais nova que a sua, **a atualização precisa ser feita antes de trocar o processador**, com o processador antigo ainda instalado. Sem a BIOS certa, a placa pode não dar imagem com o 5700X.
+
+A atualização de BIOS é um procedimento **sensível**: uma queda de energia no meio do processo pode deixar a placa sem funcionar. Por isso:
+
+- siga **exatamente o guia do fabricante da sua placa**, que varia de marca para marca;
+- use a versão de BIOS indicada na lista de suporte, baixada **só do site do fabricante**;
+- faça a atualização com o PC ligado a um **nobreak**, se possível, ou num momento sem risco de queda de energia;
+- **não desligue** o computador durante o processo.
+
+Algumas placas têm um recurso chamado **BIOS Flashback** ou equivalente, que permite atualizar a BIOS por um pendrive mesmo sem processador compatível instalado. O manual da placa informa se o seu modelo tem.
+
+**Uma observação importante:** em algumas placas antigas, BIOS novas que adicionam suporte aos Ryzen 5000 podem **remover o suporte a processadores mais antigos**, como os da primeira geração. Leia as notas da versão no site do fabricante.
+
+## Ele não vem com cooler
+
+Este é o detalhe que mais causa surpresa. Na página de suporte da AMD, a solução térmica do Ryzen 7 5700X aparece como **não incluída**. Muitos Ryzen mais antigos vinham com o cooler **Wraith** na caixa; o 5700X não. Quem tira o processador antigo e pretende reaproveitar o cooler que veio com ele pode usar o mesmo cooler, se for compatível com o AM4, mas um cooler básico de fábrica tende a trabalhar no limite com um processador de 8 núcleos em carga pesada.
+
+Para um processador de **65 W**, um **air cooler de torre** com quatro heatpipes atende com folga. Não é preciso um water cooler.
+
+![Air cooler de torre GamerStorm AK400 preto, com ventoinha de 120 mm](/images/produtos/air-cooler-ak400.webp)
+
+O **air cooler AK400**, da parceria GamerStorm com a Redragon, é um cooler de torre com **4 heatpipes** e ventoinha de **120 mm**, vendido e entregue pela Amazon, com nota **4,8** em mais de 350 avaliações. Antes de comprar, confira a **altura do cooler** na ficha do produto e a **altura máxima de cooler** que o seu gabinete suporta: coolers de torre são altos e não cabem em gabinetes muito estreitos.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0G5RDXV7N?tag=nerdcaseiro-20" store="amazon" source="ryzen-7-5700x-upgrade-am4-2026" />
+<AffiliateButton href="https://meli.la/1EWVszt" store="mercadolivre" source="ryzen-7-5700x-upgrade-am4-2026" />
+
+## Ele não tem vídeo integrado
+
+Outro detalhe importante: o 5700X **não tem gráficos integrados**. O PC precisa de uma **placa de vídeo dedicada** para dar imagem. Para quem já tem uma placa de vídeo, nada muda. Para quem usava um **Ryzen com G no nome**, como o 3400G ou o 5600G, que tem vídeo integrado, trocar pelo 5700X sem uma placa de vídeo deixa o PC **sem imagem**.
+
+Quem precisa de vídeo integrado no AM4 deve olhar o **Ryzen 7 5700G**, que tem gráficos Radeon integrados, com outras diferenças em relação ao 5700X.
+
+## O 5700X e os outros Ryzen 5000
+
+Os nomes parecidos confundem. Um resumo, com base na ficha técnica da AMD e nos anúncios:
+
+| Modelo | Núcleos / threads | TDP | Cache L3 | Observação |
+|---|---|---|---|---|
+| Ryzen 5 5500 | 6 / 12 | 65 W | 16 MB | opção mais barata de 6 núcleos |
+| Ryzen 5 5600 | 6 / 12 | 65 W | 32 MB | 6 núcleos com cache cheio |
+| **Ryzen 7 5700X** | **8 / 16** | **65 W** | **32 MB** | 8 núcleos, sem cooler e sem vídeo |
+| Ryzen 7 5800X | 8 / 16 | 105 W | 32 MB | frequências maiores, mais quente |
+| Ryzen 7 5700G | 8 / 16 | 65 W | menor | tem vídeo integrado |
+
+Existe também o **Ryzen 7 5700**, sem o X, que é vendido com cooler, mas tem cache menor que o 5700X, segundo os anúncios. Os nomes quase idênticos fazem muita gente comprar um achando que é o outro; confira a sigla completa e a quantidade de cache na ficha.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B09VCHQHZ6?tag=nerdcaseiro-20" store="amazon" source="ryzen-7-5700x-upgrade-am4-2026" />
+<AffiliateButton href="https://meli.la/1ZJPSbK" store="mercadolivre" source="ryzen-7-5700x-upgrade-am4-2026" />
+
+## PCIe 4.0: depende da placa
+
+O 5700X suporta **PCI Express 4.0**, segundo a AMD, mas o recurso depende também do **chipset da placa-mãe**. Nas placas da **série 500**, como B550 e X570, o slot principal da placa de vídeo e o slot M.2 ligado ao processador trabalham em PCIe 4.0. Nas placas das **séries 300 e 400**, como A320 e B450, a conexão fica em **PCIe 3.0**.
+
+Na prática, para placas de vídeo de entrada e intermediárias e para SSDs, a diferença entre PCIe 3.0 e 4.0 é pequena no uso doméstico. Um SSD PCIe 4.0 funciona normalmente numa placa PCIe 3.0, só que limitado à velocidade da interface. Não é motivo, sozinho, para trocar de placa-mãe.
+
+## A memória: DDR4 continua servindo
+
+O 5700X usa **memória DDR4**, a mesma das placas AM4. Quem já tem DDR4 aproveita os pentes que tem. Alguns pontos ajudam a tirar o máximo do processador:
+
+- **Dois pentes em vez de um**, para funcionar em **dual channel**. Um único pente reduz a largura de banda pela metade e prejudica o desempenho, principalmente em jogos;
+- **Ativar o perfil de memória na BIOS**, chamado de XMP, DOCP ou A-XMP conforme a marca da placa, para a memória trabalhar na velocidade anunciada e não na velocidade padrão mais baixa.
+
+O perfil fica na seção de memória ou de overclock da BIOS, e a velocidade efetiva pode ser conferida depois no Gerenciador de Tarefas do Windows, aba Desempenho, em Memória.
+
+## A fonte: 65 W não pesam
+
+Com TDP de 65 W, o 5700X não exige uma fonte maior que a de um Ryzen de 6 núcleos de geração anterior. Quem está com uma fonte de qualidade que já atende a placa de vídeo atual dificilmente precisará trocá-la por causa do processador. Como dimensionar a fonte está no guia [quantos watts de fonte usar](/posts/fonte-de-pc-quantos-watts-selo-80-plus/).
+
+## Consumo e temperatura no dia a dia
+
+Com **65 W de TDP**, o 5700X é um processador relativamente fácil de resfriar para os seus 8 núcleos. No uso de escritório e navegação, ele passa a maior parte do tempo com carga baixa, consumindo pouco. Em jogos, o consumo sobe, mas raramente fica no limite por muito tempo. Em tarefas que usam todos os núcleos de forma contínua, como renderização ou compressão de vídeo, ele trabalha mais perto do limite de potência.
+
+O comportamento de **boost** dos Ryzen faz o processador subir a frequência enquanto houver margem de temperatura e de energia. Por isso, um cooler melhor pode ajudar o processador a sustentar frequências mais altas por mais tempo. Não é preciso exagerar: para 65 W, um bom cooler de torre já entrega essa margem.
+
+**Gabinete importa:** de nada adianta um bom cooler num gabinete sem entrada e saída de ar. Pelo menos uma ventoinha puxando ar para dentro, na frente, e uma tirando ar quente, atrás, ajudam todo o sistema, inclusive a placa de vídeo.
+
+## Quanto tempo o AM4 ainda aguenta
+
+A AMD manteve a plataforma AM4 por muitos anos, e os Ryzen 5000 são a última grande geração para ela. Isso significa que, depois do 5700X, as opções de upgrade no AM4 ficam praticamente restritas aos próprios Ryzen 5000. Não é um problema para quem quer **estender a vida útil** do PC por mais alguns anos com um investimento menor: um processador de 8 núcleos e 16 threads atende bem jogos atuais, trabalho de escritório e criação de conteúdo. Quando chegar a hora de uma troca maior, o caminho natural será uma plataforma nova, com placa-mãe e memória novas.
+
+## A troca, em linhas gerais
+
+O procedimento físico é simples, mas pede cuidado:
+
+1. **Confira a compatibilidade** e, se necessário, **atualize a BIOS** com o processador antigo ainda instalado.
+2. **Desligue o PC**, tire da tomada e toque numa parte metálica do gabinete.
+3. **Retire o cooler** antigo. A pasta térmica pode colar o cooler no processador: gire levemente o cooler antes de puxar, depois de alguns minutos de uso, com a pasta morna, para não arrancar o processador do soquete junto.
+4. **Levante a alavanca** do soquete, retire o processador antigo e coloque o 5700X, alinhando o **triângulo dourado** do canto do processador com a marca do soquete. Os processadores AM4 têm os **pinos no próprio processador**: não force, ele encaixa por gravidade.
+5. **Abaixe a alavanca**.
+6. **Aplique a pasta térmica** e instale o cooler novo. Uma quantidade do tamanho de uma ervilha no centro do processador é a referência mais citada; o cooler espalha a pasta ao ser apertado.
+7. Ligue o PC, entre na BIOS e confira se o processador foi reconhecido.
+
+## Depois da troca: o que conferir
+
+- **Reconhecimento**: na BIOS ou no Gerenciador de Tarefas do Windows, aba Desempenho, o processador deve aparecer como AMD Ryzen 7 5700X, com 8 núcleos e 16 processadores lógicos.
+- **Temperatura**: em uso leve, o processador deve ficar bem longe dos **90 °C** que a AMD informa como máximo. Temperaturas altas em repouso indicam cooler mal encaixado ou pasta térmica mal aplicada.
+- **Drivers do chipset**: instale os drivers de chipset AMD mais recentes, pelo site da AMD ou do fabricante da placa.
+- **Plano de energia**: o Windows costuma ajustar sozinho; não é preciso mexer para uso comum.
+
+## Caixa, garantia e procedência
+
+O 5700X é vendido em **caixa** (box) e, em alguns anúncios, como processador avulso, chamado de **tray**, sem a caixa de varejo. A diferença está na garantia e na procedência: a versão em caixa, de vendedor conhecido, facilita o acionamento da garantia. Ao comprar, confira:
+
+- se o anúncio informa a **versão em caixa** e o código do produto, que para o 5700X em caixa termina em **WOF**;
+- se o vendedor emite **nota fiscal**, necessária para a garantia;
+- a **reputação do vendedor** e as avaliações recentes;
+- se a embalagem chegou **lacrada** e se o processador não tem pinos tortos.
+
+Pinos tortos são a avaria mais comum em processadores AM4 manuseados. Com o processador nas mãos, olhe as fileiras de pinos de lado, contra a luz: elas devem estar perfeitamente alinhadas.
+
+## Erros comuns
+
+**Comprar o processador sem conferir a BIOS da placa.** Sem a BIOS certa, a placa pode não dar imagem.
+
+**Trocar o processador antes de atualizar a BIOS.** A atualização precisa do processador antigo instalado, salvo em placas com BIOS Flashback.
+
+**Esquecer que ele vem sem cooler.** Compre o cooler junto.
+
+**Trocar um Ryzen com G por um 5700X sem ter placa de vídeo.** O PC fica sem imagem.
+
+**Confundir 5700X, 5700 e 5700G.** São processadores diferentes; leia a sigla completa.
+
+**Usar um único pente de memória.** Prefira dois, em dual channel.
+
+**Puxar o cooler antigo com força.** Pode arrancar o processador do soquete e entortar os pinos.
+
+## Resumo
+
+- O **Ryzen 7 5700X** tem **8 núcleos e 16 threads**, até **4,6 GHz**, **32 MB** de cache L3 e **TDP de 65 W**, segundo a AMD.
+- É o upgrade natural para quem tem **placa AM4 e memória DDR4**, principalmente vindo de Ryzen 1000, 2000 ou 3000.
+- **Confira a lista de CPUs suportadas** da sua placa e atualize a **BIOS** antes da troca, se necessário.
+- **Não vem com cooler** e **não tem vídeo integrado**: compre um cooler e tenha uma placa de vídeo.
+- Use **dois pentes** de memória e ative o **perfil XMP/DOCP** na BIOS.
+- Prefira a **versão em caixa**, com nota fiscal, e confira os pinos ao receber.
+
+### Fontes
+
+- AMD, [ficha dos processadores Ryzen 3000 e 5000](https://www.amd.com/content/dam/amd/en/documents/products/processors/ryzen/5000/amd-ryzen-5000-datasheet.pdf): núcleos, frequências, TDP, PCIe e cache.
+- AMD, [página de suporte do Ryzen 7 5700X](https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-7-5700x.html): solução térmica não incluída e temperatura máxima.
+- Fabricantes de placas-mãe: listas de processadores suportados (CPU Support List) de cada modelo.
