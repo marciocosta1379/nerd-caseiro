@@ -1,0 +1,278 @@
+---
+title: 'Home Assistant: alerta de porta aberta por mais de 5 minutos'
+description: 'Automação no Home Assistant 2026.11 que avisa no celular quando uma porta fica aberta por 5 minutos: gatilho de estado com for, notificação e armadilhas.'
+pubDate: 2026-11-14
+category: 'automacao-residencial'
+tags: ['home-assistant', 'automacao', 'sensor-de-porta', 'zigbee', 'notificacao', 'tutorial']
+featured: false
+draft: true
+author: 'Márcio Costa'
+faq:
+  - question: 'Funciona com qualquer sensor de porta?'
+    answer: 'Funciona com qualquer sensor de abertura que apareça no Home Assistant como um sensor binário, que fica on quando a porta abre e off quando fecha. Pode ser Zigbee, Wi-Fi ou Bluetooth, desde que esteja integrado ao Home Assistant.'
+  - question: 'Por que o alerta não chegou depois que reiniciei o Home Assistant?'
+    answer: 'Segundo a documentação do Home Assistant, quando se usa a opção for, a contagem é reiniciada se o Home Assistant reiniciar ou se as automações forem recarregadas. Se a porta já estava aberta, a contagem de 5 minutos só volta a valer a partir de uma nova mudança de estado.'
+  - question: 'Posso mudar os 5 minutos?'
+    answer: 'Pode. Basta mudar o valor de for no gatilho, por exemplo para 00:10:00, que equivale a dez minutos. O formato é horas, minutos e segundos.'
+  - question: 'Preciso do aplicativo do Home Assistant no celular?'
+    answer: 'Para receber a notificação no celular, sim. O aplicativo Home Assistant Companion cria a ação de notificação do celular, chamada notify.mobile_app seguida do nome do aparelho.'
+products:
+  - name: 'Sensor de porta e janela Sonoff SNZB-04P, Zigbee'
+    brand: 'Sonoff'
+    rating: 4.7
+    stores:
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2dgwTaB'
+    image: '/images/produtos/sonoff-snzb-04p.webp'
+    pros:
+      - 'Zigbee: funciona com ZHA e Zigbee2MQTT'
+      - 'Pequeno, alimentado por bateria'
+    cons:
+      - 'Precisa de um coordenador Zigbee no Home Assistant'
+  - name: 'Adaptador Sonoff Zigbee 3.0 USB Dongle Plus-E'
+    brand: 'Sonoff'
+    rating: 4.7
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B0B6P22YJC?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/14RjY9U'
+    image: '/images/produtos/sonoff-zigbee-dongle-plus-e.webp'
+    pros:
+      - 'Já vem com firmware de coordenador Zigbee, segundo a Sonoff'
+      - 'Suporta Home Assistant e Zigbee2MQTT'
+      - 'Mais de 3.800 avaliações na Amazon, nota 4,7'
+    cons:
+      - 'Precisa de uma extensão USB para ficar longe de interferências'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+
+A porta da geladeira que não fechou direito, o portão da garagem esquecido aberto, a porta dos fundos destrancada à noite, a janela do quarto aberta antes da chuva. São coisas que um aviso simples no celular resolve antes de virarem problema. No **Home Assistant**, essa automação é uma das mais simples e úteis que existem: **se a porta ficar aberta por mais de 5 minutos, mande uma notificação**.
+
+Este tutorial monta a automação passo a passo, pelo editor visual e em YAML, e explica as **armadilhas** que fazem o alerta não chegar.
+
+> **Versão e fontes:** este tutorial segue a documentação oficial do **Home Assistant 2026.11**: a página do [gatilho de estado (State trigger)](https://www.home-assistant.io/triggers/state/), que traz o exemplo de lembrete de porta aberta usado aqui, e a documentação de [notificações do aplicativo Companion](https://companion.home-assistant.io/docs/notifications/notifications-basic/). Consultado em **07/11/2026**. O Home Assistant muda a interface e algumas opções entre versões: confira a documentação da sua versão. O post não se baseia em teste próprio.
+
+## O que você precisa
+
+1. **Home Assistant** funcionando. Se ainda não tem, o post [Home Assistant no Raspberry Pi: instalação](/posts/home-assistant-raspberry-pi-instalacao/) mostra o caminho.
+2. **Um sensor de abertura** de porta ou janela já integrado ao Home Assistant.
+3. **O aplicativo Home Assistant Companion** instalado e conectado no celular, para receber a notificação. O post [Notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/) explica a configuração.
+
+## O sensor: qualquer um que vire "binary_sensor"
+
+A automação funciona com **qualquer sensor de abertura** que apareça no Home Assistant como um **sensor binário** (`binary_sensor`). Para sensores de porta, o estado fica:
+
+- **`on`** quando a porta está **aberta**;
+- **`off`** quando a porta está **fechada**.
+
+Na interface, o Home Assistant mostra "Aberto" e "Fechado", mas, por baixo, os valores são `on` e `off`. É isso que a automação usa.
+
+### Sensor Zigbee e o coordenador
+
+![Sensor de porta e janela Sonoff SNZB-04P](/images/produtos/sonoff-snzb-04p.webp)
+
+Sensores **Zigbee**, como o **Sonoff SNZB-04P**, são pequenos, funcionam com bateria e conversam com o Home Assistant por uma rede própria, sem depender do Wi-Fi nem da nuvem do fabricante. Eles precisam de um **coordenador Zigbee** ligado ao computador do Home Assistant.
+
+<AffiliateButton href="https://meli.la/2dgwTaB" store="mercadolivre" source="home-assistant-alerta-porta-aberta-5-minutos" />
+
+![Adaptador Sonoff Zigbee 3.0 USB Dongle Plus-E](/images/produtos/sonoff-zigbee-dongle-plus-e.webp)
+
+O **Sonoff Zigbee 3.0 USB Dongle Plus-E** é um coordenador USB. Segundo a Sonoff, ele vem **pré-gravado com firmware de coordenador Zigbee** pronto para uso, é baseado no chip **EFR32MG21** e funciona com **Home Assistant**, **Zigbee2MQTT** e **openHAB**. Na Amazon, tem mais de **3.800 avaliações**, com nota **4,7**.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B0B6P22YJC?tag=nerdcaseiro-20" store="amazon" source="home-assistant-alerta-porta-aberta-5-minutos" />
+<AffiliateButton href="https://meli.la/14RjY9U" store="mercadolivre" source="home-assistant-alerta-porta-aberta-5-minutos" />
+
+Para escolher entre as duas formas de integrar o Zigbee ao Home Assistant, o post [Zigbee2MQTT ou ZHA](/posts/zigbee2mqtt-ou-zha-home-assistant/) compara as opções. Para outros modelos de sensor, o post [Os melhores sensores de porta e janela para Home Assistant](/posts/melhores-sensores-porta-janela-home-assistant/) traz alternativas, inclusive Wi-Fi.
+
+**Dica de instalação do coordenador:** use uma **extensão USB** para deixar o dongle a meio metro ou mais do computador. Portas USB 3.0 e alguns computadores geram interferência na faixa de 2,4 GHz usada pelo Zigbee.
+
+## Zigbee, Wi-Fi ou Bluetooth: qual sensor usar
+
+Os três tipos funcionam com a automação deste tutorial. As diferenças estão no dia a dia:
+
+- **Zigbee**: rede própria, de baixo consumo; os sensores duram bastante com uma bateria e respondem rápido. Precisa de coordenador, mas não depende da internet nem da nuvem do fabricante.
+- **Wi-Fi**: não precisa de coordenador, mas consome mais bateria e, em muitos modelos, depende da nuvem do fabricante para chegar ao Home Assistant. Se a internet cair, o aviso pode atrasar ou não chegar.
+- **Bluetooth**: alguns sensores usam Bluetooth de baixo consumo e chegam ao Home Assistant por um adaptador ou por proxies Bluetooth na casa.
+
+Para quem pretende ter vários sensores, o **Zigbee** costuma ser a escolha mais estável a longo prazo.
+
+## Instalando o sensor na porta
+
+1. **Limpe** a superfície com álcool isopropílico antes de colar a fita dupla face.
+2. Cole o **sensor** no batente e o **ímã** na folha da porta, ou o contrário, com as marcas de alinhamento uma de frente para a outra.
+3. Respeite a **distância máxima** entre as peças indicada pelo fabricante, com a porta fechada.
+4. Abra e feche a porta várias vezes e confira no Home Assistant se o estado muda corretamente.
+5. Em portas de metal, o ímã pode perder força: teste antes de colar definitivamente.
+
+Para a **geladeira**, use sensores pequenos e prefira colar do lado de fora, na lateral da porta, longe do frio intenso.
+
+## Descubra o nome do sensor (entity_id)
+
+Antes de criar a automação, anote o **entity_id** do sensor:
+
+1. Vá em **Configurações > Dispositivos e serviços > Entidades**.
+2. Procure o sensor de porta pelo nome.
+3. Abra a entidade e anote o **ID da entidade**, algo como `binary_sensor.porta_dos_fundos`.
+4. Abra e feche a porta e confira se o estado muda entre **Aberto** e **Fechado**.
+
+## Descubra o nome da notificação do celular
+
+A documentação do Companion explica que a ação de notificação tem o formato `notify.mobile_app_` seguido do nome do aparelho, e que esse nome pode ser conferido no menu do aplicativo Companion, dentro das configurações do Home Assistant. Na prática:
+
+1. Vá em **Configurações > Automações e cenas > Scripts** ou abra as **Ferramentas de desenvolvedor > Ações**.
+2. Digite `notify.mobile_app` e veja a lista: aparece uma ação para cada celular com o app conectado, por exemplo `notify.mobile_app_celular_do_marcio`.
+
+## Criando a automação pelo editor visual
+
+1. Vá em **Configurações > Automações e cenas > Criar automação > Criar nova automação**.
+2. Em **Quando** (gatilho), adicione **Entidade > Estado**.
+3. Escolha a entidade do sensor de porta.
+4. Em **Para** (estado de destino), escolha **Aberto**.
+5. Em **Por pelo menos** (a opção `for`), coloque **5 minutos**.
+6. Em **Então faça** (ações), adicione **Notificações** e escolha a notificação do seu celular, ou a ação `notify.mobile_app_...`.
+7. Escreva a **mensagem**, por exemplo: "A porta dos fundos está aberta há 5 minutos."
+8. Salve com um nome claro, como "Alerta porta dos fundos aberta".
+
+## A mesma automação em YAML
+
+O gatilho segue exatamente o exemplo de "lembrete da porta dos fundos" da documentação do gatilho de estado:
+
+```yaml
+alias: Alerta porta dos fundos aberta
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.porta_dos_fundos
+    to: "on"
+    for: "00:05:00"
+actions:
+  - action: notify.mobile_app_celular_do_marcio
+    data:
+      title: "Porta aberta"
+      message: "A porta dos fundos está aberta há 5 minutos."
+```
+
+**O que cada parte faz:**
+
+- `trigger: state`: a automação observa a **mudança de estado** da entidade;
+- `entity_id`: o sensor da porta; troque pelo seu;
+- `to: "on"`: o estado de destino é **aberto**;
+- `for: "00:05:00"`: segundo a documentação, é o tempo que o novo estado precisa **permanecer sem mudar** antes de o gatilho disparar. Se a porta fechar antes dos 5 minutos, nada acontece;
+- `action: notify.mobile_app_...`: a ação de notificação do celular, no formato da documentação do Companion; troque pelo nome do seu aparelho.
+
+Para colar o YAML, abra a automação, clique nos **três pontos** no canto superior direito e escolha **Editar em YAML**.
+
+## Testando sem esperar 5 minutos
+
+Para não ficar esperando a cada teste:
+
+1. Mude temporariamente o `for` para **`00:00:10`** (dez segundos).
+2. Abra a porta e espere.
+3. Confira se a notificação chegou.
+4. Volte o `for` para **`00:05:00`** e salve.
+
+Outra forma é usar o botão **Executar ações** da própria automação, que testa só a parte da notificação, sem passar pelo gatilho.
+
+## As armadilhas que fazem o alerta falhar
+
+### 1. Reinício do Home Assistant zera a contagem
+
+A documentação do gatilho de estado avisa: ao usar a opção `for`, **o temporizador é reiniciado se o Home Assistant reiniciar ou se as automações forem recarregadas**. Se a porta abriu, o Home Assistant reiniciou logo depois e a porta continuou aberta, o alerta **não vem**, porque não houve nova mudança de estado depois do reinício.
+
+Na prática, isso afeta pouco o dia a dia, mas é bom saber: durante atualizações do Home Assistant, uma porta aberta pode passar despercebida.
+
+### 2. Sensor indisponível
+
+Se o sensor perde a conexão ou a bateria acaba, o estado vira **indisponível** (`unavailable`), e a automação não dispara. Vale ter uma **segunda automação** que avisa quando o sensor fica indisponível por muito tempo, ou acompanhar o nível de bateria dos sensores Zigbee no painel.
+
+### 3. Nome da notificação errado
+
+Se o celular foi trocado ou renomeado, a ação `notify.mobile_app_...` muda de nome, e a automação passa a falhar. Confira em **Configurações > Sistema > Logs** se aparecem erros da automação.
+
+### 4. Notificações do app bloqueadas no celular
+
+Confira se o aplicativo do Home Assistant tem **permissão de notificação** no celular e se a economia de bateria do Android não está fechando o app em segundo plano.
+
+### 5. Ímã desalinhado
+
+Sensores magnéticos têm duas peças: o **sensor** e o **ímã**. Se a distância entre elas for grande demais com a porta fechada, o sensor marca "aberto" o tempo todo. Siga a distância indicada pelo fabricante na instalação.
+
+## Uma segunda automação: aviso quando a porta fechar
+
+Depois de receber o alerta, é útil saber quando alguém fechou a porta. A lógica é a mesma, invertendo o estado: o gatilho observa a mudança para `"off"` (fechada). Sem a opção `for`, ela avisa assim que a porta fecha:
+
+```yaml
+alias: Porta dos fundos fechada
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.porta_dos_fundos
+    to: "off"
+actions:
+  - action: notify.mobile_app_celular_do_marcio
+    data:
+      message: "A porta dos fundos foi fechada."
+```
+
+Cuidado: assim, ela avisa **toda vez** que a porta fecha, mesmo depois de uma abertura rápida. Para receber o aviso só depois de um alerta de porta aberta, é preciso combinar as duas automações com uma condição, por exemplo usando um auxiliar do tipo **alternância** (`input_boolean`) que a primeira automação liga e a segunda desliga. A documentação de automações do Home Assistant explica as condições e os auxiliares.
+
+## Melhorias opcionais
+
+**Mais de uma porta:** adicione vários sensores no mesmo gatilho, listando os `entity_id`. Na mensagem, use o nome da porta que disparou.
+
+**Só à noite:** adicione uma **condição** de horário, para o alerta valer só entre 22h e 6h, por exemplo.
+
+**Só quando ninguém está em casa:** combine com a presença dos celulares. O post [Automação de chegada em casa com zonas](/posts/automacao-chegar-em-casa-zonas-home-assistant/) mostra como detectar quem está em casa.
+
+**Aviso no alto-falante:** além do celular, anuncie numa caixa de som integrada ao Home Assistant.
+
+## Como ler o histórico da porta
+
+Além do alerta, o Home Assistant guarda o **histórico** de cada sensor. Isso ajuda a entender hábitos e a investigar falhas:
+
+1. Vá em **Histórico** no menu lateral.
+2. Escolha a entidade do sensor de porta.
+3. Veja as faixas de tempo em que a porta ficou **aberta** e **fechada**.
+
+Com o histórico, dá para descobrir, por exemplo, que a porta da varanda fica aberta todo fim de tarde, ou que o sensor perde a conexão em certos horários, sinal de alcance ruim da rede Zigbee. Nesse caso, um **roteador Zigbee**, como uma tomada inteligente Zigbee ligada na energia, entre o coordenador e o sensor costuma resolver.
+
+## Privacidade e funcionamento local
+
+Uma vantagem desse tipo de automação no Home Assistant é que, com sensores **Zigbee**, tudo acontece **dentro de casa**: o sensor fala com o coordenador, o coordenador com o Home Assistant, e o Home Assistant decide quando avisar. A internet só entra no último passo, para entregar a notificação no celular quando você está fora de casa. Se a internet cair, o Home Assistant continua registrando o estado da porta e pode, por exemplo, acionar uma sirene ou uma luz local.
+
+## Onde esse alerta faz mais diferença
+
+- **Porta da geladeira ou do freezer**, com um sensor pequeno colado na lateral: evita comida estragada.
+- **Portão da garagem**: avisa quando alguém esqueceu de fechar.
+- **Porta dos fundos e varanda**: segurança à noite.
+- **Janelas**: avisa antes da chuva ou quando o ar-condicionado está ligado.
+- **Porta do quarto de bebê ou da área com piscina**: um aviso a mais de segurança, que não substitui supervisão.
+
+## Erros comuns
+
+**Usar o estado "Aberto" em YAML.** No YAML, o estado é `"on"`.
+
+**Esquecer as aspas no `for`.** Escreva `"00:05:00"`.
+
+**Testar com 5 minutos.** Use 10 segundos para testar e volte depois.
+
+**Esquecer de voltar o tempo para 5 minutos depois do teste.** Os alertas viram uma enxurrada.
+
+**Coordenador Zigbee colado no computador.** Use uma extensão USB.
+
+**Não acompanhar bateria dos sensores.** Sensor sem bateria não avisa nada, e o alerta simplesmente deixa de chegar.
+
+## Resumo
+
+- A automação usa um **gatilho de estado** com `to: "on"` e `for: "00:05:00"`, como no exemplo da documentação do Home Assistant 2026.11.
+- A ação envia uma notificação para `notify.mobile_app_` seguido do nome do celular.
+- Funciona com qualquer sensor de abertura integrado como **binary_sensor**.
+- A contagem do `for` **zera** se o Home Assistant reiniciar ou se as automações forem recarregadas.
+- Teste com **10 segundos**, confira **bateria** e **disponibilidade** dos sensores.
+- Com sensores **Zigbee**, a automação funciona localmente; a internet só é necessária para a notificação chegar ao celular fora de casa.
+
+### Fontes
+
+- Home Assistant, documentação do [State trigger](https://www.home-assistant.io/triggers/state/) (versão 2026.11): exemplo de lembrete de porta aberta com `for`, definição da opção `for` e aviso sobre reinício.
+- Home Assistant Companion, documentação de [notificações básicas](https://companion.home-assistant.io/docs/notifications/notifications-basic/): formato da ação `notify.mobile_app_` e como encontrar o nome do aparelho.
+- Sonoff, descrição do Zigbee 3.0 USB Dongle Plus-E no anúncio: firmware, chip e plataformas compatíveis.
