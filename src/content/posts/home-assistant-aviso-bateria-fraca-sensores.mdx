@@ -1,0 +1,342 @@
+---
+title: 'Home Assistant: aviso de bateria fraca em todos os sensores'
+description: 'Uma automação só para avisar no celular quais sensores estão com bateria fraca, com o template oficial do Home Assistant 2026.11 e os cuidados com Zigbee.'
+pubDate: 2026-11-21
+category: 'automacao-residencial'
+tags: ['home-assistant', 'automacao', 'bateria', 'zigbee', 'template', 'tutorial']
+draft: true
+author: 'Márcio Costa'
+products:
+  - name: 'Pilha moeda Duracell CR2032, pack com 5'
+    brand: 'Duracell'
+    rating: 4.9
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B08DQN4HQP?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/32bH6SX'
+    image: '/images/produtos/pilha-cr2032-duracell-5.webp'
+    pros:
+      - 'CR2032 é a bateria mais comum em sensores de porta, botões e sensores de temperatura'
+      - 'Validade de 10 anos na embalagem, segundo o anúncio'
+      - 'Mais de 27 mil avaliações na Amazon, nota 4,9'
+    cons:
+      - 'Embalagem reforçada só abre com tesoura (proteção contra crianças)'
+  - name: 'Bateria de lítio CR2450 Elgin, cartela com 5'
+    brand: 'Elgin'
+    rating: 4.6
+    stores:
+      - store: 'amazon'
+        url: 'https://www.amazon.com.br/dp/B07DF2M4FM?tag=nerdcaseiro-20'
+      - store: 'mercadolivre'
+        url: 'https://meli.la/2wxxPmR'
+    image: '/images/produtos/pilha-cr2450-elgin-5.webp'
+    pros:
+      - 'CR2450 aparece em sensores e botões que pedem mais autonomia'
+      - 'Cartela com 5 unidades'
+    cons:
+      - 'Menos comum: confira o modelo exato no compartimento do sensor'
+faq:
+  - question: 'Em que versão do Home Assistant este tutorial foi conferido?'
+    answer: 'O código foi conferido na documentação oficial do Home Assistant na versão 2026.11.1, no tutorial "Low battery alerts" e na página de gatilhos de automação. As funções de template usadas, como device_name e area_name, e a ação notify.send_message fazem parte da documentação atual.'
+  - question: 'Meu sensor mostra 100% há meses. Está certo?'
+    answer: 'Pode não estar. Muitos sensores Zigbee com bateria CR2032 calculam o percentual a partir da tensão, e a tensão de uma bateria de lítio fica quase estável durante boa parte da vida útil e cai rápido no fim. Relatos frequentes no fórum do Home Assistant descrevem sensores que mostram 100% por meses e depois caem de repente ou param de responder.'
+  - question: 'Por que meu sensor sumiu sem nunca aparecer com bateria baixa?'
+    answer: 'Quando a bateria acaba de repente, o sensor pode simplesmente parar de responder e ficar indisponível, sem nunca ter reportado um percentual baixo. A documentação sugere tratar os dispositivos indisponíveis separadamente, porque eles podem estar com a bateria morta.'
+  - question: 'Posso mudar o limite de 20%?'
+    answer: 'Pode. Basta trocar o número 20 no template. A documentação sugere testar com 100 para confirmar que o template encontra os sensores, e depois voltar para o limite desejado. Também é possível guardar o limite num auxiliar numérico para mudar pela interface.'
+  - question: 'O template pega sensores de bateria de celular e notebook?'
+    answer: 'Pega qualquer sensor com device_class battery, o que inclui o nível de bateria do celular com o aplicativo do Home Assistant instalado. Se não quiser receber aviso do celular, a documentação mostra como excluir entidades específicas com uma lista de entity_id.'
+  - question: 'Funciona com sensores Zigbee pelo ZHA e pelo Zigbee2MQTT?'
+    answer: 'Funciona com qualquer integração que exponha um sensor com device_class battery, o que inclui o ZHA e o Zigbee2MQTT para a maioria dos dispositivos. Alguns aparelhos só informam bateria baixa como binary_sensor; para eles, a documentação traz um laço adicional.'
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Quem tem uma casa com muitos sensores sem fio descobre um problema chato depois de alguns meses: **as baterias acabam em momentos diferentes**, e quase sempre sem aviso. O sensor da porta de entrada para de responder justamente no dia da viagem, o botão do quarto não funciona mais, o sensor de vazamento da lavanderia está morto há semanas e ninguém percebeu.
+
+O Home Assistant sabe o nível de bateria de quase todos esses dispositivos. O que falta é juntar a informação num aviso só. Este tutorial monta uma automação que, **uma vez por dia**, verifica **todos os sensores de bateria** da casa e manda para o celular a lista dos que estão abaixo de 20%, com o nome do dispositivo, o cômodo e o percentual.
+
+> **Base deste tutorial:** o código vem do tutorial oficial **"Low battery alerts"** da documentação do Home Assistant, conferido na versão **2026.11.1**, e da página oficial de **gatilhos de automação**. Os links estão no fim do post. O autor não testou em bancada; o procedimento é o da documentação, e os cuidados com Zigbee vêm de relatos do fórum oficial.
+
+## O que vamos montar
+
+O resultado é uma notificação diária como esta, no celular:
+
+> 2 devices need new batteries: Front door lock in Hallway (15%), Motion sensor in Kitchen (12%).
+
+Ou, quando está tudo bem:
+
+> All batteries are healthy.
+
+Mais abaixo, o post mostra como trocar o texto para português.
+
+## Antes de começar
+
+Você precisa de:
+
+- **Home Assistant** atualizado (a documentação usada aqui é da versão 2026.11);
+- pelo menos **um dispositivo com bateria** que informe o percentual ao Home Assistant;
+- um serviço de **notificação no celular**, normalmente o aplicativo Home Assistant instalado. O site tem um guia sobre [notificação no celular com o app do Home Assistant](/posts/notificacao-celular-home-assistant-app/);
+- acesso ao **editor de template** em **Ferramentas de desenvolvedor → Template**.
+
+## Passo 1: veja quais sensores de bateria você tem
+
+Em **Ferramentas de desenvolvedor → Estados**, filtre por `battery`. Aparecem as entidades com nível de bateria: sensores Zigbee, fechaduras, botões, controles e também o celular, se o aplicativo estiver instalado.
+
+A documentação chama atenção para um detalhe: **alguns dispositivos não informam o percentual**, só um estado de "bateria baixa" como `binary_sensor`. Esses são tratados mais abaixo.
+
+## Passo 2: liste as baterias fracas
+
+Cole este template no **editor de template**. Ele percorre todos os sensores com `device_class` de bateria, **ignora os que estão desconhecidos ou indisponíveis** e junta numa lista os que estão abaixo de 20%:
+
+```jinja
+{% set low = namespace(batteries=[]) %}
+{% for sensor in states.sensor
+  | selectattr('attributes.device_class', 'eq', 'battery')
+  | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+  {% if sensor.state | float(100) < 20 %}
+    {% set device = device_name(sensor.entity_id) or sensor.name %}
+    {% set low.batteries = low.batteries + [device] %}
+  {% endif %}
+{% endfor %}
+{{ low.batteries }}
+```
+
+O resultado aparece ao lado, como uma lista de nomes de dispositivos.
+
+O que cada parte faz:
+
+- `states.sensor | selectattr(...)` filtra só os sensores de **bateria**.
+- `rejectattr('state', 'in', ['unknown', 'unavailable'])` descarta os que não estão informando valor.
+- `float(100)` converte o estado em número; se a conversão falhar, usa 100, o que evita falso alarme.
+- `device_name(...)` usa o **nome do dispositivo** em vez do nome do sensor, porque o sensor costuma se chamar só "Battery".
+- O `namespace` é necessário porque, no Jinja, variáveis criadas dentro de um laço não sobrevivem fora dele. A documentação explica exatamente esse ponto.
+
+**Dica da documentação:** se a lista vier vazia, troque temporariamente `20` por `100`. Se aparecerem nomes, o template está funcionando; é só voltar para 20.
+
+## Passo 3: monte a mensagem
+
+A versão completa da documentação acrescenta o **cômodo** (área) e o **percentual**, e escolhe a frase conforme a quantidade de dispositivos:
+
+```jinja
+{% set low = namespace(batteries=[]) %}
+{% for sensor in states.sensor
+   | selectattr('attributes.device_class', 'eq', 'battery')
+   | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+  {% if sensor.state | float(100) < 20 %}
+    {% set device = device_name(sensor.entity_id) or sensor.name %}
+    {% set area = area_name(sensor.entity_id) %}
+    {% set label = device ~ (' in ' ~ area if area else '')
+       ~ ' (' ~ sensor.state ~ '%)' %}
+    {% set low.batteries = low.batteries + [label] %}
+  {% endif %}
+{% endfor %}
+{% if low.batteries | count == 0 %}
+  All batteries are healthy.
+{% elif low.batteries | count == 1 %}
+  1 device needs a new battery: {{ low.batteries[0] }}.
+{% else %}
+  {{ low.batteries | count }} devices need new batteries: {{
+     low.batteries | join(', ') }}.
+{% endif %}
+```
+
+`area_name(...)` busca o nome da área atribuída ao dispositivo, e o `~` junta pedaços de texto.
+
+### Para receber a mensagem em português
+
+O código acima é o da documentação, com o texto em inglês. As frases que aparecem na notificação são só texto, e podem ser trocadas sem mexer na lógica. Por exemplo, nas três últimas condições:
+
+- `All batteries are healthy.` → `Todas as baterias estão boas.`
+- `1 device needs a new battery:` → `1 dispositivo precisa de bateria nova:`
+- `devices need new batteries:` → `dispositivos precisam de baterias novas:`
+- `' in '` (entre o dispositivo e o cômodo) → `' na '` ou `' em '`.
+
+Depois de trocar, confira o resultado no editor de template antes de colar na automação.
+
+## Passo 4: crie a automação
+
+Crie uma automação chamada, por exemplo, **"Aviso de bateria fraca"**, com:
+
+- **Gatilho:** horário fixo, uma vez por dia (a documentação usa 09:00:00 como exemplo).
+- **Ação:** notificação com o template do passo 3 como mensagem.
+
+Em YAML, o gatilho de horário segue a sintaxe da página oficial de gatilhos:
+
+```yaml
+triggers:
+  - trigger: time
+    at: "09:00:00"
+```
+
+E a ação, como está no tutorial oficial:
+
+```yaml
+- action: notify.send_message
+  target:
+    entity_id: notify.my_device
+  data:
+    title: "Battery check"
+    message: >
+      {% set low = namespace(batteries=[]) %}
+      {% for sensor in states.sensor
+         | selectattr('attributes.device_class', 'eq', 'battery')
+         | rejectattr('state', 'in', ['unknown', 'unavailable']) %}
+        {% if sensor.state | float(100) < 20 %}
+          {% set device = device_name(sensor.entity_id) or sensor.name %}
+          {% set area = area_name(sensor.entity_id) %}
+          {% set label = device ~ (' in ' ~ area if area else '')
+             ~ ' (' ~ sensor.state ~ '%)' %}
+          {% set low.batteries = low.batteries + [label] %}
+        {% endif %}
+      {% endfor %}
+      {% if low.batteries | count == 0 %}
+        All batteries are healthy.
+      {% elif low.batteries | count == 1 %}
+        1 device needs a new battery: {{ low.batteries[0] }}.
+      {% else %}
+        {{ low.batteries | count }} devices need new batteries: {{
+           low.batteries | join(', ') }}.
+      {% endif %}
+```
+
+Troque `notify.my_device` pelo **alvo de notificação do seu celular**. A forma mais simples de acertar o nome é montar a ação pelo editor visual da automação, que lista os alvos disponíveis.
+
+## Passo 5: teste
+
+Na lista de automações, use **Executar ação** para disparar a automação na hora. A notificação deve chegar ao celular. Se não chegar, a documentação orienta a:
+
+1. conferir o **nome da ação de notificação** do seu sistema;
+2. abrir o **rastreamento (trace)** da automação, que mostra em que ponto ela parou.
+
+## Por que uma verificação diária, e não um aviso a cada sensor
+
+Seria possível criar uma automação para cada sensor, disparando quando a bateria cair abaixo de um valor. Com cinco sensores, funciona. Com trinta, vira uma lista de automações difícil de manter, e cada sensor novo exige uma automação nova.
+
+O template deste tutorial resolve isso de outro jeito: ele **descobre sozinho** todos os sensores de bateria da casa, inclusive os que você adicionar no futuro, desde que tenham o `device_class` de bateria. Uma automação só cuida de tudo.
+
+O aviso diário também tem uma vantagem prática: bateria baixa não é emergência de minuto. Receber uma lista por dia, num horário em que você pode agir, é mais útil do que dez notificações espalhadas.
+
+## Ideias para adaptar
+
+A documentação lista algumas extensões possíveis, que dá para montar depois com calma:
+
+- **Não mandar nada nos dias em que está tudo bem**, para a notificação só aparecer quando houver o que trocar.
+- **Guardar o limite num auxiliar numérico**, para mudar de 20% para 15% pela interface, sem editar o template.
+- **Mudar a frequência**, por exemplo para uma vez por semana, no domingo de manhã.
+- **Listar à parte os dispositivos indisponíveis**, que podem estar com a bateria morta.
+- **Ordenar do menor para o maior percentual**, para ver primeiro os mais urgentes.
+
+Antes de mexer, teste cada mudança no editor de template: o resultado aparece na hora, sem precisar esperar a automação disparar.
+
+## Indo além: sensores que só dizem "bateria baixa"
+
+Alguns dispositivos não informam percentual, só um `binary_sensor` que liga quando a bateria está baixa. A documentação traz um segundo laço para incluí-los na mesma lista. Ele entra **depois do laço dos sensores numéricos e antes da formatação final**:
+
+```jinja
+{% for binary_sensor in states.binary_sensor
+   | selectattr('attributes.device_class', 'eq', 'battery')
+   | selectattr('state', 'eq', 'on') %}
+  {% set device = device_name(binary_sensor.entity_id)
+     or binary_sensor.name %}
+  {% set area = area_name(binary_sensor.entity_id) %}
+  {% set label = device ~ (' in ' ~ area if area else '')
+     ~ ' (Low)' %}
+  {% set low.batteries = low.batteries + [label] %}
+{% endfor %}
+```
+
+Um `binary_sensor` de bateria no estado `on` significa bateria baixa.
+
+## Indo além: ignorar alguns dispositivos
+
+Para deixar de fora entidades específicas (o celular, por exemplo), a documentação sugere criar uma lista antes dos laços:
+
+```jinja
+{% set excluded_entities = [
+  'sensor.garage_battery',
+  'binary_sensor.attic_low_battery'
+] %}
+```
+
+E acrescentar `| rejectattr('entity_id', 'in', excluded_entities)` logo depois do filtro de `device_class` em cada laço. Troque os exemplos pelos `entity_id` reais que você quer ignorar.
+
+## O que a documentação não diz: o percentual pode enganar
+
+Aqui entra a parte que só aparece no uso. No fórum oficial do Home Assistant, há muitos relatos sobre sensores Zigbee com bateria **CR2032** que:
+
+- mostram **100% por meses** e depois **caem de repente** ou param de responder;
+- ficam **travados num percentual** mesmo com a bateria já fraca;
+- em alguns modelos, reportam o percentual **em dobro ou pela metade**, por diferença de unidade no padrão Zigbee.
+
+A explicação mais citada é que esses sensores **calculam o percentual pela tensão**. A tensão de uma bateria de lítio tipo moeda fica quase estável durante boa parte da vida útil e despenca no fim, então o percentual não acompanha o desgaste real.
+
+Na prática, isso significa:
+
+1. **Não confie só no limite de 20%** para dispositivos críticos (porta de entrada, vazamento, fumaça). Considere trocar a bateria por calendário, por exemplo uma vez por ano.
+2. **Acompanhe também os indisponíveis.** A própria documentação sugere tratar os dispositivos `unavailable` à parte, porque eles podem estar com a bateria morta.
+3. **Anote a data da troca** de bateria de cada sensor.
+
+## Qual bateria cada sensor usa
+
+A bateria certa está escrita **no próprio compartimento** ou no manual. As mais comuns em casa inteligente:
+
+| Bateria | Onde costuma aparecer |
+|---|---|
+| CR2032 | sensores de porta e janela, botões, sensores de temperatura e umidade |
+| CR2450 | alguns sensores e botões que pedem mais autonomia |
+| CR2477 | alguns sensores de porta e de movimento |
+| AAA | sensores de movimento, fechaduras pequenas, controles |
+| AA | fechaduras, sensores maiores, alguns hubs portáteis |
+
+Duas dicas na hora da troca:
+
+- **Não toque nas faces da bateria moeda com os dedos úmidos**; segure pelas bordas.
+- **Guarde as baterias moeda longe de crianças.** Engolir uma bateria tipo moeda é uma emergência médica.
+
+## As baterias
+
+### Duracell CR2032, pack com 5
+
+![Cartela com 5 pilhas moeda Duracell CR2032](/images/produtos/pilha-cr2032-duracell-5.webp)
+
+A **CR2032** é a bateria mais comum em sensores Zigbee de porta, botões e sensores de temperatura. O pack da **Duracell** tem **5 unidades**, com **validade de 10 anos** na embalagem e embalagem reforçada que só abre com tesoura, segundo o anúncio. Tem nota **4,9** com mais de **27 mil avaliações** na Amazon.
+
+Ter um pack em casa evita o sensor parado esperando a compra. Com a automação deste tutorial, você sabe qual sensor trocar antes de ele parar.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B08DQN4HQP?tag=nerdcaseiro-20" store="amazon" source="home-assistant-aviso-bateria-fraca-sensores" />
+<AffiliateButton href="https://meli.la/32bH6SX" store="mercadolivre" source="home-assistant-aviso-bateria-fraca-sensores" />
+
+### Elgin CR2450, cartela com 5
+
+![Cartela com 5 baterias de lítio Elgin CR2450](/images/produtos/pilha-cr2450-elgin-5.webp)
+
+A **CR2450** é maior que a CR2032 e aparece em sensores e botões que pedem mais autonomia. A cartela da **Elgin** tem **5 unidades** de **3 V**. Tem nota **4,6** com mais de **600 avaliações** na Amazon.
+
+Confira no compartimento do sensor se é a medida certa: CR2450 e CR2032 têm a mesma tensão, mas tamanhos diferentes, e uma não entra no lugar da outra.
+
+<AffiliateButton href="https://www.amazon.com.br/dp/B07DF2M4FM?tag=nerdcaseiro-20" store="amazon" source="home-assistant-aviso-bateria-fraca-sensores" />
+<AffiliateButton href="https://meli.la/2wxxPmR" store="mercadolivre" source="home-assistant-aviso-bateria-fraca-sensores" />
+
+## Erros comuns
+
+- **Copiar a ação sem trocar `notify.my_device`** pelo alvo real.
+- **Achar que lista vazia é erro**: teste com o limite 100.
+- **Confiar no percentual** de sensores Zigbee com CR2032 para dispositivos críticos.
+- **Ignorar os indisponíveis**, que podem estar sem bateria.
+- **Comprar CR2032 para sensor que usa CR2450**, ou o contrário.
+
+## Resumo
+
+- Um **template oficial** percorre todos os sensores de bateria e lista os abaixo de 20%.
+- Um **gatilho de horário** dispara a verificação uma vez por dia; a **ação de notificação** manda a lista para o celular.
+- Inclua os **binary_sensor de bateria** e exclua entidades que não interessam.
+- O percentual de sensores com **CR2032** pode enganar: acompanhe também os **indisponíveis** e troque os críticos por calendário.
+
+### Fontes
+
+- Home Assistant: [Tutorial: Low battery alerts](https://www.home-assistant.io/docs/templating/tutorial-battery-alerts/) (documentação 2026.11.1).
+- Home Assistant: [Automation triggers](https://www.home-assistant.io/docs/automation/trigger/) (sintaxe do gatilho de horário).
+- Fórum Home Assistant: [Better battery reporting: Zigbee2MQTT vs. ZHA para sensores com CR2032](https://community.home-assistant.io/t/better-battery-reporting-zigbee2mqtt-vs-zha-for-sensors-with-battery-cr2032/756979) e [Xiaomi door sensors always reporting 100% battery](https://community.home-assistant.io/t/xiaomi-door-sensors-always-reporting-100-battery-via-deconz-or-zha/121781).
