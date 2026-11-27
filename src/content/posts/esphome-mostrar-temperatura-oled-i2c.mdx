@@ -1,0 +1,163 @@
+---
+title: "Como mostrar a temperatura num display OLED com ESPHome"
+description: "Aprenda a exibir a leitura de um sensor de temperatura em uma tela OLED I²C com ESPHome e confira a configuração do display e do endereço I²C."
+pubDate: 2026-12-03T18:00:00-03:00
+category: 'eletronica-maker'
+tags: ["ESPHome","OLED","ESP32"]
+author: 'Márcio Costa'
+draft: true
+featured: false
+products:
+  - name: "Display OLED Montimport SSD1306 de 0,96 polegada, 128 × 64 I²C"
+    brand: "Montimport"
+    image: '/images/produtos/display-oled-ssd1306-i2c-128x64.webp'
+    stores:
+      - store: 'mercadolivre'
+        url: "https://meli.la/2LNHh2o"
+    pros: ["Modelo I²C de 128 × 64 identificado no anúncio","Pode compartilhar o barramento com o sensor se os endereços forem distintos"]
+    cons: ["Leia a pinagem no módulo antes de ligar","Um display do mesmo tamanho pode usar outro controlador"]
+faq:
+  - question: "O sensor e a tela podem usar os mesmos pinos SDA e SCL?"
+    answer: "Podem compartilhar um barramento I²C compatível quando usam endereços distintos e a montagem respeita os requisitos elétricos dos dois módulos."
+  - question: "O que fazer se a tela ficar preta?"
+    answer: "Confira alimentação, terra comum, pinagem, modelo e endereço. Use a varredura I²C para saber se o ESPHome encontrou o módulo."
+  - question: "Por que aparece nan em vez de uma temperatura?"
+    answer: "O sensor pode ainda não ter publicado uma leitura válida. Confira o log e confirme que a referência usada na tela é o ID da temperatura no YAML."
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Um sensor pode enviar a temperatura para o Home Assistant e ainda ser pouco prático para consultar no local. Num escritório ou na bancada, uma tela pequena mostra a leitura sem abrir o celular. Este tutorial parte de um **sensor de temperatura já funcionando no ESPHome** e acrescenta um OLED SSD1306 ligado por I²C. A referência é o **ESPHome 2026.11.0**, com as instruções do [driver SSD1306](https://esphome.io/components/display/ssd1306/) e o [exemplo oficial de hora e temperatura](https://esphome.io/cookbook/display_time_temp_oled/).
+
+## Confira o módulo antes de ligar
+
+O módulo deste exemplo é **SSD1306, I²C, 128 × 64**. Um display com aparência parecida pode usar SPI, outra altura ou um controlador SH1106. A ficha e a marcação importam mais que a diagonal escrita no anúncio. Veja como o seu módulo identifica **VCC, GND, SDA e SCL**. A ordem física dos quatro pinos pode mudar entre fabricantes.
+
+![Display OLED Montimport SSD1306 de 0,96 polegada, 128 × 64 I²C](/images/produtos/display-oled-ssd1306-i2c-128x64.webp)
+
+<ProsCons pros={["Modelo I²C de 128 × 64 identificado no anúncio","Pode compartilhar o barramento com o sensor se os endereços forem distintos"]} cons={["Leia a pinagem no módulo antes de ligar","Um display do mesmo tamanho pode usar outro controlador"]} />
+
+<AffiliateButton href={"https://meli.la/2LNHh2o"} store="mercadolivre" source="esphome-mostrar-temperatura-oled-i2c" />
+
+Se você ainda não tem um sensor funcionando, faça primeiro o [tutorial de sensor de temperatura com ESP32](/posts/sensor-temperatura-esp32-esphome-home-assistant/). Ter uma leitura válida no log separa a parte de medir da parte de mostrar. Neste artigo a tela usa o valor numérico que o nó já produz. O Home Assistant pode continuar recebendo o mesmo valor.
+
+## Use o barramento I²C que está em funcionamento
+
+Com a placa desligada, conecte o terra comum e os sinais conforme a ficha dos módulos. **SDA** do display vai ao SDA do barramento e **SCL** ao SCL. Para a montagem de exemplo com ESP32 e módulos compatíveis, use 3,3 V conforme as especificações das placas. Não deduza a tensão só pela cor do módulo ou pela presença de quatro pinos. Confira também se o modelo pede um pino de reset separado. O [componente I²C](https://esphome.io/components/i2c/) descreve a configuração dos pinos e a varredura.
+
+Se o sensor já usa I²C, conserve o bloco que definiu os pinos. Ligue os dois dispositivos a ele quando suas características elétricas e endereços permitirem. Se o firmware registra o sensor normalmente e falha ao adicionar a tela, volte à montagem anterior e valide uma mudança por vez. Cabos trocados, terra ausente e um endereço diferente têm sintomas parecidos no painel.
+
+O endereço **0x3C** aparece como padrão no exemplo do driver. Use o endereço encontrado para o seu display no log. Há módulos que podem usar outro endereço. A diferença entre um scanner reconhecer o dispositivo e o driver desenhar corretamente é importante. O scanner confirma que algo respondeu no barramento. A imagem ainda depende de selecionar o modelo correto.
+
+## Adicione a fonte e o display
+
+No sensor já configurado, anote o **ID da leitura de temperatura**. No trecho abaixo ele se chama `temperatura_ambiente`. Use o nome que seu nó já tem, ou declare esse ID na definição da leitura. O ESPHome usa o ID como referência interna, independentemente do nome que aparece no painel. Se o arquivo já tem blocos `font:` ou `display:`, integre os itens às listas existentes.
+
+A configuração usa o modelo e o campo de endereço do [exemplo SSD1306](https://esphome.io/components/display/ssd1306/), a [fonte do Google Fonts](https://esphome.io/components/font/) e a chamada de impressão de valor usada no [exemplo de temperatura](https://esphome.io/cookbook/display_time_temp_oled/). A string abaixo mostra uma casa decimal e a letra C. Confira se a leitura do seu sensor está em Celsius.
+
+```yaml
+font:
+  - file: "gfonts://Roboto"
+    id: fonte_temperatura
+    size: 22
+
+display:
+  - platform: ssd1306_i2c
+    model: "SSD1306 128x64"
+    address: 0x3C
+    lambda: |-
+      it.printf(0, 20, id(fonte_temperatura), "%.1f C", id(temperatura_ambiente).state);
+```
+
+Use a validação do ESPHome antes de atualizar o nó. Se a revisão acusa **ID desconhecido**, ajuste o identificador no código. Se o erro vier da fonte, veja se o ambiente que compila tem acesso à fonte externa ou use um arquivo de fonte local configurado conforme a documentação. Atualize o dispositivo pelo método que já usa para esse nó.
+
+## Teste a tela contra a leitura registrada
+
+Abra os logs e compare o número da tela com a leitura que o sensor publicou. O desenho pode mudar em um instante diferente da atualização do sensor. Aguarde a primeira amostra antes de diagnosticar a tela. Se o número aparece cortado, diminua o tamanho da fonte ou use coordenadas que deixam margem. Se não aparece nada e o endereço responde, confira se o modelo configurado é 128 × 64 e se o controlador no módulo confere com SSD1306.
+
+**Leitura diferente da esperada.** Confirme a unidade do sensor e se o ID aponta para temperatura, pois alguns módulos também geram umidade e pressão. **Tela desliga quando você move os cabos.** Revise as conexões com o nó desligado e encurte fios soltos antes de tentar alterar a configuração. **Dois módulos deixam de responder juntos.** Desconecte a tela com a placa desligada e teste o sensor sozinho para localizar a origem.
+
+Com o valor estável, coloque a tela em uma posição legível sem expor o sensor a calor desnecessário da placa ou a correntes de ar que distorcem a medição do ponto desejado. A tela e o painel passam a mostrar a mesma grandeza, e você mantém a integração existente para histórico e automações.
+
+## Salve a referência do sensor antes de montar a tela
+
+Abra o arquivo que já funciona e marque de onde vem o valor que você pretende mostrar. Alguns sensores oferecem temperatura e umidade no mesmo componente. Outros enviam várias leituras que aparecem com nomes parecidos. Associe a entidade publicada à linha do arquivo que define a temperatura. Abra o log do nó, espere uma atualização e anote valor, unidade e horário aproximado. Isso vai servir como referência quando houver um número no OLED.
+
+Faça uma cópia da configuração válida antes de adicionar o componente. Mantenha pinos do barramento, políticas de publicação e credenciais como estavam. Numa instalação com vários nós parecidos, verifique o nome do dispositivo e a placa para não atualizar o sensor de outro cômodo. A configuração original também permite voltar ao estado conhecido se a tela ou o novo código impedir a leitura.
+
+Confira se a tela vai mostrar o valor local do nó ou uma leitura que chega pela integração. Neste artigo ela usa o sensor local que já funciona. Nesse desenho, o visor não precisa abrir o painel nem consultar o histórico para desenhar o número. Leia as opções de conexão da configuração e teste no ambiente real caso espere funcionamento local durante falhas de rede. O comportamento do nó quando uma conexão fica indisponível pode depender das demais definições que você já usa.
+
+Para a primeira montagem, dispense logotipo, data e informação extra. Mostre uma leitura válida e uma indicação de ausência quando ela ainda não chegou. Um problema de medição pode ficar escondido em uma tela que ainda tem hora e mensagens desenhadas. Ao provar primeiro a temperatura, você sabe qual camada falhou antes de adicionar outras informações. Depois organize o desenho para que a leitura permaneça encontrável nos estados normal e de partida.
+
+## Identifique o controlador lendo o módulo inteiro
+
+Compare fotos do módulo, inscrições no conector e ficha técnica. Um OLED de 128 por 64 pixels pode ter pontos parecidos do lado da frente e um controlador que exige outra opção do lado de trás. Uma versão de 128 por 32 tem a metade da altura útil de desenho. Mesmo com endereço válido, usar a dimensão errada pode cortar uma linha ou posicionar texto fora da tela. Leia a opção de modelo na documentação e compare com a unidade que chegou.
+
+Conte e identifique os pinos pelos rótulos do próprio módulo. A ordem física pode ser invertida em placas que parecem quase iguais. Uma montagem para I²C costuma precisar de alimentação, terra e os dois sinais. Certas versões incluem reset, e uma unidade SPI pede sinais e driver de outra configuração. Escolha pela interface declarada e veja se a ficha indica como o módulo está preparado. Em caso de descrição ambígua no anúncio, confirme com o vendedor antes de ligar.
+
+Desligue a placa e prepare os cabos com comprimentos curtos e encaixes estáveis para o primeiro teste. Consulte as especificações elétricas de ambos os módulos e da placa. Um módulo que admite mais de uma tensão de alimentação pode ainda exigir condições específicas nos sinais. Use a montagem compatível descrita e confira continuidade e conexão visível antes de energizar. Se algum cabo muda de posição quando você move a tela, corrija a ligação com a placa desligada antes de culpar a configuração.
+
+Reserve uma foto com os rótulos na direção em que você liga. Ao recolocar dentro de uma caixa, a ordem pode ficar invertida de um ponto de vista diferente. Uma foto de perto ajuda a identificar qual fio termina no terra e qual no sinal sem precisar deduzir pela cor. Marque também a posição da tela, inclusive a orientação esperada do texto. Assim uma tela desenhada de cabeça para baixo indica um ajuste claro depois da montagem, em vez de parecer um defeito no modelo escolhido.
+
+## Leia a varredura como um experimento em duas passagens
+
+Comece pela montagem conhecida e veja quais endereços já aparecem no barramento. Se necessário, habilite a varredura conforme o [componente I²C do ESPHome](https://esphome.io/components/i2c/) e capture o início dos logs. Desligue, conecte a tela e repita. Um endereço novo indica um dispositivo respondendo depois da adição. Compare as duas listas. Se nada mudou, confira alimentação, conexões e se o display é realmente I²C.
+
+Se o sensor e a tela mostram indícios de usar o mesmo endereço, trate a compatibilidade antes de seguir. Consulte o manual para ver se um módulo admite mudar por seleção prevista. Outra alternativa, quando a placa e a configuração permitem, é usar outro barramento, com as ligações e identificadores corretos. Um mesmo endereço listado uma vez não demonstra que os dois módulos daquele endereço estão operando lado a lado de forma independente. Use cada módulo isolado na bancada para confirmar.
+
+Quando um endereço aparece só em algumas partidas, investigue presença física e alimentação. Anote se o módulo falha ao mover a mesa ou logo após ligar. Confira se a conexão de terra é comum e se o cabo chega à posição correta. Para barramento compartilhado, observe as orientações de comprimento, frequência e montagem elétrica na documentação. Um problema que muda com os fios costuma exigir primeiro uma conexão estável, porque o código não corrige contato intermitente.
+
+Se o scanner responde toda vez e a tela permanece preta, faça um teste com texto fixo e compare modelo e endereço. Assim a leitura de temperatura deixa de ser requisito para provar o desenho. Um erro de controlador, posição ou fonte pode aparecer com texto fixo também. Se aparece um rótulo conhecido mas o número não vem, concentre a revisão no sensor, no identificador e na forma de mostrar o estado. Faça um teste por vez e guarde o log que corresponde a ele.
+
+## Dê um comportamento legível ao tempo antes da primeira leitura
+
+O visor pode iniciar antes de o sensor publicar uma medida. Nesse intervalo, o campo numérico ainda pode estar indefinido. Em vez de tentar interpretar o que aparece como graus, mostre uma mensagem curta, como Aguardando, até chegar uma leitura válida. Use a checagem de estado do sensor e a função de desenho da configuração. Confira a transição no primeiro minuto depois de ligar. A primeira amostra pode levar o intervalo definido no sensor, além do tempo de partida.
+
+Pense no tamanho da fonte com o pior texto que precisa caber. Uma leitura de temperatura negativa tem um caractere a mais. Dezena, decimal e unidade precisam de largura. Teste valores próximos às extremidades que a sua instalação pode mostrar. Se a largura não basta, diminua a fonte ou revise o alinhamento. Uma margem no início evita que o número encoste na borda e ajuda quando o display fica atrás de uma janela recortada numa caixa.
+
+A frequência em que o visor redesenha e a frequência em que o sensor mede são controles distintos. Um redesenho mais rápido pode repetir o mesmo número várias vezes. Uma mudança brusca na medida pode aparecer depois de um intervalo se o sensor foi configurado para publicar de forma espaçada. Leia o log e compare com a hora em que o visor mudou. Para temperatura ambiente, escolha um ritmo que preserve a utilidade da leitura e se encaixe nas condições do sensor.
+
+Quando o visor tem também um rótulo, dê prioridade ao número e à unidade. Reserve lugar para texto que descreve o que está sendo medido. Uma bancada com dois nós próximos pode ter Temp sala e Temp gabinete. O rótulo evita confundir o ponto de medição mesmo quando a cor e o tamanho da caixa são iguais. Se o mesmo visor tem espaço para mais de uma página, confira que a página de retorno é a esperada depois de salvar e reiniciar.
+
+## Revise a montagem no local definitivo
+
+Coloque a caixa perto de onde a pessoa consulta a leitura e faça um ensaio de visualização normal. Verifique o tamanho do texto a partir da cadeira ou da entrada da sala. Depois compare com a luz ambiente forte e com o cômodo mais escuro. Um visor muito brilhante pode incomodar de noite, conforme o ajuste que o componente oferece. Ajuste dentro da documentação e confira se a tomada de decisão no ponto de uso continua fácil.
+
+A posição de uma tela nem sempre é a melhor posição para medir temperatura. Uma placa próxima do processador, um módulo fechado em caixa que acumula calor ou um sol direto podem alterar a leitura da região observada. Compare o lugar do sensor com o ambiente que você quer representar. Registre onde ele fica e como o ar circula. Faça uma leitura de referência na montagem de bancada e outra depois de fechar a caixa. Um resultado que mudou ao vedar aponta para condições de montagem, desde que os demais fatores estejam comparáveis.
+
+Monte o cabo de maneira que o nó possa ser aberto para manutenção. Confirme que a tampa não pressiona conectores nem muda a posição do sensor. Mesmo que a tela interna pareça um ponto fixo, a região dos pinos precisa continuar acessível para conferir um fio. Mantenha montagem e alimentação dentro das especificações. Se o uso for permanente, reserve uma forma segura de desligar sem arrancar cabos pelo corpo da placa.
+
+Após instalar, compare o valor no OLED, no log e no painel. Use o mesmo intervalo de atualização para ler. Uma interface pode arredondar para uma casa decimal e outra apresentar duas. Compare os valores antes e após arredondar. Se continuam diferentes, verifique se representam a mesma leitura e o mesmo instante. Um histórico pode mostrar amostra anterior. A tela mostra o estado que o nó tem no momento do desenho.
+
+## Separe os sintomas antes de repetir a gravação
+
+**O programa falhou na validação.** Leia qual linha e qual componente o ESPHome indicou. Se já existia uma lista de fontes ou de displays, adicione a entrada ao bloco existente conforme o formato. Um erro de indentação pode impedir a configuração inteira de passar. Se a fonte externa não foi encontrada, confira a referência e as condições de compilação ou use a alternativa local prevista na documentação.
+
+**O nó inicia e publica, mas a tela segue preta.** Veja primeiro se o endereço apareceu e se o controlador no arquivo corresponde ao módulo. Use texto fixo onde cabe e compare. Se a própria tela não responde na varredura, volte à fiação e à alimentação conforme as instruções. Não substitua várias peças de uma vez, porque você perde a referência de quando o problema aparece.
+
+**O texto aparece e a temperatura fica indefinida.** Veja se o sensor publicou no log e se o ID desenhado aponta à mesma leitura. Espere o intervalo previsto. Se a primeira leitura chega e depois para, investigue o sensor ou barramento antes de mudar o formato da tela. Um código que mostra a última leitura enquanto a conexão mudou precisa deixar claro o que o usuário espera desse estado.
+
+**A tela funciona na bancada e cai no móvel.** Compare cabos, caminho elétrico, aquecimento e posição da caixa. Retorne ao arranjo conhecido, verifique o funcionamento e reintroduza os elementos da instalação em sequência. A diferença de ambiente começa a ficar clara quando você recupera o último estado bom. Anote em que ponto a falha voltou.
+
+Por fim, guarde uma cópia da configuração que foi validada junto com a foto de pinagem e a referência do módulo. Deixe registrado o endereço visto na varredura e o identificador do sensor. Se trocar por outro display depois, confirme essas duas informações antes de reproduzir o desenho. Você mantém a mesma leitura e a mesma unidade e adapta só o que depende do módulo novo.
+
+## Teste um ciclo completo antes de fechar a caixa
+
+Desligue o nó pelo meio previsto, aguarde e ligue outra vez. Observe se a tela inicia na posição correta, se desenha a mensagem de espera e se muda quando a leitura aparece no log. Repita uma vez com o visor na caixa e outra em que você consegue alcançar os conectores. Se o comportamento muda só com a tampa fechada, revise pressão sobre fios, posição da placa e ventilação. A montagem deve funcionar sem que você precise mexer nos cabos para obter a primeira leitura.
+
+Se o visor é instalado num lugar de consulta eventual, simule olhar logo após entrar na sala. Confirme se a unidade e o local de medição ficam legíveis sem abrir o painel. Depois compare com um segundo termômetro colocado perto durante uma observação estável, considerando a precisão e o tempo de resposta de ambos. Esse teste serve para avaliar a posição de medição. Quando o OLED e o log mostram o mesmo número, o caminho de exibição funcionou, mesmo que a posição do sensor ainda precise de ajuste.
+
+## Perguntas frequentes
+
+### O sensor e a tela podem usar os mesmos pinos SDA e SCL?
+
+Podem compartilhar um barramento I²C compatível quando usam endereços distintos e a montagem respeita os requisitos elétricos dos dois módulos.
+
+### O que fazer se a tela ficar preta?
+
+Confira alimentação, terra comum, pinagem, modelo e endereço. Use a varredura I²C para saber se o ESPHome encontrou o módulo.
+
+### Por que aparece nan em vez de uma temperatura?
+
+O sensor pode ainda não ter publicado uma leitura válida. Confira o log e confirme que a referência usada na tela é o ID da temperatura no YAML.

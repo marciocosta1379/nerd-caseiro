@@ -1,0 +1,133 @@
+---
+title: "Como reforçar furos de parafuso no OrcaSlicer"
+description: "Use um modificador no OrcaSlicer para aumentar o número de paredes em volta de um furo. Veja como posicioná-lo e conferir o resultado na prévia."
+pubDate: 2026-12-05T18:00:00-03:00
+category: 'impressao-3d'
+tags: ["OrcaSlicer","impressão 3D","fatiamento"]
+author: 'Márcio Costa'
+draft: true
+featured: false
+faq:
+  - question: "Aumentar o preenchimento da peça inteira resolve o mesmo problema?"
+    answer: "Aumentar o preenchimento altera uma área maior da peça. O modificador permite comparar paredes adicionais só na região que envolve o furo."
+  - question: "Por que as linhas não mudaram na prévia?"
+    answer: "Confirme que o volume do modificador cruza a região sólida em volta do furo e que o ajuste foi feito no modificador. Uma parede física muito fina também pode limitar quantas linhas cabem."
+  - question: "O reforço do fatiador garante que o parafuso aguente carga?"
+    answer: "A resistência depende de material, geometria, posição das camadas e aperto. Para validar o resultado, use uma amostra não crítica com as mesmas condições de impressão."
+---
+
+Quando um parafuso atravessa uma peça impressa, a carga fica concentrada em uma região pequena. Aumentar o número de paredes do modelo todo muda o consumo de material e o tempo em áreas que talvez não precisem de alteração. No **OrcaSlicer**, um modificador permite testar **mais perímetros na região do furo**. O que decide se a alteração foi aplicada é o caminho das linhas na prévia.
+
+O procedimento usa a interface da série **OrcaSlicer 2.4**, com os conceitos descritos na [wiki de objetos](https://github.com/OrcaSlicer/OrcaSlicer/wiki) e no [guia de paredes](https://github.com/OrcaSlicer/OrcaSlicer/wiki/strength_settings_walls). Os nomes podem aparecer traduzidos. Procure **Objects**, **Add modifier** e **Wall loops** na interface em inglês. Use um modelo simples e sem função crítica para aprender a ler o resultado.
+
+## Primeiro fatie a peça sem mudanças
+
+Importe o modelo, selecione a impressora e o material e mantenha o perfil da peça que você já usa. Fatie e abra a prévia. Use o seletor de camadas para observar o contorno do furo no fundo, no meio e no topo. Anote quantos traços aparecem na região sólida e veja onde começa o preenchimento. Se existem outros furos, eles dão uma referência visual para comparar depois.
+
+Essa primeira observação também mostra onde a peça perde espessura. Se a parede sólida entre o furo e a borda já é pequena demais para acomodar mais linhas, mudar o número no fatiador pode produzir pouco efeito. Quando a espessura física é a limitação, editar a geometria ou redistribuir o esforço na peça pode ser mais adequado. Evite aumentar os valores até que a prévia pareça densa sem entender como a carga entra na peça.
+
+## Adicione um modificador ao próprio objeto
+
+Volte à preparação. Na árvore de objetos ou no modelo, abra o menu de contexto e use **Adicionar modificador**. Um cilindro é útil quando o objetivo é cobrir uma região circular, e um cubo é prático se o reforço acompanha uma parede reta. O modificador deve ficar associado à peça alvo. Um objeto comum importado por cima da peça tem outro efeito e pode aparecer na impressão.
+
+Centralize o volume pelo furo e dê a ele um diâmetro suficiente para cruzar o **material ao redor**. Se ficar inteiramente dentro do vazio, não haverá material a modificar. Estenda a altura até as camadas que deseja reforçar. Uma bucha ou um encaixe que trabalha só perto de uma face pode pedir uma região diferente de um parafuso que atravessa toda a peça.
+
+Quando o furo é inclinado, visualize a montagem pela lateral. Um cilindro vertical que envolve o furo na primeira camada pode deixar de cobri-lo no topo. Ajuste a orientação do volume de acordo com a geometria e confira os extremos na prévia. Se necessário, use um volume maior que a projeção do furo e diminua o tamanho após localizar onde ocorre a alteração.
+
+## Mude o número de paredes no modificador
+
+No modo **Objetos**, selecione o modificador, abra as configurações de resistência disponíveis e procure **Wall loops**, ou **número de paredes**. Aumente esse valor em uma unidade em relação ao perfil usado e fatie novamente. Começar com uma alteração pequena facilita ver o efeito e evita confundir a mudança com um ajuste global.
+
+A [wiki do OrcaSlicer sobre paredes](https://github.com/OrcaSlicer/OrcaSlicer/wiki/strength_settings_walls) explica a função dos perímetros e observa que aumentar sua quantidade pode alterar o tempo de impressão. Se o ajuste não aparece na lista do modificador, confirme a versão, o modo de parâmetros e o objeto escolhido. Selecionar a peça principal em vez do modificador pode aplicar o novo valor ao modelo inteiro.
+
+### Leia a prévia antes de imprimir
+
+Escolha a visualização por tipo de linha e procure os traços extras **junto ao furo**. Passe por várias camadas. A comparação que interessa é com o fatiamento original, no mesmo ponto da peça. Observe também regiões distantes do modificador. Ali, os perímetros devem continuar seguindo o perfil geral.
+
+Se o reforço aparece em uma faixa maior que o necessário, encolha o modificador e fatie outra vez. Se há lacunas na sequência de camadas, reveja altura e alinhamento. Compare o tempo e o consumo estimados. Em uma impressão pequena, adicionar poucos perímetros localmente pode ser suficiente para testar a hipótese com custo baixo.
+
+## Confira se a mudança resolve o problema real
+
+Faça duas amostras pequenas com a mesma orientação, o mesmo filamento e o mesmo diâmetro de furo. Use o mesmo parafuso e o mesmo método de montagem em ambas. Observe se a peça abre em linha de camada, perde aperto ou deforma no contorno. A amostra serve para aprender o comportamento daquela combinação, sem pressupor que o ajuste funcione em outro formato.
+
+O resultado também depende da direção do esforço. Se o aperto tenta separar as camadas, mudar a orientação da peça pode trazer um ganho que perímetros extras sozinhos não entregam. Se o parafuso precisa cortar material para entrar, confira antes o diâmetro e a função da fixação. Para avaliar dimensões e linhas antes de mexer no furo, vale revisar o [guia de calibração de fluxo e temperatura](/posts/calibrar-impressora-3d-temperatura-fluxo/). Assim você consegue atribuir a mudança ao reforço, e não a um perfil que variou entre as duas peças.
+
+## Leia a direção em que o parafuso aplica força
+
+Antes de mover o modificador, coloque o modelo ao lado das peças que ele vai unir. Um parafuso passante com porca comprime as faces que estão sob a cabeça e sob a porca. Um parafuso que entra diretamente no plástico aciona a rosca ao longo da parede do furo. Um terceiro caso é o do furo que permite uma peça girar em torno de um eixo. O contorno, o apoio e a direção do esforço mudam entre esses usos. Escolha uma amostra que representa o contato real.
+
+Em uma aba que prende na lateral, imagine uma força puxando a aba para fora. Veja se a região mais solicitada passa pelo furo, pela borda ou pela transição onde a aba se une ao corpo. Aumentar paredes junto ao furo pode mudar um trecho perto da ferragem. Se a aba quebra sempre mais longe, a geometria e a orientação são candidatas a revisão. Analise onde aparece o primeiro movimento no teste de bancada, em vez de julgar pelo ponto em que ficou a fratura final.
+
+Quando o parafuso prensa uma face, confira o tamanho real da cabeça e o que recebe o aperto. Uma arruela apropriada ao conjunto pode distribuir a carga por uma área diferente. A escolha depende das ferragens e do desenho, e precisa ser incluída no corpo de prova. Um reforço concentrado exatamente no diâmetro do furo pode ficar distante da região em que a cabeça transmite força. Observe a impressão e a montagem como partes do mesmo trabalho.
+
+O objetivo do tutorial é aprender a dirigir paredes para uma área numa peça de teste. Para componente que sustenta carga importante, conhece impacto ou faz parte de uma instalação crítica, use geometria, material e validação adequados à finalidade. Uma peça pequena que passa numa prova manual fornece informação sobre aquele ensaio. A conclusão não se estende automaticamente a outro desenho, outro filamento ou outro padrão de esforço.
+
+## Calcule se há largura física para mais paredes
+
+Olhe o diâmetro do furo e o contorno externo em volta. Num exemplo simples, um furo de 5 mm centralizado dentro de um ressalto circular de 11 mm deixa 3 mm de material entre o furo e a borda, porque a diferença de diâmetro se divide pelos dois lados. Essa é a largura radial aproximada disponível. Paredes podem ir tanto pelo contorno do furo quanto pelo contorno externo, e precisam dividir o espaço. A prévia mostra como o fatiador lida com a região real.
+
+Se a linha medida no perfil tem largura próxima de 0,45 mm, dois perímetros de cada contorno já ocupariam uma parte considerável da faixa do exemplo. A largura de extrusão pode variar e o gerador de paredes decide como preencher o resto. Não transforme a conta numa garantia de número de passagens. Use o cálculo para entender por que um pedido de mais paredes pode se converter em alteração pequena ou em preenchimento diferente, especialmente no trecho mais estreito.
+
+Meça também onde o furo passa perto de uma borda reta, mesmo quando a região em volta parece redonda. Um ressalto deslocado pode oferecer muito material de um lado e pouco do outro. Faça a comparação na camada em que a espessura restante é menor. Se o espaço físico restringe as passagens, fique atento à distribuição. Você pode precisar mudar o desenho para obter uma região sólida maior sem encostar em outro furo ou criar interferência com o parafuso.
+
+Quando as dimensões do furo são críticas, conserve valores e faça o teste do encaixe depois de frio. Um modificador pede novos caminhos dentro da região definida e pode interagir com as opções de largura e compensação já aplicadas. Observe se os caminhos avançaram onde a ferragem precisa entrar. Se a medida parece certa na geometria e a peça impressa não recebe o parafuso, avalie orientação, calibração e acabamento do furo em vez de forçar.
+
+## Escolha o formato do volume pela parte que quer alterar
+
+Para um furo vertical simples, um cilindro maior que o vazio é um ponto de partida fácil de desenvolver. Ajuste o diâmetro para atravessar a área sólida ao redor. Na vista superior, confira se pega todos os lados. Na lateral, confira se a altura cobre a seção em que o parafuso atua. Quando o furo tem um alojamento de cabeça mais largo perto do topo, a área de parede útil naquela altura pode ir mais para fora. A dimensão do modificador precisa acompanhar o que você quer testar.
+
+Um cubo pode ajudar em uma chapa plana com dois furos próximos e uma faixa de material comum entre eles. Em vez de alterar todo o painel, delimite uma faixa que inclui os dois contornos. Prove ambos os furos na mesma camada. Se um deles continua com poucas paredes no lado de trás, veja se a posição do volume concentra o efeito só na metade visível. Uma área contínua faz sentido quando a peça tem um caminho comum de esforço que você quer investigar.
+
+Num furo horizontal, olhe as camadas no início da curva, no meio e perto do topo. O formato desenhado em cada altura muda à medida que a peça é construída. Superfícies em balanço e suportes podem interferir na abertura. O cilindro alinhado com o eixo do furo pode exigir rotação e inspeção mais cuidadosa. Leia onde a prévia mostra parede, preenchimento e suporte. Mesmo depois de reforçar, a condição de impressão da parte superior do furo merece um ensaio só para ver se a ferragem passa.
+
+Se você já usou um modificador em outra região, observe as sobreposições e qual item está selecionado. Uma área que recebe configurações de dois volumes pode mostrar outra distribuição na prévia. Faça o diagnóstico desativando ou isolando a mudança em uma cópia do projeto. Compare com a peça fatiada sem alterações. Guarde apenas os volumes que têm função no trabalho e dê nomes simples que indiquem em qual furo atuam.
+
+## Faça a comparação em mais de uma camada
+
+Use a mesma câmera nas prévias antes e depois. Escolha uma camada perto da entrada do parafuso, uma no centro e outra perto da saída. Identifique o padrão da parede externa, os perímetros internos e o preenchimento por cor e por posição. Se você observa só o número do processo, ainda falta confirmar o que o programa conseguiu gerar. O caminho produzido decide que regiões continuam com a estrutura padrão e quais receberam linhas a mais.
+
+Se nada aparece na primeira camada, veja se ela tem regras próprias. Um reforço local pode ficar mais claro acima de base e camadas de superfície. Compare em um ponto do corpo em que paredes e preenchimento se distinguem. Se só o interior mais distante mudou, reveja o eixo e diâmetro do volume. Faça a alteração de tamanho em um passo pequeno e refaça a comparação nas três alturas anotadas.
+
+Agora olhe a peça longe do furo. Se os perímetros aumentaram no objeto todo, confirme se estava editando o modificador na árvore. A alteração deve preservar a configuração geral onde você não pediu mudança. Compare tempo estimado e uso de material no conjunto. Em peças muito pequenas, o custo adicional pode ser quase indiferente. Em um painel grande com muitos furos, localizar a mudança pode ajudar a manter o processo que já servia no resto da peça.
+
+Guarde uma captura da prévia do melhor resultado e salve o projeto com as configurações associadas. Um arquivo de geometria exportado sozinho não carrega necessariamente os modificadores e ajustes de fatiamento. Quando outra pessoa abrir para imprimir, precisa do projeto ou de instruções suficientes para recriar o volume. Confira impressora, bico e material no arquivo antes de comparar em outra máquina.
+
+## Imprima um trecho pequeno que preserve a montagem
+
+Corte ou modele um corpo de prova com o mesmo furo, espessura, borda próxima e orientação que aquele trecho tinha no projeto. Uma peça simplificada sem a borda pode ficar mais forte que a original e alterar a distribuição de força. Preserve a relação entre o centro do furo e o ponto em que você prende a amostra. Faça duas unidades com a mesma configuração geral e modifique apenas a região pretendida em uma delas.
+
+Use ferragens compatíveis e o mesmo método de aperto nas duas. Se o parafuso deve passar livre até atingir a porca, verifique isso antes de apertar. Se a fixação tem outro mecanismo, siga a orientação do conjunto. Observe quando começam pequenas marcas e em que plano elas avançam. Compare o momento de encaixar, apertar e soltar. Um furo que recebeu mais perímetros pode ficar estável e ainda ter uma deformação visível numa face que importa.
+
+Observe se a falha se inicia na união entre camadas ou no material sólido em volta. Volte à orientação da impressão se a abertura segue um plano que o esforço separa. Uma geometria arredondada na transição, apoio diferente ou espessura maior também pode ser relevante. Teste cada decisão em amostra adequada. Separar o ajuste de perímetros das mudanças de desenho evita atribuir todo ganho ao modificador só porque ele foi a última opção usada.
+
+Depois da prova, identifique as amostras com orientação e número de paredes. Em uma segunda rodada, use o mesmo ponto para aplicar movimento e o mesmo padrão de montagem. Se houve mudança de rolo, ambiente ou temperatura, anote. Uma pequena diferença no resultado vale ser olhada em mais de uma amostra antes de concluir. A oficina ganha um registro de qual condição melhorou e de qual defeito permaneceu.
+
+## Leve o ajuste para a peça inteira só quando o ensaio responder
+
+Aplique o volume e o perfil do teste à peça original e confira uma última vez o começo e o fim do modificador. Uma região que era lisa no corpo de prova pode ter um rebaixo, outro furo ou uma costura no modelo completo. Compare todos os pontos que recebem ferragem e confirme se não modificou parte de encaixe vizinha. Abra também a prévia de suporte se a orientação exige. Depois imprima e confira a montagem inicial antes de produzir mais unidades.
+
+Se o conjunto continua soltando ou deformando, conserve a amostra, o projeto e a observação de onde o esforço entra. Argumente a partir do que viu. Pode ser necessário revisar geometria, ferragem ou orientação. Quando a mudança de perímetros resolve a área prevista, anote o material e a configuração que permitiram o resultado. A vantagem do modificador é tornar visível uma alteração de fatiamento localizada, de modo que você consiga testar e repetir no mesmo tipo de peça.
+
+## Distinga perímetro extra e preenchimento na interface
+
+Selecione o tipo de linha na prévia e veja se a nova passagem acompanha um contorno inteiro ou se aparece só como peças dentro da faixa. Uma mudança de preenchimento pode deixar a região colorida de outro jeito sem adicionar a volta que você esperava. Olhe o lugar em que o furo chega mais perto da borda. A [documentação do OrcaSlicer para ordem das paredes](https://www.orcaslicer.com/wiki/quality_settings_wall_and_surfaces/) explica que paredes de dois lados podem compartilhar a largura estreita. A prévia do seu perfil permite confirmar como isso ficou ali.
+
+Se tem dois furos idênticos numa peça, mantenha um com configuração comum enquanto testa o outro. A comparação é fácil de ver nas mesmas camadas e ajuda a localizar efeitos globais. Se ambos mudaram depois de editar só a região do primeiro, confira a árvore de objetos e quais ajustes ficaram associados. Para o teste físico, indique qual furo recebeu o modificador antes de tirar da mesa. Guarde a informação para não julgar pelo brilho ou por uma marca de costura que mudou de lugar.
+
+Quando o modificador produz uma linha adicional apenas na seção que tem espessura, isso ainda é um resultado. Confira se essa seção coincide com o contato do parafuso. Se termina alguns milímetros antes, ajuste a altura ou reveja como a peça distribui esforço. Registre toda alteração de orientação e tamanho da região ao comparar projetos. A confirmação final acontece no ponto em que o novo caminho de extrusão corresponde à área de interesse e continua deixando a ferragem assentar como previsto.
+
+Se o fatiador muda de versão, abra o projeto e confira de novo as camadas de referência com o perfil atual. Isso permite perceber alterações no gerador de paredes ou na importação do modificador antes de imprimir.
+
+## Perguntas frequentes
+
+### Aumentar o preenchimento da peça inteira resolve o mesmo problema?
+
+Aumentar o preenchimento altera uma área maior da peça. O modificador permite comparar paredes adicionais só na região que envolve o furo.
+
+### Por que as linhas não mudaram na prévia?
+
+Confirme que o volume do modificador cruza a região sólida em volta do furo e que o ajuste foi feito no modificador. Uma parede física muito fina também pode limitar quantas linhas cabem.
+
+### O reforço do fatiador garante que o parafuso aguente carga?
+
+A resistência depende de material, geometria, posição das camadas e aperto. Para validar o resultado, use uma amostra não crítica com as mesmas condições de impressão.

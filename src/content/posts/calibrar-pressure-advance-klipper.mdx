@@ -1,0 +1,148 @@
+---
+title: "Como calibrar o Pressure Advance da impressora 3D no Klipper"
+description: "Entenda como o Pressure Advance muda os cantos e siga o teste oficial do Klipper para escolher um valor de partida para o seu filamento."
+pubDate: 2026-12-04T18:00:00-03:00
+category: 'impressao-3d'
+tags: ["Klipper","Pressure Advance","impressão 3D"]
+author: 'Márcio Costa'
+draft: true
+featured: false
+faq:
+  - question: "Qual fator devo usar na torre de Pressure Advance?"
+    answer: "O guia do Klipper sugere 0,005 para extrusor direto e 0,020 para Bowden longo. O fator multiplica a altura medida para encontrar o valor da rampa naquele ponto."
+  - question: "Posso aproveitar o número do perfil de outro filamento?"
+    answer: "Faça uma impressão curta para conferir e repita a torre se os cantos mudarem. O valor depende do bico, do extrusor, do material e da condição de impressão."
+---
+
+O melhor ponto da torre de Pressure Advance é a faixa em que o canto sai definido e a linha continua cheia dos dois lados da curva. Perto da base, o plástico pode fazer uma barriga quando a impressora desacelera. Mais para cima, o excesso de compensação pode afinar a parede antes da mudança de direção. A calibração consiste em achar a faixa entre esses dois defeitos, medir sua altura e converter a medida em um valor para o Klipper.
+
+O teste abaixo segue a [documentação do Klipper sobre Pressure Advance](https://www.klipper3d.org/Pressure_Advance.html). A impressora precisa estar operacional e o filamento precisa extrudar de forma consistente. Você vai usar um modelo quadrado oco, o fatiador que já usa com a máquina, uma régua ou paquímetro para medir a altura e alguma forma de enviar comandos ao Klipper. Faça o primeiro ensaio com um material e um bico que você conhece. Isso ajuda a reconhecer quando um defeito apareceu por causa da calibração.
+
+## O que acontece na linha quando o bico chega ao canto
+
+Imagine uma parede comprida que termina numa curva de noventa graus. Na reta a cabeça se move depressa e o extrusor empurra plástico para sustentar a largura da linha. Na curva a cabeça desacelera. A força acumulada no caminho do filamento ainda tende a expulsar material pelo bico durante parte dessa redução. Como o bico percorre menos distância nesse intervalo, o material pode se acumular na quina. Assim que a cabeça ganha velocidade de novo, a alimentação volta a precisar acompanhar o movimento.
+
+O Klipper compensa essa transição modificando o movimento do extrusor conforme a velocidade da trajetória muda. É por isso que a diferença costuma aparecer mais claramente no encontro entre duas retas rápidas. O efeito que você procura é uma mudança na distribuição de plástico ao longo da parede. Olhe alguns milímetros antes e depois da quina. Uma esquina pontuda com um trecho visivelmente fino ao lado continua sendo um ajuste ruim.
+
+O conjunto físico influencia a resposta. Num extrusor direto, o motor normalmente fica próximo ao bico. Num sistema Bowden longo, o filamento percorre um tubo antes de chegar à parte quente. A distância e a elasticidade do caminho ajudam a explicar por que a documentação usa uma subida de valores mais rápida na torre de Bowden longo. O valor final depende do extrusor, do bico e do material reais, inclusive de diferenças entre dois rolos que trazem o mesmo tipo de plástico na etiqueta.
+
+Uma forma de reconhecer a diferença entre pressão e outros defeitos é olhar o desenho formado pelas marcas. A bolha de pressão tende a se concentrar no canto. Ondas repetidas que começam na quina e se propagam pela face sugerem investigar a resposta mecânica e o Input Shaper. Uma linha que muda de espessura por toda a reta pede atenção à extrusão e à alimentação. Marcas reunidas numa face específica da torre podem ser da costura, que é o lugar em que o fatiador inicia e termina os perímetros de cada camada.
+
+## Prepare uma condição de impressão que você consiga reproduzir
+
+Anote o bico instalado, o rolo em uso e a temperatura de impressão. Se a mesma máquina aceita cabeças trocáveis, confirme qual extrusor está ativo. A receita impressa no rolo oferece um ponto de partida para a temperatura, mas é a qualidade da extrusão na sua máquina que determina a condição de teste. Um filamento que produz estalos e superfície irregular dificulta distinguir uma falha aleatória de um efeito do Pressure Advance.
+
+Confira se a distância de rotação do extrusor está calibrada. No Klipper ela descreve a relação entre o movimento do motor e o deslocamento do material. Um erro nessa relação aparece como excesso ou falta de plástico mesmo no meio da reta. E esse trecho é o seu controle visual. Se a parede reta estiver cheia num lado e falhada em outro sem relação com a altura, investigue se a bobina gira livre, se o tracionador segura o filamento e se o perfil está pedindo uma vazão que o hotend consegue entregar.
+
+Registre também a largura de linha e a altura de camada usadas. Ao imprimir com o mesmo bico, aumentar uma dessas medidas aumenta a quantidade de plástico requerida em cada milímetro de movimento. Aumentar a velocidade elevará a demanda de plástico por segundo. Uma conta aproximada para pensar nisso consiste em multiplicar largura de linha, altura de camada e velocidade. Uma largura de 0,45 mm, altura de 0,30 mm e velocidade de 100 mm/s representam aproximadamente 13,5 mm³/s. O formato exato da seção varia com o fatiador. Use o número para avaliar a ordem de grandeza da solicitação.
+
+Um limite volumétrico do fatiador pode reduzir a velocidade real pedida ao G-code. Assim, escolher cem milímetros por segundo na interface e ver oitenta na prévia é possível. Observe a visualização por velocidade ou vazão para checar se a camada mantém boas retas rápidas. Caso o perfil esteja pedindo mais material do que sua impressora costuma empurrar, ajuste a preparação antes de interpretar a torre. Se o extrusor está perdendo passos ou a parede fica aberta em trechos longos, o ensaio deixou de isolar a variável que você quer medir.
+
+A primeira camada precisa aderir por tempo suficiente para que as quinas da peça permaneçam na mesa. Uma torre com a base descolada inclina e altera a altura que você mede. Ajeite a superfície de impressão, a condição da mesa e o procedimento normal da máquina antes de iniciar. A saia é separada da peça. Se usar uma borda para segurar a base, mantenha a medição a partir do verdadeiro fundo da torre quadrada.
+
+## Fatie um quadrado oco para expor a transição
+
+Baixe o [arquivo square_tower.stl indicado na documentação](https://github.com/Klipper3d/klipper/blob/master/docs/prints/square_tower.stl). Posicione a peça como indicado pelo modelo e abra a prévia do fatiador. Procure um perímetro sem preenchimento interno ao longo da parte a ser analisada. Uma parede com duas ou três linhas, conforme a sugestão do Klipper, ajuda a peça a manter forma suficiente para você comparar os cantos depois de tirar da mesa.
+
+A documentação pede uma camada grossa para o bico e dá como referência aproximadamente três quartos do diâmetro. Para um bico de 0,4 mm, o cálculo chega a 0,30 mm. Use as velocidades de perímetro para que o ensaio exponha uma diferença clara de regime entre a reta e a quina, respeitando a configuração apropriada para a máquina. A primeira camada pode permanecer mais lenta, porque sua superfície e seu contato com a mesa serão avaliados de outro modo.
+
+Desative no perfil os ajustes dinâmicos de aceleração e a união gradual da costura, chamada de scarf joint em alguns fatiadores. A costura gradual muda a aparência na área que você vai usar como evidência. Os comandos do Klipper também precisam ser efetivamente usados durante o ensaio. Alguns perfis enviam comandos de aceleração a cada mudança de tipo de perímetro. Abra a prévia, leia as configurações de máquina e observe se há limites impostos pelo início da impressão ou pelas macros habituais.
+
+Antes de disparar a impressão, procure pelo comando que muda Pressure Advance no início do arquivo. Um perfil que guarda um valor para cada material pode escrevê-lo por conta própria. Isso é conveniente no uso diário, mas atrapalha um ensaio em que a rampa deve partir de zero. Salve uma cópia do perfil de teste com os controles que interferem desligados. Dessa forma a configuração de produção fica disponível para reabrir depois, e você consegue refazer o ensaio nas mesmas condições caso perca a primeira torre.
+
+A posição da costura é outro parâmetro que vale conferir na prévia. Se ela aparece em um canto só, você já sabe o que descartar na leitura. Quando foi espalhada por vários lugares, fica mais difícil distinguir rugas aleatórias de uma transição de pressão. Não é preciso esconder a costura do lado perfeito. A ideia é concentrar o ponto de início e fim em um lugar que você possa identificar com facilidade ao virar a peça na mão.
+
+## Rode o teste no console do Klipper
+
+Com o cabeçote livre e a mesa pronta, abra o console da interface que você utiliza, como Mainsail ou Fluidd. O comando indicado pelo Klipper para reduzir o contorno nas esquinas durante o ensaio é:
+
+```
+SET_VELOCITY_LIMIT SQUARE_CORNER_VELOCITY=1 ACCEL=500
+```
+
+Para uma impressora com extrusor direto, monte a rampa com:
+
+```
+TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.005
+```
+
+Para um sistema Bowden longo, a documentação propõe outra inclinação:
+
+```
+TUNING_TOWER COMMAND=SET_PRESSURE_ADVANCE PARAMETER=ADVANCE START=0 FACTOR=.020
+```
+
+Use a linha correspondente ao seu extrusor e mande imprimir a torre preparada. Nas primeiras camadas, observe a aderência. Procure o início da faixa útil mais acima, onde a parede já segue a velocidade do corpo da impressão. A torre pode exibir uma região com excesso na quina, uma região de transição mais limpa e uma região em que a quina perde definição ou aparece falta de material. Se a impressão já passou claramente pela faixa boa e as quinas ficaram piores, o próprio guia admite encerrar a torre antes do topo.
+
+Entenda o fator como o aumento de compensação por milímetro de altura. Ele é parte da leitura do ensaio. Trocar a inclinação e usar a conta da receita anterior produzirá um número errado mesmo com a altura certa. Nomeie o arquivo enviado de uma forma que você reconheça depois e anote o fator ao lado do material. Se imprimir duas torres no mesmo dia, marque com um papel qual veio de cada perfil antes que elas se misturem na bancada.
+
+Se um erro interromper o ensaio antes de surgir uma região aproveitável, guarde a observação feita no momento. Um aviso no console, um ruído no motor ou a borda da base levantando são indicações distintas. Corrija o que interrompeu a primeira tentativa e inicie a sequência de comandos novamente. A altura só pode ser convertida com a rampa realmente ativa durante o trecho observado.
+
+## Leia três cantos antes de escolher a altura
+
+Espere a mesa e a peça esfriarem antes de tirar a torre. Use uma luz de lado. A iluminação lateral faz as saliências lançarem sombra e deixa as linhas estreitas mais visíveis. Gire a torre e procure primeiro a quina em que a costura se repete. Desconsidere esse canto se ele estiver diferente, como costuma acontecer no teste oficial. Use os outros três para achar um trecho estável, inclusive quando um lado parece melhorar antes do outro.
+
+Comece comparando a base com o topo e depois volte para a região intermediária. Na parte de baixo, a parede pode fazer uma pequena onda para fora no vértice, especialmente se a curva está depositando plástico demais. Na região boa, o encontro entre as faces fica definido sem um ressalto concentrado e sem um trecho aberto. Se na parte superior a quina ficar arredondada e a linha parecer curta ou estreita ao entrar na mudança de direção, você já passou do melhor ponto.
+
+Trace a faixa mentalmente em cada lado. Se um canto parece bom dos 13 aos 18 mm e os outros dois melhoram entre 15 e 19 mm, use a zona de sobreposição. Uma linha exata de uma camada pode parecer melhor só por causa da luz. A faixa visível em vários lados é uma evidência mais robusta. Dentro dela, o Klipper sugere preferir o lado mais baixo quando houver dúvida.
+
+Para medir, mantenha a ferramenta paralela à direção vertical da peça. Encoste a referência na base da torre e marque onde fica a faixa escolhida. Meça uma segunda vez em outro canto para flagrar uma inclinação ou confusão com uma pequena saliência da primeira camada. Se a torre se soltou e ganhou um pé curvado, uma medição precisa desse pé ainda será uma referência ruim. Refazer uma peça curta e bem presa pode economizar tentativas ao aplicar um número tirado de uma torre deformada.
+
+Use o acabamento das paredes como contexto. Em um filamento com brilho que muda conforme a velocidade, um trecho escuro pode parecer um buraco na foto. Olhe a mesma área com a luz em outro ângulo ou passe a unha de leve na parede já fria. A textura real do depósito e a continuidade da linha interessam mais que a cor do reflexo.
+
+## Faça a conta com o fator que você usou
+
+O cálculo soma o valor inicial ao produto da altura pelo fator. Nos comandos acima, a rampa começa em zero. Se a faixa escolhida ficou a 16 mm da base com o fator de 0,005, a conta é dezesseis vezes cinco milésimos. O resultado é 0,080. Com fator de 0,020, uma faixa a 12 mm corresponde a 0,240. Os dois exemplos ilustram como extrair o número da peça. Uma torre de outra máquina tem outro ponto de partida para a sua decisão.
+
+É comum encontrar uma faixa que cobre vários milímetros. Para ter ideia da sensibilidade, pense num caso de extrusor direto que fica bonito entre 14 e 18 mm. Os valores correspondentes aos extremos são 0,070 e 0,090. Registrar os dois ajuda a repetir o ensaio e reconhecer que 0,075 é uma escolha dentro de uma região aceitável. Acrescentar muitas casas decimais ao resultado após medir uma faixa larga dá uma sensação de exatidão que a observação não sustenta.
+
+Se você encontrar uma transição rápida demais, consulte o guia do Klipper para ajustar o começo e o fator de uma segunda torre. Um fator menor abre no espaço físico diferenças que se comprimiam em poucas camadas. O procedimento é mais esclarecedor quando a primeira tentativa já indicou aproximadamente onde procurar. Para refazer, envie a rampa de teste e os limites de movimento novamente e registre os novos números junto à peça nova.
+
+## Grave a configuração e teste nas velocidades reais
+
+Guarde uma cópia da configuração atual antes de editar. No arquivo incluído que contém a definição do extrusor ativo ou no próprio arquivo de configuração, coloque o valor calculado no campo correspondente. Abaixo vai o exemplo de uma medida convertida em 0,080:
+
+```ini
+[extruder]
+pressure_advance: 0.080
+```
+
+Edite a linha existente da seção em vez de recriar a seção inteira. As outras definições do motor e do hotend continuam necessárias. Ao terminar, envie o reinício previsto na documentação:
+
+```
+RESTART
+```
+
+Esse reinício também limpa o estado da torre e devolve os limites temporários de curva e aceleração à configuração regular. Antes de imprimir uma peça grande, verifique se o comando inicial do seu perfil volta a trocar o valor. Se você escolheu guardar cada material no fatiador, confira qual configuração será enviada ao carregar aquele perfil. Se preferiu manter o valor na impressora, revise os perfis que substituem a definição ao iniciar o arquivo.
+
+Imprima uma peça pequena com uma parede comprida, algumas quinas e o perfil que você usa no dia a dia. Compare quinas, faces, costura e a parte da parede logo depois da mudança de direção. O ensaio da torre faz a diferença ficar visível em condições artificiais. A peça curta mostra se a configuração também funciona quando voltam a velocidade, o volume e o padrão normal de movimentos do seu trabalho.
+
+Observe o extrusor nessa confirmação. A documentação do Klipper sinaliza que uma combinação de compensação alta com aceleração normal pode fazer o motor perder passos. Um estalo acompanhado de falha de extrusão no movimento rápido merece nova conferência. Volte para um ajuste estável e investigue a capacidade de alimentação antes de usar a peça longa como campo de testes.
+
+## O que revisar se a torre não mostrar uma faixa clara
+
+**Todas as paredes parecem magras.** Reduza a quantidade de variáveis. Imprima um perímetro dentro de uma vazão já conhecida e procure alimentação irregular, filamento enroscado e perfil inadequado. Uma extrusão que já sai inconsistente no trecho reto compromete a comparação dos cantos. Confira também a largura real prevista no fatiador e o limite de vazão do material.
+
+**Só uma quina muda de comportamento.** Veja onde o fatiador desenhou a costura. Se coincidir com o defeito, concentre a análise nas outras faces. Se a variação segue um eixo em duas quinas, examine o contexto mecânico da máquina e a repetibilidade do movimento antes de eleger a quina mais bonita como meta para todas. Fotografar cada lado, com pequena etiqueta indicando a orientação na mesa, facilita comparar os ensaios.
+
+**Do fundo ao topo a forma permanece igual.** Confirme o console e a ordem dos comandos enviados. A macro inicial pode redefinir parâmetros e a prévia pode revelar paredes mais lentas do que o esperado. Verifique se o fundo e o topo foram comparados com a mesma luminosidade e com a costura fora do campo de comparação. Se a rampa funcionou e o guia do Klipper indica que sua faixa útil foi testada sem benefício, volte para a condição anterior.
+
+**A torre parece boa, mas a peça larga começa a apresentar ecos na parede.** Olhe se são marcas periódicas que se afastam da quina. O teste de pressão ajuda no excesso de material em mudanças de velocidade. A avaliação de vibrações e aceleração tem outro método. Alterar tudo no mesmo arquivo impede descobrir qual ajuste melhorou ou piorou a peça.
+
+Finalmente, guarde o valor junto ao nome do rolo e ao bico. Quando mudar o material, diâmetro ou temperatura de trabalho, use uma peça curta para conferir se o resultado continua servindo. Ao retomar a impressão após semanas, o registro permite saber qual resultado veio de uma medição e qual veio de um perfil copiado. É o suficiente para decidir quando repetir a torre e quando voltar direto ao modelo que você queria imprimir.
+
+## Quando um valor no perfil ajuda mais que um valor global
+
+Considere uma máquina que alterna entre PLA para suportes leves e PETG para peças de bancada. Na primeira semana, vale guardar a configuração conhecida e testar os dois rolos separadamente. Quando a faixa útil realmente mudar, o perfil de material facilita carregar o ajuste correspondente na próxima impressão. Dê ao perfil um nome que cite o extrusor e o bico quando o mesmo computador atende máquinas diferentes. Confira o trecho inicial do arquivo exportado para saber qual valor a máquina de fato recebe.
+
+Quando a produção usa quase sempre o mesmo filamento no mesmo bico, a configuração da impressora pode ser mais fácil de manter. Um arquivo antigo que já traz sua própria configuração continua capaz de alterar o valor durante a impressão. Por isso, ao comparar dois trabalhos, além de registrar o ajuste escolhido, anote a origem do ajuste. A informação explica como duas peças feitas no mesmo equipamento podem ter cantos bem diferentes.
+
+## Perguntas frequentes
+
+### Qual fator devo usar na torre de Pressure Advance?
+
+O guia do Klipper sugere 0,005 para extrusor direto e 0,020 para Bowden longo. O fator multiplica a altura medida para encontrar o valor da rampa naquele ponto.
+
+### Posso aproveitar o número do perfil de outro filamento?
+
+Faça uma impressão curta para conferir e repita a torre se os cantos mudarem. O valor depende do bico, do extrusor, do material e da condição de impressão.

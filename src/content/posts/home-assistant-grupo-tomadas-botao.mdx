@@ -1,0 +1,155 @@
+---
+title: "Como desligar várias tomadas num toque no Home Assistant"
+description: "Aprenda a agrupar tomadas inteligentes e criar um botão no painel do Home Assistant para desligar de uma vez os aparelhos ligados à bancada."
+pubDate: 2026-12-01T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ["Home Assistant","tomadas inteligentes","automação"]
+author: 'Márcio Costa'
+draft: true
+featured: false
+products:
+  - name: "TP-Link Tapo P110, tomada inteligente Wi-Fi"
+    brand: "TP-Link"
+    image: '/images/produtos/tapo-p110.webp'
+    stores:
+      - store: 'amazon'
+        url: "https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20"
+      - store: 'mercadolivre'
+        url: "https://meli.la/2b3KeRZ"
+    pros: ["Pode ser integrada ao Home Assistant para acionar a saída","Serve como exemplo de entidade switch no painel"]
+    cons: ["Confira tensão, corrente e tipo de carga na ficha da variante","O tutorial pressupõe que a integração já funciona"]
+faq:
+  - question: "O grupo mostra ligado com só uma tomada ativa?"
+    answer: "Por padrão, um grupo de switches indica ligado quando pelo menos um dos membros está ligado. O helper também permite configurar a interpretação de todos ligados."
+  - question: "Por que usar Desligar em vez de Alternar?"
+    answer: "Desligar envia a mesma ordem todas as vezes. Alternar usa o estado atual e pode ligar a bancada quando tudo já estiver desligado."
+  - question: "Posso controlar cada tomada depois de criar o grupo?"
+    answer: "Sim. O helper adiciona uma entidade para o conjunto. As entidades individuais continuam disponíveis quando você precisa lidar com um aparelho específico."
+---
+
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ProsCons from '../../components/ProsCons.astro';
+
+Quando a bancada tem luminária e outros aparelhos em tomadas separadas, desligar um por um todo fim de dia vira tarefa repetida. No Home Assistant, um **grupo de switches** reúne as tomadas em uma entidade. Um cartão de botão pode então enviar uma ordem de desligar a esse grupo. O tutorial segue a documentação do **Home Assistant 2026.11** e usa o editor visual.
+
+Escolha só aparelhos que aceitam perder energia na tomada. Uma luz de mesa simples costuma ser um bom primeiro teste. Equipamentos que gravam arquivos, dependem de um desligamento pelo próprio sistema ou precisam estar disponíveis de forma permanente têm outra rotina. Evite incluir computador ligado, roteador que mantém a bancada acessível, geladeira e equipamentos de uso crítico. Reunir dispositivos no painel não muda os limites elétricos de nenhuma tomada.
+
+## Comece por duas tomadas que funcionam de forma independente
+
+No painel, abra a entidade de cada tomada e confira se é possível ligá-la e desligá-la. O identificador deve começar com **switch.** para o grupo de interruptores deste exemplo. Se você encontrou só entidades que começam com **sensor.**, essas representam leituras. Procure também a entidade que comanda a saída elétrica.
+
+A Tapo P110 aparece no [guia de consumo no Home Assistant](/posts/painel-energia-home-assistant-tomada-inteligente/) como exemplo de tomada já integrada. Quem tem outra tomada compatível pode usar a entidade existente. Se for comprar uma, confira a integração, o tipo de plugue e os limites declarados para o uso que pretende fazer.
+
+![TP-Link Tapo P110, tomada inteligente Wi-Fi](/images/produtos/tapo-p110.webp)
+
+<ProsCons pros={["Pode ser integrada ao Home Assistant para acionar a saída","Serve como exemplo de entidade switch no painel"]} cons={["Confira tensão, corrente e tipo de carga na ficha da variante","O tutorial pressupõe que a integração já funciona"]} />
+
+<AffiliateButton href={"https://www.amazon.com.br/dp/B0CPFT8QQK?tag=nerdcaseiro-20"} store="amazon" source="home-assistant-grupo-tomadas-botao" />
+
+<AffiliateButton href={"https://meli.la/2b3KeRZ"} store="mercadolivre" source="home-assistant-grupo-tomadas-botao" />
+
+## Crie um grupo de interruptores
+
+Na documentação do [helper de grupos](https://www.home-assistant.io/integrations/group/), o caminho pela interface começa em **Configurações → Dispositivos e serviços → Auxiliares**. Crie um auxiliar, escolha **Grupo** e selecione o tipo de grupo de interruptores. Dê um nome fácil de reconhecer, como **Tomadas da bancada**, e adicione as entidades que verificou antes.
+
+O grupo exibe, por padrão, estado ligado quando pelo menos um interruptor está ligado. Para este uso, deixe esse comportamento inicial. Ao usar o botão para desligar, você quer identificar rapidamente se sobrou alguma tomada ligada. Evite ocultar os membros enquanto faz os primeiros testes. Ter as entidades individuais visíveis facilita descobrir qual aparelho não respondeu.
+
+Se houver duas bancadas, prefira nomes que identifiquem a sala ou a finalidade. A entidade do grupo vai aparecer junto das tomadas na lista de alvos. Um nome parecido com o da tomada individual dificulta acertar a seleção no cartão.
+
+## Coloque um botão de desligar no painel
+
+Edite o painel em que você controla a bancada e adicione um [cartão de botão](https://www.home-assistant.io/dashboards/button/). Selecione o grupo como entidade do cartão e use um nome de ação, como **Desligar bancada**. Abra a configuração de toque. Conforme a [documentação de ações do painel](https://www.home-assistant.io/dashboards/actions/), o cartão pode **executar uma ação** em vez de alternar a entidade.
+
+Selecione a ação **Interruptor: desligar**, identificada como **switch.turn_off**, e escolha como alvo a entidade **Tomadas da bancada**. O alvo precisa ser o grupo que você criou. A entidade mostrada no cartão e a entidade usada como alvo devem apontar para o mesmo grupo nesse exemplo. Salve e volte à visualização normal para testar.
+
+### Por que configurar uma ação em vez de alternar?
+
+O botão tem um objetivo previsível. Você encerrou o trabalho e quer deixar todas as saídas controladas desligadas. Se alguém tocar duas vezes, a segunda ordem também será de desligar. Ao deixar o cartão em modo alternar, o mesmo gesto poderia ligar coisas que estavam desligadas. Esse detalhe importa quando o painel fica em um tablet usado por outras pessoas da casa.
+
+## Confira o estado de cada saída
+
+Faça o primeiro teste com uma luz ligada e outra desligada. Toque no botão e veja se as duas ficam desligadas. Repita em outra combinação. Por fim, deixe as duas desligadas e confirme que o botão não acende nenhuma. Se usar o aplicativo no celular, repita pelo painel que vai servir no dia a dia.
+
+Quando um aparelho some ou fica com o estado **indisponível**, inspecione o dispositivo e a rede antes de editar o grupo. O grupo consegue enviar a ordem aos membros disponíveis, mas uma tomada inacessível pode continuar fisicamente no estado anterior. Por isso, quando o estado importar, abra a entidade individual e cheque a saída.
+
+**Só uma tomada mudou?** Confira a lista de membros do helper. Um item incluído por engano pode ser a leitura de consumo em outro auxiliar, e um dispositivo renomeado pode ter deixado um alvo diferente do esperado. **O botão ligou a bancada?** Volte à configuração do toque e confirme que salvou **desligar**, com o grupo como alvo. **Quer desligar uma de cada vez?** Mantenha os cartões individuais ao lado do botão do grupo.
+
+O resultado é um painel com um comando de fim de uso e controle separado quando necessário. Se o próximo passo for medir o consumo no painel de energia, trate essa medição como outro recurso. O grupo desta pauta resolve o controle da saída sem exigir que todas as tomadas meçam potência.
+
+## Monte um inventário do que esse botão pode desligar
+
+Comece pelos nomes físicos. Uma etiqueta simples na tomada e o mesmo nome no painel ajudam a identificar qual saída controla a luminária e qual controla outro item compatível. Ligue e desligue apenas um dispositivo por vez e confira o efeito na bancada. Em uma régua ou tomada com mais de uma saída controlável, cada entidade pode representar uma porta diferente. O nome padrão pode ser parecido entre elas, especialmente depois de cadastrar várias unidades do mesmo modelo.
+
+Para cada aparelho, responda como ele deveria ser desligado na rotina. Lâmpadas simples que aceitam ser ligadas e desligadas pela tomada servem para a demonstração. Computadores e dispositivos que mantêm arquivos, refrigeração ou alguma função importante não devem ir no grupo de uma bancada comum. Observe também o que acontece quando a energia volta. Um equipamento que religa sozinho pode ter uma consequência diferente de uma lâmpada que mantém o último estado. Para testar o botão, escolha aparelhos cujo comportamento seja previsível e cuja perda de energia esteja prevista para esse uso.
+
+Confira o limite da tomada inteligente, a tensão da variante e o tipo de carga admitido. O limite registrado no manual pode distinguir iluminação e outras cargas. Os dispositivos que têm partida, motor ou fonte com pico precisam ser avaliados conforme as orientações dos fabricantes. A soma de membros do grupo no Home Assistant não representa a potência permitida em uma régua, em uma tomada de parede ou no circuito. Distribua o projeto para preservar a instalação elétrica adequada e consulte um profissional quando houver dúvida.
+
+Crie uma tabela simples no seu registro. Uma linha por tomada, com o local, a entidade, o aparelho ligado e a ação que deve acontecer ao tocar. Essa lista é útil quando alguém muda uma luminária de lugar ou retira uma tomada para usar na sala. A entidade pode conservar o nome anterior mesmo que a carga física tenha mudado. Em casa compartilhada, combine como registrar essa troca antes de adicionar uma nova tomada ao grupo.
+
+## Diferencie o estado do grupo dos estados de cada saída
+
+Imagine duas tomadas. A primeira está ligada. A segunda está desligada. No comportamento padrão descrito na [integração Group](https://www.home-assistant.io/integrations/group/), o grupo aparece ligado quando pelo menos uma delas está ligada. É um resumo conveniente para detectar que ainda existe atividade. Logo após apertar o botão de desligar, abra os dois membros e verifique se a interface acompanhou a mudança. Se o grupo ficar ligado, há pelo menos uma saída ativa que você consegue investigar individualmente.
+
+A opção de interpretar o grupo como ligado quando todos os membros estão ligados serve para outras rotinas. Pense em duas iluminações que identificam uma configuração completa. O grupo aparecer ligado só quando as duas estão acesas pode auxiliar naquele painel. Em um botão de desligamento, a preocupação costuma ser ver se ficou alguma saída ativa. Configure o estado agregado de acordo com o que o cartão deve informar antes de decidir pelo ícone e pela cor.
+
+O estado de indisponibilidade merece atenção. A tomada pode ter parado de responder ao servidor por perda de rede e continuar alimentando o aparelho. Por isso vale manter as entidades individuais visíveis nas primeiras semanas. Quando o botão diz que a ordem foi executada, verifique a reação e o estado dos dispositivos. Uma luz que fica acesa é uma evidência física fácil de reconhecer. Para uma saída que alimenta um aparelho silencioso, acompanhe a entidade com atenção e confira presencialmente quando o estado for importante.
+
+Dê a cada membro um nome que a pessoa consegue associar ao lugar em poucos segundos. No painel de uma oficina, por exemplo, lâmpada à esquerda e luz da prateleira pode ser mais claro que dois nomes baseados na marca. Se duvida qual está indisponível, o nome permite checar o cabo e a alimentação certa antes de selecionar um alvo diferente no botão. Esse arranjo organiza o diagnóstico sem mexer no grupo toda vez que alguém muda a vista do painel.
+
+## Decida o que o cartão deve mostrar em repouso
+
+Um botão com o texto Desligar bancada indica o efeito do toque. Um cartão com o texto Bancada pode ser interpretado como atalho para ligar e desligar. Dê ao botão o nome da ação e deixe os estados individuais visíveis ao lado ou logo abaixo. O desenho ideal permite que uma pessoa que nunca configurou o Home Assistant saiba o que vai acontecer antes de tocar e verifique o resultado depois.
+
+Se o painel usa um tablet na parede, teste a posição do cartão com as mãos na distância habitual. Um botão ao lado de controles de iluminação geral pode ser acionado sem querer quando alguém está procurando um deles. Coloque os atalhos que têm efeitos diferentes em posições distintas. No celular, veja se a versão compacta do painel mostra o nome inteiro ou se o ícone ganhou destaque sem explicar o resultado. Use uma vista existente para reduzir o trabalho quando você já tem os controles individuais nela.
+
+O editor permite atribuir ações a toques e a outras interações. No primeiro ensaio, mantenha um gesto claro e confira quais ações estão salvas. Se você usa toque e toque longo para funções diferentes, deve conseguir explicar o mapa antes de compartilhar o painel. Deixar as interações adicionais livres pode evitar que alguém dispare uma ordem que não esperava. Volte ao modo de visualização depois de salvar e repita o teste fora do editor.
+
+Quando o cartão não faz o que você configurou, verifique a diferença entre a entidade que ele mostra e o alvo da ação. Um cartão pode exibir o estado do grupo no desenho e ainda enviar a ordem para uma tomada individual por erro de seleção. Abra a ação e leia o alvo completo. Depois use duas tomadas ligadas para detectar a diferença. Se uma ficar ligada, abra o grupo e compare a lista de membros com a tabela física que você fez.
+
+## Faça uma matriz pequena de testes
+
+Comece com as duas luzes desligadas e toque no botão. A configuração explícita deve manter ambas apagadas. Depois ligue apenas a primeira pelo controle individual e toque de novo. Repita com a segunda ligada. Por fim, deixe as duas acesas. Essa sequência confirma que o botão produz o mesmo efeito em estados de partida diferentes. Anote o que mudou na lâmpada e o que apareceu no painel. Uma atualização que tarda alguns segundos precisa ser observada até o estado se estabilizar.
+
+Verifique também o gesto repetido. Toque duas vezes com uma tomada ligada, aguardando apenas o tempo usual de uso. Confira se a segunda ordem conserva o estado final. Uma rotina de desligamento não precisa devolver energia quando o feixe de luz já desapareceu. Se o cartão está alternando, esse caso tende a revelar a escolha de ação inadequada. Corrija e repita com ambas apagadas para fechar a verificação.
+
+Para avaliar indisponibilidade, você pode observar um caso que já acontece na rede, sem provocar perda de acesso a equipamento importante. Se um membro aparecer indisponível, veja a representação do grupo e teste apenas as luzes que podem mudar de estado com segurança. Anote se o cartão alterou o membro disponível e o que ocorreu no retorno de comunicação. Quando estiver em dúvida, restaure o acesso ao membro e teste pelo cartão individual. Uma ordem anterior pode não ter sido entregue e o estado deve ser verificado de novo.
+
+Caso o usuário tenha mais de um painel, repita em duas telas. Abra a vista que a família usa quando está na bancada e a que fica disponível ao sair. Um painel separado pode conservar um cartão antigo que alterna o grupo. Compare os rótulos e os alvos. Se forem realmente funções distintas, mantenha nomes distintos. Para o mesmo fim de uso, siga com a mesma ordem de desligamento.
+
+## Reaproveite o grupo sem duplicar listas em cada lugar
+
+O grupo serve como referência única para os membros. Se você usa um botão no painel e quer reaproveitar as mesmas tomadas em outra rotina, use o grupo como alvo. Quando acrescentar uma saída compatível, revise só a lista do helper e depois confira todos os locais que usam aquela entidade. Anote o efeito da mudança para alguém que olhe o painel e ache que só a luz anterior pertence à bancada.
+
+Uma rotina que faz outras coisas além de desligar pode usar um script. Imagine uma bancada em que você quer acender uma luz de saída, desligar duas luminárias de trabalho e reduzir o som de um aparelho que tem controle próprio. Cada etapa tem uma entidade e uma ordem. Faça o script funcionar pelo painel antes de apontar o cartão para ele. A necessidade de um script aparece quando há mais ações para manter juntas. Quando a função consiste apenas em desligar o grupo, a ação direta mantém a configuração mais curta.
+
+Se o painel parece mudar e a tomada acaba ligada de novo depois, observe outras automações que possam atuar sobre as mesmas entidades. Uma rotina de presença, uma agenda no aplicativo do fabricante ou outra pessoa com o controle individual pode mandar uma ordem depois do toque. Confira a hora em que cada estado mudou e, quando o registro disponível permitir, qual contexto iniciou a ação. Uma ordem executada com sucesso seguida de outra ordem precisa de diagnóstico diferente de um botão que nem chega à tomada.
+
+Ao mudar o nome de uma entidade ou aposentar um plugue, verifique o grupo, os cartões e outros controles em que ele aparece. As ferramentas de edição ajudam a achar um alvo ausente. Se o botão deve continuar atendendo toda a bancada, revise os membros antes de excluir ou trocar o dispositivo antigo. Faça de novo o teste com a luz individual e depois com o grupo. Isso mostra que a entidade nova foi incorporada no lugar esperado.
+
+## Isole as causas quando uma tomada sai do ritmo
+
+Uma saída que funciona em seu aplicativo e não responde pelo painel pode ter uma diferença de integração ou disponibilidade no Home Assistant. Comece abrindo a entidade e confirme que ela ainda oferece o comando. Depois veja se há outra entidade de mesmo nome em uma integração diferente. Se o teste individual no Home Assistant falha, concentre-se no dispositivo, na rede ou na integração antes de alterar o cartão. Se o individual funciona, examine a associação com o grupo e o alvo salvo.
+
+Se todos os membros falham juntos, confirme que o painel responde com outros dispositivos conhecidos. Veja se a instância está ao alcance e se a conta da pessoa está usando a vista correta. Quando o grupo aparece como indisponível, identifique a condição de cada membro. Uma falha de rede que afeta só as tomadas de determinada faixa é diferente de uma tela que ficou em outra instância. A [documentação de testes](https://www.home-assistant.io/docs/automation/testing/) ajuda a avaliar passos individuais quando um script passou a fazer parte da sequência.
+
+Faça uma conferência após atualizar o Home Assistant, substituir o roteador ou mudar a bancada de cômodo. Comece pelas duas lâmpadas que você conhecia e execute a sequência simples. Se todas as entidades têm estado coerente e a ação faz o que o rótulo promete, repita a rotina do dia a dia uma vez. A vantagem de controlar o grupo com um toque aparece quando a pessoa sabe o que ele abrange, a instalação física suporta esse uso e o controle individual continua disponível para investigar qualquer exceção.
+
+## Registre o que entrou no grupo depois que a rotina funcionar
+
+Quando levar uma tomada de um cômodo para outro, examine primeiro a entidade. Se o adaptador que antes atendia uma luminária agora ficou reservado para outro uso, retire do grupo antigo ou use uma entidade diferente conforme sua instalação. A mudança física pode acontecer sem nenhuma alteração automática na lista do Home Assistant. Uma inscrição no plugue com o cômodo e uma conferência do painel evitam deixar uma tomada recém-transferida sob o comando de outra bancada.
+
+Prepare também um atalho manual para o caso de a rede estar temporariamente fora do ar. Mostre ao morador que usa a bancada onde está o controle de cada luminária e confira a instrução local do dispositivo. Durante uma falha de conexão, a prioridade é saber quais luzes ainda estão ligadas e poder desligá-las pelo meio habitual. Depois que a rede volta, teste cada saída individual antes de pressupor que o cartão recebeu a ordem que foi dada no intervalo. Faça o mesmo quando uma atualização da integração altera a forma como a entidade aparece no painel.
+
+## Perguntas frequentes
+
+### O grupo mostra ligado com só uma tomada ativa?
+
+Por padrão, um grupo de switches indica ligado quando pelo menos um dos membros está ligado. O helper também permite configurar a interpretação de todos ligados.
+
+### Por que usar Desligar em vez de Alternar?
+
+Desligar envia a mesma ordem todas as vezes. Alternar usa o estado atual e pode ligar a bancada quando tudo já estiver desligado.
+
+### Posso controlar cada tomada depois de criar o grupo?
+
+Sim. O helper adiciona uma entidade para o conjunto. As entidades individuais continuam disponíveis quando você precisa lidar com um aparelho específico.

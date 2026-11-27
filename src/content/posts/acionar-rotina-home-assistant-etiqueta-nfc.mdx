@@ -1,0 +1,128 @@
+---
+title: "Como acionar uma rotina do Home Assistant com uma tag NFC"
+description: "Aprenda a cadastrar uma etiqueta NFC no Home Assistant e usá-la para disparar uma rotina pelo celular. Veja como testar antes de fixar a tag."
+pubDate: 2026-12-06T18:00:00-03:00
+category: 'automacao-residencial'
+tags: ["Home Assistant","NFC","automação"]
+author: 'Márcio Costa'
+draft: true
+featured: false
+faq:
+  - question: "A etiqueta NFC funciona sem o celular?"
+    answer: "Neste passo a passo, o telefone com Companion faz a leitura e envia o evento à instância. Leitores dedicados compatíveis são outra forma de implementar a mesma ideia."
+  - question: "Preciso regravar a etiqueta para mudar qual luz ela acende?"
+    answer: "Mude a ação ou o alvo na automação e mantenha o mesmo identificador de tag."
+  - question: "Por que o telefone leu a etiqueta, mas a luz ficou apagada?"
+    answer: "Confira se o evento chegou à instância e abra o rastro da automação. No iPhone, complete o toque na notificação quando solicitado."
+---
+
+Uma etiqueta NFC pode deixar a rotina de iluminação no lugar onde você precisa dela. Por exemplo, ao terminar o dia, aproxime o celular de uma etiqueta na mesa para desligar a luminária de trabalho e deixar a luz do corredor acesa. A etiqueta fica na mesa. O celular lê o identificador. O aplicativo envia a leitura à sua instância do Home Assistant e a automação executa a ação que você escolheu.
+
+Para a primeira montagem, use uma rotina que dá para conferir com os olhos. Uma lâmpada que muda de estado deixa claro se a configuração funcionou. Este passo a passo usa o aplicativo Companion e o painel de tags do Home Assistant, conforme a documentação da série 2026.11. Os nomes de menus podem variar segundo o idioma e a versão. O teste inclui o leitor, a chegada ao servidor e a ação final separadamente, para você conseguir localizar um problema sem regravar tudo.
+
+## Entenda por onde o comando passa
+
+Uma etiqueta NFC passiva guarda uma informação legível de perto. O celular compatível se aproxima, identifica a gravação e abre ou encaminha o link de tag ao aplicativo. O Home Assistant recebe o identificador e pode usar aquele evento como gatilho. A etiqueta continua no lugar mesmo se o telefone estiver desligado. Para disparar a rotina, o smartphone precisa ler, o aplicativo precisa receber o link e a instância precisa estar acessível naquele momento.
+
+A [documentação do Companion](https://companion.home-assistant.io/docs/integrations/universal-links/) descreve um link com o identificador da tag. É esse identificador que liga uma superfície física à ação configurada no servidor. Quando você decide trocar a lâmpada que acende, pode editar a ação na automação e conservar a etiqueta onde está. Ao criar outras etiquetas, nomes no painel ajudam a lembrar a posição e a finalidade de cada ID.
+
+No Android, a leitura por NFC pode disparar o evento pelo aplicativo quando as condições do sistema estão atendidas. No iPhone, o fluxo documentado pelo Companion apresenta uma notificação. Toque nela para abrir o aplicativo e produzir o evento. Teste os aparelhos usados em casa antes de decidir onde colar. A posição da antena varia e, em alguns telefones, o ponto ideal fica mais próximo de uma extremidade do que do centro.
+
+Abra primeiro o aplicativo no telefone que vai gravar e no telefone que vai usar a rotina. Veja se ambos chegam ao painel da instância desejada na rede em que ficarão. Se um telefone fala com a instância de testes e outro com a instalação da casa, a etiqueta pode ser lida com sucesso e o evento chegar ao lugar errado. Resolva a seleção do servidor antes de acrescentar a tag ao sistema. Em caso de leitura fora de casa, o acesso remoto precisa já funcionar pelo meio de conexão configurado.
+
+## Escolha uma etiqueta que você consiga gravar e testar
+
+Use uma etiqueta NFC regravável compatível com o telefone, ainda sem gravação permanente. As [instruções de tags do Home Assistant](https://www.home-assistant.io/integrations/tag/) mostram como escrever pelo aplicativo. Mesmo que dois adesivos sejam fisicamente iguais, um pode ter sido entregue só para leitura. Se o sistema acusa bloqueio ao gravar, verifique a condição reportada e teste outra unidade antes de culpar o telefone.
+
+Separe primeiro uma área de madeira, plástico ou papelão que você conhece. Faça a gravação com a tag fora da superfície final. Em uma mesa metálica, a proximidade direta pode prejudicar a leitura de um adesivo comum. Para esse caso, teste uma etiqueta indicada para montagem sobre metal ou procure uma posição não metálica perto do local desejado. Um teste inicial em papelão serve como referência quando a leitura degrada depois de mudar a tag para o móvel.
+
+Anote a relação entre nome e local. Um nome como Mesa Escritório Luz descreve a etiqueta mesmo antes de implementar a rotina inteira. Um pequeno símbolo na superfície física ajuda a achar onde aproximar o celular, especialmente com a luz apagada. Se for esconder o adesivo atrás de uma placa, teste o conjunto com a placa e a espessura que vai usar. O leitor precisa chegar perto o suficiente na posição em que o braço de uma pessoa consegue alcançá-lo.
+
+Uma etiqueta passiva pode funcionar anos no mesmo lugar, mas fita, umidade, limpeza e atrito mudam o estado do suporte. Planeje como substituir se a rotina virar parte do dia. Pode ser mais fácil manter uma tag em um cartão apoiado ou presa com fita removível no teste. Depois de provar o uso, fixe de um modo que permita localizar a tag e remover a peça sem estragar o acabamento.
+
+## Cadastre a tag e escreva com o celular
+
+1. No Home Assistant, abra **Configurações > Tags** e escolha adicionar uma etiqueta. Informe um nome que identifique o local e a ação. Guarde o identificador gerado se precisar inspecionar o evento mais tarde.
+2. Selecione a opção de escrever a tag e siga a instrução no telefone com o Companion. O aplicativo também dá acesso à gravação pelo caminho **Configurações > Aplicativo Companion > Cartões NFC**, de acordo com o menu descrito na documentação.
+3. Encoste a parte apropriada do telefone na etiqueta e espere a confirmação. Quando aparecer um pedido para aproximar, procure o ponto da antena movendo devagar o telefone sobre um adesivo apoiado. Deixe a tag parada até completar.
+4. Afaste o telefone antes de tentar ler. Aproxime mais uma vez, toque na notificação se o sistema pedir e confira no painel de tags o registro de leitura. Observe a hora e a instância para diferenciar o teste atual de uma leitura anterior.
+
+A etapa de gravação muda a informação na etiqueta. Se ela já pertence a outra rotina, identifique o uso existente antes de regravar. Para um adesivo de ensaio, é mais simples usar um que está solto e sem função. Você pode criar um identificador novo para ele e confirmar a primeira leitura sem risco de chamar duas rotinas com o mesmo código por acidente.
+
+Se o painel não atualizar, abra o aplicativo normalmente e confirme que a interface responde. Tente a leitura na mesma bancada onde gravou. No iPhone, confira se abriu a notificação. No Android, confira se o NFC está habilitado e se o sistema está encaminhando o link ao aplicativo. Uma capa grossa ou com suporte metálico pode alterar o ponto em que o leitor responde. Compare temporariamente com a capa removida para descobrir se ela faz parte da causa.
+
+## Crie a automação para uma luz que você consegue ver
+
+Comece com uma lâmpada já controlada pelo painel do Home Assistant. Ligue e desligue pelo painel antes de acrescentar a etiqueta. Isso confirma que você já tem uma entidade disponível. Se há duas lâmpadas do mesmo nome em áreas diferentes, veja a entidade de cada uma e escolha um identificador que não deixa dúvida na hora de testar.
+
+No painel de automações, crie uma automação vazia. Em **Quando**, adicione o gatilho **Tag** e escolha a etiqueta cadastrada. Em **Então**, adicione a ação para ligar luz e defina como alvo a entidade que você acabou de conferir. Salve um nome que inclua o cômodo e o efeito esperado. Deixe as condições em branco no teste inicial. A ideia é provar que uma leitura nova encontra o gatilho e chega à ação.
+
+Use um comando explícito de ligar. Se alguém aproxima o celular duas vezes e o Home Assistant recebe duas leituras, ligar uma luz já ligada preserva o resultado. Já uma ação de alternar pode acender e apagar em sequência. A escolha depende do efeito desejado. Numa etiqueta colocada com o significado de encerrar o trabalho, deixar uma luz de passagem ligada é uma instrução clara a cada leitura. Numa etiqueta que funciona como interruptor, alternar pode ser a própria função.
+
+Apague a lâmpada pelo meio habitual, volte à etiqueta e faça uma leitura completa. Confirme a mudança no ambiente e observe o horário da automação. Se só executar as ações pelo editor, você prova o caminho da ação até o dispositivo. O teste com a etiqueta também avalia o gatilho, o aplicativo e a instância. A [documentação de testes de automações](https://www.home-assistant.io/docs/automation/testing/) distingue esses dois ensaios.
+
+## Confirme o evento e leia o rastro
+
+Quando há dúvida sobre o encaminhamento, abra **Ferramentas do desenvolvedor > Eventos**, inicie a escuta de eventos de leitura de tag e faça uma leitura única. O nome usado pela integração é `tag_scanned`. O [guia do Home Assistant sobre tags](https://www.home-assistant.io/integrations/tag/) descreve o identificador da etiqueta e o identificador do leitor no conteúdo recebido. Compare o ID da leitura com aquele que a automação espera.
+
+Se nenhum evento chega, mantenha a lanterna ou a lâmpada como estava e volte para a primeira parte do percurso. Verifique se o telefone reagiu, se o banner foi aberto quando necessário e se o aplicativo conectou ao servidor certo. Se já havia evento e você trocou a ação de lugar, faça outro teste com o painel de eventos aberto e associe a hora exata. Não é preciso mexer em todos os componentes de uma vez.
+
+Se o evento aparece e a lâmpada não muda, abra os rastros recentes da automação. Um rastro útil mostra onde a execução começou e qual passo recebeu a ação. Quando o registro indica interrupção por condição, leia o valor real que a condição analisou. Uma condição de horário pode usar a configuração de fuso da instância e uma condição de presença pode estar apoiada numa entidade que ainda não atualizou.
+
+Às vezes a ação foi acionada e o dispositivo permaneceu indisponível. Veja a entidade no painel e tente o comando da luz ali. Se o produto depende de uma ponte ou integração específica, confira se outros dispositivos daquela integração respondem. Uma falha em todas as luzes que usam a mesma ponte sugere um diagnóstico distinto de uma entidade selecionada por engano. A [página oficial de solução de problemas](https://www.home-assistant.io/docs/automation/troubleshooting/) mostra como distinguir gatilho, condição e ação pelos rastros.
+
+Quando terminar um teste, pare a escuta de eventos e volte à automação. Ela continua ativa com o gatilho configurado. Anote quais resultados esperados você já viu. Isso evita que um teste manual bem-sucedido seja confundido com prova de que a etiqueta funcionou. Para conclusões que dependem da hora, faça uma tentativa dentro e outra fora do período previsto.
+
+## Faça a primeira etiqueta chamar uma rotina reaproveitável
+
+Imagine a rotina Fim do Expediente. Ela desliga a luz da mesa, acende a luz de passagem e reduz o som de um aparelho que você controla pelo painel. Pode ser acionada de dois lugares diferentes, como uma tag na mesa e um cartão no painel. Quando várias formas de acionamento devem executar a mesma sequência, vale colocar as ações num script e deixar a automação da tag chamar esse script. Assim as duas formas usam a mesma definição de ação.
+
+Comece com as duas lâmpadas apenas. Abra as ações do script e teste a ordem em que são executadas. Se apagar a luz principal antes de acender a de passagem deixa o cômodo sem luz por alguns instantes, inverta a sequência e confira com alguém na saída. Quando for acrescentar um terceiro dispositivo, dê a ele uma ação que você conhece, com estado explícito e um alvo fácil de identificar no painel.
+
+Uma cena é útil quando você quer aplicar um conjunto de estados, como níveis de luz configurados. Um script é uma opção para encadear passos e aproveitar a sequência por mais de uma entrada. O [guia de blocos do Home Assistant](https://www.home-assistant.io/docs/automation/building-blocks/) apresenta os papéis de scripts e automações. Decida o que acontece após a leitura antes de criar camadas. Uma etiqueta que só acende a luminária continua simples com uma ação direta.
+
+Quando usar temporização, teste duas leituras próximas. O modo de execução da automação determina o que ocorre se a primeira rotina ainda estiver rodando. Em uma rotina com espera, a segunda leitura pode ser ignorada, iniciar de novo ou entrar em fila conforme o modo. Para luz de passagem, imagine duas pessoas saindo em sequência e confira se o comportamento desejado é estender, repetir ou conservar o primeiro tempo. Salve a decisão junto à descrição da automação.
+
+## Teste a leitura no lugar definitivo
+
+Coloque a etiqueta provisoriamente na posição em que pretende colá-la. Faça duas leituras com o braço na posição normal e uma terceira com a luz do ambiente reduzida. Confira se é fácil descobrir onde fica a tag, posicionar a antena e completar a etapa pedida pelo aparelho. Se for esconder atrás de uma mesa ou num nicho, veja se o movimento exige colocar o telefone perto demais de um canto ou encostar a tela no móvel.
+
+Teste com os dois aparelhos mais usados da casa. Deixe que as pessoas encontrem a etiqueta pela indicação física e leiam no próprio telefone. Veja o que acontece com a capa habitual, com a tela em repouso e no estado de desbloqueio que o sistema espera. Uma etiqueta encontra o leitor mais depressa quando a pessoa sabe qual parte do aparelho aproximar. Em lugar compartilhado, uma indicação breve do uso evita que alguém leia tentando ativar outra função.
+
+Para uma posição de passagem, verifique a rede no ponto exato. Uma tag no final da garagem pode ser lida fisicamente, enquanto o aplicativo ainda troca entre Wi-Fi e rede móvel. Se o evento demora nessa região, abra o app no local e confira como chega à instância. Tente de novo já com a conectividade estável. Compare as horas dos eventos ao investigar se a demora está na comunicação ou numa espera da própria automação.
+
+Mantenha um controle de parede ou do painel para a mesma ação quando fizer sentido. Uma pessoa sem telefone por perto continua capaz de acender a luz. Em uma família com aparelhos de sistemas diferentes, esses controles também ajudam quando uma atualização muda o comportamento da leitura. A tag vira uma forma conveniente de pedir a ação quando você passa pelo local e conhece a posição.
+
+## Mantenha cada etiqueta ligada a uma ação fácil de entender
+
+Uma gravação copiada para duas etiquetas pode disparar a mesma rotina em dois lugares. Para uma luz de passagem acionada de entradas distintas isso pode ser útil. Se você prefere ler no histórico em qual local alguém aproximou o telefone, use dois identificadores, atribua nomes que indiquem o lugar e aponte ambos para a mesma sequência. Assim é possível mover ou retirar um dos pontos sem mexer no outro.
+
+A informação armazenada pode ser lida ou copiada por quem alcança tag. Escolha para o adesivo ações que fazem sentido como conveniência, como luz, mídia e rotinas do painel. Para ações que exigem saber quem está pedindo e se tem permissão, use os mecanismos de autorização apropriados. Uma etiqueta que está na parede é um ponto fácil de replicar e sua presença não comprova a identidade da pessoa que acionou o equipamento.
+
+Quando uma etiqueta muda de lugar, renomeie no painel e teste com a identificação física nova. Se perdeu o adesivo e continuou com o cadastro, desabilite ou ajuste a automação antes de reaproveitar aquela função. Se uma rotina acende dispositivos com os quais você não contava, confira as entidades explícitas antes de escolher uma área inteira como alvo. Uma nova lâmpada incluída em área existente pode mudar o resultado de uma ação que usa toda a área.
+
+Conserve o identificador, a finalidade e a localização num registro simples. Depois de restaurar um backup ou mudar telefone, abra o painel e confira a instância ligada ao Companion. Teste primeiro uma etiqueta que chama uma luz visível. Se o painel registrar o ID, veja o rastro antes de reescrever o adesivo. A automação pode ser corrigida no servidor mantendo a gravação original e o local que a casa já aprendeu a usar.
+
+## Trate a troca de telefone como um novo teste de leitura
+
+Ao migrar o aplicativo para outro telefone, verifique se ele abriu a mesma instância, mesmo que o painel tenha aparência idêntica à do aparelho anterior. Toque numa luz pelo painel e faça uma leitura na etiqueta da bancada. Depois leia na posição definitiva. Isso ajuda a descobrir se o problema de uma capa nova aparece antes ou depois de encaminhar a leitura. Se o painel registrar a tag, há evidência de que o aplicativo completou o percurso até o servidor.
+
+Quando uma automação foi personalizada para reagir somente a um leitor conhecido, a troca de telefone merece atenção extra. O identificador da etiqueta e o de quem leu são registros distintos. Uma regra criada para um leitor anterior pode aceitar o cartão físico e ignorar a leitura de um aparelho novo. Compare os dados dos eventos e confira a condição no rastro. Atualize apenas a referência ao leitor quando essa era a regra pretendida.
+
+Se outra pessoa ler a mesma tag, observe que o resultado depende do telefone e da configuração que ele tem. Uma etiqueta gravada num celular do escritório não contém credenciais para os aparelhos da casa. Para uma rotina que todos podem usar, teste com as contas e permissões de cada morador. Para uma automação pessoal, use uma posição que já faça parte da sua rotina, como a lateral da bancada onde você coloca o telefone ao fim do trabalho.
+
+Uma etiqueta no criado-mudo pode pedir uma cena simples de noite. Se o sistema selecionado no Companion também atende outra residência, veja para onde a notificação leva ao usar aquele aparelho. Se você tem duas instâncias, mantenha as etiquetas identificadas pelo local. Em caso de uma decisão de servidor apresentada pelo sistema, confirme a opção antes de concluir que a automação está com erro. Isso também evita interpretar a ausência de uma reação da lâmpada local como falha de leitura, quando a informação apenas chegou a outra instalação cadastrada.
+
+## Perguntas frequentes
+
+### A etiqueta NFC funciona sem o celular?
+
+Neste passo a passo, o telefone com Companion faz a leitura e envia o evento à instância. Leitores dedicados compatíveis são outra forma de implementar a mesma ideia.
+
+### Preciso regravar a etiqueta para mudar qual luz ela acende?
+
+Mude a ação ou o alvo na automação e mantenha o mesmo identificador de tag.
+
+### Por que o telefone leu a etiqueta, mas a luz ficou apagada?
+
+Confira se o evento chegou à instância e abra o rastro da automação. No iPhone, complete o toque na notificação quando solicitado.
